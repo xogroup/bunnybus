@@ -1,0 +1,27 @@
+FROM node:4-alpine
+
+MAINTAINER Lam Chan (XO Group)
+
+EXPOSE 8080
+EXPOSE 5858
+
+ENTRYPOINT ["docker-shell"]
+
+ENV APPDIR /opt/app/current
+
+RUN mkdir -p $APPDIR
+
+WORKDIR $APPDIR
+
+CMD ["-t"]
+
+ADD ./docker/docker-shell.sh /usr/bin/docker-shell
+RUN chmod +x /usr/bin/docker-shell
+
+ADD ./package.json $APPDIR/package.json
+ADD ./npm-shrinkwrap.json $APPDIR/npm-shrinkwrap.json
+
+RUN npm install
+#RUN npm link gulp gulp-shell del vinyl-paths
+
+ADD . $APPDIR
