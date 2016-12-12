@@ -14,9 +14,7 @@ Currently supports the following queueing frameworks.
 Lead Maintainer: [Lam Chan](https://github.com/lamchakchan)
 
 ## Introduction
-BunnyBus abstracts away low level queue driver details such as creating a connection, creating a channel, creating bindings, creating subscribing queues and etc.  
-BunnyBus provides safe defaults for many setups which can also be configured.  The core of BunnyBus implements native node callbacks providing maximum performance.  
-BunnyBus provides two flavors of API for callbacks and Promise alike.
+BunnyBus abstracts away low level queue driver details such as creating a connection, creating a channel, creating bindings, creating subscribing queues and etc.  BunnyBus provides safe defaults for many setups which can also be configured.  The core of BunnyBus implements native node callbacks providing maximum performance.  BunnyBus provides two flavors of API for callbacks and Promise alike.
 
 ## Installation
 ```
