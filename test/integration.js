@@ -14,23 +14,22 @@ let instance = undefined;
 
 describe('integration', () => {
 
-    before('setup', (done) => {
-        
+    before((done) => {
+
         instance = new BunnyBus();
         instance.config = BunnyBus.DEFAULT_CONFIGURATION;
         done();
-    })
+    });
 
     it('should connect with default values', (done) => {
 
         instance.connect((err) => {
-            
-            expect(err).to.be.undefined();
-            expect(instance.connection).to.exist();
-            epxect(instance.channel).to.exist();
 
+            expect(err).to.be.null();
+            expect(instance.connection).to.exist();
+            expect(instance.channel).to.exist();
             done();
         });
-    })
+    });
 });
 

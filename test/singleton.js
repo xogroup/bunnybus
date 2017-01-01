@@ -25,7 +25,7 @@ describe('singleton', () => {
         const instance1 = new BunnyBus();
         const instance2 = new BunnyBus();
 
-        expect(instance1).to.be.equal(instance2);
+        expect(instance1).to.shallow.equal(instance2);
         done();
     });
 });

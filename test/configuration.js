@@ -23,10 +23,33 @@ describe('configuration', () => {
             globalExchange : 'testExchange'
         };
 
-        const instance = new BunnyBus();
-        instance.config = config;
+        const instance = new BunnyBus(config);
 
         expect(instance.config).to.include(config);
+        done();
+    });
+
+    it('should generate a connections string when default values are passed through the constructor', (done) => {
+
+        const instance = new BunnyBus(BunnyBus.DEFAULT_CONFIGURATION);
+
+        expect(instance.connectionString).to.equal('amqp://guest:guest@rabbitmq:5672/%2f?heartbeat=2000');
+        done();
+    });
+
+    it('should generate a connections string when custom values are passed through the constructor', (done) => {
+
+        const config = {
+            ssl : true,
+            user : 'testUser',
+            password : 'testPassword',
+            server : 'test.rabbitmq.com',
+            vhost : 'testVirtualHost'
+        };
+
+        const instance = new BunnyBus(config);
+
+        expect(instance.connectionString).to.equal('amqps://testUser:testPassword@test.rabbitmq.com:5672/testVirtualHost?heartbeat=2000');
         done();
     });
 
