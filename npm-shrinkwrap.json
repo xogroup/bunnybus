@@ -3,34 +3,64 @@
   "version": "0.0.1",
   "dependencies": {
     "amqplib": {
-      "version": "0.5.1"
+      "version": "0.5.1",
+      "from": "amqplib@>=0.5.1 <0.6.0",
+      "resolved": "http://local-npm-proxy.elasticbeanstalk.com/amqplib/-/amqplib-0.5.1.tgz"
+    },
+    "async": {
+      "version": "2.1.4",
+      "from": "async@latest",
+      "resolved": "http://local-npm-proxy.elasticbeanstalk.com/async/-/async-2.1.4.tgz"
     },
     "bitsyntax": {
-      "version": "0.0.4"
+      "version": "0.0.4",
+      "from": "bitsyntax@>=0.0.4 <0.1.0",
+      "resolved": "http://registry.npmjs.org/bitsyntax/-/bitsyntax-0.0.4.tgz"
     },
     "bluebird": {
-      "version": "3.4.6"
+      "version": "3.4.6",
+      "from": "http://local-npm-proxy.elasticbeanstalk.com/bluebird/-/bluebird-3.4.6.tgz",
+      "resolved": "http://local-npm-proxy.elasticbeanstalk.com/bluebird/-/bluebird-3.4.6.tgz"
     },
     "buffer-more-ints": {
-      "version": "0.0.2"
+      "version": "0.0.2",
+      "from": "buffer-more-ints@0.0.2",
+      "resolved": "http://registry.npmjs.org/buffer-more-ints/-/buffer-more-ints-0.0.2.tgz"
     },
     "core-util-is": {
-      "version": "1.0.2"
+      "version": "1.0.2",
+      "from": "core-util-is@>=1.0.0 <1.1.0",
+      "resolved": "http://registry.npmjs.org/core-util-is/-/core-util-is-1.0.2.tgz"
     },
     "hoek": {
-      "version": "4.1.0"
+      "version": "4.1.0",
+      "from": "hoek@>=4.1.0 <5.0.0",
+      "resolved": "http://local-npm-proxy.elasticbeanstalk.com/hoek/-/hoek-4.1.0.tgz"
     },
     "inherits": {
-      "version": "2.0.3"
+      "version": "2.0.3",
+      "from": "inherits@>=2.0.1 <2.1.0",
+      "resolved": "http://local-npm-proxy.elasticbeanstalk.com/inherits/-/inherits-2.0.3.tgz"
     },
     "isarray": {
-      "version": "0.0.1"
+      "version": "0.0.1",
+      "from": "isarray@0.0.1",
+      "resolved": "http://local-npm-proxy.elasticbeanstalk.com/isarray/-/isarray-0.0.1.tgz"
+    },
+    "lodash": {
+      "version": "4.17.3",
+      "from": "lodash@>=4.0.0 <5.0.0",
+      "resolved": "http://local-npm-proxy.elasticbeanstalk.com/lodash/-/lodash-4.17.3.tgz"
     },
     "readable-stream": {
-      "version": "1.1.14"
+      "version": "1.1.14",
+      "from": "readable-stream@>=1.0.0 <2.0.0 >=1.1.9",
+      "resolved": "https://registry.npmjs.org/readable-stream/-/readable-stream-1.1.14.tgz"
     },
     "string_decoder": {
-      "version": "0.10.31"
+      "version": "0.10.31",
+      "from": "string_decoder@>=0.10.0 <0.11.0",
+      "resolved": "http://registry.npmjs.org/string_decoder/-/string_decoder-0.10.31.tgz"
     }
   }
 }
