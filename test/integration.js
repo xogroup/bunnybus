@@ -4,6 +4,7 @@ const Async = require('async');
 const Code = require('code');
 const Lab = require('lab');
 const Exceptions = require('../lib/exceptions');
+const Assertions = require('./assertions');
 
 const lab = exports.lab = Lab.script();
 const before = lab.before;
@@ -284,7 +285,7 @@ describe('positive integration tests', () => {
 
         const queueName = 'test-publish-queue-1';
         const message = { name : 'bunnybus' };
-        const patterns = ['a', 'a.b', 'a.c', 'b', 'b.b', 'z.*'];
+        const patterns = ['a', 'a.b', 'b', 'b.b', 'z.*'];
 
         before((done) => {
 
@@ -316,21 +317,32 @@ describe('positive integration tests', () => {
 
         it('should publish for route `a`', (done) => {
 
-            Async.waterfall([
-                instance.publish.bind(instance, message, { routeKey : 'a' }),
-                (results, cb) => {
+            Assertions.assertPublish(instance, message, queueName, 'a', true, done);
+        });
 
-                    setTimeout(() => cb(), 40);
-                },
-                instance.channel.get.bind(instance.channel, queueName, null)
-            ],
-            (err, result) => {
+        it('should publish for route `a.b`', (done) => {
 
-                expect(err).to.be.null();
-                expect(JSON.parse(result.content.toString()).message).to.equal(message);
-                //still need to act this off the queue
-                done();
-            });
+            Assertions.assertPublish(instance, message, queueName, 'a.b', true, done);
+        });
+
+        it('should publish for route `b`', (done) => {
+
+            Assertions.assertPublish(instance, message, queueName, 'b', true, done);
+        });
+
+        it('should publish for route `b.b`', (done) => {
+
+            Assertions.assertPublish(instance, message, queueName, 'b.b', true, done);
+        });
+
+        it('should publish for route `z.a`', (done) => {
+
+            Assertions.assertPublish(instance, message, queueName, 'z.a', true, done);
+        });
+
+        it('should publish for route `z` but not route to queue', (done) => {
+
+            Assertions.assertPublish(instance, message, queueName, 'z', false, done);
         });
     });
 });
