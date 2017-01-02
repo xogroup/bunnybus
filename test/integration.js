@@ -118,7 +118,7 @@ describe('positive integration tests', () => {
 
     describe('_autoConnectChannel', () => {
 
-        before((done) => {
+        beforeEach((done) => {
 
             instance.closeConnection(done);
         });
@@ -132,6 +132,43 @@ describe('positive integration tests', () => {
                 expect(instance.channel).to.exist();
                 done();
             });
+        });
+    });
+
+    describe('_recoverConnectChannel', () => {
+
+        beforeEach((done) => {
+
+            instance._autoConnectChannel(done);
+        });
+
+        afterEach((done) => {
+
+            instance.closeConnection(done);
+        });
+
+        it('should recreate connection when connection error occurs', (done) => {
+
+            instance.connection.emit('error');
+
+            setTimeout(() => {
+
+                expect(instance.connection).to.exist();
+                expect(instance.channel).to.exist();
+                done();
+            }, 100);
+        });
+
+        it('should recreate connection when channel error occurs', (done) => {
+
+            instance.channel.emit('error');
+
+            setTimeout(() => {
+
+                expect(instance.connection).to.exist();
+                expect(instance.channel).to.exist();
+                done();
+            }, 100);
         });
     });
 
