@@ -116,16 +116,32 @@ describe('positive integration tests', () => {
         });
     });
 
+    describe('_autoConnectChannel', () => {
+
+        before((done) => {
+
+            instance.closeConnection(done);
+        });
+
+        it('should create connection and channel', (done) => {
+
+            instance._autoConnectChannel((err) => {
+
+                expect(err).to.be.null();
+                expect(instance.connection).to.exist();
+                expect(instance.channel).to.exist();
+                done();
+            });
+        });
+    });
+
     describe('queue', () => {
 
         const queueName = 'test-queue-1';
 
         beforeEach((done) => {
 
-            Async.waterfall([
-                instance.createConnection,
-                instance.createChannel
-            ], done);
+            instance._autoConnectChannel(done);
         });
 
         it('should create queue with name `test-queue-1`', (done) => {
@@ -156,6 +172,54 @@ describe('positive integration tests', () => {
 
                 expect(err).to.be.null();
                 expect(result.messageCount).to.be.equal(0);
+                done();
+            });
+        });
+    });
+
+    describe('exchange', () => {
+
+        const exchangeName = 'test-exchange-1';
+
+        before((done) => {
+
+            Async.waterfall([
+                instance._autoConnectChannel,
+                (cb) => {
+
+                    instance.deleteExchange(exchangeName, null, cb);
+                }
+            ], done);
+        });
+
+        beforeEach((done) => {
+
+            instance._autoConnectChannel(done);
+        });
+
+        it('should create exchange with name `test-exchange-1`', (done) => {
+
+            instance.createExchange(exchangeName, null, null, (err, result) => {
+
+                expect(err).to.be.null();
+                done();
+            });
+        });
+
+        it('should check exchange with name `test-exchange-1`', (done) => {
+
+            instance.checkExchange(exchangeName, (err, result) => {
+
+                expect(err).to.be.null();
+                done();
+            });
+        });
+
+        it('should delete exchange with name `test-exchange-1`', (done) => {
+
+            instance.deleteExchange(exchangeName, null, (err, result) => {
+
+                expect(err).to.be.null();
                 done();
             });
         });
@@ -218,6 +282,43 @@ describe('negative integration tests', () => {
         it('should throw NoChannelError when calling deleteQueue and connection does not pre-exist', (done) => {
 
             instance.deleteQueue(queueName, null, (err) => {
+
+                expect(err).to.be.an.error(Exceptions.NoChannelError);
+                done();
+            });
+        });
+    });
+
+    describe('exchange', () => {
+
+        const exchangeName = 'test-exchange-1';
+
+        beforeEach((done) => {
+
+            instance.closeConnection(done);
+        });
+
+        it('should throw NoChannelError when calling createExcahnge and connection does not pre-exist', (done) => {
+
+            instance.createExchange(exchangeName, null, null, (err) => {
+
+                expect(err).to.be.an.error(Exceptions.NoChannelError);
+                done();
+            });
+        });
+
+        it('should throw NoChannelError when calling checkExchange and connection does not pre-exist', (done) => {
+
+            instance.checkExchange(exchangeName, (err) => {
+
+                expect(err).to.be.an.error(Exceptions.NoChannelError);
+                done();
+            });
+        });
+
+        it('should throw NoChannelError when calling deleteExchange and connection does not pre-exist', (done) => {
+
+            instance.deleteExchange(exchangeName, null, (err) => {
 
                 expect(err).to.be.an.error(Exceptions.NoChannelError);
                 done();
