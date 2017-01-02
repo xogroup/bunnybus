@@ -8,6 +8,7 @@ const Exceptions = require('../lib/exceptions');
 const lab = exports.lab = Lab.script();
 const before = lab.before;
 const beforeEach = lab.beforeEach;
+const after = lab.after;
 const afterEach = lab.afterEach;
 const describe = lab.describe;
 const it = lab.it;
@@ -133,6 +134,22 @@ describe('positive integration tests', () => {
                 done();
             });
         });
+
+        it('should create connection and channel properly with no race condition', (done) => {
+
+            Async.parallel([
+                instance._autoConnectChannel,
+                instance._autoConnectChannel,
+                instance._autoConnectChannel,
+                instance._autoConnectChannel
+            ],(err) => {
+
+                expect(err).to.be.null();
+                expect(instance.connection).to.exist();
+                expect(instance.channel).to.exist();
+                done();
+            });
+        });
     });
 
     describe('_recoverConnectChannel', () => {
@@ -236,9 +253,10 @@ describe('positive integration tests', () => {
 
         it('should create exchange with name `test-exchange-1`', (done) => {
 
-            instance.createExchange(exchangeName, null, null, (err, result) => {
+            instance.createExchange(exchangeName, 'topic', null, (err, result) => {
 
                 expect(err).to.be.null();
+
                 done();
             });
         });
@@ -257,6 +275,60 @@ describe('positive integration tests', () => {
             instance.deleteExchange(exchangeName, null, (err, result) => {
 
                 expect(err).to.be.null();
+                done();
+            });
+        });
+    });
+
+    describe('publish', () => {
+
+        const queueName = 'test-publish-queue-1';
+        const message = { name : 'bunnybus' };
+        const patterns = ['a', 'a.b', 'a.c', 'b', 'b.b', 'z.*'];
+
+        before((done) => {
+
+            Async.waterfall([
+                instance._autoConnectChannel,
+                instance.createExchange.bind(instance, instance.config.globalExchange, 'topic', null),
+                instance.createQueue.bind(instance, queueName),
+                (result, cb) => {
+
+                    Async.map(
+                        patterns,
+                        (item, mapCB) => {
+
+                            instance.channel.bindQueue(queueName, instance.config.globalExchange, item, null, mapCB);
+                        },
+                        cb);
+                }
+            ], done);
+        });
+
+        after((done) => {
+
+            Async.waterfall([
+                instance._autoConnectChannel,
+                instance.deleteExchange.bind(instance, instance.config.globalExchange, null),
+                instance.deleteQueue.bind(instance, queueName)
+            ], done);
+        });
+
+        it('should publish for route `a`', (done) => {
+
+            Async.waterfall([
+                instance.publish.bind(instance, message, { routeKey : 'a' }),
+                (results, cb) => {
+
+                    setTimeout(() => cb(), 40);
+                },
+                instance.channel.get.bind(instance.channel, queueName, null)
+            ],
+            (err, result) => {
+
+                expect(err).to.be.null();
+                expect(JSON.parse(result.content.toString()).message).to.equal(message);
+                //still need to act this off the queue
                 done();
             });
         });
