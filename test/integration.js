@@ -317,32 +317,43 @@ describe('positive integration tests', () => {
 
         it('should publish for route `a`', (done) => {
 
-            Assertions.assertPublish(instance, message, queueName, 'a', true, done);
+            Assertions.assertPublish(instance, message, queueName, 'a', null, null, true, done);
         });
 
         it('should publish for route `a.b`', (done) => {
 
-            Assertions.assertPublish(instance, message, queueName, 'a.b', true, done);
+            Assertions.assertPublish(instance, message, queueName, 'a.b', null, null, true, done);
         });
 
         it('should publish for route `b`', (done) => {
 
-            Assertions.assertPublish(instance, message, queueName, 'b', true, done);
+            Assertions.assertPublish(instance, message, queueName, 'b', null, null, true, done);
         });
 
         it('should publish for route `b.b`', (done) => {
 
-            Assertions.assertPublish(instance, message, queueName, 'b.b', true, done);
+            Assertions.assertPublish(instance, message, queueName, 'b.b', null, null, true, done);
         });
 
         it('should publish for route `z.a`', (done) => {
 
-            Assertions.assertPublish(instance, message, queueName, 'z.a', true, done);
+            Assertions.assertPublish(instance, message, queueName, 'z.a', null, null, true, done);
         });
 
         it('should publish for route `z` but not route to queue', (done) => {
 
-            Assertions.assertPublish(instance, message, queueName, 'z', false, done);
+            Assertions.assertPublish(instance, message, queueName, 'z', null, null, false, done);
+        });
+
+        it('should proxy `callingModule` when supplied', (done) => {
+
+            Assertions.assertPublish(instance, message, queueName, 'a', null, 'someModule', true, done);
+        });
+
+        it('should publish for route `a` when route key is provided in the message', (done) => {
+
+            const messageWithRoute = Object.assign({}, message, { event : 'a' });
+            Assertions.assertPublish(instance, messageWithRoute, queueName, null, null, null, true, done);
         });
     });
 });

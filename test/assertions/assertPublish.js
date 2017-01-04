@@ -4,13 +4,13 @@ const Async = require('async');
 const Code = require('code');
 const expect = Code.expect;
 
-const AssertPublish = (instance, message, queueName, routeKey, shouldRoute, callback) => {
+const AssertPublish = (instance, message, queueName, routeKey, transactionId, callingModule, shouldRoute, callback) => {
 
-    const options = {};
-
-    if (routeKey) {
-        options.routeKey = routeKey;
-    }
+    const options = {
+        routeKey,
+        transactionId,
+        callingModule
+    };
 
     Async.waterfall([
         instance.publish.bind(instance, message, options),
@@ -24,9 +24,14 @@ const AssertPublish = (instance, message, queueName, routeKey, shouldRoute, call
 
         if (shouldRoute) {
             const subscribedMessage = JSON.parse(payload.content.toString()).message;
-
             expect(err).to.be.null();
             expect(subscribedMessage).to.equal(message);
+            expect(payload.properties.headers.transactionId).to.be.string();
+
+            if (callingModule) {
+                expect(payload.properties.headers.callingModule).to.be.string();
+            }
+
             instance.channel.ack(payload);
         }
         else {
