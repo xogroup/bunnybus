@@ -457,4 +457,18 @@ describe('negative integration tests', () => {
             });
         });
     });
+
+    describe('publish', () => {
+
+        const message = { name : 'bunnybus' };
+
+        it('should throw NoRouteKeyError when calling publish and `options.routeKey` nor `message.event` exist', (done) => {
+
+            instance.publish(message, null, (err) => {
+
+                expect(err).to.be.an.error(Exceptions.NoRouteKeyError);
+                done();
+            });
+        });
+    });
 });
