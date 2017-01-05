@@ -23,7 +23,7 @@ const AssertPublish = (instance, message, queueName, routeKey, transactionId, ca
     (err, payload) => {
 
         if (shouldRoute) {
-            const subscribedMessage = JSON.parse(payload.content.toString()).message;
+            const subscribedMessage = JSON.parse(payload.content.toString());
             expect(err).to.be.null();
             expect(subscribedMessage).to.equal(message);
             expect(payload.properties.headers.transactionId).to.be.string();
