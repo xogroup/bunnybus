@@ -90,12 +90,12 @@ describe('positive integration tests', () => {
             });
         });
 
-        it('should close an opened channel', (done) => {
+        it.only('should close an opened channel', (done) => {
 
             Async.waterfall([
                 instance.createChannel,
                 instance.closeChannel
-            ], (err) => {
+            ], (err, result) => {
 
                 expect(err).to.be.null();
                 expect(instance.channel).to.be.null();
