@@ -14,10 +14,6 @@ const AssertPublish = (instance, message, queueName, routeKey, transactionId, ca
 
     Async.waterfall([
         instance.publish.bind(instance, message, options),
-        (results, cb) => {
-
-            setTimeout(() => cb(), 20);
-        },
         instance.get.bind(instance, queueName, null)
     ],
     (err, payload) => {
