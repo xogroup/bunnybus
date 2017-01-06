@@ -392,6 +392,60 @@ describe('positive integration tests', () => {
             Assertions.assertPublish(instance, messageWithRoute, queueName, null, null, null, true, done);
         });
     });
+
+    describe('acknowledge', () => {
+
+        const queueName = 'test-acknowledge-queue-1';
+        const message = { name : 'bunnybus', event : 'a' };
+        const patterns = ['a'];
+
+        before((done) => {
+
+            Async.waterfall([
+                instance._autoConnectChannel,
+                instance.createExchange.bind(instance, instance.config.globalExchange, 'topic', null),
+                instance.createQueue.bind(instance, queueName),
+                (result, cb) => {
+
+                    Async.map(
+                        patterns,
+                        (item, mapCB) => {
+
+                            instance.channel.bindQueue(queueName, instance.config.globalExchange, item, null, mapCB);
+                        },
+                        cb);
+                }
+            ], done);
+        });
+
+        after((done) => {
+
+            Async.waterfall([
+                instance._autoConnectChannel,
+                instance.deleteExchange.bind(instance, instance.config.globalExchange, null),
+                instance.deleteQueue.bind(instance, queueName)
+            ], done);
+        });
+
+        it('should ack a message off the queue', (done) => {
+
+            Async.waterfall([
+                instance.publish.bind(instance, message, null),
+                instance.get.bind(instance, queueName, null),
+                (payload, cb) => {
+
+                    instance.ack(payload, null, cb);
+                },
+                instance.checkQueue.bind(instance, queueName),
+                (result, cb) => {
+
+                    expect(result.queue).to.be.equal(queueName);
+                    expect(result.messageCount).to.be.equal(0);
+                    cb();
+                }
+            ], done);
+        });
+    });
 });
 
 describe('negative integration tests', () => {
