@@ -20,13 +20,81 @@ Creates a new singleton instance of `bunnybus`.
  * `globalExchange` - value of the exchange to transact through for message publishing.  This is the default used when one is not provided as an within the `options` for any `BunnyBus` methods that supports one transactionally.  Defaults to `default-exchange`. *[string]* **Optional**
  * `prefetch` - value of the maximum number of unacknowledged messages allowable in a channel.  Defaults to `5`. *[number]* **Optional**
 
+```Javascript
+const BunnyBus = require('bunnybus');
+const bunnyBus = new BunnyBus({ server : 'red-bee.cloudamqp.com' });
+
+//do work;
+```
+
+###`config`
+
+Setter and Getter for configuration.
+
+```Javascript
+const BunnyBus = require('bunnybus');
+const bunnybus = new BunnyBus();
+
+//deferred configuration
+bunnybus.config = { server : 'red-bee.cloudamqp.com'};
+
+//do work
+```
+
+###`connectionString`
+
+Getter for AMQP connection string.
+
+```Javascript
+const BunnyBus = require('bunnybus');
+const bunnyBus = new BunnyBus();
+
+console.log(bunnybus.connectionString);
+//output : amqp://guest:guest@rabbitmq:5672/%2f?heartbeat=2000
+```
+
+###`connection`
+
+Setter and Getter for AMQP connection object.
+
+###`hasConnection`
+
+Getter for existence for an active AMQP connection object.
+
+###`channel`
+
+Setter and Getter for AMQP confirmation channel object.
+
+###`hasChannel`
+
+Getter for existence for an active AMQP channel object
+
 ###`publish(message, [options, [callback]])`
 
 Publish a message onto the bus
 
-* `message` - the content being sent across the wire. *[string|Object]* **Required**
+* `message` - the content being sent to downstream subscribers. *[string|Object]* **Required**
  * `event` - override value for the route key. The value must be supplied here or in `options.routeKey`.  The value can be `.` separated for namespacing. *[string]* **Optional.**
 * `options` - optional settings.
  * `routeKey` - value for the route key to route the message with.  The value must be supplied here or in `message.event`.  The value can be `.` separated for namespacing. *[string]*  **Optional**
  * `transactionId` - value attached to the header of the message for tracing.  When one is not supplied, a random 40 character token is generated. *[string]*  **Optional**
- * `callingModule` - value attached to the header of the message to help with tracking the origination point of your application.  For applications that leverage this plugin in multiple modules, each module can supply its own module name so a message can be tracked to the creator. *[string]* **Optional**
+ * `callingModule` - value attached to the header of the message to help with tracking the origination point of your application.  For applications that leverage this plugin in multiple modules, each module can supply its own module name so a message can be tracked to the creator. *[string]* 
+ **Optional**
+ * `globalExchange` - value to override the exchange specified in `config`. *[string]* **Optional**
+
+###`send(message, queue, [options, [callback]])`
+
+Send a message directly to a queue
+
+* `message` - the content being sent directly to specfied queue. *[string|Object]* **Required**
+* `queue` - the name of the queue. *[string]* **Required**
+* `options` - optional settings.
+ * `transactionId` - value attached to the header of the message for tracing.  When one is not supplied, a random 40 character token is generated. *[string]*  **Optional**
+ * `callingModule` - value attached to the header of the message to help with tracking the origination point of your application.  For applications that leverage this plugin in multiple modules, each module can supply its own module name so a message can be tracked to the creator. *[string]*  **Optional**
+
+###`get(queue, [options, [callback]])`
+
+Pop a message directly off a queue
+
+* `queue` - the name of the queue. *[string]* **Required**
+* `options` - optional settings
