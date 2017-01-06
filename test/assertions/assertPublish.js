@@ -18,7 +18,7 @@ const AssertPublish = (instance, message, queueName, routeKey, transactionId, ca
 
             setTimeout(() => cb(), 20);
         },
-        instance.channel.get.bind(instance.channel, queueName, null)
+        instance.get.bind(instance, queueName, null)
     ],
     (err, payload) => {
 
@@ -27,9 +27,18 @@ const AssertPublish = (instance, message, queueName, routeKey, transactionId, ca
             expect(err).to.be.null();
             expect(subscribedMessage).to.equal(message);
             expect(payload.properties.headers.transactionId).to.be.string();
+            expect(payload.properties.headers.createdAt).to.exist();
 
             if (callingModule) {
                 expect(payload.properties.headers.callingModule).to.be.string();
+            }
+
+            if (transactionId) {
+                expect(payload.properties.headers.transactionId).to.equal(transactionId);
+            }
+
+            if (callingModule) {
+                expect(payload.properties.headers.callingModule).to.equal(callingModule);
             }
 
             instance.channel.ack(payload);

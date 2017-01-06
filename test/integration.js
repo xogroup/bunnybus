@@ -281,6 +281,37 @@ describe('positive integration tests', () => {
         });
     });
 
+    describe('send / get', () => {
+
+        const queueName = 'test-send-queue-1';
+        const message = { name : 'bunnybus' };
+
+        beforeEach((done) => {
+
+            instance.closeConnection(done);
+        });
+
+        afterEach((done) => {
+
+            instance.deleteQueue(queueName, null, done);
+        });
+
+        it('should send message', (done) => {
+
+            Assertions.assertSend(instance, message, queueName, null, null, done);
+        });
+
+        it('should proxy `callingModule` when supplied', (done) => {
+
+            Assertions.assertSend(instance, message, queueName, null, 'someModule', done);
+        });
+
+        it('should proxy `transactionId` when supplied', (done) => {
+
+            Assertions.assertSend(instance, message, queueName, 'someTransactionId', null, done);
+        });
+    });
+
     describe('publish', () => {
 
         const queueName = 'test-publish-queue-1';
@@ -348,6 +379,11 @@ describe('positive integration tests', () => {
         it('should proxy `callingModule` when supplied', (done) => {
 
             Assertions.assertPublish(instance, message, queueName, 'a', null, 'someModule', true, done);
+        });
+
+        it('should proxy `transactionId` when supplied', (done) => {
+
+            Assertions.assertPublish(instance, message, queueName, 'a', 'someTransactionId', null, true, done);
         });
 
         it('should publish for route `a` when route key is provided in the message', (done) => {

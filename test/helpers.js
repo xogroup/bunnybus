@@ -50,4 +50,47 @@ describe('helpers', () => {
                 });
         });
     });
+
+    describe('cleanObject', () => {
+
+        it('should clean properties that have no values at first level', (done) => {
+
+            const obj = {
+                a : 'value1',
+                b : null,
+                c : undefined,
+                d : 'value2'
+            };
+
+            Helpers.cleanObject(obj);
+
+            const cleanedKeys = Object.keys(obj);
+
+            expect(cleanedKeys.find((key) => key === 'b')).to.be.undefined();
+            expect(cleanedKeys.find((key) => key === 'c')).to.be.undefined();
+
+            done();
+        });
+
+        it('should clean properties that have no values at second level', (done) => {
+
+            const obj = {
+                a : {
+                    a1 : 'value1',
+                    a2 : null,
+                    a3 : undefined,
+                    a4 : 'value2'
+                }
+            };
+
+            Helpers.cleanObject(obj);
+
+            const cleanedKeys = Object.keys(obj.a);
+
+            expect(cleanedKeys.find((key) => key === 'b')).to.be.undefined();
+            expect(cleanedKeys.find((key) => key === 'c')).to.be.undefined();
+
+            done();
+        });
+    });
 });

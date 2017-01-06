@@ -1,5 +1,6 @@
 'use strict';
 
 module.exports = {
-    assertPublish : require('./assertPublish')
+    assertPublish : require('./assertPublish'),
+    assertSend    : require('./assertSend')
 };
