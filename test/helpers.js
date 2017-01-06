@@ -87,8 +87,8 @@ describe('helpers', () => {
 
             const cleanedKeys = Object.keys(obj.a);
 
-            expect(cleanedKeys.find((key) => key === 'b')).to.be.undefined();
-            expect(cleanedKeys.find((key) => key === 'c')).to.be.undefined();
+            expect(cleanedKeys.find((key) => key === 'a2')).to.be.undefined();
+            expect(cleanedKeys.find((key) => key === 'a3')).to.be.undefined();
 
             done();
         });
