@@ -14,7 +14,7 @@ describe('helpers', () => {
 
     describe('createTransactionId', () => {
 
-        it('should create an 8 character long alphanumeric token', (done) => {
+        it('should create an 40 character long alphanumeric token', (done) => {
 
             Helpers.createTransactionId((err, result) => {
 

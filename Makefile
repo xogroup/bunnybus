@@ -2,7 +2,7 @@ NAME=xogroup/bunnybus
 VERSION=latest
 
 test:
-	node_modules/.bin/lab test -a code -L
+	node_modules/.bin/lab test -a code -L -v
 
 debug-test:
 	@mocha --debug-brk --recursive -w
