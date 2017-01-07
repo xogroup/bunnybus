@@ -3,6 +3,7 @@
 const Code = require('code');
 const Lab = require('lab');
 const Async = require('async');
+const Assertions = require('./assertions');
 const Helpers = require('../lib/helpers');
 
 const lab = exports.lab = Lab.script();
@@ -91,6 +92,44 @@ describe('helpers', () => {
             expect(cleanedKeys.find((key) => key === 'a3')).to.be.undefined();
 
             done();
+        });
+    });
+
+    describe('convertToBuffer', () => {
+
+        it('should convert a string to a Buffer', (done) => {
+
+            const data = 'hello';
+
+            Assertions.assertConvertToBuffer(data, done);
+        });
+
+        it('should convert an object to a Buffer', (done) => {
+
+            const data = {
+                a : 'root1',
+                b : 'root2',
+                c : {
+                    c1 : 'sub1',
+                    c2 : 'sub2'
+                }
+            };
+
+            Assertions.assertConvertToBuffer(data, done);
+        });
+
+        it('should convert an array to a Buffer', (done) => {
+
+            const data = ['a', 'b', 1, 2];
+
+            Assertions.assertConvertToBuffer(data, done);
+        });
+
+        it('should not alter a Buffer input', (done) => {
+
+            const data = new Buffer('hello');
+
+            Assertions.assertConvertToBuffer(data, done);
         });
     });
 });

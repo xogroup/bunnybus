@@ -434,7 +434,7 @@ describe('positive integration tests', () => {
                 instance.get.bind(instance, queueName, null),
                 (payload, cb) => {
 
-                    instance.ack(payload, null, cb);
+                    instance._ack(payload, null, cb);
                 },
                 instance.checkQueue.bind(instance, queueName),
                 (result, cb) => {
@@ -548,6 +548,25 @@ describe('negative integration tests', () => {
         });
     });
 
+    describe('get', () => {
+
+        const queueName = 'test-queue-1';
+
+        beforeEach((done) => {
+
+            instance.closeConnection(done);
+        });
+
+        it('should throw NoChannelError when calling get and connection does not pre-exist', (done) => {
+
+            instance.get(queueName, null, (err) => {
+
+                expect(err).to.be.an.error(Exceptions.NoChannelError);
+                done();
+            });
+        });
+    });
+
     describe('publish', () => {
 
         const message = { name : 'bunnybus' };
@@ -557,6 +576,25 @@ describe('negative integration tests', () => {
             instance.publish(message, null, (err) => {
 
                 expect(err).to.be.an.error(Exceptions.NoRouteKeyError);
+                done();
+            });
+        });
+    });
+
+    describe('acknowledge', () => {
+
+        const payload = { content : new Buffer('hello')};
+
+        beforeEach((done) => {
+
+            instance.closeConnection(done);
+        });
+
+        it('should throw NoChannelError when calling )ack and connection does not pre-exist', (done) => {
+
+            instance._ack(payload, null, (err) => {
+                
+                expect(err).to.be.an.error(Exceptions.NoChannelError);
                 done();
             });
         });

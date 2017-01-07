@@ -73,7 +73,7 @@ Getter for existence for an active AMQP channel object
 
 Publish a message onto the bus
 
-* `message` - the content being sent to downstream subscribers. *[string|Object]* **Required**
+* `message` - the content being sent to downstream subscribers. *[string|Object|Buffer]* **Required**
  * `event` - override value for the route key. The value must be supplied here or in `options.routeKey`.  The value can be `.` separated for namespacing. *[string]* **Optional.**
 * `options` - optional settings.
  * `routeKey` - value for the route key to route the message with.  The value must be supplied here or in `message.event`.  The value can be `.` separated for namespacing. *[string]*  **Optional**
@@ -86,7 +86,7 @@ Publish a message onto the bus
 
 Send a message directly to a queue
 
-* `message` - the content being sent directly to specfied queue. *[string|Object]* **Required**
+* `message` - the content being sent directly to specfied queue. *[string|Object|Buffer]* **Required**
 * `queue` - the name of the queue. *[string]* **Required**
 * `options` - optional settings.
  * `transactionId` - value attached to the header of the message for tracing.  When one is not supplied, a random 40 character token is generated. *[string]*  **Optional**
