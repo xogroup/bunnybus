@@ -505,7 +505,7 @@ describe('positive integration tests', () => {
             });
         });
 
-        it('should requeued with well formed header properties', (done) => {
+        it('should requeue with well formed header properties', (done) => {
 
             const publishOptions = {
                 callingModule : 'test'
