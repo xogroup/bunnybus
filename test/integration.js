@@ -536,6 +536,107 @@ describe('positive integration tests', () => {
             });
         });
     });
+
+    describe('reject', () => {
+
+        const errorQueueName = 'test-reject-error-queue-1';
+        const queueName = 'test-reject-queue-1';
+        const message = { name : 'bunnybus', event : 'a' };
+        const patterns = ['a'];
+
+        beforeEach((done) => {
+
+            instance.channel.purgeQueue(queueName, done);
+        });
+
+        before((done) => {
+
+            Async.waterfall([
+                instance._autoConnectChannel,
+                instance.createExchange.bind(instance, instance.config.globalExchange, 'topic', null),
+                instance.createQueue.bind(instance, queueName),
+                (result, cb) => {
+
+                    Async.map(
+                        patterns,
+                        (item, mapCB) => {
+
+                            instance.channel.bindQueue(queueName, instance.config.globalExchange, item, null, mapCB);
+                        },
+                        cb);
+                }
+            ], done);
+        });
+
+        after((done) => {
+
+            Async.waterfall([
+                instance._autoConnectChannel,
+                instance.deleteExchange.bind(instance, instance.config.globalExchange, null),
+                instance.deleteQueue.bind(instance, queueName),
+                instance.deleteQueue.bind(instance, errorQueueName)
+            ], done);
+        });
+
+        afterEach((done) => {
+
+            instance.deleteQueue(errorQueueName, null, done);
+        });
+
+        it('should reject a message off the queue', (done) => {
+
+            Async.waterfall([
+                instance.publish.bind(instance, message, null),
+                instance.get.bind(instance, queueName, null),
+                (payload, cb) => {
+
+                    instance._reject(payload, errorQueueName, null, cb);
+                },
+                instance.checkQueue.bind(instance, errorQueueName)
+            ], (err, result) => {
+
+                expect(err).to.be.null();
+                expect(result.queue).to.be.equal(errorQueueName);
+                expect(result.messageCount).to.be.equal(1);
+                done();
+            });
+        });
+
+        it('should requeue with well formed header properties', (done) => {
+
+            const publishOptions = {
+                callingModule : 'test'
+            };
+            const requeuedAt = (new Date()).toISOString();
+            const retryCount = 5;
+            let transactionId = null;
+            let createdAt = null;
+
+            Async.waterfall([
+                instance.publish.bind(instance, message, publishOptions),
+                instance.get.bind(instance, queueName, null),
+                (payload, cb) => {
+
+                    transactionId = payload.properties.headers.transactionId;
+                    createdAt = payload.properties.headers.createdAt;
+                    payload.properties.headers.requeuedAt = requeuedAt;
+                    payload.properties.headers.retryCount = retryCount;
+                    instance._reject(payload, errorQueueName, null, cb);
+                },
+                instance.get.bind(instance, errorQueueName, null)
+            ], (err, payload) => {
+
+                expect(err).to.be.null();
+                expect(payload.properties.headers.transactionId).to.equal(transactionId);
+                expect(payload.properties.headers.createAt).to.equal(createdAt);
+                expect(payload.properties.headers.callingModule).to.equal(publishOptions.callingModule);
+                expect(payload.properties.headers.requeuedAt).to.equal(requeuedAt);
+                expect(payload.properties.headers.retryCount).to.equal(retryCount);
+                expect(payload.properties.headers.errorAt).to.exist();
+                done();
+            });
+        });
+    });
 });
 
 describe('negative integration tests', () => {
@@ -682,9 +783,51 @@ describe('negative integration tests', () => {
             instance.closeConnection(done);
         });
 
-        it('should throw NoChannelError when calling )ack and connection does not pre-exist', (done) => {
+        it('should throw NoChannelError when calling _ack and connection does not pre-exist', (done) => {
 
             instance._ack(payload, null, (err) => {
+
+                expect(err).to.be.an.error(Exceptions.NoChannelError);
+                done();
+            });
+        });
+    });
+
+    describe('requeue', () => {
+
+        const payload = {
+            content : new Buffer('hello')
+        };
+
+        beforeEach((done) => {
+
+            instance.closeConnection(done);
+        });
+
+        it('should throw NoChannelError when calling _requeue and connection does not pre-exist', (done) => {
+
+            instance._requeue(payload, null, null, (err) => {
+
+                expect(err).to.be.an.error(Exceptions.NoChannelError);
+                done();
+            });
+        });
+    });
+
+    describe('reject', () => {
+
+        const payload = {
+            content : new Buffer('hello')
+        };
+
+        beforeEach((done) => {
+
+            instance.closeConnection(done);
+        });
+
+        it('should throw NoChannelError when calling _reject and connection does not pre-exist', (done) => {
+
+            instance._reject(payload, null, null, (err) => {
 
                 expect(err).to.be.an.error(Exceptions.NoChannelError);
                 done();
