@@ -6,7 +6,7 @@ Currently supports the following queueing frameworks.
 - [RabbitMQ](https://www.rabbitmq.com/)
 
 [![npm version](https://badge.fury.io/js/bunnybus.svg)](https://badge.fury.io/js/bunnybus)
-[![Build Status](https://travis-ci.org/xogroup/bunnybus.svg?branch=master)](https://travis-ci.org/xogroup/bunnybus)
+[![Build Status](https://travis-ci.org/xogroup/bunnybus.svg?branch=development)](https://travis-ci.org/xogroup/bunnybus)
 
 [![Known Vulnerabilities](https://snyk.io/test/github/xogroup/bunnybus/badge.svg)](https://snyk.io/test/github/xogroup/bunnybus)
 [![NSP Status](https://nodesecurity.io/orgs/xo-group/projects/0e507cfa-6ee8-4226-9613-9a4208fa2e63/badge)](https://nodesecurity.io/orgs/xo-group/projects/0e507cfa-6ee8-4226-9613-9a4208fa2e63)
@@ -25,11 +25,11 @@ npm install bunnybus
 
 ## API
 
-See the [API Reference](http://github.com/xogroup/bunnybus/blob/master/API.md).
+See the [API Reference](http://github.com/xogroup/bunnybus/blob/development/API.md).
 
 ## Contributing
 
-We love community and contributions! Please check out our [guidelines](http://github.com/xogroup/bunnybus/blob/master/.github/CONTRIBUTING.md) before making any PRs.
+We love community and contributions! Please check out our [guidelines](http://github.com/xogroup/bunnybus/blob/development/.github/CONTRIBUTING.md) before making any PRs.
 
 ## Setting up for development
 
