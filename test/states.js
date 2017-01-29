@@ -10,35 +10,34 @@ const beforeEach = lab.beforeEach;
 const it = lab.it;
 const expect = Code.expect;
 
-const BunnyBus = require('../lib');
+const SubscriptionManager = require('../lib/states/subscriptionManager');
 let instance = undefined;
 
 describe('state management', () => {
 
-    before((done) => {
-
-        instance = new BunnyBus();
-        instance.config = BunnyBus.DEFAULT_SERVER_CONFIGURATION;
-        done();
-    });
-
     describe('subscriptions', () => {
+
+        before((done) => {
+
+            instance = new SubscriptionManager();
+            done();
+        });
 
         beforeEach((done) => {
 
-            if(instance && instance._state && instance.subscriptions) {
-                Object.keys(instance-_state.subscriptions, (key) => {
+            if(instance && instance._subscriptions) {
+                Object.keys(instance._subscriptions, (key) => {
 
-                    delete instance._state.subscriptions[key];
+                    delete instance._subscriptions[key];
                 });
             }
 
             done();
         });
 
-        describe('_createSubscription', () => {
+        describe('create', () => {
 
-            const baseQueueName = 'subscription-createSubscription'
+            const baseQueueName = 'subscription-createSubscription';
 
             it('should create one if it does not exist', (done) => {
 
@@ -47,8 +46,8 @@ describe('state management', () => {
                 const handlers = { event1 : () => {} };
                 const options = {};
 
-                const response = instance._createSubscription(queueName, consumerTag, handlers, options);
-                const sut = instance._state.subscriptions[queueName];
+                const response = instance.create(queueName, consumerTag, handlers, options);
+                const sut = instance._subscriptions[queueName];
 
                 expect(response).to.be.true();
                 expect(sut).to.exist();
@@ -66,17 +65,49 @@ describe('state management', () => {
                 const handlers = { event1 : () => {} };
                 const options = {};
 
-                instance._createSubscription(queueName, consumerTag, handlers, options);
-                const response = instance._createSubscription(queueName, consumerTag, handlers, options);
+                instance.create(queueName, consumerTag, handlers, options);
+                const response = instance.create(queueName, consumerTag, handlers, options);
 
                 expect(response).to.be.false();
                 done();
             });
         });
 
-        describe('_clearSubscription', () => {
+        describe('get', () => {
 
-            const baseQueueName = 'subscription-clearSubscription'
+            const baseQueueName = 'subscription-getSubscription';
+
+            it('should return a subscription when it exist', (done) => {
+
+                const queueName = `${baseQueueName}-1`;
+                const consumerTag = 'abcdefg012345';
+                const handlers = { event1 : () => {} };
+                const options = {};
+
+                instance.create(queueName, consumerTag, handlers, options);
+                const sut = instance.get(queueName);
+
+                expect(sut).to.exist();
+                expect(sut.consumerTag).to.equal(consumerTag);
+                expect(sut.handlers).to.exist();
+                expect(sut.handlers.event1).to.be.a.function();
+                expect(sut.options).to.exist();
+                done();                
+            });
+
+            it('should return undefined when it does not exist', (done) => {
+
+                const queueName = `${baseQueueName}-2`;
+                const sut = instance.get(queueName);
+
+                expect(sut).to.be.undefined();
+                done();                
+            });
+        });
+
+        describe('clear', () => {
+
+            const baseQueueName = 'subscription-clearSubscription';
 
             it('should return true when subscription is cleared', (done) => {
 
@@ -85,9 +116,9 @@ describe('state management', () => {
                 const handlers = { event1 : () => {} };
                 const options = {};
 
-                instance._createSubscription(queueName, consumerTag, handlers, options);
-                const response = instance._clearSubscription(queueName);
-                const sut = instance._state.subscriptions[queueName].hasOwnProperty('consumerTag');
+                instance.create(queueName, consumerTag, handlers, options);
+                const response = instance.clear(queueName);
+                const sut = instance._subscriptions[queueName].hasOwnProperty('consumerTag');
 
                 expect(response).to.be.true();
                 expect(sut).to.be.false();
@@ -101,9 +132,9 @@ describe('state management', () => {
                 const handlers = { event1 : () => {} };
                 const options = {};
 
-                instance._createSubscription(queueName, consumerTag, handlers, options);
-                delete instance._state.subscriptions[queueName].consumerTag;
-                const response = instance._clearSubscription(queueName);
+                instance.create(queueName, consumerTag, handlers, options);
+                delete instance._subscriptions[queueName].consumerTag;
+                const response = instance.clear(queueName);
 
                 expect(response).to.be.false();
                 done();
@@ -113,22 +144,22 @@ describe('state management', () => {
 
                 const queueName = `${baseQueueName}-3`;
 
-                const response = instance._clearSubscription(queueName);
+                const response = instance.clear(queueName);
 
                 expect(response).to.be.false();
                 done();
             });
         });
 
-        describe('_hasSubscription', () => {
+        describe('contains', () => {
 
-            const baseQueueName = 'subscription-hasSubscription'
+            const baseQueueName = 'subscription-contains';
 
             it('should return false when subscription does not exist', (done) => {
 
                 const queueName = `${baseQueueName}-1`;
 
-                const response = instance._hasSubscription(queueName);
+                const response = instance.contains(queueName);
 
                 expect(response).to.be.false();
                 done();
@@ -141,8 +172,8 @@ describe('state management', () => {
                 const handlers = { event1 : () => {} };
                 const options = {};
 
-                instance._createSubscription(queueName, consumerTag, handlers, options);
-                const response = instance._hasSubscription(queueName);
+                instance.create(queueName, consumerTag, handlers, options);
+                const response = instance.contains(queueName);
 
                 expect(response).to.be.true();
                 done();  
@@ -155,24 +186,24 @@ describe('state management', () => {
                 const handlers = { event1 : () => {} };
                 const options = {};
 
-                instance._createSubscription(queueName, consumerTag, handlers, options);
-                delete instance._state.subscriptions[queueName].consumerTag;
-                const response = instance._hasSubscription(queueName, false);
+                instance.create(queueName, consumerTag, handlers, options);
+                delete instance._subscriptions[queueName].consumerTag;
+                const response = instance.contains(queueName, false);
 
                 expect(response).to.be.true();
                 done();  
             });
         });
 
-        describe('_removeSubscription', () => {
+        describe('remove', () => {
 
-            const baseQueueName = 'subscription-removeSubscription'
+            const baseQueueName = 'subscription-removeSubscription';
 
             it('should return false when subscription does not exist', (done) => {
 
                 const queueName = `${baseQueueName}-1`;
 
-                const response = instance._removeSubscription(queueName);
+                const response = instance.remove(queueName);
 
                 expect(response).to.be.false();
                 done();
@@ -185,8 +216,8 @@ describe('state management', () => {
                 const handlers = { event1 : () => {} };
                 const options = {};
 
-                instance._createSubscription(queueName, consumerTag, handlers, options);
-                const response = instance._removeSubscription(queueName);
+                instance.create(queueName, consumerTag, handlers, options);
+                const response = instance.remove(queueName);
 
                 expect(response).to.be.true();
                 done();  
@@ -199,9 +230,9 @@ describe('state management', () => {
                 const handlers = { event1 : () => {} };
                 const options = {};
 
-                instance._createSubscription(queueName, consumerTag, handlers, options);
-                delete instance._state.subscriptions[queueName].consumerTag;
-                const response = instance._removeSubscription(queueName);
+                instance.create(queueName, consumerTag, handlers, options);
+                delete instance._subscriptions[queueName].consumerTag;
+                const response = instance.remove(queueName);
 
                 expect(response).to.be.true();
                 done();  

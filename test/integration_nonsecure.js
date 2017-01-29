@@ -393,7 +393,7 @@ describe('positive integration tests', () => {
         });
     });
 
-//     describe.only('subscribe', () => {
+//     describe.only('subscribe / unsubscribe', () => {
 
 //         const queueName = 'test-subscribe-queue-1';
 //         const errorQueueName = `${queueName}_error`;
@@ -409,13 +409,14 @@ describe('positive integration tests', () => {
 //             ], done);
 //         });
 
-//         // afterEach((done) => {
+//         afterEach((done) => {
 
-//         //     Async.waterfall([
-//         //         instance.channel.purgeQueue.bind(instance.channel, queueName),
-//         //         instance.channel.purgeQueue.bind(instance.channel, errorQueueName)
-//         //     ], done);
-//         // });
+//             instance.unsubscribe(queueName, done);
+//             // Async.waterfall([
+//             //     instance.channel.purgeQueue.bind(instance.channel, queueName),
+//             //     instance.channel.purgeQueue.bind(instance.channel, errorQueueName)
+//             // ], done);
+//         });
 
 //         it('should consume message from queue and acknowledge off', (done) => {
 
