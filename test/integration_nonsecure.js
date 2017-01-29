@@ -393,84 +393,80 @@ describe('positive integration tests', () => {
         });
     });
 
-//     describe.only('subscribe / unsubscribe', () => {
+    describe('subscribe / unsubscribe', () => {
 
-//         const queueName = 'test-subscribe-queue-1';
-//         const errorQueueName = `${queueName}_error`;
-//         const message = { event : 'a.b', name : 'bunnybus' };
+        const queueName = 'test-subscribe-queue-1';
+        const errorQueueName = `${queueName}_error`;
+        const message = { event : 'a.b', name : 'bunnybus' };
 
-//         before((done) => {
+        before((done) => {
 
-//             Async.waterfall([
-//                 instance._autoConnectChannel,
-//                 instance.deleteExchange.bind(instance, instance.config.globalExchange, null),
-//                 instance.deleteQueue.bind(instance, queueName),
-//                 instance.deleteQueue.bind(instance, errorQueueName)
-//             ], done);
-//         });
+            Async.waterfall([
+                instance._autoConnectChannel,
+                instance.deleteExchange.bind(instance, instance.config.globalExchange, null),
+                instance.deleteQueue.bind(instance, queueName),
+                instance.deleteQueue.bind(instance, errorQueueName)
+            ], done);
+        });
 
-//         afterEach((done) => {
+        afterEach((done) => {
 
-//             instance.unsubscribe(queueName, done);
-//             // Async.waterfall([
-//             //     instance.channel.purgeQueue.bind(instance.channel, queueName),
-//             //     instance.channel.purgeQueue.bind(instance.channel, errorQueueName)
-//             // ], done);
-//         });
+            instance.unsubscribe(queueName, done);
+        });
 
-//         it('should consume message from queue and acknowledge off', (done) => {
+        it('should consume message from queue and acknowledge off', (done) => {
 
-//             const handlers = {};
-//             handlers[message.event] = (consumedMessage, ack, reject, requeue) => {
-// console.log('custom handler 1');
-//                 expect(consumedMessage.name).to.equal(message.name);
-//                 ack(null, done);
-//             };
+            const handlers = {};
+            handlers[message.event] = (consumedMessage, ack, reject, requeue) => {
+console.log('custom handler 1');
+                expect(consumedMessage.name).to.equal(message.name);
+                ack(null, done);
+            };
 
-//             Async.waterfall([
-//                 instance.subscribe.bind(instance, queueName, handlers, null),
-//                 instance.publish.bind(instance, message, null)
-//             ],
-//             (err) => {
+            Async.waterfall([
+                instance.subscribe.bind(instance, queueName, handlers, null),
+                instance.publish.bind(instance, message, null)
+            ],
+            (err) => {
 
-//                 if (err) {
-//                     done(err);
-//                 }
-//             });
-//         });
+                if (err) {
+                    done(err);
+                }
+            });
+        });
 
-//         it('should consume message from queue and requeue off on maxRetryCount', { timeout : 0 }, (done) => {
-// console.log('in here?');
-//             const handlers = {};
-//             const maxRetryCount = 3;
-//             let retryCount = 0;
-//             handlers[message.event] = (consumedMessage, ack, reject, requeue) => {
-// console.log('custom handler 2');
-//                 ++retryCount;
+        it('should consume message from queue and requeue off on maxRetryCount', { timeout : 0 }, (done) => {
+console.log('in here?');
+            const handlers = {};
+            const maxRetryCount = 3;
+            let retryCount = 0;
+            handlers[message.event] = (consumedMessage, ack, reject, requeue) => {
+console.log('custom handler 2');
+                ++retryCount;
 
-//                 if (retryCount < maxRetryCount) {
-//                     console.log('requeuing');
-//                     requeue(null, () => { });
-//                 }
-//                 else {
-//                     console.log('retry reached', retryCount, maxRetryCount);
-//                     expect(retryCount).to.equal(maxRetryCount);
-//                     ack(null, done);
-//                 }
-//             };
+                if (retryCount < maxRetryCount) {
+                    console.log('requeuing');
+                    requeue(null, () => { });
+                }
+                else {
+                    console.log('retry reached', retryCount, maxRetryCount);
+                    expect(retryCount).to.equal(maxRetryCount);
+                    ack(null, done);
+                }
+            };
 
-//             Async.waterfall([
-//                 instance.subscribe.bind(instance, queueName, handlers, { maxRetryCount }),
-//                 instance.publish.bind(instance, message, null)
-//             ],
-//             (err) => {
+            Async.waterfall([
+                instance.subscribe.bind(instance, queueName, handlers, { maxRetryCount }),
+                instance.publish.bind(instance, message, null)
+            ],
+            (err) => {
 
-//                 if (err) {
-//                     done(err);
-//                 }
-//             });
-//         });
-//     });
+                if (err) {
+                    done(err);
+                }
+            });
+        });
+    });
 
     describe('acknowledge', () => {
 
