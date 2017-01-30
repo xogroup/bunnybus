@@ -510,6 +510,71 @@ describe('positive integration tests', () => {
         });
     });
 
+    describe('subscribe / unsubscribe (multiple)', () => {
+
+        const queueName1 = 'test-subscribe-multiple-queue-1';
+        const queueName2 = 'test-subscribe-multiple-queue-2';
+        const message = { event : 'a.b', name : 'bunnybus'};
+
+        before((done) => {
+
+            Async.waterfall([
+                instance._autoConnectChannel,
+                instance.deleteExchange.bind(instance, instance.config.globalExchange, null),
+                instance.deleteQueue.bind(instance, queueName1),
+                instance.deleteQueue.bind(instance, queueName2)
+            ], done);  
+        })
+
+        afterEach((done) => {
+
+            Async.parallel([
+                instance.unsubscribe.bind(instance, queueName1),
+                instance.unsubscribe.bind(instance, queueName2)
+            ], done);
+        });
+
+        after((done) => {
+
+            Async.waterfall([
+                instance._autoConnectChannel,
+                instance.deleteExchange.bind(instance, instance.config.globalExchange, null),
+                instance.deleteQueue.bind(instance, queueName1),
+                instance.deleteQueue.bind(instance, queueName2)
+            ], done);            
+        });
+
+        it('should consume message from two queues and acknowledge off', (done) => {
+
+            const handlers = {};
+            let counter = 0;
+
+            handlers[message.event] = (consumedMessage, ack, reject, requeue) => {
+
+                expect(consumedMessage.name).to.equal(message.name);
+                ack(null, () => {
+
+                    ++counter;
+                    if (counter === 2) {
+                        done();
+                    }
+                });
+            };
+
+            Async.waterfall([
+                instance.subscribe.bind(instance, queueName1, handlers, null),
+                instance.subscribe.bind(instance, queueName2, handlers, null),
+                instance.publish.bind(instance, message, null)
+            ],
+            (err) => {
+
+                if (err) {
+                    done(err);
+                }
+            });
+        });
+    });
+
     describe('acknowledge', () => {
 
         const queueName = 'test-acknowledge-queue-1';
