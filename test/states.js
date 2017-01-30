@@ -25,7 +25,7 @@ describe('state management', () => {
 
         beforeEach((done) => {
 
-            if(instance && instance._subscriptions) {
+            if (instance && instance._subscriptions) {
                 Object.keys(instance._subscriptions, (key) => {
 
                     delete instance._subscriptions[key];
@@ -92,7 +92,7 @@ describe('state management', () => {
                 expect(sut.handlers).to.exist();
                 expect(sut.handlers.event1).to.be.a.function();
                 expect(sut.options).to.exist();
-                done();                
+                done();
             });
 
             it('should return undefined when it does not exist', (done) => {
@@ -101,7 +101,7 @@ describe('state management', () => {
                 const sut = instance.get(queueName);
 
                 expect(sut).to.be.undefined();
-                done();                
+                done();
             });
         });
 
@@ -122,7 +122,7 @@ describe('state management', () => {
 
                 expect(response).to.be.true();
                 expect(sut).to.be.false();
-                done();        
+                done();
             });
 
             it('should return false when subscription exist but does not have a consumerTag', (done) => {
@@ -176,7 +176,7 @@ describe('state management', () => {
                 const response = instance.contains(queueName);
 
                 expect(response).to.be.true();
-                done();  
+                done();
             });
 
             it('should return true when subscription does exist with removed consumerTag when using flag override', (done) => {
@@ -191,7 +191,7 @@ describe('state management', () => {
                 const response = instance.contains(queueName, false);
 
                 expect(response).to.be.true();
-                done();  
+                done();
             });
         });
 
@@ -220,7 +220,7 @@ describe('state management', () => {
                 const response = instance.remove(queueName);
 
                 expect(response).to.be.true();
-                done();  
+                done();
             });
 
             it('should return true when subscription exist with no consumerTag', (done) => {
@@ -235,7 +235,7 @@ describe('state management', () => {
                 const response = instance.remove(queueName);
 
                 expect(response).to.be.true();
-                done();  
+                done();
             });
         });
     });

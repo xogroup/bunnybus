@@ -414,11 +414,21 @@ describe('positive integration tests', () => {
             instance.unsubscribe(queueName, done);
         });
 
+        after((done) => {
+
+            Async.waterfall([
+                instance._autoConnectChannel,
+                instance.deleteExchange.bind(instance, instance.config.globalExchange, null),
+                instance.deleteQueue.bind(instance, queueName),
+                instance.deleteQueue.bind(instance, errorQueueName)
+            ], done);            
+        });
+
         it('should consume message from queue and acknowledge off', (done) => {
 
             const handlers = {};
             handlers[message.event] = (consumedMessage, ack, reject, requeue) => {
-console.log('custom handler 1');
+
                 expect(consumedMessage.name).to.equal(message.name);
                 ack(null, done);
             };
@@ -435,13 +445,45 @@ console.log('custom handler 1');
             });
         });
 
+        it('should consume message from queue and reject off', (done) => {
+
+            const handlers = {};
+            handlers[message.event] = (consumedMessage, ack, reject, requeue) => {
+
+                expect(consumedMessage.name).to.equal(message.name);
+
+                Async.waterfall([
+                    (cb) => reject(null, cb),
+                    (cb) => instance.get(errorQueueName, null, cb),
+                    (payload, cb) => {
+
+                        expect(payload).to.exist();
+                        const errorMessage = JSON.parse(payload.content.toString());
+                        expect(errorMessage).to.equal(message);
+                        cb();
+                    }
+                ], done);
+            };
+
+            Async.waterfall([
+                instance.subscribe.bind(instance, queueName, handlers, null),
+                instance.publish.bind(instance, message, null)
+            ],
+            (err) => {
+
+                if (err) {
+                    done(err);
+                }
+            });
+        });
+
         it('should consume message from queue and requeue off on maxRetryCount', { timeout : 0 }, (done) => {
-console.log('in here?');
+
             const handlers = {};
             const maxRetryCount = 3;
             let retryCount = 0;
             handlers[message.event] = (consumedMessage, ack, reject, requeue) => {
-console.log('custom handler 2');
+
                 ++retryCount;
 
                 if (retryCount < maxRetryCount) {

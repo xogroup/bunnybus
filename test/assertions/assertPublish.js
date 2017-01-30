@@ -31,7 +31,6 @@ const AssertPublish = (instance, message, queueName, routeKey, transactionId, ca
             else {
                 expect(payload.properties.headers.routeKey).to.equal(message.event);
             }
-            
 
             if (callingModule) {
                 expect(payload.properties.headers.callingModule).to.be.string();
