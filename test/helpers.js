@@ -132,4 +132,64 @@ describe('helpers', () => {
             Assertions.assertConvertToBuffer(data, done);
         });
     });
+
+    describe('findCallback', () => {
+
+        it('should return callback from first parameter', (done) => {
+
+            const callback = () => {};
+
+            const sut = Helpers.findCallback(callback);
+
+            expect(sut).to.be.a.function();
+            done();
+        });
+
+        it('should return callback from second parameter when first parameter is defined as an object', (done) => {
+
+            const callback = () => {};
+            const options = {};
+
+            const sut = Helpers.findCallback(options, callback);
+
+            expect(sut).to.be.a.function();
+            done();
+        });
+
+        it('should return callback from second parameter when first parameter is undefined', (done) => {
+
+            const callback = () => {};
+
+            const sut = Helpers.findCallback(undefined, callback);
+
+            expect(sut).to.be.a.function();
+            done();
+        });
+
+        it('should return callback from second parameter when first parameter is null', (done) => {
+
+            const callback = () => {};
+
+            const sut = Helpers.findCallback(null, callback);
+
+            expect(sut).to.be.a.function();
+            done();
+        });
+
+        it('should return undefined when first parameter is defined as an object', (done) => {
+
+            const sut = Helpers.findCallback({});
+
+            expect(sut).to.be.undefined();
+            done();
+        });
+
+        it('should return undefined when first parameter and second parameters are undefined', (done) => {
+
+            const sut = Helpers.findCallback(undefined, undefined);
+
+            expect(sut).to.be.undefined();
+            done();
+        });
+    });
 });

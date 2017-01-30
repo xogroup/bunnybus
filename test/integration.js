@@ -419,7 +419,7 @@ describe('positive integration tests', () => {
                 instance.deleteExchange.bind(instance, instance.config.globalExchange, null),
                 instance.deleteQueue.bind(instance, queueName),
                 instance.deleteQueue.bind(instance, errorQueueName)
-            ], done);            
+            ], done);
         });
 
         it('should consume message from queue and acknowledge off', (done) => {
@@ -512,7 +512,7 @@ describe('positive integration tests', () => {
 
         const queueName1 = 'test-subscribe-multiple-queue-1';
         const queueName2 = 'test-subscribe-multiple-queue-2';
-        const message = { event : 'a.b', name : 'bunnybus'};
+        const message = { event : 'a.b', name : 'bunnybus' };
 
         before((done) => {
 
@@ -521,8 +521,8 @@ describe('positive integration tests', () => {
                 instance.deleteExchange.bind(instance, instance.config.globalExchange, null),
                 instance.deleteQueue.bind(instance, queueName1),
                 instance.deleteQueue.bind(instance, queueName2)
-            ], done);  
-        })
+            ], done);
+        });
 
         afterEach((done) => {
 
@@ -539,7 +539,7 @@ describe('positive integration tests', () => {
                 instance.deleteExchange.bind(instance, instance.config.globalExchange, null),
                 instance.deleteQueue.bind(instance, queueName1),
                 instance.deleteQueue.bind(instance, queueName2)
-            ], done);            
+            ], done);
         });
 
         it('should consume message from two queues and acknowledge off', (done) => {

@@ -1,19 +1,14 @@
 'use strict';
 
 const Async = require('async');
-const Code = require('code');
 const Lab = require('lab');
-const Exceptions = require('../lib/exceptions');
-const Assertions = require('./assertions');
 
 const lab = exports.lab = Lab.script();
 const before = lab.before;
-const beforeEach = lab.beforeEach;
 const after = lab.after;
 const afterEach = lab.afterEach;
 const describe = lab.describe;
 const it = lab.it;
-const expect = Code.expect;
 
 const BunnyBus = require('../lib');
 let instance = undefined;
@@ -27,13 +22,13 @@ describe('integration load test', () => {
         done();
     });
 
-    describe.only('with callback interface', (done) => {
+    describe('with callback interface', (done) => {
 
         const queueName = 'load-callback-queue-1';
         const errorQueueName = `${queueName}_error`;
         const message = { event : 'a.b', name : 'bunnybus' };
         const patterns = ['a.b'];
-        const publishTarget = 1000;
+        const publishTarget = 2;
 
         before((done) => {
 
@@ -69,24 +64,24 @@ describe('integration load test', () => {
                 instance.deleteExchange.bind(instance, instance.config.globalExchange, null),
                 instance.deleteQueue.bind(instance, queueName),
                 instance.deleteQueue.bind(instance, errorQueueName)
-            ], done);            
+            ], done);
         });
 
         it('should publish all messages within 2 seconds', (done) => {
 
             let count = 0;
-            
+
             const resolver = (err) => {
 
                 if (err) {
                     done(err);
-                } 
-                else if(++count === publishTarget) {
+                }
+                else if (++count === publishTarget) {
                     done();
                 }
             };
 
-            for(let i=0; i<publishTarget; ++i) {
+            for (let i = 0; i < publishTarget; ++i) {
                 instance.publish(message, null, resolver);
             }
         });
@@ -96,9 +91,9 @@ describe('integration load test', () => {
             let count = 0;
 
             instance.subscribe(
-                queueName, 
+                queueName,
                 {
-                    'a.b' : (message, ack, reject, requeue) => {
+                    'a.b' : (msg, ack, reject, requeue) => {
 
                         ack(null, () => {
 
@@ -108,7 +103,7 @@ describe('integration load test', () => {
                             }
                         });
                     }
-                }, 
+                },
                 null,
                 () => {});
         });
@@ -117,4 +112,4 @@ describe('integration load test', () => {
     describe('with promises interface', (done) => {
 
     });
-})
+});
