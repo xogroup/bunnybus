@@ -199,7 +199,7 @@ describe('positive integration tests', () => {
 
         it('should create queue with name `test-queue-1`', (done) => {
 
-            instance.createQueue(queueName, null, (err, result) => {
+            instance.createQueue(queueName, (err, result) => {
 
                 expect(err).to.be.null();
                 expect(result.queue).to.be.equal(queueName);
@@ -221,7 +221,7 @@ describe('positive integration tests', () => {
 
         it('should delete queue with name `test-queue-1`', (done) => {
 
-            instance.deleteQueue(queueName, null, (err, result) => {
+            instance.deleteQueue(queueName, (err, result) => {
 
                 expect(err).to.be.null();
                 expect(result.messageCount).to.be.equal(0);
@@ -240,7 +240,7 @@ describe('positive integration tests', () => {
                 instance._autoConnectChannel,
                 (cb) => {
 
-                    instance.deleteExchange(exchangeName, null, cb);
+                    instance.deleteExchange(exchangeName, cb);
                 }
             ], done);
         });
@@ -252,7 +252,7 @@ describe('positive integration tests', () => {
 
         it('should create exchange with name `test-exchange-1`', (done) => {
 
-            instance.createExchange(exchangeName, 'topic', null, (err, result) => {
+            instance.createExchange(exchangeName, 'topic', (err, result) => {
 
                 expect(err).to.be.null();
 
@@ -271,7 +271,7 @@ describe('positive integration tests', () => {
 
         it('should delete exchange with name `test-exchange-1`', (done) => {
 
-            instance.deleteExchange(exchangeName, null, (err, result) => {
+            instance.deleteExchange(exchangeName, (err, result) => {
 
                 expect(err).to.be.null();
                 done();
@@ -291,7 +291,7 @@ describe('positive integration tests', () => {
 
         afterEach((done) => {
 
-            instance.deleteQueue(queueName, null, done);
+            instance.deleteQueue(queueName, done);
         });
 
         it('should send message', (done) => {
@@ -320,7 +320,7 @@ describe('positive integration tests', () => {
 
             Async.waterfall([
                 instance._autoConnectChannel,
-                instance.createExchange.bind(instance, instance.config.globalExchange, 'topic', null),
+                instance.createExchange.bind(instance, instance.config.globalExchange, 'topic'),
                 instance.createQueue.bind(instance, queueName),
                 (result, cb) => {
 
@@ -339,7 +339,7 @@ describe('positive integration tests', () => {
 
             Async.waterfall([
                 instance._autoConnectChannel,
-                instance.deleteExchange.bind(instance, instance.config.globalExchange, null),
+                instance.deleteExchange.bind(instance, instance.config.globalExchange),
                 instance.deleteQueue.bind(instance, queueName)
             ], done);
         });
@@ -401,7 +401,7 @@ describe('positive integration tests', () => {
 
             Async.waterfall([
                 instance._autoConnectChannel,
-                instance.deleteExchange.bind(instance, instance.config.globalExchange, null),
+                instance.deleteExchange.bind(instance, instance.config.globalExchange),
                 instance.deleteQueue.bind(instance, queueName),
                 instance.deleteQueue.bind(instance, errorQueueName)
             ], done);
@@ -416,7 +416,7 @@ describe('positive integration tests', () => {
 
             Async.waterfall([
                 instance._autoConnectChannel,
-                instance.deleteExchange.bind(instance, instance.config.globalExchange, null),
+                instance.deleteExchange.bind(instance, instance.config.globalExchange),
                 instance.deleteQueue.bind(instance, queueName),
                 instance.deleteQueue.bind(instance, errorQueueName)
             ], done);
@@ -432,8 +432,8 @@ describe('positive integration tests', () => {
             };
 
             Async.waterfall([
-                instance.subscribe.bind(instance, queueName, handlers, null),
-                instance.publish.bind(instance, message, null)
+                instance.subscribe.bind(instance, queueName, handlers),
+                instance.publish.bind(instance, message)
             ],
             (err) => {
 
@@ -464,8 +464,8 @@ describe('positive integration tests', () => {
             };
 
             Async.waterfall([
-                instance.subscribe.bind(instance, queueName, handlers, null),
-                instance.publish.bind(instance, message, null)
+                instance.subscribe.bind(instance, queueName, handlers),
+                instance.publish.bind(instance, message)
             ],
             (err) => {
 
@@ -486,18 +486,18 @@ describe('positive integration tests', () => {
 
                 if (retryCount < maxRetryCount) {
                     console.log('requeuing');
-                    requeue(null, () => { });
+                    requeue(() => { });
                 }
                 else {
                     console.log('retry reached', retryCount, maxRetryCount);
                     expect(retryCount).to.equal(maxRetryCount);
-                    ack(null, done);
+                    ack(done);
                 }
             };
 
             Async.waterfall([
                 instance.subscribe.bind(instance, queueName, handlers, { maxRetryCount }),
-                instance.publish.bind(instance, message, null)
+                instance.publish.bind(instance, message)
             ],
             (err) => {
 
@@ -518,7 +518,7 @@ describe('positive integration tests', () => {
 
             Async.waterfall([
                 instance._autoConnectChannel,
-                instance.deleteExchange.bind(instance, instance.config.globalExchange, null),
+                instance.deleteExchange.bind(instance, instance.config.globalExchange),
                 instance.deleteQueue.bind(instance, queueName1),
                 instance.deleteQueue.bind(instance, queueName2)
             ], done);
@@ -536,7 +536,7 @@ describe('positive integration tests', () => {
 
             Async.waterfall([
                 instance._autoConnectChannel,
-                instance.deleteExchange.bind(instance, instance.config.globalExchange, null),
+                instance.deleteExchange.bind(instance, instance.config.globalExchange),
                 instance.deleteQueue.bind(instance, queueName1),
                 instance.deleteQueue.bind(instance, queueName2)
             ], done);
@@ -550,7 +550,7 @@ describe('positive integration tests', () => {
             handlers[message.event] = (consumedMessage, ack, reject, requeue) => {
 
                 expect(consumedMessage.name).to.equal(message.name);
-                ack(null, () => {
+                ack(() => {
 
                     ++counter;
                     if (counter === 2) {
@@ -560,9 +560,9 @@ describe('positive integration tests', () => {
             };
 
             Async.waterfall([
-                instance.subscribe.bind(instance, queueName1, handlers, null),
-                instance.subscribe.bind(instance, queueName2, handlers, null),
-                instance.publish.bind(instance, message, null)
+                instance.subscribe.bind(instance, queueName1, handlers),
+                instance.subscribe.bind(instance, queueName2, handlers),
+                instance.publish.bind(instance, message)
             ],
             (err) => {
 
@@ -583,7 +583,7 @@ describe('positive integration tests', () => {
 
             Async.waterfall([
                 instance._autoConnectChannel,
-                instance.createExchange.bind(instance, instance.config.globalExchange, 'topic', null),
+                instance.createExchange.bind(instance, instance.config.globalExchange, 'topic'),
                 instance.createQueue.bind(instance, queueName),
                 (result, cb) => {
 
@@ -602,7 +602,7 @@ describe('positive integration tests', () => {
 
             Async.waterfall([
                 instance._autoConnectChannel,
-                instance.deleteExchange.bind(instance, instance.config.globalExchange, null),
+                instance.deleteExchange.bind(instance, instance.config.globalExchange),
                 instance.deleteQueue.bind(instance, queueName)
             ], done);
         });
@@ -610,11 +610,11 @@ describe('positive integration tests', () => {
         it('should ack a message off the queue', (done) => {
 
             Async.waterfall([
-                instance.publish.bind(instance, message, null),
-                instance.get.bind(instance, queueName, null),
+                instance.publish.bind(instance, message),
+                instance.get.bind(instance, queueName),
                 (payload, cb) => {
 
-                    instance._ack(payload, null, cb);
+                    instance._ack(payload, cb);
                 },
                 instance.checkQueue.bind(instance, queueName),
                 (result, cb) => {
@@ -642,7 +642,7 @@ describe('positive integration tests', () => {
 
             Async.waterfall([
                 instance._autoConnectChannel,
-                instance.createExchange.bind(instance, instance.config.globalExchange, 'topic', null),
+                instance.createExchange.bind(instance, instance.config.globalExchange, 'topic'),
                 instance.createQueue.bind(instance, queueName),
                 (result, cb) => {
 
@@ -661,7 +661,7 @@ describe('positive integration tests', () => {
 
             Async.waterfall([
                 instance._autoConnectChannel,
-                instance.deleteExchange.bind(instance, instance.config.globalExchange, null),
+                instance.deleteExchange.bind(instance, instance.config.globalExchange),
                 instance.deleteQueue.bind(instance, queueName)
             ], done);
         });
@@ -669,11 +669,11 @@ describe('positive integration tests', () => {
         it('should requeue a message off the queue', (done) => {
 
             Async.waterfall([
-                instance.publish.bind(instance, message, null),
-                instance.get.bind(instance, queueName, null),
+                instance.publish.bind(instance, message),
+                instance.get.bind(instance, queueName),
                 (payload, cb) => {
 
-                    instance._requeue(payload, queueName, null, cb);
+                    instance._requeue(payload, queueName, cb);
                 },
                 instance.checkQueue.bind(instance, queueName)
             ], (err, result) => {
@@ -696,14 +696,14 @@ describe('positive integration tests', () => {
 
             Async.waterfall([
                 instance.publish.bind(instance, message, publishOptions),
-                instance.get.bind(instance, queueName, null),
+                instance.get.bind(instance, queueName),
                 (payload, cb) => {
 
                     transactionId = payload.properties.headers.transactionId;
                     createdAt = payload.properties.headers.createdAt;
-                    instance._requeue(payload, queueName, null, cb);
+                    instance._requeue(payload, queueName, cb);
                 },
-                instance.get.bind(instance, queueName, null)
+                instance.get.bind(instance, queueName)
             ], (err, payload) => {
 
                 expect(err).to.be.null();
@@ -733,7 +733,7 @@ describe('positive integration tests', () => {
 
             Async.waterfall([
                 instance._autoConnectChannel,
-                instance.createExchange.bind(instance, instance.config.globalExchange, 'topic', null),
+                instance.createExchange.bind(instance, instance.config.globalExchange, 'topic'),
                 instance.createQueue.bind(instance, queueName),
                 (result, cb) => {
 
@@ -752,24 +752,24 @@ describe('positive integration tests', () => {
 
             Async.waterfall([
                 instance._autoConnectChannel,
-                instance.deleteExchange.bind(instance, instance.config.globalExchange, null),
+                instance.deleteExchange.bind(instance, instance.config.globalExchange),
                 instance.deleteQueue.bind(instance, queueName)
             ], done);
         });
 
         afterEach((done) => {
 
-            instance.deleteQueue(errorQueueName, null, done);
+            instance.deleteQueue(errorQueueName, done);
         });
 
         it('should reject a message off the queue', (done) => {
 
             Async.waterfall([
-                instance.publish.bind(instance, message, null),
-                instance.get.bind(instance, queueName, null),
+                instance.publish.bind(instance, message),
+                instance.get.bind(instance, queueName),
                 (payload, cb) => {
 
-                    instance._reject(payload, errorQueueName, null, cb);
+                    instance._reject(payload, errorQueueName, cb);
                 },
                 instance.checkQueue.bind(instance, errorQueueName)
             ], (err, result) => {
@@ -793,16 +793,16 @@ describe('positive integration tests', () => {
 
             Async.waterfall([
                 instance.publish.bind(instance, message, publishOptions),
-                instance.get.bind(instance, queueName, null),
+                instance.get.bind(instance, queueName),
                 (payload, cb) => {
 
                     transactionId = payload.properties.headers.transactionId;
                     createdAt = payload.properties.headers.createdAt;
                     payload.properties.headers.requeuedAt = requeuedAt;
                     payload.properties.headers.retryCount = retryCount;
-                    instance._reject(payload, errorQueueName, null, cb);
+                    instance._reject(payload, errorQueueName, cb);
                 },
-                instance.get.bind(instance, errorQueueName, null)
+                instance.get.bind(instance, errorQueueName)
             ], (err, payload) => {
 
                 expect(err).to.be.null();
@@ -855,7 +855,7 @@ describe('negative integration tests', () => {
 
         it('should throw NoChannelError when calling createQueue and connection does not pre-exist', (done) => {
 
-            instance.createQueue(queueName, null, (err) => {
+            instance.createQueue(queueName, (err) => {
 
                 expect(err).to.be.an.error(Exceptions.NoChannelError);
                 done();
@@ -873,7 +873,7 @@ describe('negative integration tests', () => {
 
         it('should throw NoChannelError when calling deleteQueue and connection does not pre-exist', (done) => {
 
-            instance.deleteQueue(queueName, null, (err) => {
+            instance.deleteQueue(queueName, (err) => {
 
                 expect(err).to.be.an.error(Exceptions.NoChannelError);
                 done();
@@ -892,7 +892,7 @@ describe('negative integration tests', () => {
 
         it('should throw NoChannelError when calling createExcahnge and connection does not pre-exist', (done) => {
 
-            instance.createExchange(exchangeName, null, null, (err) => {
+            instance.createExchange(exchangeName, '', (err) => {
 
                 expect(err).to.be.an.error(Exceptions.NoChannelError);
                 done();
@@ -910,7 +910,7 @@ describe('negative integration tests', () => {
 
         it('should throw NoChannelError when calling deleteExchange and connection does not pre-exist', (done) => {
 
-            instance.deleteExchange(exchangeName, null, (err) => {
+            instance.deleteExchange(exchangeName, (err) => {
 
                 expect(err).to.be.an.error(Exceptions.NoChannelError);
                 done();
@@ -929,7 +929,7 @@ describe('negative integration tests', () => {
 
         it('should throw NoChannelError when calling get and connection does not pre-exist', (done) => {
 
-            instance.get(queueName, null, (err) => {
+            instance.get(queueName, (err) => {
 
                 expect(err).to.be.an.error(Exceptions.NoChannelError);
                 done();
@@ -943,7 +943,7 @@ describe('negative integration tests', () => {
 
         it('should throw NoRouteKeyError when calling publish and `options.routeKey` nor `message.event` exist', (done) => {
 
-            instance.publish(message, null, (err) => {
+            instance.publish(message, (err) => {
 
                 expect(err).to.be.an.error(Exceptions.NoRouteKeyError);
                 done();
@@ -964,7 +964,7 @@ describe('negative integration tests', () => {
 
         it('should throw NoChannelError when calling _ack and connection does not pre-exist', (done) => {
 
-            instance._ack(payload, null, (err) => {
+            instance._ack(payload, (err) => {
 
                 expect(err).to.be.an.error(Exceptions.NoChannelError);
                 done();
@@ -985,7 +985,7 @@ describe('negative integration tests', () => {
 
         it('should throw NoChannelError when calling _requeue and connection does not pre-exist', (done) => {
 
-            instance._requeue(payload, null, null, (err) => {
+            instance._requeue(payload, '', (err) => {
 
                 expect(err).to.be.an.error(Exceptions.NoChannelError);
                 done();
@@ -1006,7 +1006,7 @@ describe('negative integration tests', () => {
 
         it('should throw NoChannelError when calling _reject and connection does not pre-exist', (done) => {
 
-            instance._reject(payload, null, null, (err) => {
+            instance._reject(payload, '', (err) => {
 
                 expect(err).to.be.an.error(Exceptions.NoChannelError);
                 done();
