@@ -4,7 +4,7 @@ const Async = require('async');
 const Code = require('code');
 const expect = Code.expect;
 
-const AssertPublish = (instance, message, queueName, routeKey, transactionId, callingModule, shouldRoute, callback) => {
+const assertPublish = (instance, message, queueName, routeKey, transactionId, callingModule, shouldRoute, callback) => {
 
     const options = {
         routeKey,
@@ -55,4 +55,4 @@ const AssertPublish = (instance, message, queueName, routeKey, transactionId, ca
     });
 };
 
-module.exports = AssertPublish;
+module.exports = assertPublish;

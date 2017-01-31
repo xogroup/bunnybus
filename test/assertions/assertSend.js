@@ -4,7 +4,7 @@ const Async = require('async');
 const Code = require('code');
 const expect = Code.expect;
 
-const AssertSend = (instance, message, queueName, transactionId, callingModule, callback) => {
+const assertSend = (instance, message, queueName, transactionId, callingModule, callback) => {
 
     const options = {
         transactionId,
@@ -41,4 +41,4 @@ const AssertSend = (instance, message, queueName, transactionId, callingModule, 
     });
 };
 
-module.exports = AssertSend;
+module.exports = assertSend;

@@ -133,62 +133,49 @@ describe('helpers', () => {
         });
     });
 
-    describe('findCallback', () => {
+    describe('reduceCallback', () => {
 
-        it('should return callback from first parameter', (done) => {
+        const callback = () => {};
 
-            const callback = () => {};
+        it('should return callback when given (callback)', (done) => {
 
-            const sut = Helpers.findCallback(callback);
-
-            expect(sut).to.be.a.function();
+            Assertions.assertReduceCallback(callback);
             done();
         });
 
-        it('should return callback from second parameter when first parameter is defined as an object', (done) => {
+        it('should return callback when given ({}, callback)', (done) => {
 
-            const callback = () => {};
-            const options = {};
-
-            const sut = Helpers.findCallback(options, callback);
-
-            expect(sut).to.be.a.function();
+            Assertions.assertReduceCallback({}, callback);
             done();
         });
 
-        it('should return callback from second parameter when first parameter is undefined', (done) => {
+        it('should return callback when given (undefined, callback)', (done) => {
 
-            const callback = () => {};
-
-            const sut = Helpers.findCallback(undefined, callback);
-
-            expect(sut).to.be.a.function();
+            Assertions.assertReduceCallback(undefined, callback);
             done();
         });
 
-        it('should return callback from second parameter when first parameter is null', (done) => {
+        it('should return callback when given (null, callback)', (done) => {
 
-            const callback = () => {};
-
-            const sut = Helpers.findCallback(null, callback);
-
-            expect(sut).to.be.a.function();
+            Assertions.assertReduceCallback(null, callback);
             done();
         });
 
-        it('should return undefined when first parameter is defined as an object', (done) => {
+        it('should return callback when given ({}, null, callback)', (done) => {
 
-            const sut = Helpers.findCallback({});
-
-            expect(sut).to.be.undefined();
+            Assertions.assertReduceCallback({}, null, callback);
             done();
         });
 
-        it('should return undefined when first parameter and second parameters are undefined', (done) => {
+        it('should return callback when given ({})', (done) => {
 
-            const sut = Helpers.findCallback(undefined, undefined);
+            Assertions.assertReduceCallback({});
+            done();
+        });
 
-            expect(sut).to.be.undefined();
+        it('should return undefined when given (undefined, undefined)', (done) => {
+
+            Assertions.assertReduceCallback(undefined, undefined);
             done();
         });
     });

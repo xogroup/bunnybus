@@ -4,7 +4,7 @@ const Helpers = require('../../lib/helpers');
 const Code = require('code');
 const expect = Code.expect;
 
-const AssertConvertToBuffer = (data, callback) => {
+const assertConvertToBuffer = (data, callback) => {
 
     Helpers.convertToBuffer(data, (err, result) => {
 
@@ -22,4 +22,4 @@ const AssertConvertToBuffer = (data, callback) => {
     });
 };
 
-module.exports = AssertConvertToBuffer;
+module.exports = assertConvertToBuffer;
