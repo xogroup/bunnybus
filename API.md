@@ -355,6 +355,7 @@ Pop a message directly off a queue
 * `options` - optional settings.  [Settings](http://www.squaremobius.net/amqp.node/channel_api.html#channel_get) are proxied through to amqplib `get`. *[Object]* **Optional**
 * `callback` - node style callback `(err, result) => {}`. *[Function]* **Optional**
 
+```Javascript
 const BunnyBus = require('bunnybus');
 const bunnyBus = new BunnyBus();
 
