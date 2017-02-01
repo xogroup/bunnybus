@@ -3,7 +3,7 @@
 - [BunnyBus](#BunnyBus)
  - [`new BunnyBus(config)`](#new-bunnybusconfig)
  - [`config`](#config)
- - [`onnectionString`](#connectionString)
+ - [`connectionString`](#connectionString)
  - [`connection`](#connection)
  - [`hasConnection`](#hasConnection)
  - [`channel`](#channel)
