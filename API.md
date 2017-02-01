@@ -1,6 +1,6 @@
 # 1.0.0 API Reference
 
-- [Bunnybus](#BunnyBus)
+- [BunnyBus](#BunnyBus)
  - [`new BunnyBus(config)`](#new-bunnybusconfig)
  - [`config`](#config)
  - [`onnectionString`](#connectionString)
