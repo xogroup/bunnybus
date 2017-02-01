@@ -1,6 +1,7 @@
 # 1.0.0 API Reference
 
 - [bunnybus](#BunnyBus)
+<!-- TODO create TOC -->
   
 ## BunnyBus
 
