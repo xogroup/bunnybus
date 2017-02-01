@@ -287,17 +287,22 @@ Subscribe to messages from the bus
 
 #### handlers
 
-* a `key` is the routeKey in RabbitMQ terminology.  `BunnyBus` specifically leverages [topic exchange](https://www.rabbitmq.com/tutorials/tutorial-five-python.html) to route a message from the exchange to any number of queues that are subscribed.  The keys are normally dot notated and wild cards of `*` (can substitute for exactly one word) and `#` (can substitute for zero or more words).  Keys can look like `vineyard.wine-produced`, `vineyard.wine-sold`, `vineyard.*`, `vineyard.#` and etc...
-* a `handler` is a function which contains the following arity.  Order matters.
- * `message` is what was received from the bus.  The message is a JS object and not the buffer.  The original source of this object is from `payload.content`.
- * `ack([option, [callback]])` is a function for acknowledging the message off the bus.
-  * `option` - a placeholder for future optional parameters for `ack`.  High chance of deprecation.
-  * `callback` - node style callback `(err, result) => {}`. *[Function]* **Optional**
- * `reject([option, [callback]])` is a function for rejecting the message off the bus to a predefined error queue.  The error queue is named by default `<your queue name>_error`.  It will also short circuit to `error_bus` when defaults can't be found.
-  * `option` - a placeholder for future optional parameters for `ack`.  High chance of deprecation.
-  * `callback` - node style callback `(err, result) => {}`. *[Function]* **Optional**
- * `requeue([callback])` is a function for requeuing the message back to the back of the queue.  This is feature circumvents Rabbit's `nack` RPC.  `nack` natively requeues but pushes the message to the front of the queue.
-  * `callback` - node style callback `(err, result) => {}`. *[Function]* **Optional**
+##### `key`
+
+A `key` is the routeKey in RabbitMQ terminology.  `BunnyBus` specifically leverages [topic exchange](https://www.rabbitmq.com/tutorials/tutorial-five-python.html) to route a message from the exchange to any number of queues that are subscribed.  The keys are normally dot notated and wild cards of `*` (can substitute for exactly one word) and `#` (can substitute for zero or more words).  Keys can look like `vineyard.wine-produced`, `vineyard.wine-sold`, `vineyard.*`, `vineyard.#` and etc...
+
+##### `handler`
+
+A `handler` is a function which contains the following arity.  Order matters.
+* `message` is what was received from the bus.  The message is a JS object and not the buffer.  The original source of this object is from `payload.content`.
+* `ack([option, [callback]])` is a function for acknowledging the message off the bus.
+ * `option` - a placeholder for future optional parameters for `ack`.  High chance of deprecation.
+ * `callback` - node style callback `(err, result) => {}`. *[Function]* **Optional**
+* `reject([option, [callback]])` is a function for rejecting the message off the bus to a predefined error queue.  The error queue is named by default `<your queue name>_error`.  It will also short circuit to `error_bus` when defaults can't be found.
+ * `option` - a placeholder for future optional parameters for `ack`.  High chance of deprecation.
+ * `callback` - node style callback `(err, result) => {}`. *[Function]* **Optional**
+* `requeue([callback])` is a function for requeuing the message back to the back of the queue.  This is feature circumvents Rabbit's `nack` RPC.  `nack` natively requeues but pushes the message to the front of the queue.
+ * `callback` - node style callback `(err, result) => {}`. *[Function]* **Optional**
 
 ```Javascript
 const BunnyBus = require('bunnybus');
