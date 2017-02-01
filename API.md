@@ -55,19 +55,199 @@ console.log(bunnybus.connectionString);
 
 ###`connection`
 
-Setter and Getter for AMQP connection object.
+Setter and Getter for AMQP connection object.  While this property setter is available, it is strongly discouraged to set this manually.  Connections and channels have lifecycle responsibilties to objects already instantiated through them.  Consequences of switching out a connection or channel midway through an operation will result in corruption of all messages that are in progress of being delivered.  If a connection has to be manually set, it is highly recommended to do so before any other operation have been invoked.
+
+
+```Javascript
+const Amqp = require('amqplib');
+const BunnyBus = require('bunnybus');
+const bunnyBus = new BunnyBus();
+
+Amqp.connect('<connection-string>', (err, connection) => {
+    bunnyBus.connection = connection;
+});
+```
 
 ###`hasConnection`
 
 Getter for existence for an active AMQP connection object.
 
+```Javascript
+const Amqp = require('amqplib');
+const BunnyBus = require('bunnybus');
+const bunnyBus = new BunnyBus();
+
+bunnyBus.hasConnection;
+//true|false
+```
+
 ###`channel`
 
-Setter and Getter for AMQP confirmation channel object.
+Setter and Getter for AMQP confirmation channel object.  While this property setter is available, it is strongly discouraged to set this manually.  Connections and channels have lifecycle responsibilties to objects already instantiated through them.  Consequences of switching out a connection or channel midway through an operation will result in corruption of all messages that are in progress of being delivered.  If a channel has to be manually set, it is highly recommended to do so before any other operation have been invoked.
+
+```Javascript
+const Amqp = require('amqplib');
+const BunnyBus = require('bunnybus');
+const bunnyBus = new BunnyBus();
+
+bunnyBus.connection.createConfirmationChannel((err, channel) => {
+    bunnyBus.channel = channel;
+});
+```
 
 ###`hasChannel`
 
 Getter for existence for an active AMQP channel object
+
+```Javascript
+const Amqp = require('amqplib');
+const BunnyBus = require('bunnybus');
+const bunnyBus = new BunnyBus();
+
+bunnyBus.hasChannel;
+//true|false
+```
+
+###`createConnection([callback])`
+
+Create a connection from settings defined through custom or default configurations.  This method should not be called manually.
+
+* `callback` - node style callback `(err, result) => {}`. *[Function]* **Optional**
+
+```Javascript
+const BunnyBus = require('bunnybus');
+const bunnyBus = new BunnyBus();
+
+bunnyBus.createConnection((err) => {});
+```
+
+###`closeConnection([callback])`
+
+Closes an opened connection if one exist.  This method should not be called manually.
+
+* `callback` - node style callback `(err, result) => {}`. *[Function]* **Optional**
+
+```Javascript
+const BunnyBus = require('bunnybus');
+const bunnyBus = new BunnyBus();
+
+bunnyBus.closeConnection((err) => {});
+```
+
+###`createChannel([callback])`
+
+Create a channel from an existing connection.  This method should not be called manually.
+
+* `callback` - node style callback `(err, result) => {}`. *[Function]* **Optional**
+
+```Javascript
+const BunnyBus = require('bunnybus');
+const bunnyBus = new BunnyBus();
+
+bunnyBus.createChannel((err) => {});
+```
+
+###`closeChannel([callback])`
+
+Closes an channel if one exist.  This method should not be called manually.
+
+* `callback` - node style callback `(err, result) => {}`. *[Function]* **Optional**
+
+```Javascript
+const BunnyBus = require('bunnybus');
+const bunnyBus = new BunnyBus();
+
+bunnyBus.closeChannel((err) => {});
+```
+
+###`createExchange(name, type, [options, [callback]])`
+
+Creates an exchange
+
+* `name` - name of the exchange to be created. *[string]* **Required**
+* `type` - type of exchange to create. Possible values are (`direct`, `fanout`, `header`, `topic`) *[string]* **Required**
+* `options` - optional settings.  [Settings](http://www.squaremobius.net/amqp.node/channel_api.html#channel_assertExchange) are proxied through to amqplib `assertExchange`. *[Object]* **Optional**
+* `callback` - node style callback `(err, result) => {}`. *[Function]* **Optional**
+
+```Javascript
+const BunnyBus = require('bunnybus');
+const bunnyBus = new BunnyBus();
+
+bunnyBus.createExchange('default-exchange', 'topic', (err) => {});
+```
+
+###`deleteExchange(name, [options[callback]])`
+
+Delete an exchange
+
+* `name` - name of the exchange to be deleted. *[string]* **Required**
+* `options` - optional settings. [Settings](http://www.squaremobius.net/amqp.node/channel_api.html#channel_deleteExchange) are proxed through to amqplib `deleteExchange`. *[Object]* **Optional**
+* `callback` - node style callback `(err, result) => {}`. *[Function]* **Optional**
+
+```Javascript
+const BunnyBus = require('bunnybus');
+const bunnyBus = new BunnyBus();
+
+bunnyBus.deleteExchange('default-exchange', (err) => {});
+```
+
+###`checkExchange(name, [callback])`
+
+Checks an exchange exist.  Channel closes when exchange does not exist.
+
+* `name` - name of the exchange to be checked. *[string]* **Required**
+* `callback` - node style callback `(err, result) => {}`. *[Function]* **Optional**
+
+```Javascript
+const BunnyBus = require('bunnybus');
+const bunnyBus = new BunnyBus();
+
+bunnyBus.checkExchange('default-exchange', (err) => {});
+```
+
+###`createQueue(name, [options, [callback]])`
+
+Creates a queue
+
+* `name` - name of the queue to be created. *[string]* **Required**
+* `options` - optional settings.  [Settings](http://www.squaremobius.net/amqp.node/channel_api.html#channel_assertQueue) are proxied through to amqplib `assertQueue`. *[Object]* **Optional**
+* `callback` - node style callback `(err, result) => {}`. *[Function]* **Optional**
+
+```Javascript
+const BunnyBus = require('bunnybus');
+const bunnyBus = new BunnyBus();
+
+bunnyBus.createQueue('queue1', (err) => {});
+```
+
+###`deleteQueue(name, [options, [callback]])`
+
+Delete a queue
+
+* `name` - name of the queue to be created. *[string]* **Required**
+* `options` - optional settings.  [Settings](http://www.squaremobius.net/amqp.node/channel_api.html#channel_deleteQueue) are proxied through to amqplib `deleteQueue`. *[Object]* **Optional**
+* `callback` - node style callback `(err, result) => {}`. *[Function]* **Optional**
+
+```Javascript
+const BunnyBus = require('bunnybus');
+const bunnyBus = new BunnyBus();
+
+bunnyBus.deleteQueue('queue1', (err) => {});
+```
+
+###`checkQueue(name, [callback])`
+
+Checks a queue exist.  Channel closes when queue does not exist.
+
+* `name` - name of the queue to be checked. *[string]* **Required**
+* `callback` - node style callback `(err, result) => {}`. *[Function]* **Optional**
+
+```Javascript
+const BunnyBus = require('bunnybus');
+const bunnyBus = new BunnyBus();
+
+bunnyBus.checkQueue('queue1', (err) => {});
+```
 
 ###`publish(message, [options, [callback]])`
 
@@ -75,7 +255,7 @@ Publish a message onto the bus
 
 * `message` - the content being sent to downstream subscribers. *[string|Object|Buffer]* **Required**
  * `event` - override value for the route key. The value must be supplied here or in `options.routeKey`.  The value can be `.` separated for namespacing. *[string]* **Optional.**
-* `options` - optional settings.
+* `options` - optional settings. *[Object]* **Optional**
  * `routeKey` - value for the route key to route the message with.  The value must be supplied here or in `message.event`.  The value can be `.` separated for namespacing. *[string]*  **Optional**
  * `transactionId` - value attached to the header of the message for tracing.  When one is not supplied, a random 40 character token is generated. *[string]*  **Optional**
  * `callingModule` - value attached to the header of the message to help with tracking the origination point of your application.  For applications that leverage this plugin in multiple modules, each module can supply its own module name so a message can be tracked to the creator. *[string]* 
@@ -88,7 +268,7 @@ Send a message directly to a queue
 
 * `message` - the content being sent directly to specfied queue. *[string|Object|Buffer]* **Required**
 * `queue` - the name of the queue. *[string]* **Required**
-* `options` - optional settings.
+* `options` - optional settings. *[Object]* **Optional**
  * `transactionId` - value attached to the header of the message for tracing.  When one is not supplied, a random 40 character token is generated. *[string]*  **Optional**
  * `callingModule` - value attached to the header of the message to help with tracking the origination point of your application.  For applications that leverage this plugin in multiple modules, each module can supply its own module name so a message can be tracked to the creator. *[string]*  **Optional**
 
