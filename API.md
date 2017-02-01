@@ -1,7 +1,27 @@
 # 1.0.0 API Reference
 
-- [bunnybus](#BunnyBus)
-<!-- TODO create TOC -->
+- [BunnyBus](#BunnyBus)
+ - [`new BunnyBus(config)`](#new-bunnybusconfig)
+ - [`config`](#config)
+ - [`connectionString`](#connectionString)
+ - [`connection`](#connection)
+ - [`hasConnection`](#hasConnection)
+ - [`channel`](#channel)
+ - [`hasChannel`](#hasChannel)
+ - [`createConnection([callback])`](#createConnectioncallback)
+ - [`closeConnection([callback])`](#closeConnectioncallback)
+ - [`createChannel([callback])`](#createChannelcallback)
+ - [`closeChannel([callback])`](#closeChannelcallback)
+ - [`createExchange(name, type, [options, [callback]])`](#createExchangename-type-options-callback)
+ - [`deleteExchange(name, [options, [callback]])`](#deleteExchangename-options-callback)
+ - [`checkExchange(name, [callback])`](#checkExchangename-callback)
+ - [`createQueue(name, [options, [callback]])`](#createQueuename-options-callback)
+ - [`deleteQueue(name, [options, [callback]])`](#deleteQueuename-options-callback)
+ - [`checkQueue(name, [callback])`](#checkQueuename-callback)
+ - [`publish(message, [options, [callback]])`](#publishmessage-options-callback)
+ - [`subscribe(queue, handlers, [options, [callback]])`](#subscribequeue-handlers-options-callback)
+ - [`send(message, queue, [options, [callback]])`](#sendmessage-queue-options-callback)
+ - [`get(queue, [options, [callback]])`](#getqueue-options-callback)
   
 ## BunnyBus
 
@@ -177,7 +197,7 @@ const bunnyBus = new BunnyBus();
 bunnyBus.createExchange('default-exchange', 'topic', (err) => {});
 ```
 
-###`deleteExchange(name, [options[callback]])`
+###`deleteExchange(name, [options, [callback]])`
 
 Delete an exchange
 
