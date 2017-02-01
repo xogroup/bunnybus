@@ -167,9 +167,9 @@ describe('helpers', () => {
             done();
         });
 
-        it('should return callback when given ({})', (done) => {
+        it('should return undefined when given ({})', (done) => {
 
-            Assertions.assertReduceCallback({});
+            Assertions.assertUndefinedReduceCallback({});
             done();
         });
 
