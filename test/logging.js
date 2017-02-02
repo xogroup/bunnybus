@@ -1,4 +1,5 @@
-const Async = require('async');
+'use strict';
+
 const Lab = require('lab');
 
 const lab = exports.lab = Lab.script();
@@ -12,8 +13,8 @@ let instance = undefined;
 
 describe('logging', () => {
 
-    const inputMessage = { 
-        prop1 : 'message value 1', 
+    const inputMessage = {
+        prop1 : 'message value 1',
         prop2 : 'message value 2'
     };
 

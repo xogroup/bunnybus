@@ -16,4 +16,4 @@ const assertLogger = (instance, level, inputMessage, callback) => {
     instance.logger[level](inputMessage);
 };
 
-exports.module = assertLogger;
+module.exports = assertLogger;
