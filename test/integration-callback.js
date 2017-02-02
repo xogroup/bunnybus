@@ -18,7 +18,7 @@ const expect = Code.expect;
 const BunnyBus = require('../lib');
 let instance = undefined;
 
-describe('positive integration tests', () => {
+describe('positive integration tests - Callback api', () => {
 
     before((done) => {
 

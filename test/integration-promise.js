@@ -17,7 +17,7 @@ const expect = Code.expect;
 const BunnyBus = require('../lib');
 let instance = undefined;
 
-describe('positive integration tests', () => {
+describe('positive integration tests - Promise api', () => {
 
     before((done) => {
 
@@ -102,200 +102,181 @@ describe('positive integration tests', () => {
         });
     });
 
-    // describe('_autoConnectChannel', () => {
-    //
-    //     beforeEach((done) => {
-    //
-    //         instance.closeConnection(done);
-    //     });
-    //
-    //     it('should create connection and channel', (done) => {
-    //
-    //         instance._autoConnectChannel((err) => {
-    //
-    //             expect(err).to.be.null();
-    //             expect(instance.connection).to.exist();
-    //             expect(instance.channel).to.exist();
-    //             done();
-    //         });
-    //     });
-    //
-    //     it('should create connection and channel properly with no race condition', (done) => {
-    //
-    //         Async.parallel([
-    //             instance._autoConnectChannel,
-    //             instance._autoConnectChannel,
-    //             instance._autoConnectChannel,
-    //             instance._autoConnectChannel
-    //         ],(err) => {
-    //
-    //             expect(err).to.be.null();
-    //             expect(instance.connection).to.exist();
-    //             expect(instance.channel).to.exist();
-    //             done();
-    //         });
-    //     });
-    // });
-    //
-    // describe('_recoverConnectChannel', () => {
-    //
-    //     beforeEach((done) => {
-    //
-    //         instance._autoConnectChannel(done);
-    //     });
-    //
-    //     afterEach((done) => {
-    //
-    //         instance.closeConnection(done);
-    //     });
-    //
-    //     it('should recreate connection when connection error occurs', (done) => {
-    //
-    //         instance.connection.emit('error');
-    //
-    //         setTimeout(() => {
-    //
-    //             expect(instance.connection).to.exist();
-    //             expect(instance.channel).to.exist();
-    //             done();
-    //         }, 100);
-    //     });
-    //
-    //     it('should recreate connection when channel error occurs', (done) => {
-    //
-    //         instance.channel.emit('error');
-    //
-    //         setTimeout(() => {
-    //
-    //             expect(instance.connection).to.exist();
-    //             expect(instance.channel).to.exist();
-    //             done();
-    //         }, 100);
-    //     });
-    // });
-    //
-    // describe('queue', () => {
-    //
-    //     const queueName = 'test-queue-1';
-    //
-    //     beforeEach((done) => {
-    //
-    //         instance._autoConnectChannel(done);
-    //     });
-    //
-    //     it('should create queue with name `test-queue-1`', (done) => {
-    //
-    //         instance.createQueue(queueName, (err, result) => {
-    //
-    //             expect(err).to.be.null();
-    //             expect(result.queue).to.be.equal(queueName);
-    //             expect(result.messageCount).to.be.equal(0);
-    //             done();
-    //         });
-    //     });
-    //
-    //     it('should check queue with name `test-queue-1`', (done) => {
-    //
-    //         instance.checkQueue(queueName, (err, result) => {
-    //
-    //             expect(err).to.be.null();
-    //             expect(result.queue).to.be.equal(queueName);
-    //             expect(result.messageCount).to.be.equal(0);
-    //             done();
-    //         });
-    //     });
-    //
-    //     it('should delete queue with name `test-queue-1`', (done) => {
-    //
-    //         instance.deleteQueue(queueName, (err, result) => {
-    //
-    //             expect(err).to.be.null();
-    //             expect(result.messageCount).to.be.equal(0);
-    //             done();
-    //         });
-    //     });
-    // });
-    //
-    // describe('exchange', () => {
-    //
-    //     const exchangeName = 'test-exchange-1';
-    //
-    //     before((done) => {
-    //
-    //         Async.waterfall([
-    //             instance._autoConnectChannel,
-    //             (cb) => {
-    //
-    //                 instance.deleteExchange(exchangeName, cb);
-    //             }
-    //         ], done);
-    //     });
-    //
-    //     beforeEach((done) => {
-    //
-    //         instance._autoConnectChannel(done);
-    //     });
-    //
-    //     it('should create exchange with name `test-exchange-1`', (done) => {
-    //
-    //         instance.createExchange(exchangeName, 'topic', (err, result) => {
-    //
-    //             expect(err).to.be.null();
-    //
-    //             done();
-    //         });
-    //     });
-    //
-    //     it('should check exchange with name `test-exchange-1`', (done) => {
-    //
-    //         instance.checkExchange(exchangeName, (err, result) => {
-    //
-    //             expect(err).to.be.null();
-    //             done();
-    //         });
-    //     });
-    //
-    //     it('should delete exchange with name `test-exchange-1`', (done) => {
-    //
-    //         instance.deleteExchange(exchangeName, (err, result) => {
-    //
-    //             expect(err).to.be.null();
-    //             done();
-    //         });
-    //     });
-    // });
-    //
-    // describe('send / get', () => {
-    //
-    //     const queueName = 'test-send-queue-1';
-    //     const message = { name : 'bunnybus' };
-    //
-    //     beforeEach((done) => {
-    //
-    //         instance.closeConnection(done);
-    //     });
-    //
-    //     afterEach((done) => {
-    //
-    //         instance.deleteQueue(queueName, done);
-    //     });
-    //
-    //     it('should send message', (done) => {
-    //
-    //         Assertions.assertSend(instance, message, queueName, null, null, done);
-    //     });
-    //
-    //     it('should proxy `callingModule` when supplied', (done) => {
-    //
-    //         Assertions.assertSend(instance, message, queueName, null, 'someModule', done);
-    //     });
-    //
-    //     it('should proxy `transactionId` when supplied', (done) => {
-    //
-    //         Assertions.assertSend(instance, message, queueName, 'someTransactionId', null, done);
-    //     });
-    // });
-    //
+    describe('_autoConnectChannel', () => {
+
+        beforeEach(() => {
+
+            return instance.closeConnection();
+        });
+
+        it('should create connection and channel', () => {
+
+            return instance._autoConnectChannel()
+                .then(() => {
+
+
+                    expect(instance.connection).to.exist();
+                    expect(instance.channel).to.exist();
+                });
+        });
+
+        it('should create connection and channel properly with no race condition', () => {
+
+            return Promise.all([
+                instance._autoConnectChannel(),
+                instance._autoConnectChannel(),
+                instance._autoConnectChannel(),
+                instance._autoConnectChannel()
+            ])
+                .then(() => {
+
+                    expect(instance.connection).to.exist();
+                    expect(instance.channel).to.exist();
+                });
+        });
+    });
+
+    describe('_recoverConnectChannel', () => {
+
+        beforeEach(() => {
+
+            return instance._autoConnectChannel();
+        });
+
+        afterEach(() => {
+
+            return instance.closeConnection();
+        });
+
+        it('should recreate connection when connection error occurs', (done) => {
+
+            instance.connection.emit('error');
+
+            setTimeout(() => {
+
+                expect(instance.connection).to.exist();
+                expect(instance.channel).to.exist();
+                done();
+            }, 100);
+        });
+
+        it('should recreate connection when channel error occurs', (done) => {
+
+            instance.channel.emit('error');
+
+            setTimeout(() => {
+
+                expect(instance.connection).to.exist();
+                expect(instance.channel).to.exist();
+                done();
+            }, 100);
+        });
+    });
+
+    describe('queue', () => {
+
+        const queueName = 'test-queue-1';
+
+        beforeEach(() => {
+
+            return instance._autoConnectChannel();
+        });
+
+        it('should create queue with name `test-queue-1`', () => {
+
+            return instance.createQueue(queueName)
+                .then((result) => {
+
+                    expect(result.queue).to.be.equal(queueName);
+                    expect(result.messageCount).to.be.equal(0);
+                });
+        });
+
+        it('should check queue with name `test-queue-1`', () => {
+
+            return instance.checkQueue(queueName)
+                .then((result) => {
+
+                    expect(result.queue).to.be.equal(queueName);
+                    expect(result.messageCount).to.be.equal(0);
+                });
+        });
+
+        it('should delete queue with name `test-queue-1`', () => {
+
+            return instance.deleteQueue(queueName)
+                .then((result) => {
+
+                    expect(result.messageCount).to.be.equal(0);
+                });
+        });
+    });
+
+    describe('exchange', () => {
+
+        const exchangeName = 'test-exchange-1';
+
+        before(() => {
+
+            return instance._autoConnectChannel()
+                .then(() => {
+
+                    return instance.deleteExchange(exchangeName);
+                });
+        });
+
+        beforeEach(() => {
+
+            return instance._autoConnectChannel();
+        });
+
+        it('should create exchange with name `test-exchange-1`', () => {
+
+            return instance.createExchange(exchangeName, 'topic');
+        });
+
+        it('should check exchange with name `test-exchange-1`', () => {
+
+            return instance.checkExchange(exchangeName);
+        });
+
+        it('should delete exchange with name `test-exchange-1`', () => {
+
+            return instance.deleteExchange(exchangeName);
+        });
+    });
+
+    describe('send / get', () => {
+
+        const queueName = 'test-send-queue-1';
+        const message = { name : 'bunnybus' };
+
+        beforeEach(() => {
+
+            return instance.closeConnection();
+        });
+
+        afterEach(() => {
+
+            return instance.deleteQueue(queueName);
+        });
+
+        it('should send message', () => {
+
+            return Assertions.assertSendPromise(instance, message, queueName, null, null);
+        });
+
+        it('should proxy `callingModule` when supplied', () => {
+
+            return Assertions.assertSendPromise(instance, message, queueName, null, 'someModule');
+        });
+
+        it('should proxy `transactionId` when supplied', () => {
+
+            return Assertions.assertSendPromise(instance, message, queueName, 'someTransactionId', null);
+        });
+    });
+
     // describe('publish', () => {
     //
     //     const queueName = 'test-publish-queue-1';
