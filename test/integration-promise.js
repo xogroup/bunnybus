@@ -583,249 +583,263 @@ describe('positive integration tests - Promise api', () => {
         });
     });
 
-    // describe('_ack', () => {
-    //
-    //     const queueName = 'test-acknowledge-queue-1';
-    //     const message = { name : 'bunnybus', event : 'a' };
-    //     const patterns = ['a'];
-    //
-    //     before((done) => {
-    //
-    //         Async.waterfall([
-    //             instance._autoConnectChannel,
-    //             instance.createExchange.bind(instance, instance.config.globalExchange, 'topic'),
-    //             instance.createQueue.bind(instance, queueName),
-    //             (result, cb) => {
-    //
-    //                 Async.map(
-    //                     patterns,
-    //                     (item, mapCB) => {
-    //
-    //                         instance.channel.bindQueue(queueName, instance.config.globalExchange, item, null, mapCB);
-    //                     },
-    //                     cb);
-    //             }
-    //         ], done);
-    //     });
-    //
-    //     after((done) => {
-    //
-    //         Async.waterfall([
-    //             instance._autoConnectChannel,
-    //             instance.deleteExchange.bind(instance, instance.config.globalExchange),
-    //             instance.deleteQueue.bind(instance, queueName)
-    //         ], done);
-    //     });
-    //
-    //     it('should ack a message off the queue', (done) => {
-    //
-    //         Async.waterfall([
-    //             instance.publish.bind(instance, message),
-    //             instance.get.bind(instance, queueName),
-    //             (payload, cb) => {
-    //
-    //                 instance._ack(payload, cb);
-    //             },
-    //             instance.checkQueue.bind(instance, queueName),
-    //             (result, cb) => {
-    //
-    //                 expect(result.queue).to.be.equal(queueName);
-    //                 expect(result.messageCount).to.be.equal(0);
-    //                 cb();
-    //             }
-    //         ], done);
-    //     });
-    // });
-    //
-    // describe('_requeue', () => {
-    //
-    //     const queueName = 'test-requeue-queue-1';
-    //     const message = { name : 'bunnybus', event : 'a' };
-    //     const patterns = ['a'];
-    //
-    //     beforeEach((done) => {
-    //
-    //         instance.channel.purgeQueue(queueName, done);
-    //     });
-    //
-    //     before((done) => {
-    //
-    //         Async.waterfall([
-    //             instance._autoConnectChannel,
-    //             instance.createExchange.bind(instance, instance.config.globalExchange, 'topic'),
-    //             instance.createQueue.bind(instance, queueName),
-    //             (result, cb) => {
-    //
-    //                 Async.map(
-    //                     patterns,
-    //                     (item, mapCB) => {
-    //
-    //                         instance.channel.bindQueue(queueName, instance.config.globalExchange, item, null, mapCB);
-    //                     },
-    //                     cb);
-    //             }
-    //         ], done);
-    //     });
-    //
-    //     after((done) => {
-    //
-    //         Async.waterfall([
-    //             instance._autoConnectChannel,
-    //             instance.deleteExchange.bind(instance, instance.config.globalExchange),
-    //             instance.deleteQueue.bind(instance, queueName)
-    //         ], done);
-    //     });
-    //
-    //     it('should requeue a message off the queue', (done) => {
-    //
-    //         Async.waterfall([
-    //             instance.publish.bind(instance, message),
-    //             instance.get.bind(instance, queueName),
-    //             (payload, cb) => {
-    //
-    //                 instance._requeue(payload, queueName, cb);
-    //             },
-    //             instance.checkQueue.bind(instance, queueName)
-    //         ], (err, result) => {
-    //
-    //             expect(err).to.be.null();
-    //             expect(result.queue).to.be.equal(queueName);
-    //             expect(result.messageCount).to.be.equal(1);
-    //             done();
-    //         });
-    //     });
-    //
-    //     it('should requeue with well formed header properties', (done) => {
-    //
-    //         const publishOptions = {
-    //             callingModule : 'test'
-    //         };
-    //
-    //         let transactionId = null;
-    //         let createdAt = null;
-    //
-    //         Async.waterfall([
-    //             instance.publish.bind(instance, message, publishOptions),
-    //             instance.get.bind(instance, queueName),
-    //             (payload, cb) => {
-    //
-    //                 transactionId = payload.properties.headers.transactionId;
-    //                 createdAt = payload.properties.headers.createdAt;
-    //                 instance._requeue(payload, queueName, cb);
-    //             },
-    //             instance.get.bind(instance, queueName)
-    //         ], (err, payload) => {
-    //
-    //             expect(err).to.be.null();
-    //             expect(payload.properties.headers.transactionId).to.equal(transactionId);
-    //             expect(payload.properties.headers.createAt).to.equal(createdAt);
-    //             expect(payload.properties.headers.callingModule).to.equal(publishOptions.callingModule);
-    //             expect(payload.properties.headers.requeuedAt).to.exist();
-    //             expect(payload.properties.headers.retryCount).to.equal(1);
-    //             done();
-    //         });
-    //     });
-    // });
-    //
-    // describe('_reject', () => {
-    //
-    //     const errorQueueName = 'test-reject-error-queue-1';
-    //     const queueName = 'test-reject-queue-1';
-    //     const message = { name : 'bunnybus', event : 'a' };
-    //     const patterns = ['a'];
-    //
-    //     beforeEach((done) => {
-    //
-    //         instance.channel.purgeQueue(queueName, done);
-    //     });
-    //
-    //     before((done) => {
-    //
-    //         Async.waterfall([
-    //             instance._autoConnectChannel,
-    //             instance.createExchange.bind(instance, instance.config.globalExchange, 'topic'),
-    //             instance.createQueue.bind(instance, queueName),
-    //             (result, cb) => {
-    //
-    //                 Async.map(
-    //                     patterns,
-    //                     (item, mapCB) => {
-    //
-    //                         instance.channel.bindQueue(queueName, instance.config.globalExchange, item, null, mapCB);
-    //                     },
-    //                     cb);
-    //             }
-    //         ], done);
-    //     });
-    //
-    //     after((done) => {
-    //
-    //         Async.waterfall([
-    //             instance._autoConnectChannel,
-    //             instance.deleteExchange.bind(instance, instance.config.globalExchange),
-    //             instance.deleteQueue.bind(instance, queueName)
-    //         ], done);
-    //     });
-    //
-    //     afterEach((done) => {
-    //
-    //         instance.deleteQueue(errorQueueName, done);
-    //     });
-    //
-    //     it('should reject a message off the queue', (done) => {
-    //
-    //         Async.waterfall([
-    //             instance.publish.bind(instance, message),
-    //             instance.get.bind(instance, queueName),
-    //             (payload, cb) => {
-    //
-    //                 instance._reject(payload, errorQueueName, cb);
-    //             },
-    //             instance.checkQueue.bind(instance, errorQueueName)
-    //         ], (err, result) => {
-    //
-    //             expect(err).to.be.null();
-    //             expect(result.queue).to.be.equal(errorQueueName);
-    //             expect(result.messageCount).to.be.equal(1);
-    //             done();
-    //         });
-    //     });
-    //
-    //     it('should requeue with well formed header properties', (done) => {
-    //
-    //         const publishOptions = {
-    //             callingModule : 'test'
-    //         };
-    //         const requeuedAt = (new Date()).toISOString();
-    //         const retryCount = 5;
-    //         let transactionId = null;
-    //         let createdAt = null;
-    //
-    //         Async.waterfall([
-    //             instance.publish.bind(instance, message, publishOptions),
-    //             instance.get.bind(instance, queueName),
-    //             (payload, cb) => {
-    //
-    //                 transactionId = payload.properties.headers.transactionId;
-    //                 createdAt = payload.properties.headers.createdAt;
-    //                 payload.properties.headers.requeuedAt = requeuedAt;
-    //                 payload.properties.headers.retryCount = retryCount;
-    //                 instance._reject(payload, errorQueueName, cb);
-    //             },
-    //             instance.get.bind(instance, errorQueueName)
-    //         ], (err, payload) => {
-    //
-    //             expect(err).to.be.null();
-    //             expect(payload.properties.headers.transactionId).to.equal(transactionId);
-    //             expect(payload.properties.headers.createAt).to.equal(createdAt);
-    //             expect(payload.properties.headers.callingModule).to.equal(publishOptions.callingModule);
-    //             expect(payload.properties.headers.requeuedAt).to.equal(requeuedAt);
-    //             expect(payload.properties.headers.retryCount).to.equal(retryCount);
-    //             expect(payload.properties.headers.errorAt).to.exist();
-    //             done();
-    //         });
-    //     });
-    // });
+    describe('_ack', () => {
+
+        const queueName = 'test-acknowledge-queue-1';
+        const message = { name : 'bunnybus', event : 'a' };
+        const patterns = ['a'];
+
+        before(() => {
+
+            return instance._autoConnectChannel()
+                .then(() => {
+
+                    return instance.createExchange(instance.config.globalExchange, 'topic');
+                })
+                .then(() => {
+
+                    return instance.createQueue(queueName);
+                })
+                .then(() => {
+
+                    const promises = patterns.map((pattern) => {
+
+                        return instance.channel.bindQueue(queueName, instance.config.globalExchange, pattern);
+                    });
+
+                    return Promise.all(promises);
+                });
+        });
+
+        after(() => {
+
+            return instance._autoConnectChannel()
+                .then(() => {
+
+                    return instance.deleteExchange(instance.config.globalExchange);
+                })
+                .then(() => {
+
+                    return instance.deleteQueue(queueName);
+                });
+        });
+
+        it('should ack a message off the queue', () => {
+
+            return instance.publish(message)
+                .then(() => {
+
+                    return instance.get(queueName);
+                })
+                .then((payload) => {
+
+                    return instance._ack(payload);
+                })
+                .then(() => {
+
+                    return instance.checkQueue(queueName);
+                })
+                .then((result) => {
+
+                    expect(result.queue).to.be.equal(queueName);
+                    expect(result.messageCount).to.be.equal(0);
+                });
+        });
+    });
+
+    describe('_requeue', () => {
+
+        const queueName = 'test-requeue-queue-1';
+        const message = { name : 'bunnybus', event : 'a' };
+        const patterns = ['a'];
+
+        beforeEach((done) => {
+
+            instance.channel.purgeQueue(queueName, done);
+        });
+
+        before(() => {
+
+            return instance._autoConnectChannel()
+                .then(() => {
+
+                    return instance.createExchange(instance.config.globalExchange, 'topic');
+                })
+                .then(() => {
+
+                    return instance.createQueue(queueName);
+                })
+                .then(() => {
+
+                    const promises = patterns.map((pattern) => {
+
+                        return instance.channel.bindQueue(queueName, instance.config.globalExchange, pattern);
+                    });
+
+                    return Promise.all(promises);
+                });
+        });
+
+        after(() => {
+
+            return instance._autoConnectChannel()
+                .then(() => {
+
+                    return instance.deleteExchange(instance.config.globalExchange);
+                })
+                .then(() => {
+
+                    return instance.deleteQueue(queueName);
+                })
+        });
+
+        it('should requeue a message off the queue', () => {
+
+            return instance.publish(message)
+                .then(() => {
+
+                    return instance.get(queueName);
+                })
+                .then((payload) => {
+
+                    return instance._requeue(payload, queueName);
+                })
+                .then(() => {
+
+                    return instance.checkQueue(queueName);
+                })
+                .then((result) => {
+
+                    expect(result.queue).to.be.equal(queueName);
+                    expect(result.messageCount).to.be.equal(1);
+                });
+        });
+
+        it('should requeue with well formed header properties', () => {
+
+            const publishOptions = {
+                callingModule : 'test'
+            };
+
+            let transactionId = null;
+            let createdAt = null;
+
+            return instance.publish(message, publishOptions)
+                .then(() => {
+
+                    return instance.get(queueName);
+                })
+                .then((payload) => {
+
+                    transactionId = payload.properties.headers.transactionId;
+                    createdAt = payload.properties.headers.createdAt;
+
+                    return instance._requeue(payload, queueName);
+                })
+                .then(() => {
+
+                    return instance.get(queueName);
+                })
+                .then((payload) => {
+
+                    expect(payload.properties.headers.transactionId).to.equal(transactionId);
+                    expect(payload.properties.headers.createAt).to.equal(createdAt);
+                    expect(payload.properties.headers.callingModule).to.equal(publishOptions.callingModule);
+                    expect(payload.properties.headers.requeuedAt).to.exist();
+                    expect(payload.properties.headers.retryCount).to.equal(1);
+                });
+        });
+    });
+
+    describe('_reject', () => {
+
+        const errorQueueName = 'test-reject-error-queue-1';
+        const queueName = 'test-reject-queue-1';
+        const message = { name : 'bunnybus', event : 'a' };
+        const patterns = ['a'];
+
+        beforeEach((done) => {
+
+            instance.channel.purgeQueue(queueName, done);
+        });
+
+        before(() => {
+
+            return instance._autoConnectChannel()
+                .then(instance.createExchange.bind(instance, instance.config.globalExchange, 'topic'))
+                .then(instance.createQueue.bind(instance, queueName))
+                .then(() => {
+
+                    const promises = patterns.map((pattern) => {
+
+                        return instance.channel.bindQueue(queueName, instance.config.globalExchange, pattern);
+                    });
+
+                    return Promise.all(promises);
+                });
+        });
+
+        after(() => {
+
+            return instance._autoConnectChannel()
+                .then(instance.deleteExchange.bind(instance, instance.config.globalExchange))
+                .then(instance.deleteQueue.bind(instance, queueName));
+        });
+
+        afterEach(() => {
+
+            return instance.deleteQueue(errorQueueName);
+        });
+
+        it('should reject a message off the queue', () => {
+
+            return instance.publish(message)
+                .then(instance.get.bind(instance, queueName))
+                .then((payload) => {
+
+                    return instance._reject(payload, errorQueueName);
+                })
+                .then(instance.checkQueue.bind(instance, errorQueueName))
+                .then((result) => {
+
+                    expect(result.queue).to.be.equal(errorQueueName);
+                    expect(result.messageCount).to.be.equal(1);
+                });
+        });
+
+        it('should requeue with well formed header properties', () => {
+
+            const publishOptions = {
+                callingModule : 'test'
+            };
+            const requeuedAt = (new Date()).toISOString();
+            const retryCount = 5;
+            let transactionId = null;
+            let createdAt = null;
+
+            return instance.publish(message, publishOptions)
+                .then(instance.get.bind(instance, queueName))
+                .then((payload) => {
+
+                    transactionId = payload.properties.headers.transactionId;
+                    createdAt = payload.properties.headers.createdAt;
+                    payload.properties.headers.requeuedAt = requeuedAt;
+                    payload.properties.headers.retryCount = retryCount;
+
+                    return instance._reject(payload, errorQueueName);
+                })
+                .then(instance.get.bind(instance, errorQueueName))
+                .then((payload) => {
+
+                    expect(payload.properties.headers.transactionId).to.equal(transactionId);
+                    expect(payload.properties.headers.createAt).to.equal(createdAt);
+                    expect(payload.properties.headers.callingModule).to.equal(publishOptions.callingModule);
+                    expect(payload.properties.headers.requeuedAt).to.equal(requeuedAt);
+                    expect(payload.properties.headers.retryCount).to.equal(retryCount);
+                    expect(payload.properties.headers.errorAt).to.exist();
+                });
+        });
+    });
 });
 
 // describe('negative integration tests', () => {
