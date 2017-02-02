@@ -277,204 +277,230 @@ describe('positive integration tests - Promise api', () => {
         });
     });
 
-    // describe('publish', () => {
-    //
-    //     const queueName = 'test-publish-queue-1';
-    //     const message = { name : 'bunnybus' };
-    //     const patterns = ['a', 'a.b', 'b', 'b.b', 'z.*'];
-    //
-    //     before((done) => {
-    //
-    //         Async.waterfall([
-    //             instance._autoConnectChannel,
-    //             instance.createExchange.bind(instance, instance.config.globalExchange, 'topic'),
-    //             instance.createQueue.bind(instance, queueName),
-    //             (result, cb) => {
-    //
-    //                 Async.map(
-    //                     patterns,
-    //                     (item, mapCB) => {
-    //
-    //                         instance.channel.bindQueue(queueName, instance.config.globalExchange, item, null, mapCB);
-    //                     },
-    //                     cb);
-    //             }
-    //         ], done);
-    //     });
-    //
-    //     after((done) => {
-    //
-    //         Async.waterfall([
-    //             instance._autoConnectChannel,
-    //             instance.deleteExchange.bind(instance, instance.config.globalExchange),
-    //             instance.deleteQueue.bind(instance, queueName)
-    //         ], done);
-    //     });
-    //
-    //     it('should publish for route `a`', (done) => {
-    //
-    //         Assertions.assertPublish(instance, message, queueName, 'a', null, null, true, done);
-    //     });
-    //
-    //     it('should publish for route `a.b`', (done) => {
-    //
-    //         Assertions.assertPublish(instance, message, queueName, 'a.b', null, null, true, done);
-    //     });
-    //
-    //     it('should publish for route `b`', (done) => {
-    //
-    //         Assertions.assertPublish(instance, message, queueName, 'b', null, null, true, done);
-    //     });
-    //
-    //     it('should publish for route `b.b`', (done) => {
-    //
-    //         Assertions.assertPublish(instance, message, queueName, 'b.b', null, null, true, done);
-    //     });
-    //
-    //     it('should publish for route `z.a`', (done) => {
-    //
-    //         Assertions.assertPublish(instance, message, queueName, 'z.a', null, null, true, done);
-    //     });
-    //
-    //     it('should publish for route `z` but not route to queue', (done) => {
-    //
-    //         Assertions.assertPublish(instance, message, queueName, 'z', null, null, false, done);
-    //     });
-    //
-    //     it('should proxy `callingModule` when supplied', (done) => {
-    //
-    //         Assertions.assertPublish(instance, message, queueName, 'a', null, 'someModule', true, done);
-    //     });
-    //
-    //     it('should proxy `transactionId` when supplied', (done) => {
-    //
-    //         Assertions.assertPublish(instance, message, queueName, 'a', 'someTransactionId', null, true, done);
-    //     });
-    //
-    //     it('should publish for route `a` when route key is provided in the message', (done) => {
-    //
-    //         const messageWithRoute = Object.assign({}, message, { event : 'a' });
-    //         Assertions.assertPublish(instance, messageWithRoute, queueName, null, null, null, true, done);
-    //     });
-    // });
-    //
-    // describe('subscribe / unsubscribe (single queue)', () => {
-    //
-    //     const queueName = 'test-subscribe-queue-1';
-    //     const errorQueueName = `${queueName}_error`;
-    //     const message = { event : 'a.b', name : 'bunnybus' };
-    //
-    //     before((done) => {
-    //
-    //         Async.waterfall([
-    //             instance._autoConnectChannel,
-    //             instance.deleteExchange.bind(instance, instance.config.globalExchange),
-    //             instance.deleteQueue.bind(instance, queueName),
-    //             instance.deleteQueue.bind(instance, errorQueueName)
-    //         ], done);
-    //     });
-    //
-    //     afterEach((done) => {
-    //
-    //         instance.unsubscribe(queueName, done);
-    //     });
-    //
-    //     after((done) => {
-    //
-    //         Async.waterfall([
-    //             instance._autoConnectChannel,
-    //             instance.deleteExchange.bind(instance, instance.config.globalExchange),
-    //             instance.deleteQueue.bind(instance, queueName),
-    //             instance.deleteQueue.bind(instance, errorQueueName)
-    //         ], done);
-    //     });
-    //
-    //     it('should consume message from queue and acknowledge off', (done) => {
-    //
-    //         const handlers = {};
-    //         handlers[message.event] = (consumedMessage, ack, reject, requeue) => {
-    //
-    //             expect(consumedMessage.name).to.equal(message.name);
-    //             ack(null, done);
-    //         };
-    //
-    //         Async.waterfall([
-    //             instance.subscribe.bind(instance, queueName, handlers),
-    //             instance.publish.bind(instance, message)
-    //         ],
-    //         (err) => {
-    //
-    //             if (err) {
-    //                 done(err);
-    //             }
-    //         });
-    //     });
-    //
-    //     it('should consume message from queue and reject off', (done) => {
-    //
-    //         const handlers = {};
-    //         handlers[message.event] = (consumedMessage, ack, reject, requeue) => {
-    //
-    //             expect(consumedMessage.name).to.equal(message.name);
-    //
-    //             Async.waterfall([
-    //                 (cb) => reject(null, cb),
-    //                 (cb) => instance.get(errorQueueName, null, cb),
-    //                 (payload, cb) => {
-    //
-    //                     expect(payload).to.exist();
-    //                     const errorMessage = JSON.parse(payload.content.toString());
-    //                     expect(errorMessage).to.equal(message);
-    //                     cb();
-    //                 }
-    //             ], done);
-    //         };
-    //
-    //         Async.waterfall([
-    //             instance.subscribe.bind(instance, queueName, handlers),
-    //             instance.publish.bind(instance, message)
-    //         ],
-    //         (err) => {
-    //
-    //             if (err) {
-    //                 done(err);
-    //             }
-    //         });
-    //     });
-    //
-    //     it('should consume message from queue and requeue off on maxRetryCount', { timeout : 0 }, (done) => {
-    //
-    //         const handlers = {};
-    //         const maxRetryCount = 3;
-    //         let retryCount = 0;
-    //         handlers[message.event] = (consumedMessage, ack, reject, requeue) => {
-    //
-    //             ++retryCount;
-    //
-    //             if (retryCount < maxRetryCount) {
-    //                 console.log('requeuing');
-    //                 requeue(() => { });
-    //             }
-    //             else {
-    //                 console.log('retry reached', retryCount, maxRetryCount);
-    //                 expect(retryCount).to.equal(maxRetryCount);
-    //                 ack(done);
-    //             }
-    //         };
-    //
-    //         Async.waterfall([
-    //             instance.subscribe.bind(instance, queueName, handlers, { maxRetryCount }),
-    //             instance.publish.bind(instance, message)
-    //         ],
-    //         (err) => {
-    //
-    //             if (err) {
-    //                 done(err);
-    //             }
-    //         });
-    //     });
-    // });
-    //
+    describe('publish', () => {
+
+        const queueName = 'test-publish-queue-1';
+        const message = { name : 'bunnybus' };
+        const patterns = ['a', 'a.b', 'b', 'b.b', 'z.*'];
+
+        before(() => {
+
+            return instance._autoConnectChannel()
+                .then(() => {
+
+                    return instance.createExchange(instance.config.globalExchange, 'topic');
+                })
+                .then(() => {
+
+                    return instance.createQueue(queueName);
+                })
+                .then(() => {
+
+                    const promises = patterns.map((pattern) => {
+
+                        return instance.channel.bindQueue(queueName, instance.config.globalExchange, pattern);
+                    });
+
+                    return Promise.all(promises);
+                });
+        });
+
+        after(() => {
+
+            return instance._autoConnectChannel()
+                .then(() => {
+
+                    return instance.deleteExchange(instance.config.globalExchange);
+                })
+                .then(() => {
+
+                    return instance.deleteQueue(queueName);
+                });
+        });
+
+        it('should publish for route `a`', () => {
+
+            return Assertions.assertPublishPromise(instance, message, queueName, 'a', null, null, true);
+        });
+
+        it('should publish for route `a.b`', () => {
+
+            return Assertions.assertPublishPromise(instance, message, queueName, 'a.b', null, null, true);
+        });
+
+        it('should publish for route `b`', () => {
+
+            return Assertions.assertPublishPromise(instance, message, queueName, 'b', null, null, true);
+        });
+
+        it('should publish for route `b.b`', () => {
+
+            return Assertions.assertPublishPromise(instance, message, queueName, 'b.b', null, null, true);
+        });
+
+        it('should publish for route `z.a`', () => {
+
+            return Assertions.assertPublishPromise(instance, message, queueName, 'z.a', null, null, true);
+        });
+
+        it('should publish for route `z` but not route to queue', () => {
+
+            return Assertions.assertPublishPromise(instance, message, queueName, 'z', null, null, false);
+        });
+
+        it('should proxy `callingModule` when supplied', () => {
+
+            return Assertions.assertPublishPromise(instance, message, queueName, 'a', null, 'someModule', true);
+        });
+
+        it('should proxy `transactionId` when supplied', () => {
+
+            return Assertions.assertPublishPromise(instance, message, queueName, 'a', 'someTransactionId', null, true);
+        });
+
+        it('should publish for route `a` when route key is provided in the message', () => {
+
+            const messageWithRoute = Object.assign({}, message, { event : 'a' });
+
+            return Assertions.assertPublishPromise(instance, messageWithRoute, queueName, null, null, null, true);
+        });
+    });
+
+    describe('subscribe / unsubscribe (single queue)', () => {
+
+        const queueName = 'test-subscribe-queue-1';
+        const errorQueueName = `${queueName}_error`;
+        const message = { event : 'a.b', name : 'bunnybus' };
+
+        before(() => {
+
+            return instance._autoConnectChannel()
+                .then(() => {
+
+                    return instance.deleteExchange(instance.config.globalExchange);
+                })
+                .then(() => {
+
+                    return instance.deleteQueue(queueName);
+                })
+                .then(() => {
+
+                    return instance.deleteQueue(errorQueueName);
+                });
+        });
+
+        afterEach(() => {
+
+            return instance.unsubscribe(queueName);
+        });
+
+        after(() => {
+
+            return instance._autoConnectChannel()
+                .then(() => {
+
+                    return instance.deleteExchange(instance.config.globalExchange);
+                })
+                .then(() => {
+
+                    return instance.deleteQueue(queueName);
+                })
+                .then(() => {
+
+                    return instance.deleteQueue(errorQueueName);
+                });
+        });
+
+        it('should consume message from queue and acknowledge off', () => {
+
+             return new Promise((resolve, reject) => {
+
+                    const handlers = {};
+
+                    handlers[message.event] = (consumedMessage, ack) => {
+
+                        expect(consumedMessage.name).to.equal(message.name);
+
+                        return ack()
+                            .then(resolve);
+                    };
+
+                    return instance.subscribe(queueName, handlers)
+                        .then(() => {
+
+                            return instance.publish(message);
+                        })
+                        .catch(reject);
+                });
+        });
+
+        it('should consume message from queue and reject off', () => {
+
+            return new Promise((resolve, reject) => {
+
+                const handlers = {};
+
+                handlers[message.event] = (consumedMessage, ack, rej) => {
+
+                    expect(consumedMessage.name).to.equal(message.name);
+
+                    return rej()
+                        .then(() => {
+
+                            return instance.get(errorQueueName);
+                        })
+                        .then((payload) => {
+
+                            expect(payload).to.exist();
+
+                            const errorMessage = JSON.parse(payload.content.toString());
+
+                            expect(errorMessage).to.equal(message);
+                        })
+                        .then(resolve);
+                };
+
+                return instance.subscribe(queueName, handlers)
+                    .then(() =>{
+
+                        return instance.publish(message);
+                    })
+                    .catch(reject);
+            });
+        });
+
+        it('should consume message from queue and requeue off on maxRetryCount', { timeout : 0 }, () => {
+
+            return new Promise((resolve, reject) => {
+
+                const handlers = {};
+                const maxRetryCount = 3;
+                let retryCount = 0;
+                handlers[message.event] = (consumedMessage, ack, rej, requeue) => {
+
+                    ++retryCount;
+
+                    if (retryCount < maxRetryCount) {
+                        return requeue();
+                    }
+                    else {
+                        expect(retryCount).to.equal(maxRetryCount);
+
+                        return ack()
+                            .then(resolve);
+                    }
+                };
+
+                return instance.subscribe(queueName, handlers, { maxRetryCount })
+                    .then(() => {
+
+                        return instance.publish(message);
+                    })
+                    .catch(reject);
+            });
+        });
+    });
+
     // describe('subscribe / unsubscribe (multiple queue)', () => {
     //
     //     const queueName1 = 'test-subscribe-multiple-queue-1';
