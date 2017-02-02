@@ -24,7 +24,7 @@
     - [`send(message, queue, [options, [callback]])`](#sendmessage-queue-options-callback)
     - [`get(queue, [options, [callback]])`](#getqueue-options-callback)
   - [Events](#Events)
-    -[Examples](#Examples)
+    - [Examples](#Examples)
   
 ##BunnyBus
 
