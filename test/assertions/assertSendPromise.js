@@ -36,7 +36,7 @@ const assertSendPromise = (instance, message, queueName, transactionId, callingM
             }
 
             return instance.channel.ack(payload);
-        })
+        });
 };
 
 module.exports = assertSendPromise;

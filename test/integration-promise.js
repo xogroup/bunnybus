@@ -28,14 +28,14 @@ describe('positive integration tests - Promise api', () => {
 
     describe('connection', () => {
 
-        before((done) => {
+        before(() => {
 
-            instance.closeConnection(done);
+            return instance.closeConnection();
         });
 
-        afterEach((done) => {
+        afterEach(() => {
 
-            instance.closeConnection(done);
+            return instance.closeConnection();
         });
 
         it('should create connection with default values', () => {
@@ -219,10 +219,7 @@ describe('positive integration tests - Promise api', () => {
         before(() => {
 
             return instance._autoConnectChannel()
-                .then(() => {
-
-                    return instance.deleteExchange(exchangeName);
-                });
+                .then(instance.deleteExchange.bind(instance, exchangeName));
         });
 
         beforeEach(() => {
@@ -286,14 +283,8 @@ describe('positive integration tests - Promise api', () => {
         before(() => {
 
             return instance._autoConnectChannel()
-                .then(() => {
-
-                    return instance.createExchange(instance.config.globalExchange, 'topic');
-                })
-                .then(() => {
-
-                    return instance.createQueue(queueName);
-                })
+                .then(instance.createExchange.bind(instance, instance.config.globalExchange, 'topic'))
+                .then(instance.createQueue.bind(instance, queueName))
                 .then(() => {
 
                     const promises = patterns.map((pattern) => {
@@ -308,14 +299,8 @@ describe('positive integration tests - Promise api', () => {
         after(() => {
 
             return instance._autoConnectChannel()
-                .then(() => {
-
-                    return instance.deleteExchange(instance.config.globalExchange);
-                })
-                .then(() => {
-
-                    return instance.deleteQueue(queueName);
-                });
+                .then(instance.deleteExchange.bind(instance, instance.config.globalExchange))
+                .then(instance.deleteQueue.bind(instance, queueName));
         });
 
         it('should publish for route `a`', () => {
@@ -375,18 +360,9 @@ describe('positive integration tests - Promise api', () => {
         before(() => {
 
             return instance._autoConnectChannel()
-                .then(() => {
-
-                    return instance.deleteExchange(instance.config.globalExchange);
-                })
-                .then(() => {
-
-                    return instance.deleteQueue(queueName);
-                })
-                .then(() => {
-
-                    return instance.deleteQueue(errorQueueName);
-                });
+                .then(instance.deleteExchange.bind(instance, instance.config.globalExchange))
+                .then(instance.deleteQueue.bind(instance, queueName))
+                .then(instance.deleteQueue.bind(instance, errorQueueName));
         });
 
         afterEach(() => {
@@ -397,41 +373,29 @@ describe('positive integration tests - Promise api', () => {
         after(() => {
 
             return instance._autoConnectChannel()
-                .then(() => {
-
-                    return instance.deleteExchange(instance.config.globalExchange);
-                })
-                .then(() => {
-
-                    return instance.deleteQueue(queueName);
-                })
-                .then(() => {
-
-                    return instance.deleteQueue(errorQueueName);
-                });
+                .then(instance.deleteExchange.bind(instance, instance.config.globalExchange))
+                .then(instance.deleteQueue.bind(instance, queueName))
+                .then(instance.deleteQueue.bind(instance, errorQueueName));
         });
 
         it('should consume message from queue and acknowledge off', () => {
 
-             return new Promise((resolve, reject) => {
+            return new Promise((resolve, reject) => {
 
-                    const handlers = {};
+                const handlers = {};
 
-                    handlers[message.event] = (consumedMessage, ack) => {
+                handlers[message.event] = (consumedMessage, ack) => {
 
-                        expect(consumedMessage.name).to.equal(message.name);
+                    expect(consumedMessage.name).to.equal(message.name);
 
-                        return ack()
-                            .then(resolve);
-                    };
+                    return ack()
+                        .then(resolve);
+                };
 
-                    return instance.subscribe(queueName, handlers)
-                        .then(() => {
-
-                            return instance.publish(message);
-                        })
-                        .catch(reject);
-                });
+                return instance.subscribe(queueName, handlers)
+                    .then(instance.publish.bind(instance, message))
+                    .catch(reject);
+            });
         });
 
         it('should consume message from queue and reject off', () => {
@@ -445,10 +409,7 @@ describe('positive integration tests - Promise api', () => {
                     expect(consumedMessage.name).to.equal(message.name);
 
                     return rej()
-                        .then(() => {
-
-                            return instance.get(errorQueueName);
-                        })
+                        .then(instance.get.bind(instance, errorQueueName))
                         .then((payload) => {
 
                             expect(payload).to.exist();
@@ -461,10 +422,7 @@ describe('positive integration tests - Promise api', () => {
                 };
 
                 return instance.subscribe(queueName, handlers)
-                    .then(() =>{
-
-                        return instance.publish(message);
-                    })
+                    .then(instance.publish.bind(instance, message))
                     .catch(reject);
             });
         });
@@ -483,19 +441,15 @@ describe('positive integration tests - Promise api', () => {
                     if (retryCount < maxRetryCount) {
                         return requeue();
                     }
-                    else {
-                        expect(retryCount).to.equal(maxRetryCount);
 
-                        return ack()
-                            .then(resolve);
-                    }
+                    expect(retryCount).to.equal(maxRetryCount);
+
+                    return ack()
+                        .then(resolve);
                 };
 
                 return instance.subscribe(queueName, handlers, { maxRetryCount })
-                    .then(() => {
-
-                        return instance.publish(message);
-                    })
+                    .then(instance.publish.bind(instance, message))
                     .catch(reject);
             });
         });
@@ -510,18 +464,9 @@ describe('positive integration tests - Promise api', () => {
         before(() => {
 
             return instance._autoConnectChannel()
-                .then(() => {
-
-                    return instance.deleteExchange(instance.config.globalExchange);
-                })
-                .then(() => {
-
-                    return instance.deleteQueue(queueName1);
-                })
-                .then(() => {
-
-                    return instance.deleteQueue(queueName2);
-                });
+                .then(instance.deleteExchange.bind(instance, instance.config.globalExchange))
+                .then(instance.deleteQueue.bind(instance, queueName1))
+                .then(instance.deleteQueue.bind(instance, queueName2));
         });
 
         afterEach(() => {
@@ -535,22 +480,14 @@ describe('positive integration tests - Promise api', () => {
         after(() => {
 
             return instance._autoConnectChannel()
-                .then(() => {
-
-                    return instance.deleteExchange(instance.config.globalExchange);
-                })
-                .then(() => {
-
-                    return instance.deleteQueue(queueName1);
-                }).then(() => {
-
-                    return instance.deleteQueue(queueName2);
-                });
+                .then(instance.deleteExchange.bind(instance, instance.config.globalExchange))
+                .then(instance.deleteQueue.bind(instance, queueName1))
+                .then(instance.deleteQueue.bind(instance, queueName2));
         });
 
         it('should consume message from two queues and acknowledge off', () => {
 
-           return new Promise((resolve, reject) => {
+            return new Promise((resolve, reject) => {
 
                 const handlers = {};
                 let counter = 0;
@@ -570,14 +507,8 @@ describe('positive integration tests - Promise api', () => {
                 };
 
                 return instance.subscribe(queueName1, handlers)
-                    .then(() => {
-
-                        return instance.subscribe(queueName2, handlers);
-                    })
-                    .then(() => {
-
-                        return instance.publish(message);
-                    })
+                    .then(instance.subscribe.bind(instance, queueName2, handlers))
+                    .then(instance.publish.bind(instance, message))
                     .catch(reject);
             });
         });
@@ -592,14 +523,8 @@ describe('positive integration tests - Promise api', () => {
         before(() => {
 
             return instance._autoConnectChannel()
-                .then(() => {
-
-                    return instance.createExchange(instance.config.globalExchange, 'topic');
-                })
-                .then(() => {
-
-                    return instance.createQueue(queueName);
-                })
+                .then(instance.createExchange.bind(instance, instance.config.globalExchange, 'topic'))
+                .then(instance.createQueue.bind(instance, queueName))
                 .then(() => {
 
                     const promises = patterns.map((pattern) => {
@@ -614,31 +539,16 @@ describe('positive integration tests - Promise api', () => {
         after(() => {
 
             return instance._autoConnectChannel()
-                .then(() => {
-
-                    return instance.deleteExchange(instance.config.globalExchange);
-                })
-                .then(() => {
-
-                    return instance.deleteQueue(queueName);
-                });
+                .then(instance.deleteExchange.bind(instance, instance.config.globalExchange))
+                .then(instance.deleteQueue.bind(instance, queueName));
         });
 
         it('should ack a message off the queue', () => {
 
             return instance.publish(message)
-                .then(() => {
-
-                    return instance.get(queueName);
-                })
-                .then((payload) => {
-
-                    return instance._ack(payload);
-                })
-                .then(() => {
-
-                    return instance.checkQueue(queueName);
-                })
+                .then(instance.get.bind(instance, queueName))
+                .then(instance._ack.bind(instance))
+                .then(instance.checkQueue.bind(instance, queueName))
                 .then((result) => {
 
                     expect(result.queue).to.be.equal(queueName);
@@ -661,14 +571,8 @@ describe('positive integration tests - Promise api', () => {
         before(() => {
 
             return instance._autoConnectChannel()
-                .then(() => {
-
-                    return instance.createExchange(instance.config.globalExchange, 'topic');
-                })
-                .then(() => {
-
-                    return instance.createQueue(queueName);
-                })
+                .then(instance.createExchange.bind(instance, instance.config.globalExchange, 'topic'))
+                .then(instance.createQueue.bind(instance, queueName))
                 .then(() => {
 
                     const promises = patterns.map((pattern) => {
@@ -683,31 +587,19 @@ describe('positive integration tests - Promise api', () => {
         after(() => {
 
             return instance._autoConnectChannel()
-                .then(() => {
-
-                    return instance.deleteExchange(instance.config.globalExchange);
-                })
-                .then(() => {
-
-                    return instance.deleteQueue(queueName);
-                })
+                .then(instance.deleteExchange.bind(instance, instance.config.globalExchange))
+                .then(instance.deleteQueue.bind(instance, queueName));
         });
 
         it('should requeue a message off the queue', () => {
 
             return instance.publish(message)
-                .then(() => {
-
-                    return instance.get(queueName);
-                })
+                .then(instance.get.bind(instance, queueName))
                 .then((payload) => {
 
                     return instance._requeue(payload, queueName);
                 })
-                .then(() => {
-
-                    return instance.checkQueue(queueName);
-                })
+                .then(instance.checkQueue.bind(instance, queueName))
                 .then((result) => {
 
                     expect(result.queue).to.be.equal(queueName);
@@ -725,10 +617,7 @@ describe('positive integration tests - Promise api', () => {
             let createdAt = null;
 
             return instance.publish(message, publishOptions)
-                .then(() => {
-
-                    return instance.get(queueName);
-                })
+                .then(instance.get.bind(instance, queueName))
                 .then((payload) => {
 
                     transactionId = payload.properties.headers.transactionId;
@@ -736,10 +625,7 @@ describe('positive integration tests - Promise api', () => {
 
                     return instance._requeue(payload, queueName);
                 })
-                .then(() => {
-
-                    return instance.get(queueName);
-                })
+                .then(instance.get.bind(instance, queueName))
                 .then((payload) => {
 
                     expect(payload.properties.headers.transactionId).to.equal(transactionId);
