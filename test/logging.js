@@ -49,4 +49,29 @@ describe('logging', () => {
 
         Assertions.assertLogger(instance, 'debug', inputMessage, done);
     });
+
+    it('should call custom info handler', (done) => {
+
+        Assertions.assertCustomLogger(instance, 'info', inputMessage, done);
+    });
+
+    it('should call custom error handler', (done) => {
+
+        Assertions.assertCustomLogger(instance, 'error', inputMessage, done);
+    });
+
+    it('should call custom warn handler', (done) => {
+
+        Assertions.assertCustomLogger(instance, 'warn', inputMessage, done);
+    });
+
+    it('should call custom fatal handler', (done) => {
+
+        Assertions.assertCustomLogger(instance, 'fatal', inputMessage, done);
+    });
+
+    it('should call custom debug handler', (done) => {
+
+        Assertions.assertCustomLogger(instance, 'debug', inputMessage, done);
+    });
 });
