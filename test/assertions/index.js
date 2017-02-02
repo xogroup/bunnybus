@@ -5,6 +5,6 @@ module.exports = {
     assertSend                    : require('./assertSend'),
     assertConvertToBuffer         : require('./assertConvertToBuffer'),
     assertReduceCallback          : require('./assertReduceCallback'),
-    assertUndefinedReduceCallback : require('./assertUndefinedReduceCallback')
-
+    assertUndefinedReduceCallback : require('./assertUndefinedReduceCallback'),
+    assertLogger                  : require('./assertLogger')
 };

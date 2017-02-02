@@ -23,7 +23,7 @@
  - [`send(message, queue, [options, [callback]])`](#sendmessage-queue-options-callback)
  - [`get(queue, [options, [callback]])`](#getqueue-options-callback)
   
-## BunnyBus
+##BunnyBus
 
 The `BunnyBus` is a class that instantiates into a singleton.  It hosts all features for communicating with RabbitMQ to provide an easy to use enterprise bus facade.
 
