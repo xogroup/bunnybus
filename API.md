@@ -1,27 +1,30 @@
 # 1.0.0 API Reference
 
 - [BunnyBus](#BunnyBus)
- - [`new BunnyBus(config)`](#new-bunnybusconfig)
- - [`config`](#config)
- - [`connectionString`](#connectionString)
- - [`connection`](#connection)
- - [`hasConnection`](#hasConnection)
- - [`channel`](#channel)
- - [`hasChannel`](#hasChannel)
- - [`createConnection([callback])`](#createConnectioncallback)
- - [`closeConnection([callback])`](#closeConnectioncallback)
- - [`createChannel([callback])`](#createChannelcallback)
- - [`closeChannel([callback])`](#closeChannelcallback)
- - [`createExchange(name, type, [options, [callback]])`](#createExchangename-type-options-callback)
- - [`deleteExchange(name, [options, [callback]])`](#deleteExchangename-options-callback)
- - [`checkExchange(name, [callback])`](#checkExchangename-callback)
- - [`createQueue(name, [options, [callback]])`](#createQueuename-options-callback)
- - [`deleteQueue(name, [options, [callback]])`](#deleteQueuename-options-callback)
- - [`checkQueue(name, [callback])`](#checkQueuename-callback)
- - [`publish(message, [options, [callback]])`](#publishmessage-options-callback)
- - [`subscribe(queue, handlers, [options, [callback]])`](#subscribequeue-handlers-options-callback)
- - [`send(message, queue, [options, [callback]])`](#sendmessage-queue-options-callback)
- - [`get(queue, [options, [callback]])`](#getqueue-options-callback)
+  - [`new BunnyBus(config)`](#new-bunnybusconfig)
+    - [`config`](#config)
+    - [`logger`](#logger)
+    - [`connectionString`](#connectionString)
+    - [`connection`](#connection)
+    - [`hasConnection`](#hasConnection)
+    - [`channel`](#channel)
+    - [`hasChannel`](#hasChannel)
+    - [`createConnection([callback])`](#createConnectioncallback)
+    - [`closeConnection([callback])`](#closeConnectioncallback)
+    - [`createChannel([callback])`](#createChannelcallback)
+    - [`closeChannel([callback])`](#closeChannelcallback)
+    - [`createExchange(name, type, [options, [callback]])`](#createExchangename-type-options-callback)
+    - [`deleteExchange(name, [options, [callback]])`](#deleteExchangename-options-callback)
+    - [`checkExchange(name, [callback])`](#checkExchangename-callback)
+    - [`createQueue(name, [options, [callback]])`](#createQueuename-options-callback)
+    - [`deleteQueue(name, [options, [callback]])`](#deleteQueuename-options-callback)
+    - [`checkQueue(name, [callback])`](#checkQueuename-callback)
+    - [`publish(message, [options, [callback]])`](#publishmessage-options-callback)
+    - [`subscribe(queue, handlers, [options, [callback]])`](#subscribequeue-handlers-options-callback)
+    - [`send(message, queue, [options, [callback]])`](#sendmessage-queue-options-callback)
+    - [`get(queue, [options, [callback]])`](#getqueue-options-callback)
+  - [Events](#Events)
+    -[Examples](#Examples)
   
 ##BunnyBus
 
@@ -60,6 +63,29 @@ const bunnybus = new BunnyBus();
 bunnybus.config = { server : 'red-bee.cloudamqp.com'};
 
 //do work
+```
+
+###`logger`
+
+Setter and Getter for logger.  By default, `BunnyBus` will instantiate and set a logger using the `EventEmitter`.  When a custom logger is set, `BunnyBus` will **no** longer emit log messages.
+
+```Javascript
+const BunnyBus = require('bunnybus');
+const bunnybus = new BunnyBus();
+
+const logHandler = (message) => {
+
+    //log something to some where
+};
+
+//custom logger
+bunnybus.logger = { 
+    info = logHandler,
+    debug = logHandler,
+    warn = logHandler,
+    error = logHandler,
+    fatal = logHandler
+};
 ```
 
 ###`connectionString`
@@ -386,5 +412,29 @@ const message = {
 bunnyBus.get('queue1', (err, result) => {
     //result contains an rabbit payload object
     //JSON.tostring(result.content) will contain the message that was sent.
+});
+```
+
+##Events (`EventEmitter`)
+
+`BunnyBus` extends `EventEmitter` for emitting logs and system specific events.  Subscription to these events are optional.
+
+* `log.info` - info level logging message.
+* `log.debug` - debug level logging message.
+* `log.warn` - warn level logging message.
+* `log.error` - error level logging message.
+* `log.fatal` - fatal level logging message.
+
+###Examples
+
+Logging on error events with [pino](https://github.com/pinojs/pino)
+```Javascript
+const BunnyBus = require('bunnybus');
+const bunnyBus = new BunnyBus();
+const pino = require('pino')();
+
+bunnyBus.on('log.error', (message) => {
+
+    pino.error(message);
 });
 ```
