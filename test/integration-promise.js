@@ -17,6 +17,11 @@ const expect = Code.expect;
 const BunnyBus = require('../lib');
 let instance = undefined;
 
+const throwError = () => {
+
+    throw new Error('Test should not have reached the .then block');
+};
+
 describe('positive integration tests - Promise api', () => {
 
     before((done) => {
@@ -728,199 +733,211 @@ describe('positive integration tests - Promise api', () => {
     });
 });
 
-// describe('negative integration tests', () => {
-//
-//     before((done) => {
-//
-//         instance = new BunnyBus();
-//         instance.config = BunnyBus.DEFAULT_SERVER_CONFIGURATION;
-//         done();
-//     });
-//
-//     describe('channel', () => {
-//
-//         beforeEach((done) => {
-//
-//             instance.closeConnection(done);
-//         });
-//
-//         it('should throw NoConnectionError when connection does not pre-exist', (done) => {
-//
-//             instance.createChannel((err) => {
-//
-//                 expect(err).to.be.an.error(Exceptions.NoConnectionError);
-//                 done();
-//             });
-//         });
-//     });
-//
-//     describe('queue', () => {
-//
-//         const queueName = 'test-queue-1';
-//
-//         beforeEach((done) => {
-//
-//             instance.closeConnection(done);
-//         });
-//
-//         it('should throw NoChannelError when calling createQueue and connection does not pre-exist', (done) => {
-//
-//             instance.createQueue(queueName, (err) => {
-//
-//                 expect(err).to.be.an.error(Exceptions.NoChannelError);
-//                 done();
-//             });
-//         });
-//
-//         it('should throw NoChannelError when calling checkQueue and connection does not pre-exist', (done) => {
-//
-//             instance.checkQueue(queueName, (err) => {
-//
-//                 expect(err).to.be.an.error(Exceptions.NoChannelError);
-//                 done();
-//             });
-//         });
-//
-//         it('should throw NoChannelError when calling deleteQueue and connection does not pre-exist', (done) => {
-//
-//             instance.deleteQueue(queueName, (err) => {
-//
-//                 expect(err).to.be.an.error(Exceptions.NoChannelError);
-//                 done();
-//             });
-//         });
-//     });
-//
-//     describe('exchange', () => {
-//
-//         const exchangeName = 'test-exchange-1';
-//
-//         beforeEach((done) => {
-//
-//             instance.closeConnection(done);
-//         });
-//
-//         it('should throw NoChannelError when calling createExcahnge and connection does not pre-exist', (done) => {
-//
-//             instance.createExchange(exchangeName, '', (err) => {
-//
-//                 expect(err).to.be.an.error(Exceptions.NoChannelError);
-//                 done();
-//             });
-//         });
-//
-//         it('should throw NoChannelError when calling checkExchange and connection does not pre-exist', (done) => {
-//
-//             instance.checkExchange(exchangeName, (err) => {
-//
-//                 expect(err).to.be.an.error(Exceptions.NoChannelError);
-//                 done();
-//             });
-//         });
-//
-//         it('should throw NoChannelError when calling deleteExchange and connection does not pre-exist', (done) => {
-//
-//             instance.deleteExchange(exchangeName, (err) => {
-//
-//                 expect(err).to.be.an.error(Exceptions.NoChannelError);
-//                 done();
-//             });
-//         });
-//     });
-//
-//     describe('get', () => {
-//
-//         const queueName = 'test-queue-1';
-//
-//         beforeEach((done) => {
-//
-//             instance.closeConnection(done);
-//         });
-//
-//         it('should throw NoChannelError when calling get and connection does not pre-exist', (done) => {
-//
-//             instance.get(queueName, (err) => {
-//
-//                 expect(err).to.be.an.error(Exceptions.NoChannelError);
-//                 done();
-//             });
-//         });
-//     });
-//
-//     describe('publish', () => {
-//
-//         const message = { name : 'bunnybus' };
-//
-//         it('should throw NoRouteKeyError when calling publish and `options.routeKey` nor `message.event` exist', (done) => {
-//
-//             instance.publish(message, (err) => {
-//
-//                 expect(err).to.be.an.error(Exceptions.NoRouteKeyError);
-//                 done();
-//             });
-//         });
-//     });
-//
-//     describe('acknowledge', () => {
-//
-//         const payload = {
-//             content : new Buffer('hello')
-//         };
-//
-//         beforeEach((done) => {
-//
-//             instance.closeConnection(done);
-//         });
-//
-//         it('should throw NoChannelError when calling _ack and connection does not pre-exist', (done) => {
-//
-//             instance._ack(payload, (err) => {
-//
-//                 expect(err).to.be.an.error(Exceptions.NoChannelError);
-//                 done();
-//             });
-//         });
-//     });
-//
-//     describe('requeue', () => {
-//
-//         const payload = {
-//             content : new Buffer('hello')
-//         };
-//
-//         beforeEach((done) => {
-//
-//             instance.closeConnection(done);
-//         });
-//
-//         it('should throw NoChannelError when calling _requeue and connection does not pre-exist', (done) => {
-//
-//             instance._requeue(payload, '', (err) => {
-//
-//                 expect(err).to.be.an.error(Exceptions.NoChannelError);
-//                 done();
-//             });
-//         });
-//     });
-//
-//     describe('reject', () => {
-//
-//         const payload = {
-//             content : new Buffer('hello')
-//         };
-//
-//         beforeEach((done) => {
-//
-//             instance.closeConnection(done);
-//         });
-//
-//         it('should throw NoChannelError when calling _reject and connection does not pre-exist', (done) => {
-//
-//             instance._reject(payload, '', (err) => {
-//
-//                 expect(err).to.be.an.error(Exceptions.NoChannelError);
-//                 done();
-//             });
-//         });
-//     });
-// });
+describe('negative integration tests', () => {
+
+    before((done) => {
+
+        instance = new BunnyBus();
+        instance.config = BunnyBus.DEFAULT_SERVER_CONFIGURATION;
+        done();
+    });
+
+    describe('channel', () => {
+
+        beforeEach(() => {
+
+            return instance.closeConnection();
+        });
+
+        it('should throw NoConnectionError when connection does not pre-exist', () => {
+
+            return instance.createChannel()
+                .then(throwError)
+                .catch((err) => {
+
+                    expect(err).to.be.an.error(Exceptions.NoConnectionError);
+                });
+        });
+    });
+
+    describe('queue', () => {
+
+        const queueName = 'test-queue-1';
+
+        beforeEach(() => {
+
+            return instance.closeConnection();
+        });
+
+        it('should throw NoChannelError when calling createQueue and connection does not pre-exist', () => {
+
+            return instance.createQueue(queueName)
+                .then(throwError)
+                .catch((err) => {
+
+                    expect(err).to.be.an.error(Exceptions.NoChannelError);
+                });
+        });
+
+        it('should throw NoChannelError when calling checkQueue and connection does not pre-exist', () => {
+
+            return instance.checkQueue(queueName)
+                .then(throwError)
+                .catch((err) => {
+
+                    expect(err).to.be.an.error(Exceptions.NoChannelError);
+                });
+        });
+
+        it('should throw NoChannelError when calling deleteQueue and connection does not pre-exist', () => {
+
+            return instance.deleteQueue(queueName)
+                .then(throwError)
+                .catch((err) => {
+
+                    expect(err).to.be.an.error(Exceptions.NoChannelError);
+                });
+        });
+    });
+
+    describe('exchange', () => {
+
+        const exchangeName = 'test-exchange-1';
+
+        beforeEach(() => {
+
+            return instance.closeConnection();
+        });
+
+        it('should throw NoChannelError when calling createExchange and connection does not pre-exist', () => {
+
+            return instance.createExchange(exchangeName, '')
+                .then(throwError)
+                .catch((err) => {
+
+                    expect(err).to.be.an.error(Exceptions.NoChannelError);
+                });
+        });
+
+        it('should throw NoChannelError when calling checkExchange and connection does not pre-exist', () => {
+
+            return instance.checkExchange(exchangeName)
+                .then(throwError)
+                .catch((err) => {
+
+                    expect(err).to.be.an.error(Exceptions.NoChannelError);
+                });
+        });
+
+        it('should throw NoChannelError when calling deleteExchange and connection does not pre-exist', () => {
+
+            return instance.deleteExchange(exchangeName)
+                .then(throwError)
+                .catch((err) => {
+
+                    expect(err).to.be.an.error(Exceptions.NoChannelError);
+                });
+        });
+    });
+
+    describe('get', () => {
+
+        const queueName = 'test-queue-1';
+
+        beforeEach(() => {
+
+            return instance.closeConnection();
+        });
+
+        it('should throw NoChannelError when calling get and connection does not pre-exist', () => {
+
+            return instance.get(queueName)
+                .then(throwError)
+                .catch((err) => {
+
+                    expect(err).to.be.an.error(Exceptions.NoChannelError);
+                });
+        });
+    });
+
+    describe('publish', () => {
+
+        const message = { name : 'bunnybus' };
+
+        it('should throw NoRouteKeyError when calling publish and `options.routeKey` nor `message.event` exist', () => {
+
+            return instance.publish(message)
+                .then(throwError)
+                .catch((err) => {
+
+                    expect(err).to.be.an.error(Exceptions.NoRouteKeyError);
+                });
+        });
+    });
+
+    describe('acknowledge', () => {
+
+        const payload = {
+            content : new Buffer('hello')
+        };
+
+        beforeEach(() => {
+
+            return instance.closeConnection();
+        });
+
+        it('should throw NoChannelError when calling _ack and connection does not pre-exist', () => {
+
+            return instance._ack(payload)
+                .then(throwError)
+                .catch((err) => {
+
+                    expect(err).to.be.an.error(Exceptions.NoChannelError);
+                });
+        });
+    });
+
+    describe('requeue', () => {
+
+        const payload = {
+            content : new Buffer('hello')
+        };
+
+        beforeEach(() => {
+
+            return instance.closeConnection();
+        });
+
+        it('should throw NoChannelError when calling _requeue and connection does not pre-exist', () => {
+
+            return instance._requeue(payload, '')
+                .then(throwError)
+                .catch((err) => {
+
+                    expect(err).to.be.an.error(Exceptions.NoChannelError);
+                });
+        });
+    });
+
+    describe('reject', () => {
+
+        const payload = {
+            content : new Buffer('hello')
+        };
+
+        beforeEach(() => {
+
+            return instance.closeConnection();
+        });
+
+        it('should throw NoChannelError when calling _reject and connection does not pre-exist', () => {
+
+            return instance._reject(payload, '')
+                .then(throwError)
+                .catch((err) => {
+
+                    expect(err).to.be.an.error(Exceptions.NoChannelError);
+                });
+        });
+    });
+});
