@@ -41,6 +41,9 @@ Creates a new singleton instance of `bunnybus`.
  * `globalExchange` - value of the exchange to transact through for message publishing.  This is the default used when one is not provided as an within the `options` for any `BunnyBus` methods that supports one transactionally.  Defaults to `default-exchange`. *[string]* **Optional**
  * `prefetch` - value of the maximum number of unacknowledged messages allowable in a channel.  Defaults to `5`. *[number]* **Optional**
 
+
+ All methods of `bunnybus` which accept an optional callback function will return a native `Promise` instead if no callback is provided.
+
 ```Javascript
 const BunnyBus = require('bunnybus');
 const bunnyBus = new BunnyBus({ server : 'red-bee.cloudamqp.com' });
@@ -140,6 +143,11 @@ const BunnyBus = require('bunnybus');
 const bunnyBus = new BunnyBus();
 
 bunnyBus.createConnection((err) => {});
+
+// promise api
+bunnyBus.createConnection()
+    .then()
+    .catch((err) => {});
 ```
 
 ###`closeConnection([callback])`
@@ -153,6 +161,11 @@ const BunnyBus = require('bunnybus');
 const bunnyBus = new BunnyBus();
 
 bunnyBus.closeConnection((err) => {});
+
+// promise api
+bunnyBus.closeConnection()
+    .then()
+    .catch((err) => {});
 ```
 
 ###`createChannel([callback])`
@@ -166,6 +179,11 @@ const BunnyBus = require('bunnybus');
 const bunnyBus = new BunnyBus();
 
 bunnyBus.createChannel((err) => {});
+
+// promise api
+bunnyBus.createChannel()
+    .then()
+    .catch((err) => {});
 ```
 
 ###`closeChannel([callback])`
@@ -179,6 +197,11 @@ const BunnyBus = require('bunnybus');
 const bunnyBus = new BunnyBus();
 
 bunnyBus.closeChannel((err) => {});
+
+// promise api
+bunnyBus.closeChannel()
+    .then()
+    .catch((err) => {});
 ```
 
 ###`createExchange(name, type, [options, [callback]])`
@@ -195,6 +218,11 @@ const BunnyBus = require('bunnybus');
 const bunnyBus = new BunnyBus();
 
 bunnyBus.createExchange('default-exchange', 'topic', (err) => {});
+
+// promise api
+bunnyBus.createExchange('default-exchange', 'topic')
+    .then()
+    .catch((err) => {});
 ```
 
 ###`deleteExchange(name, [options, [callback]])`
@@ -210,6 +238,11 @@ const BunnyBus = require('bunnybus');
 const bunnyBus = new BunnyBus();
 
 bunnyBus.deleteExchange('default-exchange', (err) => {});
+
+// promise api
+bunnyBus.deleteExchange('default-exchange')
+    .then()
+    .catch((err) => {});
 ```
 
 ###`checkExchange(name, [callback])`
@@ -224,6 +257,11 @@ const BunnyBus = require('bunnybus');
 const bunnyBus = new BunnyBus();
 
 bunnyBus.checkExchange('default-exchange', (err) => {});
+
+// promise api
+bunnyBus.checkExchange('default-exchange')
+    .then()
+    .catch((err) => {});
 ```
 
 ###`createQueue(name, [options, [callback]])`
@@ -239,6 +277,11 @@ const BunnyBus = require('bunnybus');
 const bunnyBus = new BunnyBus();
 
 bunnyBus.createQueue('queue1', (err) => {});
+
+// promise api
+bunnyBus.createQueue('queue1')
+    .then()
+    .catch((err) => {});
 ```
 
 ###`deleteQueue(name, [options, [callback]])`
@@ -254,6 +297,11 @@ const BunnyBus = require('bunnybus');
 const bunnyBus = new BunnyBus();
 
 bunnyBus.deleteQueue('queue1', (err) => {});
+
+// promise api
+bunnyBus.deleteQueue('queue1')
+    .then()
+    .catch((err) => {});
 ```
 
 ###`checkQueue(name, [callback])`
@@ -268,6 +316,11 @@ const BunnyBus = require('bunnybus');
 const bunnyBus = new BunnyBus();
 
 bunnyBus.checkQueue('queue1', (err) => {});
+
+// promise api
+bunnyBus.checkQueue('queue1')
+    .then()
+    .catch((err) => {});
 ```
 
 ###`publish(message, [options, [callback]])`
@@ -294,6 +347,11 @@ const message = {
 }
 
 bunnyBus.publish(message, (err) => {});
+
+// promise api
+bunnyBus.publish(message)
+    .then()
+    .catch((err) => {});
 ```
 
 ###`subscribe(queue, handlers, [options, [callback]])`
@@ -343,6 +401,27 @@ const handlers = {
 }
 
 bunnyBus.subscribe('queue', handlers, (err) => {});
+
+// promise api
+const handlers = {
+    route.event1 : (message, ack, reject, requeue) => {
+        return ack()
+            .then();
+    },
+    route.event2 : (message, ack, reject, requeue) => {
+        if (//something not ready) {
+            return requeue()
+                .then();
+        } else {
+            return ack()
+                .then();
+        }
+    }
+}
+
+bunnyBus.subscribe('queue', handlers)
+    .then()
+    .catch((err) => {});
 ```
 
 ###`send(message, queue, [options, [callback]])`
@@ -365,6 +444,11 @@ const message = {
 }
 
 bunnyBus.send(message, 'queue1', (err) => {});
+
+// promise api
+bunnyBus.send(message, 'queue1')
+    .then()
+    .catch((err) =>{});
 ```
 
 ###`get(queue, [options, [callback]])`
@@ -387,4 +471,9 @@ bunnyBus.get('queue1', (err, result) => {
     //result contains an rabbit payload object
     //JSON.tostring(result.content) will contain the message that was sent.
 });
+
+// promise api
+bunnyBus.get('queue1')
+    .then((result) => {})
+    .catch((err) =>{});
 ```
