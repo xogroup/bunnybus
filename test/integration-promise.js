@@ -501,71 +501,88 @@ describe('positive integration tests - Promise api', () => {
         });
     });
 
-    // describe('subscribe / unsubscribe (multiple queue)', () => {
-    //
-    //     const queueName1 = 'test-subscribe-multiple-queue-1';
-    //     const queueName2 = 'test-subscribe-multiple-queue-2';
-    //     const message = { event : 'a.b', name : 'bunnybus' };
-    //
-    //     before((done) => {
-    //
-    //         Async.waterfall([
-    //             instance._autoConnectChannel,
-    //             instance.deleteExchange.bind(instance, instance.config.globalExchange),
-    //             instance.deleteQueue.bind(instance, queueName1),
-    //             instance.deleteQueue.bind(instance, queueName2)
-    //         ], done);
-    //     });
-    //
-    //     afterEach((done) => {
-    //
-    //         Async.parallel([
-    //             instance.unsubscribe.bind(instance, queueName1),
-    //             instance.unsubscribe.bind(instance, queueName2)
-    //         ], done);
-    //     });
-    //
-    //     after((done) => {
-    //
-    //         Async.waterfall([
-    //             instance._autoConnectChannel,
-    //             instance.deleteExchange.bind(instance, instance.config.globalExchange),
-    //             instance.deleteQueue.bind(instance, queueName1),
-    //             instance.deleteQueue.bind(instance, queueName2)
-    //         ], done);
-    //     });
-    //
-    //     it('should consume message from two queues and acknowledge off', (done) => {
-    //
-    //         const handlers = {};
-    //         let counter = 0;
-    //
-    //         handlers[message.event] = (consumedMessage, ack, reject, requeue) => {
-    //
-    //             expect(consumedMessage.name).to.equal(message.name);
-    //             ack(() => {
-    //
-    //                 ++counter;
-    //                 if (counter === 2) {
-    //                     done();
-    //                 }
-    //             });
-    //         };
-    //
-    //         Async.waterfall([
-    //             instance.subscribe.bind(instance, queueName1, handlers),
-    //             instance.subscribe.bind(instance, queueName2, handlers),
-    //             instance.publish.bind(instance, message)
-    //         ],
-    //         (err) => {
-    //
-    //             if (err) {
-    //                 done(err);
-    //             }
-    //         });
-    //     });
-    // });
-    //
+    describe('subscribe / unsubscribe (multiple queue)', () => {
+
+        const queueName1 = 'test-subscribe-multiple-queue-1';
+        const queueName2 = 'test-subscribe-multiple-queue-2';
+        const message = { event : 'a.b', name : 'bunnybus' };
+
+        before(() => {
+
+            return instance._autoConnectChannel()
+                .then(() => {
+
+                    return instance.deleteExchange(instance.config.globalExchange);
+                })
+                .then(() => {
+
+                    return instance.deleteQueue(queueName1);
+                })
+                .then(() => {
+
+                    return instance.deleteQueue(queueName2);
+                });
+        });
+
+        afterEach(() => {
+
+            return Promise.all([
+                instance.unsubscribe(queueName1),
+                instance.unsubscribe(queueName2)
+            ]);
+        });
+
+        after(() => {
+
+            return instance._autoConnectChannel()
+                .then(() => {
+
+                    return instance.deleteExchange(instance.config.globalExchange);
+                })
+                .then(() => {
+
+                    return instance.deleteQueue(queueName1);
+                }).then(() => {
+
+                    return instance.deleteQueue(queueName2);
+                });
+        });
+
+        it('should consume message from two queues and acknowledge off', () => {
+
+           return new Promise((resolve, reject) => {
+
+                const handlers = {};
+                let counter = 0;
+
+                handlers[message.event] = (consumedMessage, ack) => {
+
+                    expect(consumedMessage.name).to.equal(message.name);
+
+                    return ack()
+                        .then(() => {
+
+                            ++counter;
+                            if (counter === 2) {
+                                return resolve();
+                            }
+                        });
+                };
+
+                return instance.subscribe(queueName1, handlers)
+                    .then(() => {
+
+                        return instance.subscribe(queueName2, handlers);
+                    })
+                    .then(() => {
+
+                        return instance.publish(message);
+                    })
+                    .catch(reject);
+            });
+        });
+    });
+
     // describe('_ack', () => {
     //
     //     const queueName = 'test-acknowledge-queue-1';
