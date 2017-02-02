@@ -7,6 +7,7 @@ module.exports = {
     assertSendPromise             : require('./assertSendPromise'),
     assertConvertToBuffer         : require('./assertConvertToBuffer'),
     assertReduceCallback          : require('./assertReduceCallback'),
-    assertUndefinedReduceCallback : require('./assertUndefinedReduceCallback')
-
+    assertUndefinedReduceCallback : require('./assertUndefinedReduceCallback'),
+    assertLogger                  : require('./assertLogger'),
+    assertCustomLogger            : require('./assertCustomLogger')
 };
