@@ -6,7 +6,7 @@ const expect = Code.expect;
 
 const assertReduceCallback = (...args) => {
 
-    const result = Helpers.reduceCallback.apply(this, args);
+    const result = Helpers.reduceCallback(...args);
 
     expect(result).to.be.a.function();
 };
