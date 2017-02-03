@@ -5,7 +5,7 @@ const expect = Code.expect;
 
 const assertLogger = (instance, level, inputMessage, callback) => {
 
-    instance.on(`log.${level}`, (message) => {
+    instance.once(`log.${level}`, (message) => {
 
         expect(message).to.exist();
         expect(message).to.be.a.object();

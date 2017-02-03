@@ -26,10 +26,11 @@ describe('state management', () => {
         beforeEach((done) => {
 
             if (instance && instance._subscriptions) {
-                Object.keys(instance._subscriptions, (key) => {
-
+                for (const key in instance._subscriptions) {
                     delete instance._subscriptions[key];
-                });
+                }
+
+                instance._blockQueues.clear();
             }
 
             done();
@@ -70,6 +71,26 @@ describe('state management', () => {
 
                 expect(response).to.be.false();
                 done();
+            });
+
+            it('should subscribe to `subscription.created` event', (done) => {
+
+                const queueName = `${baseQueueName}-3`;
+                const consumerTag = 'abcdefg012345';
+                const handlers = { event1 : () => {} };
+                const options = {};
+
+                instance.once('subscription.created', (subcription) => {
+
+                    expect(subcription).to.exist();
+                    expect(subcription.consumerTag).to.equal(consumerTag);
+                    expect(subcription.handlers).to.exist();
+                    expect(subcription.handlers.event1).to.be.a.function();
+                    expect(subcription.options).to.exist();
+                    done();
+                });
+
+                instance.create(queueName, consumerTag, handlers, options);
             });
         });
 
@@ -148,6 +169,23 @@ describe('state management', () => {
 
                 expect(response).to.be.false();
                 done();
+            });
+
+            it('should subscribe to `subscription.cleared` event', (done) => {
+
+                const queueName = `${baseQueueName}-4`;
+                const consumerTag = 'abcdefg012345';
+                const handlers = { event1 : () => {} };
+                const options = {};
+
+                instance.once('subscription.cleared', (subcription) => {
+
+                    expect(subcription).to.exist();
+                    done();
+                });
+
+                instance.create(queueName, consumerTag, handlers, options);
+                instance.clear(queueName);
             });
         });
 
@@ -236,6 +274,117 @@ describe('state management', () => {
 
                 expect(response).to.be.true();
                 done();
+            });
+
+            it('should subscribe to `subscription.removed` event', (done) => {
+
+                const queueName = `${baseQueueName}-4`;
+                const consumerTag = 'abcdefg012345';
+                const handlers = { event1 : () => {} };
+                const options = {};
+
+                instance.once('subscription.removed', (subscription) => {
+
+                    expect(subscription).to.exist();
+                    done();
+                });
+
+                instance.create(queueName, consumerTag, handlers, options);
+                instance.remove(queueName);
+            });
+        });
+
+        describe('list', () => {
+
+            const baseQueueName = 'subscription-listSubscription';
+
+            it('should return 3 records when 3 were added', (done) => {
+
+                for (let i = 1; i <= 3; ++i) {
+                    const queueName = `${baseQueueName}-${i}`;
+                    const consumerTag = 'abcdefg012345';
+                    const handlers = { event1 : () => {} };
+                    const options = {};
+
+                    instance.create(queueName, consumerTag, handlers, options);
+                }
+
+                const results = instance.list();
+
+                expect(results).to.have.length(3);
+                done();
+            });
+        });
+
+        describe('block/unblock', () => {
+
+            it('should be true when blocking queue is unique', (done) => {
+
+                const queueName = 'queue1';
+
+                const result = instance.block(queueName);
+
+                expect(result).to.be.true();
+                done();
+            });
+
+            it('should be false when blocking queue is not unique', (done) => {
+
+                const queueName = 'queue2';
+
+                instance.block(queueName);
+                const result = instance.block(queueName);
+
+                expect(result).to.be.false();
+                done();
+            });
+
+            it('should be true when unblocking queue exist', (done) => {
+
+                const queueName = 'queue3';
+
+                instance.block(queueName);
+                const result = instance.unblock(queueName);
+
+                expect(result).to.be.true();
+                done();
+            });
+
+            it('should be false when unblocking queue does not exist', (done) => {
+
+                const queueName = 'queue4';
+
+                const result = instance.unblock(queueName);
+
+                expect(result).to.be.false();
+                done();
+            });
+
+            it('should subscribe to `subscription.blocked` event', (done) => {
+
+                const queueName = 'queue5';
+
+                instance.once('subscription.blocked', (queue) => {
+
+                    expect(queue).to.equal(queueName);
+                    done();
+                });
+
+                instance.block(queueName);
+            });
+
+            it('should subscribe to `subscription.unblocked` event', (done) => {
+
+                const queueName = 'queue6';
+
+                instance.once('subscription.unblocked', (queue) => {
+
+                    expect(queue).to.equal(queueName);
+                    done();
+                });
+
+                instance.block(queueName);
+                instance.unblock(queueName);
             });
         });
     });
