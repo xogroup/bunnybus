@@ -11,11 +11,12 @@
   "dependencies": {
     "amqplib": "^0.5.1",
     "async": "^2.1.4",
-    "bluebird": "http://local-npm-proxy.elasticbeanstalk.com/bluebird/-/bluebird-3.4.6.tgz",
     "hoek": "^4.1.0"
   },
   "devDependencies": {
+    "bluebird": "^3.4.6",
     "code": "^4.0.0",
-    "lab": "^11.2.1"
+    "lab": "^11.2.1",
+    "q": "^1.4.1"
   }
 }

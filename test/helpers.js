@@ -3,11 +3,15 @@
 const Code = require('code');
 const Lab = require('lab');
 const Async = require('async');
+const Q = require('q');
+const Bluebird = require('bluebird');
 const Assertions = require('./assertions');
 const Helpers = require('../lib/helpers');
 const EventLogger = require('../lib/loggers').EventLogger;
 
 const lab = exports.lab = Lab.script();
+const before = lab.before;
+const after = lab.after;
 const describe = lab.describe;
 const it = lab.it;
 const expect = Code.expect;
@@ -233,6 +237,105 @@ describe('helpers', () => {
         it('should return false when validating custom logger missing fatal', (done) => {
 
             Assertions.assertValidateLoggerContract(FakeLoggerFactory('debug', 'info', 'warn', 'error'), false, done);
+        });
+    });
+
+    describe('validatePromiseContract', () => {
+
+        it('should return true for native Promise', (done) => {
+
+            expect(Helpers.validatePromiseContract(Promise)).to.be.true();
+            done();
+        });
+
+        it('should return true for Bluebird', (done) => {
+
+            expect(Helpers.validatePromiseContract(Bluebird)).to.be.true();
+            done();
+        });
+
+        it('should return false for q', (done) => {
+
+            expect(Helpers.validatePromiseContract(Q)).to.be.false();
+            done();
+        });
+
+        it('should return false for non-promise constructor', (done) => {
+
+            class BadPromise {}
+
+            expect(Helpers.validatePromiseContract(BadPromise)).to.be.false();
+            done();
+        });
+    });
+
+    describe('toPromise', () => {
+
+        const BunnyBus = require('../lib');
+        const callbackFunction = (cb) => {
+
+            return cb();
+        };
+        let instance = undefined;
+
+        before((done) => {
+
+            instance = new BunnyBus();
+            instance.config = BunnyBus.DEFAULT_SERVER_CONFIGURATION;
+            done();
+        });
+
+        after((done) => {
+
+            instance.promise = Promise;
+            done();
+        });
+
+        describe('default native Promise', () => {
+
+            it('should promisify methods using the native implementation', (done) => {
+
+                expect(instance.promise).to.equal(Promise);
+
+                const task = Helpers.toPromise(instance, callbackFunction);
+
+                expect(task).to.be.instanceof(Promise);
+                expect(task.then).to.be.a.function();
+                done();
+            });
+
+            it('should fallback to default native promise if unsupported implementation is used', (done) => {
+
+                instance.promise = Q;
+
+                expect(instance.promise).to.equal(Promise);
+
+                const task = Helpers.toPromise(instance, callbackFunction);
+
+                expect(task).to.be.instanceof(Promise);
+                expect(task.then).to.be.a.function();
+                done();
+            });
+        });
+
+        describe('bluebird', () => {
+
+            before((done) => {
+
+                instance.promise = Bluebird;
+                done();
+            });
+
+            it('should promisify methods using the Bluebird implementation', (done) => {
+
+                expect(instance.promise).to.equal(Bluebird);
+
+                const task = Helpers.toPromise(instance, callbackFunction);
+
+                expect(task).to.be.instanceof(Bluebird);
+                expect(task.then).to.be.a.function();
+                done();
+            });
         });
     });
 });
