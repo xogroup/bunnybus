@@ -185,7 +185,7 @@ describe('integration load test', () => {
         const errorQueueName = `${queueName}_error`;
         const message = { event : 'b.promise', name : 'bunnybus' };
         const patterns = ['b.promise'];
-        const publishTarget = 2000;
+        const publishTarget = 2;
 
         before(() => {
 
@@ -218,6 +218,7 @@ describe('integration load test', () => {
                 .then(instance.deleteQueue.bind(instance, queueName))
                 .then(instance.deleteQueue.bind(instance, errorQueueName))
                 .then(() => {
+
                     instance.promise = Promise;
                 });
         });
