@@ -4,6 +4,7 @@
   - [`new BunnyBus(config)`](#new-bunnybusconfig)
     - [`config`](#config)
     - [`logger`](#logger)
+    - [`promise`](#promise)
     - [`connectionString`](#connectionString)
     - [`connection`](#connection)
     - [`hasConnection`](#hasConnection)
@@ -89,6 +90,19 @@ bunnybus.logger = {
     error = logHandler,
     fatal = logHandler
 };
+```
+
+###`promise`
+
+Setter and Getter for promise. By default, `BunnyBus` will utilize the native Promise implementation. Supported promise implementations must be initialized as Constructor functions and must pass `resolve` and `reject` functions to the provided callback. If an unsupported promise library is passed, the existing promise implementation will not be overridden.
+
+```Javascript
+const Bluebird = require('bluebird');
+const BunnyBus = require('bunnybus');
+const bunnybus = new BunnyBus();
+
+bunnybus.promise = Bluebird
+// All promises returned by bunnybus will now be Bluebird promises
 ```
 
 ###`connectionString`
