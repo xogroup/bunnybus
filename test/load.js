@@ -2,6 +2,7 @@
 
 const Async = require('async');
 const Lab = require('lab');
+const Bluebird = require('bluebird');
 
 const lab = exports.lab = Lab.script();
 const before = lab.before;
@@ -165,6 +166,81 @@ describe('integration load test', () => {
                 queueName,
                 {
                     'a.promise' : (msg, ack) => {
+
+                        return ack()
+                            .then(() => {
+
+                                if (++count === publishTarget) {
+                                    done();
+                                }
+                            });
+                    }
+                });
+        });
+    });
+
+    describe('with third-party promise interface', () => {
+
+        const queueName = 'load-promise-queue-2';
+        const errorQueueName = `${queueName}_error`;
+        const message = { event : 'b.promise', name : 'bunnybus' };
+        const patterns = ['b.promise'];
+        const publishTarget = 2000;
+
+        before(() => {
+
+            instance.promise = Bluebird;
+
+            return instance._autoConnectChannel()
+                .then(instance.createExchange.bind(instance, instance.config.globalExchange, 'topic', null))
+                .then(instance.createQueue.bind(instance, queueName))
+                .then(() => {
+
+                    const promises = patterns.map((pattern) => {
+
+                        return instance.channel.bindQueue(queueName, instance.config.globalExchange, pattern);
+                    });
+
+                    return Promise.all(promises);
+                });
+        });
+
+        afterEach(() => {
+
+            return instance._autoConnectChannel()
+                .then(instance.unsubscribe.bind(instance, queueName));
+        });
+
+        after(() => {
+
+            return instance._autoConnectChannel()
+                .then(instance.deleteExchange.bind(instance, instance.config.globalExchange, null))
+                .then(instance.deleteQueue.bind(instance, queueName))
+                .then(instance.deleteQueue.bind(instance, errorQueueName))
+                .then(() => {
+                    instance.promise = Promise;
+                });
+        });
+
+        it('should publish all messages within 2 seconds', () => {
+
+            const promises = [];
+
+            for (let i = 0; i < publishTarget; ++i) {
+                promises.push(instance.publish(message));
+            }
+
+            return Promise.all(promises);
+        });
+
+        it('should consume all messages within 2 seconds', (done) => {
+
+            let count = 0;
+
+            instance.subscribe(
+                queueName,
+                {
+                    'b.promise' : (msg, ack) => {
 
                         return ack()
                             .then(() => {
