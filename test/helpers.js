@@ -240,6 +240,35 @@ describe('helpers', () => {
         });
     });
 
+    describe('validatePromiseContract', () => {
+
+        it('should return true for native Promise', (done) => {
+
+            expect(Helpers.validatePromiseContract(Promise)).to.be.true();
+            done();
+        });
+
+        it('should return true for Bluebird', (done) => {
+
+            expect(Helpers.validatePromiseContract(Bluebird)).to.be.true();
+            done();
+        });
+
+        it('should return false for q', (done) => {
+
+            expect(Helpers.validatePromiseContract(Q)).to.be.false();
+            done();
+        });
+
+        it('should return false for non-promise constructor', (done) => {
+
+            class BadPromise {}
+
+            expect(Helpers.validatePromiseContract(BadPromise)).to.be.false();
+            done();
+        });
+    });
+
     describe('toPromise', () => {
 
         const BunnyBus = require('../lib');
