@@ -5,11 +5,23 @@ const Lab = require('lab');
 const Async = require('async');
 const Assertions = require('./assertions');
 const Helpers = require('../lib/helpers');
+const EventLogger = require('../lib/loggers').EventLogger;
 
 const lab = exports.lab = Lab.script();
 const describe = lab.describe;
 const it = lab.it;
 const expect = Code.expect;
+
+const FakeLoggerFactory = (...levels) => {
+
+    const logger = {};
+
+    for (const level of levels) {
+        logger[level] = () => {};
+    }
+
+    return logger;
+};
 
 describe('helpers', () => {
 
@@ -183,6 +195,44 @@ describe('helpers', () => {
 
             Assertions.assertUndefinedReduceCallback();
             done();
+        });
+    });
+
+    describe('validateLoggerContract', () => {
+
+        it('should return true when validating EventLogger', (done) => {
+
+            Assertions.assertValidateLoggerContract(new EventLogger(), true, done);
+        });
+
+        it('should return true when validating custom logger object', (done) => {
+
+            Assertions.assertValidateLoggerContract(FakeLoggerFactory('debug', 'info', 'warn', 'error', 'fatal'), true, done);
+        });
+
+        it('should return false when validating custom logger missing debug', (done) => {
+
+            Assertions.assertValidateLoggerContract(FakeLoggerFactory('info', 'warn', 'error', 'fatal'), false, done);
+        });
+
+        it('should return false when validating custom logger missing info', (done) => {
+
+            Assertions.assertValidateLoggerContract(FakeLoggerFactory('debug', 'warn', 'error', 'fatal'), false, done);
+        });
+
+        it('should return false when validating custom logger missing warn', (done) => {
+
+            Assertions.assertValidateLoggerContract(FakeLoggerFactory('debug', 'info', 'error', 'fatal'), false, done);
+        });
+
+        it('should return false when validating custom logger missing error', (done) => {
+
+            Assertions.assertValidateLoggerContract(FakeLoggerFactory('debug', 'info', 'warn', 'fatal'), false, done);
+        });
+
+        it('should return false when validating custom logger missing fatal', (done) => {
+
+            Assertions.assertValidateLoggerContract(FakeLoggerFactory('debug', 'info', 'warn', 'error'), false, done);
         });
     });
 });

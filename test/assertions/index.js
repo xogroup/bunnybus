@@ -9,5 +9,6 @@ module.exports = {
     assertReduceCallback          : require('./assertReduceCallback'),
     assertUndefinedReduceCallback : require('./assertUndefinedReduceCallback'),
     assertLogger                  : require('./assertLogger'),
-    assertCustomLogger            : require('./assertCustomLogger')
+    assertCustomLogger            : require('./assertCustomLogger'),
+    assertValidateLoggerContract  : require('./assertValidateLoggerContract')
 };
