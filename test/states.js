@@ -29,6 +29,8 @@ describe('state management', () => {
                 for (const key in instance._subscriptions) {
                     delete instance._subscriptions[key];
                 }
+
+                instance._blockQueues.clear();
             }
 
             done();
@@ -314,7 +316,7 @@ describe('state management', () => {
             });
         });
 
-        describe.only('block/unblock', () => {
+        describe('block/unblock', () => {
 
             it('should be true when blocking queue is unique', (done) => {
 
