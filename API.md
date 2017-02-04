@@ -24,7 +24,7 @@
     - [`subscribe(queue, handlers, [options, [callback]])`](#subscribequeue-handlers-options-callback)
     - [`send(message, queue, [options, [callback]])`](#sendmessage-queue-options-callback)
     - [`get(queue, [options, [callback]])`](#getqueue-options-callback)
-  - [Events](#Events)
+  - [Events (EventEmitter)](#Events-EventEmitter)
     - [Examples](#Examples)
   
 ##BunnyBus
