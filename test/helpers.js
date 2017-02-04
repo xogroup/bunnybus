@@ -10,8 +10,6 @@ const Helpers = require('../lib/helpers');
 const EventLogger = require('../lib/loggers').EventLogger;
 
 const lab = exports.lab = Lab.script();
-const before = lab.before;
-const after = lab.after;
 const describe = lab.describe;
 const it = lab.it;
 const expect = Code.expect;
@@ -271,46 +269,15 @@ describe('helpers', () => {
 
     describe('toPromise', () => {
 
-        const BunnyBus = require('../lib');
-        const callbackFunction = (cb) => {
+        const callback = () => {};
 
-            return cb();
-        };
-        let instance = undefined;
-
-        before((done) => {
-
-            instance = new BunnyBus();
-            instance.config = BunnyBus.DEFAULT_SERVER_CONFIGURATION;
-            done();
-        });
-
-        after((done) => {
-
-            instance.promise = Promise;
-            done();
-        });
-
-        describe('default native Promise', () => {
+        describe('ES6 Promise', () => {
 
             it('should promisify methods using the native implementation', (done) => {
 
-                expect(instance.promise).to.equal(Promise);
+                //expect(instance.promise).to.equal(Promise);
 
-                const task = Helpers.toPromise(instance, callbackFunction);
-
-                expect(task).to.be.instanceof(Promise);
-                expect(task.then).to.be.a.function();
-                done();
-            });
-
-            it('should fallback to default native promise if unsupported implementation is used', (done) => {
-
-                instance.promise = Q;
-
-                expect(instance.promise).to.equal(Promise);
-
-                const task = Helpers.toPromise(instance, callbackFunction);
+                const task = Helpers.toPromise(Promise, callback);
 
                 expect(task).to.be.instanceof(Promise);
                 expect(task.then).to.be.a.function();
@@ -318,19 +285,11 @@ describe('helpers', () => {
             });
         });
 
-        describe('bluebird', () => {
-
-            before((done) => {
-
-                instance.promise = Bluebird;
-                done();
-            });
+        describe('Bluebird Promise', () => {
 
             it('should promisify methods using the Bluebird implementation', (done) => {
 
-                expect(instance.promise).to.equal(Bluebird);
-
-                const task = Helpers.toPromise(instance, callbackFunction);
+                const task = Helpers.toPromise(Bluebird, callback);
 
                 expect(task).to.be.instanceof(Bluebird);
                 expect(task.then).to.be.a.function();
