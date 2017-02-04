@@ -25,10 +25,12 @@ describe('state management', () => {
 
         beforeEach((done) => {
 
-            if (instance && instance._subscriptions) {
-                for (const key in instance._subscriptions) {
-                    delete instance._subscriptions[key];
-                }
+            if (instance) {
+
+                instance._subscriptions.clear();
+                // for (const key in instance._subscriptions) {
+                //     delete instance._subscriptions[key];
+                // }
 
                 instance._blockQueues.clear();
             }
@@ -48,7 +50,7 @@ describe('state management', () => {
                 const options = {};
 
                 const response = instance.create(queueName, consumerTag, handlers, options);
-                const sut = instance._subscriptions[queueName];
+                const sut = instance._subscriptions.get(queueName);
 
                 expect(response).to.be.true();
                 expect(sut).to.exist();
@@ -139,7 +141,7 @@ describe('state management', () => {
 
                 instance.create(queueName, consumerTag, handlers, options);
                 const response = instance.clear(queueName);
-                const sut = instance._subscriptions[queueName].hasOwnProperty('consumerTag');
+                const sut = instance._subscriptions.get(queueName).hasOwnProperty('consumerTag');
 
                 expect(response).to.be.true();
                 expect(sut).to.be.false();
@@ -154,7 +156,7 @@ describe('state management', () => {
                 const options = {};
 
                 instance.create(queueName, consumerTag, handlers, options);
-                delete instance._subscriptions[queueName].consumerTag;
+                delete instance._subscriptions.get(queueName).consumerTag;
                 const response = instance.clear(queueName);
 
                 expect(response).to.be.false();
@@ -225,7 +227,7 @@ describe('state management', () => {
                 const options = {};
 
                 instance.create(queueName, consumerTag, handlers, options);
-                delete instance._subscriptions[queueName].consumerTag;
+                delete instance._subscriptions.get(queueName).consumerTag;
                 const response = instance.contains(queueName, false);
 
                 expect(response).to.be.true();
@@ -269,7 +271,7 @@ describe('state management', () => {
                 const options = {};
 
                 instance.create(queueName, consumerTag, handlers, options);
-                delete instance._subscriptions[queueName].consumerTag;
+                delete instance._subscriptions.get(queueName).consumerTag;
                 const response = instance.remove(queueName);
 
                 expect(response).to.be.true();
