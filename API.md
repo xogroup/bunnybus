@@ -3,6 +3,7 @@
 - [BunnyBus](#BunnyBus)
   - [`new BunnyBus(config)`](#new-bunnybusconfig)
     - [`config`](#config)
+    - [`subscriptions`](#subscriptions)
     - [`logger`](#logger)
     - [`promise`](#promise)
     - [`connectionString`](#connectionString)
@@ -24,8 +25,17 @@
     - [`subscribe(queue, handlers, [options, [callback]])`](#subscribequeue-handlers-options-callback)
     - [`send(message, queue, [options, [callback]])`](#sendmessage-queue-options-callback)
     - [`get(queue, [options, [callback]])`](#getqueue-options-callback)
-  - [Events (EventEmitter)](#Events-EventEmitter)
-    - [Examples](#Examples)
+  - [Events (`EventEmitter`)](#events-eventEmitter)
+    - [Examples](#examples)
+  - [`Subscription Manager`](#subscription-manager)
+    - [`contains(queue, [withConsumerTag])`](#containsqueue-withconsumertag)
+    - [`create(queue, [consumerTag, [handlers, [options]]])`](#createqueue-consumertag-handlers-options)
+    - [`get(queue)`](#getqueue)
+    - [`clear(queue)`](#clearqueue)
+    - [`remove(queue)`](#removequeue)
+    - [`list()`](#list)
+    - [`block(queue)`](#blockqueue)
+    - [`unblock(queue)`](#unblockqueue)
   
 ##BunnyBus
 
@@ -67,6 +77,19 @@ const bunnybus = new BunnyBus();
 bunnybus.config = { server : 'red-bee.cloudamqp.com'};
 
 //do work
+```
+
+###`subscriptions`
+
+Getter for subscriptions.  A reference to the [Subscription Manager](#subscription-manager).
+
+```Javascript
+const BunnyBus = require('bunnybus');
+const bunnybus = new BunnyBus();
+
+console.log(bunnyBus.subscriptions.get('queue'));
+
+//output : { queue : 'queue1', consumerTag : 'abc123', handlers : {}, options : {}}
 ```
 
 ###`logger`
@@ -540,4 +563,127 @@ bunnyBus.on('log.error', (message) => {
 
     pino.error(message);
 });
+```
+
+##`SubscriptionManager`
+
+This class manages the state for all subscriptions registered with queues.  A subscription is an association between a queue and handlers associated with it.  A subscription is created when [`subscribe()`](#subscribequeue-handlers-options-callback) is invoked succesfully. The `SubscriptionManager` is also an `EventEmitter` so when actions like `create`, `clear` and `remove` are called, events are emitted so `BunnyBus` can apply the corresponding behavior to meet the desired state.
+
+###`contains(queue, [withConsumerTag])`
+
+Checks if a queue has a subscription.
+
+* `queue` - the name of the queue. *[string]* **Required**
+* `withConsumerTag` - requires the condition of a subscription to be active.  Defaults to `true`. *[boolean]* **Optional**
+
+```Javascript
+const BunnyBus = require('bunnybus');
+const bunnyBus = new BunnyBus();
+
+bunnybus.subscriptions.contains('queue1');
+const message = {
+    // other stuff you want to send
+}
+```
+
+###`create(queue, [consumerTag, [handlers, [options]]])`
+
+Creates a subscription.
+
+* `queue` - the name of the queue. *[string]* **Required**
+* `consumerTag` - a value returned from the [`consume()`](http://www.squaremobius.net/amqp.node/channel_api.html#channel_consume) method of amqplib.  *[string]* **Optional**
+* `handlers` - handlers parameter passed through the [`subscribe()`](#subscribequeue-handlers-options-callback) method.  *[Object]* **Optional**
+* `options` - options parameter passed through the [`subscribe()`](#subscribequeue-handlers-options-callback) method.  *[Object]* **Optional**
+
+```Javascript
+const BunnyBus = require('bunnybus');
+const bunnyBus = new BunnyBus();
+
+bunnybus.subscriptions.create('queue1');
+}
+```
+
+###`get(queue)`
+
+Returns a clone of the subscription if the queue exist.  Returns `undefined` when it does not exist.
+
+* `queue` - the name of the queue. *[string]* **Required**
+
+```Javascript
+const BunnyBus = require('bunnybus');
+const bunnyBus = new BunnyBus();
+
+bunnybus.subscriptions.get('queue1');
+}
+```
+
+###`clear(queue)`
+
+Clears a subscription of the `consumerTag`.  Returns `true` when successful and `false` when not.
+
+* `queue` - the name of the queue. *[string]* **Required**
+
+```Javascript
+const BunnyBus = require('bunnybus');
+const bunnyBus = new BunnyBus();
+
+bunnybus.subscriptions.clear('queue1');
+}
+```
+
+###`remove(queue)`
+
+Removes a subscription from registrar.  Returns `true` when successful and `false` when not.
+
+* `queue` - the name of the queue. *[string]* **Required**
+
+```Javascript
+const BunnyBus = require('bunnybus');
+const bunnyBus = new BunnyBus();
+
+bunnybus.subscriptions.remove('queue1');
+}
+```
+
+###`list()`
+
+Returns a list of cloned subscriptions in registrar.
+
+
+```Javascript
+const BunnyBus = require('bunnybus');
+const bunnyBus = new BunnyBus();
+
+bunnybus.subscriptions.list();
+
+//output : [ subscriptions ]
+}
+```
+
+###`block(queue)`
+
+Adds a queue to a ban list.  Queues in this list lives in a desired state.  Once a queue name is added to this list, `BunnyBus` will try to unsubscribe any active consumed queues.
+
+* `queue` - the name of the queue. *[string]* **Required**
+
+```Javascript
+const BunnyBus = require('bunnybus');
+const bunnyBus = new BunnyBus();
+
+bunnybus.subscriptions.block('queue1');
+}
+```
+
+###`unblock(queue)`
+
+Removes a queue to a ban list.  Queues in this list lives in a desired state.  Once a queue name is removed from this list, `BunnyBus` will try to re-subscribe any unactive queues.
+
+* `queue` - the name of the queue. *[string]* **Required**
+
+```Javascript
+const BunnyBus = require('bunnybus');
+const bunnyBus = new BunnyBus();
+
+bunnybus.subscriptions.unblock('queue1');
+}
 ```
