@@ -35,7 +35,7 @@
     - [`BunnyBus.PUBLISHED_EVENT`](#bunnybus-published-event)
     - [`BunnyBus.SUBSCRIBED_EVENT`](#bunnybus-subscribed-event)
     - [`BunnyBus.UNSUBSCRIBED_EVENT`](#bunnybus-unsubscribed-event)
-  - [`Subscription Manager`](#subscription-manager)
+  - [`SubscriptionManager`](#subscriptionmanager)
     - [`contains(queue, [withConsumerTag])`](#containsqueue-withconsumertag)
     - [`create(queue, [consumerTag, [handlers, [options]]])`](#createqueue-consumertag-handlers-options)
     - [`get(queue)`](#getqueue)
