@@ -26,7 +26,11 @@
     - [`send(message, queue, [options, [callback]])`](#sendmessage-queue-options-callback)
     - [`get(queue, [options, [callback]])`](#getqueue-options-callback)
   - [Events (`EventEmitter`)](#events-eventEmitter)
-    - [Examples](#examples)
+    - [`BunnyBus.LOG_DEBUG_EVENT`](#bunnybus-log-debug-event)
+    - [`BunnyBus.LOG_INFO_EVENT`](#bunnybus-log-info-event)
+    - [`BunnyBus.LOG_WARN_EVENT`](#bunnybus-log-warn-event)
+    - [`BunnyBus.LOG_ERROR_EVENT`](#bunnybus-log-error-event)
+    - [`BunnyBus.LOG_FATAL_EVENT`](#bunnybus-log-fatal-event)
   - [`Subscription Manager`](#subscription-manager)
     - [`contains(queue, [withConsumerTag])`](#containsqueue-withconsumertag)
     - [`create(queue, [consumerTag, [handlers, [options]]])`](#createqueue-consumertag-handlers-options)
@@ -543,26 +547,66 @@ bunnyBus.get('queue1')
 
 ##Events (`EventEmitter`)
 
-`BunnyBus` extends `EventEmitter` for emitting logs and system specific events.  Subscription to these events are optional.
+`BunnyBus` extends `EventEmitter` for emitting logs and system specific events.  Subscription to these events are optional.  `BunnyBus` class also exposes static Getter properties for the name of these public events.
 
-* `log.info` - info level logging message.
+###`BunnyBus.LOG_DEBUG_EVENT`
+
 * `log.debug` - debug level logging message.
-* `log.warn` - warn level logging message.
-* `log.error` - error level logging message.
-* `log.fatal` - fatal level logging message.
 
-###Examples
-
-Logging on error events with [pino](https://github.com/pinojs/pino)
 ```Javascript
 const BunnyBus = require('bunnybus');
-const bunnyBus = new BunnyBus();
 const pino = require('pino')();
 
-bunnyBus.on('log.error', (message) => {
+bunnyBus.on('BunnyBus.LOG_DEBUG_EVENT', pino.debug);
+bunnyBus.on('log.debug', pino.debug);
+```
 
-    pino.error(message);
-});
+###`BunnyBus.LOG_INFO_EVENT`
+
+* `log.info` - info level logging message.
+
+```Javascript
+const BunnyBus = require('bunnybus');
+const pino = require('pino')();
+
+bunnyBus.on('BunnyBus.LOG_INFO_EVENT', pino.info);
+bunnyBus.on('log.info', pino.info);
+```
+
+###`BunnyBus.LOG_WARN_EVENT`
+
+* `log.warn` - warn level logging message.
+
+```Javascript
+const BunnyBus = require('bunnybus');
+const pino = require('pino')();
+
+bunnyBus.on('BunnyBus.LOG_WARN_EVENT', pino.warn);
+bunnyBus.on('log.warn', pino.warn);
+```
+
+###`BunnyBus.LOG_ERROR_EVENT`
+
+* `log.error` - error level logging message.
+
+```Javascript
+const BunnyBus = require('bunnybus');
+const pino = require('pino')();
+
+bunnyBus.on('BunnyBus.LOG_ERROR_EVENT', pino.error);
+bunnyBus.on('log.error', pino.error);
+```
+
+###`BunnyBus.LOG_FATAL_EVENT`
+
+* `log.fatal` - fatal level logging message.
+
+```Javascript
+const BunnyBus = require('bunnybus');
+const pino = require('pino')();
+
+bunnyBus.on('BunnyBus.LOG_FATAL_EVENT', pino.fatal);
+bunnyBus.on('log.fatal', pino.fatal);
 ```
 
 ##`SubscriptionManager`
