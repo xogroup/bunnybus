@@ -25,15 +25,8 @@ describe('state management', () => {
 
         beforeEach((done) => {
 
-            if (instance) {
-
-                instance._subscriptions.clear();
-                // for (const key in instance._subscriptions) {
-                //     delete instance._subscriptions[key];
-                // }
-
-                instance._blockQueues.clear();
-            }
+            instance._subscriptions.clear();
+            instance._blockQueues.clear();
 
             done();
         });
@@ -82,7 +75,7 @@ describe('state management', () => {
                 const handlers = { event1 : () => {} };
                 const options = {};
 
-                instance.once('subscription.created', (subcription) => {
+                instance.once(SubscriptionManager.CREATED_EVENT, (subcription) => {
 
                     expect(subcription).to.exist();
                     expect(subcription.consumerTag).to.equal(consumerTag);
@@ -180,7 +173,7 @@ describe('state management', () => {
                 const handlers = { event1 : () => {} };
                 const options = {};
 
-                instance.once('subscription.cleared', (subcription) => {
+                instance.once(SubscriptionManager.CLEARED_EVENT, (subcription) => {
 
                     expect(subcription).to.exist();
                     done();
@@ -285,7 +278,7 @@ describe('state management', () => {
                 const handlers = { event1 : () => {} };
                 const options = {};
 
-                instance.once('subscription.removed', (subscription) => {
+                instance.once(SubscriptionManager.REMOVED_EVENT, (subscription) => {
 
                     expect(subscription).to.exist();
                     done();
@@ -366,7 +359,7 @@ describe('state management', () => {
 
                 const queueName = 'queue5';
 
-                instance.once('subscription.blocked', (queue) => {
+                instance.once(SubscriptionManager.BLOCKED_EVENT, (queue) => {
 
                     expect(queue).to.equal(queueName);
                     done();
@@ -379,7 +372,7 @@ describe('state management', () => {
 
                 const queueName = 'queue6';
 
-                instance.once('subscription.unblocked', (queue) => {
+                instance.once(SubscriptionManager.UNBLOCKED_EVENT, (queue) => {
 
                     expect(queue).to.equal(queueName);
                     done();
