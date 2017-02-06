@@ -35,17 +35,17 @@ describe('positive integration tests - Promise api', () => {
 
         before(() => {
 
-            return instance.closeConnection();
+            return instance._closeConnection();
         });
 
         afterEach(() => {
 
-            return instance.closeConnection();
+            return instance._closeConnection();
         });
 
         it('should create connection with default values', () => {
 
-            return instance.createConnection()
+            return instance._createConnection()
                 .then(() => {
 
                     expect(instance.connection).to.not.be.null();
@@ -54,8 +54,8 @@ describe('positive integration tests - Promise api', () => {
 
         it('should close an opened connection', () => {
 
-            return instance.createConnection()
-                .then(instance.closeConnection)
+            return instance._createConnection()
+                .then(instance._closeConnection)
                 .then(() => {
 
                     expect(instance.connection).to.be.null();
@@ -67,18 +67,18 @@ describe('positive integration tests - Promise api', () => {
 
         before(() => {
 
-            return instance.closeChannel();
+            return instance._closeChannel();
         });
 
         beforeEach(() => {
 
-            return instance.closeChannel()
-                .then(instance.createConnection);
+            return instance._closeChannel()
+                .then(instance._createConnection);
         });
 
         it('should create channel with default values', () => {
 
-            return instance.createChannel()
+            return instance._createChannel()
                 .then(() => {
 
                     expect(instance.channel).to.exist();
@@ -87,8 +87,8 @@ describe('positive integration tests - Promise api', () => {
 
         it('should close an opened channel', () => {
 
-            return instance.createChannel()
-                .then(instance.closeChannel)
+            return instance._createChannel()
+                .then(instance._closeChannel)
                 .then(() => {
 
                     expect(instance.channel).to.be.null();
@@ -97,8 +97,8 @@ describe('positive integration tests - Promise api', () => {
 
         it('should close both connection and channel when closing a connection', () => {
 
-            return instance.createChannel()
-                .then(instance.closeConnection)
+            return instance._createChannel()
+                .then(instance._closeConnection)
                 .then(() => {
 
                     expect(instance.connection).to.be.null();
@@ -111,7 +111,7 @@ describe('positive integration tests - Promise api', () => {
 
         beforeEach(() => {
 
-            return instance.closeConnection();
+            return instance._closeConnection();
         });
 
         it('should create connection and channel', () => {
@@ -150,7 +150,7 @@ describe('positive integration tests - Promise api', () => {
 
         afterEach(() => {
 
-            return instance.closeConnection();
+            return instance._closeConnection();
         });
 
         it('should recreate connection when connection error occurs', (done) => {
@@ -255,7 +255,7 @@ describe('positive integration tests - Promise api', () => {
 
         beforeEach(() => {
 
-            return instance.closeConnection();
+            return instance._closeConnection();
         });
 
         afterEach(() => {
@@ -746,12 +746,12 @@ describe('negative integration tests', () => {
 
         beforeEach(() => {
 
-            return instance.closeConnection();
+            return instance._closeConnection();
         });
 
         it('should throw NoConnectionError when connection does not pre-exist', () => {
 
-            return instance.createChannel()
+            return instance._createChannel()
                 .then(throwError)
                 .catch((err) => {
 
@@ -766,7 +766,7 @@ describe('negative integration tests', () => {
 
         beforeEach(() => {
 
-            return instance.closeConnection();
+            return instance._closeConnection();
         });
 
         it('should throw NoChannelError when calling createQueue and connection does not pre-exist', () => {
@@ -806,7 +806,7 @@ describe('negative integration tests', () => {
 
         beforeEach(() => {
 
-            return instance.closeConnection();
+            return instance._closeConnection();
         });
 
         it('should throw NoChannelError when calling createExchange and connection does not pre-exist', () => {
@@ -846,7 +846,7 @@ describe('negative integration tests', () => {
 
         beforeEach(() => {
 
-            return instance.closeConnection();
+            return instance._closeConnection();
         });
 
         it('should throw NoChannelError when calling get and connection does not pre-exist', () => {
@@ -883,7 +883,7 @@ describe('negative integration tests', () => {
 
         beforeEach(() => {
 
-            return instance.closeConnection();
+            return instance._closeConnection();
         });
 
         it('should throw NoChannelError when calling _ack and connection does not pre-exist', () => {
@@ -905,7 +905,7 @@ describe('negative integration tests', () => {
 
         beforeEach(() => {
 
-            return instance.closeConnection();
+            return instance._closeConnection();
         });
 
         it('should throw NoChannelError when calling _requeue and connection does not pre-exist', () => {
@@ -927,7 +927,7 @@ describe('negative integration tests', () => {
 
         beforeEach(() => {
 
-            return instance.closeConnection();
+            return instance._closeConnection();
         });
 
         it('should throw NoChannelError when calling _reject and connection does not pre-exist', () => {

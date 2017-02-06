@@ -26,10 +26,10 @@
         - [`send(message, queue, [options, [callback]])`](#sendmessage-queue-options-callback)
         - [`get(queue, [options, [callback]])`](#getqueue-options-callback)
       - [Internal-use methods](#internal-use-methods)
-        - [`createConnection([callback])`](#createConnectioncallback)
-        - [`closeConnection([callback])`](#closeConnectioncallback)
-        - [`createChannel([callback])`](#createChannelcallback)
-        - [`closeChannel([callback])`](#closeChannelcallback)
+        - [`_createConnection([callback])`](#_createConnectioncallback)
+        - [`_closeConnection([callback])`](#_closeConnectioncallback)
+        - [`_createChannel([callback])`](#_createChannelcallback)
+        - [`_closeChannel([callback])`](#_closeChannelcallback)
   - [Events (`EventEmitter`)](#events-eventemitter)
     - [`BunnyBus.LOG_DEBUG_EVENT`](#bunnybuslog_debug_event)
     - [`BunnyBus.LOG_INFO_EVENT`](#bunnybuslog_info_event)
@@ -533,7 +533,7 @@ bunnyBus.get('queue1')
 The following methods are available in the public API, but manual use of them is highly discouraged.
 Please see the [Public API](#public-api) for the primary BunnyBus methods.
 
-####`createConnection([callback])`
+####`_createConnection([callback])`
 
 Create a connection from settings defined through custom or default configurations.
 
@@ -543,15 +543,15 @@ Create a connection from settings defined through custom or default configuratio
 const BunnyBus = require('bunnybus');
 const bunnyBus = new BunnyBus();
 
-bunnyBus.createConnection((err) => {});
+bunnyBus._createConnection((err) => {});
 
 // promise api
-bunnyBus.createConnection()
+bunnyBus._createConnection()
     .then()
     .catch((err) => {});
 ```
 
-####`closeConnection([callback])`
+####`_closeConnection([callback])`
 
 Closes an opened connection if one exist.
 
@@ -561,15 +561,15 @@ Closes an opened connection if one exist.
 const BunnyBus = require('bunnybus');
 const bunnyBus = new BunnyBus();
 
-bunnyBus.closeConnection((err) => {});
+bunnyBus._closeConnection((err) => {});
 
 // promise api
-bunnyBus.closeConnection()
+bunnyBus._closeConnection()
     .then()
     .catch((err) => {});
 ```
 
-####`createChannel([callback])`
+####`_createChannel([callback])`
 
 Create a channel from an existing connection.
 
@@ -579,15 +579,15 @@ Create a channel from an existing connection.
 const BunnyBus = require('bunnybus');
 const bunnyBus = new BunnyBus();
 
-bunnyBus.createChannel((err) => {});
+bunnyBus._createChannel((err) => {});
 
 // promise api
-bunnyBus.createChannel()
+bunnyBus._createChannel()
     .then()
     .catch((err) => {});
 ```
 
-####`closeChannel([callback])`
+####`_closeChannel([callback])`
 
 Closes an channel if one exist.
 
@@ -597,10 +597,10 @@ Closes an channel if one exist.
 const BunnyBus = require('bunnybus');
 const bunnyBus = new BunnyBus();
 
-bunnyBus.closeChannel((err) => {});
+bunnyBus._closeChannel((err) => {});
 
 // promise api
-bunnyBus.closeChannel()
+bunnyBus._closeChannel()
     .then()
     .catch((err) => {});
 ```
