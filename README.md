@@ -36,5 +36,8 @@ We love community and contributions! Please check out our [guidelines](http://gi
 Getting yourself setup and bootstrapped is easy.  Use the following commands after you clone down.
 
 ```
-npm install && npm test
+npm install
+npm run run-docker
+npm test
+npm run stop-docker
 ```

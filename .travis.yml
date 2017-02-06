@@ -1,0 +1,19 @@
+language: node_js
+node_js:
+- '6'
+- node
+sudo: required
+services:
+  - docker
+deploy:
+  provider: npm
+  email: xo-npmjs.group@xogrp.com
+  api_key:
+    secure: OVmvrgLhNvZjCQ2a8iX/EL1Q8k7Ws/jbZ7nxEXkiB+mqzE2sHKWDy3zdWAYlxxeTBd/EWgKgfpe6ukxSyJimZTz/t6KBUNxyhNLgmdpCo/NqZhZjsHeLxLb7ekapH4XqV0Z/K6mc1BGIXW9IDU41RpRjNRVuWc6tENqaOKfA7UwD3pFAh0XzKAhbYwcKPiRwGDVf14VxrfuetkPFkz9TeQydOgDRWMVUXPWFH4fnidlVJC03RnEFrv7rqXFqmWMKphC6gXwnifD90WZDsp7RAOf2pUielV8232yjArnNGLHqr2RbyWHZUl/wpJqyRXFtr04TuLQxHDNDmDbCM847zvGYJ0p0/aSs4W+caO79uBlrUgfOBZwpMg7Kn+3JGJau62SnojMglha2hPJ2uS3Cr8PuEbsDf/l09ASLp0rSAc92sUn+oXntgxBgH4aNShIQlSfwsZ+hU38zbm86dy658ESGnGqNoUn50DVnBReWRsjc9b6ENF9aK0ckl41QPCyYmkMf/R6rwdId3c/lZ0Qb3d80dsoC72HEiMyDb7NboO5AS25v4WRfB7Vh/glSGzy33NJWG/0BV6Zh4kKSZQnG8Nus/EK59jaBa9Db90nGr2uApMISQbjzVm0RQ1OQzqlFlosKolI+zpboC/+HK0ROC4nMDEC3HkGLsbI704aTyW0=
+  on:
+    tags: true
+    repo: xogroup/bunnybus
+before_install:
+- npm install -g npm@'>=2.13.5'
+- docker pull rabbitmq:3-management
+- docker run -d -p 5671:5671 -p 15672:15672 -p 5672:5672 rabbitmq:3-management
