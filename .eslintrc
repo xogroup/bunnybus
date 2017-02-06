@@ -1,0 +1,6 @@
+{
+    "extends" : ["hapi"],
+    "rules": {
+        "consistent-this" : [ 0, "self", "$" ]
+    }
+}

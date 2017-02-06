@@ -73,7 +73,7 @@ Setter and Getter for singleton configuration. Accepts the following optional pr
  * `ssl` - value for creating a secure connection.  Used in the connection string.  Defaults to `false`. *[boolean]* **Optional**
  * `user` - value of the username.  Used in the connection string.  Defaults to `guest`. *[string]* **Optional**
  * `password` - value of the password.  Used in the connection string.  Defaults to `guest`. *[string]* **Optional**
- * `server` - value of the server address.  Just the host portion of the URI.  eg `red-bee.cloudamqp.com` or `rabbitbox`.  Used in the connection string.  Defaults to `rabbitmq`. *[string]* **Optional**
+ * `server` - value of the server address.  Just the host portion of the URI.  eg `red-bee.cloudamqp.com` or `rabbitbox` or `56.23.0.123`.  Used in the connection string.  Defaults to `127.0.0.1`. *[string]* **Optional**
  * `port` - value of the port for client connections.  Used in the conneciton string.  Defaults to `5672`. *[number]* **Optional**
  * `vhost` - value of the virtual host the user connects to.  Used in the connection string.  Defaults to `%2f`. *[string]* **Optional**
  * `heartbeat` -  value negotiated between client and server on when the TCP tunnel is considered dead.  Unit is a measurement of milliseconds.  Used in the connection string.  Defaults to `2000`. *[number]* **Optional**
@@ -148,7 +148,7 @@ const BunnyBus = require('bunnybus');
 const bunnyBus = new BunnyBus();
 
 console.log(bunnybus.connectionString);
-//output : amqp://guest:guest@rabbitmq:5672/%2f?heartbeat=2000
+//output : amqp://guest:guest@127.0.0.1:5672/%2f?heartbeat=2000
 ```
 
 #####`connection`
