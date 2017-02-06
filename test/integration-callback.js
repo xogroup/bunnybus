@@ -485,11 +485,9 @@ describe('positive integration tests - Callback api', () => {
                 ++retryCount;
 
                 if (retryCount < maxRetryCount) {
-                    console.log('requeuing');
                     requeue(() => { });
                 }
                 else {
-                    console.log('retry reached', retryCount, maxRetryCount);
                     expect(retryCount).to.equal(maxRetryCount);
                     ack(done);
                 }
