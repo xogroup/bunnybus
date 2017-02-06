@@ -9,7 +9,7 @@ Currently supports the following queueing frameworks.
 [![Build Status](https://travis-ci.org/xogroup/bunnybus.svg?branch=development)](https://travis-ci.org/xogroup/bunnybus)
 
 [![Known Vulnerabilities](https://snyk.io/test/github/xogroup/bunnybus/badge.svg)](https://snyk.io/test/github/xogroup/bunnybus)
-[![NSP Status](https://nodesecurity.io/orgs/xo-group/projects/0e507cfa-6ee8-4226-9613-9a4208fa2e63/badge)](https://nodesecurity.io/orgs/xo-group/projects/0e507cfa-6ee8-4226-9613-9a4208fa2e63)
+[![NSP Status](https://nodesecurity.io/orgs/xo-group/projects/599e335d-8668-4f77-89ea-ebac0d607378/badge)](https://nodesecurity.io/orgs/xo-group/projects/599e335d-8668-4f77-89ea-ebac0d607378)
 
 Lead Maintainer: [Lam Chan](https://github.com/lamchakchan)
 
@@ -41,3 +41,5 @@ npm run run-docker
 npm test
 npm run stop-docker
 ```
+
+For normal iterations, there is no need to stop the docker container.  When the docker container is already running, just `npm test`.
