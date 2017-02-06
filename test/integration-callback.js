@@ -31,17 +31,17 @@ describe('positive integration tests - Callback api', () => {
 
         before((done) => {
 
-            instance.closeConnection(done);
+            instance._closeConnection(done);
         });
 
         afterEach((done) => {
 
-            instance.closeConnection(done);
+            instance._closeConnection(done);
         });
 
         it('should create connection with default values', (done) => {
 
-            instance.createConnection((err) => {
+            instance._createConnection((err) => {
 
                 expect(err).to.be.null();
                 expect(instance.connection).to.exist();
@@ -52,8 +52,8 @@ describe('positive integration tests - Callback api', () => {
         it('should close an opened connection', (done) => {
 
             Async.waterfall([
-                instance.createConnection,
-                instance.closeConnection
+                instance._createConnection,
+                instance._closeConnection
             ], (err) => {
 
                 expect(err).to.be.null();
@@ -67,20 +67,20 @@ describe('positive integration tests - Callback api', () => {
 
         before((done) => {
 
-            instance.closeChannel(done);
+            instance._closeChannel(done);
         });
 
         beforeEach((done) => {
 
             Async.waterfall([
-                instance.closeChannel.bind(instance),
-                instance.createConnection.bind(instance)
+                instance._closeChannel.bind(instance),
+                instance._createConnection.bind(instance)
             ], done);
         });
 
         it('should create channel with default values', (done) => {
 
-            instance.createChannel((err) => {
+            instance._createChannel((err) => {
 
                 expect(err).to.be.null();
                 expect(instance.channel).to.exist();
@@ -91,8 +91,8 @@ describe('positive integration tests - Callback api', () => {
         it('should close an opened channel', (done) => {
 
             Async.waterfall([
-                instance.createChannel,
-                instance.closeChannel
+                instance._createChannel,
+                instance._closeChannel
             ], (err) => {
 
                 expect(err).to.be.null();
@@ -104,8 +104,8 @@ describe('positive integration tests - Callback api', () => {
         it('should close both connection and channel when closing a connection', (done) => {
 
             Async.waterfall([
-                instance.createChannel,
-                instance.closeConnection
+                instance._createChannel,
+                instance._closeConnection
             ], (err) => {
 
                 expect(err).to.be.null();
@@ -120,7 +120,7 @@ describe('positive integration tests - Callback api', () => {
 
         beforeEach((done) => {
 
-            instance.closeConnection(done);
+            instance._closeConnection(done);
         });
 
         it('should create connection and channel', (done) => {
@@ -160,7 +160,7 @@ describe('positive integration tests - Callback api', () => {
 
         afterEach((done) => {
 
-            instance.closeConnection(done);
+            instance._closeConnection(done);
         });
 
         it('should recreate connection when connection error occurs', (done) => {
@@ -286,7 +286,7 @@ describe('positive integration tests - Callback api', () => {
 
         beforeEach((done) => {
 
-            instance.closeConnection(done);
+            instance._closeConnection(done);
         });
 
         afterEach((done) => {
@@ -831,12 +831,12 @@ describe('negative integration tests', () => {
 
         beforeEach((done) => {
 
-            instance.closeConnection(done);
+            instance._closeConnection(done);
         });
 
         it('should throw NoConnectionError when connection does not pre-exist', (done) => {
 
-            instance.createChannel((err) => {
+            instance._createChannel((err) => {
 
                 expect(err).to.be.an.error(Exceptions.NoConnectionError);
                 done();
@@ -850,7 +850,7 @@ describe('negative integration tests', () => {
 
         beforeEach((done) => {
 
-            instance.closeConnection(done);
+            instance._closeConnection(done);
         });
 
         it('should throw NoChannelError when calling createQueue and connection does not pre-exist', (done) => {
@@ -887,7 +887,7 @@ describe('negative integration tests', () => {
 
         beforeEach((done) => {
 
-            instance.closeConnection(done);
+            instance._closeConnection(done);
         });
 
         it('should throw NoChannelError when calling createExcahnge and connection does not pre-exist', (done) => {
@@ -924,7 +924,7 @@ describe('negative integration tests', () => {
 
         beforeEach((done) => {
 
-            instance.closeConnection(done);
+            instance._closeConnection(done);
         });
 
         it('should throw NoChannelError when calling get and connection does not pre-exist', (done) => {
@@ -959,7 +959,7 @@ describe('negative integration tests', () => {
 
         beforeEach((done) => {
 
-            instance.closeConnection(done);
+            instance._closeConnection(done);
         });
 
         it('should throw NoChannelError when calling _ack and connection does not pre-exist', (done) => {
@@ -980,7 +980,7 @@ describe('negative integration tests', () => {
 
         beforeEach((done) => {
 
-            instance.closeConnection(done);
+            instance._closeConnection(done);
         });
 
         it('should throw NoChannelError when calling _requeue and connection does not pre-exist', (done) => {
@@ -1001,7 +1001,7 @@ describe('negative integration tests', () => {
 
         beforeEach((done) => {
 
-            instance.closeConnection(done);
+            instance._closeConnection(done);
         });
 
         it('should throw NoChannelError when calling _reject and connection does not pre-exist', (done) => {
