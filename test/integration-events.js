@@ -1,3 +1,4 @@
+
 'use strict';
 
 const Async = require('async');
@@ -64,7 +65,12 @@ describe('positive integration tests - events', () => {
 
         afterEach((done) => {
 
-            instance.channel.cancel(instance.subscriptions.get(queueName).consumerTag, done);
+            instance.channel.cancel(instance.subscriptions.get(queueName).consumerTag, (err) => {
+
+                instance.subscriptions._subscriptions.clear();
+                instance.subscriptions._blockQueues.clear();
+                done(err);
+            });
         });
 
         it('should be evented when queue is subscribed', (done) => {
