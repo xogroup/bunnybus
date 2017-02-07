@@ -395,7 +395,10 @@ describe('positive integration tests - Callback api', () => {
 
         const queueName = 'test-subscribe-queue-1';
         const errorQueueName = `${queueName}_error`;
-        const message = { event : 'a.b', name : 'bunnybus' };
+        const publishOptions = { routeKey : 'a.b' };
+        const messageObject = { event : 'a.b', name : 'bunnybus' };
+        const messageString = 'bunnybus';
+        const messageBuffer = new Buffer(messageString);
 
         before((done) => {
 
@@ -422,18 +425,18 @@ describe('positive integration tests - Callback api', () => {
             ], done);
         });
 
-        it('should consume message from queue and acknowledge off', (done) => {
+        it('should consume message (Object) from queue and acknowledge off', (done) => {
 
             const handlers = {};
-            handlers[message.event] = (consumedMessage, ack, reject, requeue) => {
+            handlers[messageObject.event] = (consumedMessage, ack) => {
 
-                expect(consumedMessage.name).to.equal(message.name);
+                expect(consumedMessage).to.equal(messageObject);
                 ack(null, done);
             };
 
             Async.waterfall([
                 instance.subscribe.bind(instance, queueName, handlers),
-                instance.publish.bind(instance, message)
+                instance.publish.bind(instance, messageObject)
             ],
             (err) => {
 
@@ -443,12 +446,54 @@ describe('positive integration tests - Callback api', () => {
             });
         });
 
-        it('should consume message from queue and reject off', (done) => {
+        it('should consume message (String) from queue and acknowledge off', (done) => {
 
             const handlers = {};
-            handlers[message.event] = (consumedMessage, ack, reject, requeue) => {
+            handlers[publishOptions.routeKey] = (consumedMessage, ack) => {
 
-                expect(consumedMessage.name).to.equal(message.name);
+                expect(consumedMessage).to.equal(messageString);
+                ack(null, done);
+            };
+
+            Async.waterfall([
+                instance.subscribe.bind(instance, queueName, handlers),
+                instance.publish.bind(instance, messageString, publishOptions)
+            ],
+            (err) => {
+
+                if (err) {
+                    done(err);
+                }
+            });
+        });
+
+        it('should consume message (Buffer) from queue and acknowledge off', (done) => {
+
+            const handlers = {};
+            handlers[publishOptions.routeKey] = (consumedMessage, ack) => {
+
+                expect(consumedMessage).to.equal(messageBuffer);
+                ack(null, done);
+            };
+
+            Async.waterfall([
+                instance.subscribe.bind(instance, queueName, handlers),
+                instance.publish.bind(instance, messageBuffer, publishOptions)
+            ],
+            (err) => {
+
+                if (err) {
+                    done(err);
+                }
+            });
+        });
+
+        it('should consume message (Object) from queue and reject off', (done) => {
+
+            const handlers = {};
+            handlers[messageObject.event] = (consumedMessage, ack, reject) => {
+
+                expect(consumedMessage).to.equal(messageObject);
 
                 Async.waterfall([
                     (cb) => reject(null, cb),
@@ -457,7 +502,8 @@ describe('positive integration tests - Callback api', () => {
 
                         expect(payload).to.exist();
                         const errorMessage = JSON.parse(payload.content.toString());
-                        expect(errorMessage).to.equal(message);
+                        expect(errorMessage).to.equal(messageObject);
+                        expect(payload.properties.headers.isBuffer).to.be.false();
                         cb();
                     }
                 ], done);
@@ -465,7 +511,7 @@ describe('positive integration tests - Callback api', () => {
 
             Async.waterfall([
                 instance.subscribe.bind(instance, queueName, handlers),
-                instance.publish.bind(instance, message)
+                instance.publish.bind(instance, messageObject)
             ],
             (err) => {
 
@@ -475,12 +521,45 @@ describe('positive integration tests - Callback api', () => {
             });
         });
 
-        it('should consume message from queue and requeue off on maxRetryCount', { timeout : 0 }, (done) => {
+        it('should consume message (Buffer) from queue and reject off', (done) => {
+
+            const handlers = {};
+            handlers[publishOptions.routeKey] = (consumedMessage, ack, reject) => {
+
+                expect(consumedMessage).to.equal(messageBuffer);
+
+                Async.waterfall([
+                    (cb) => reject(null, cb),
+                    (cb) => instance.get(errorQueueName, null, cb),
+                    (payload, cb) => {
+
+                        expect(payload).to.exist();
+                        const errorMessage = payload.content;
+                        expect(errorMessage).to.equal(messageBuffer);
+                        expect(payload.properties.headers.isBuffer).to.be.true();
+                        cb();
+                    }
+                ], done);
+            };
+
+            Async.waterfall([
+                instance.subscribe.bind(instance, queueName, handlers),
+                instance.publish.bind(instance, messageBuffer, publishOptions)
+            ],
+            (err) => {
+
+                if (err) {
+                    done(err);
+                }
+            });
+        });
+
+        it('should consume message (Object) from queue and requeue off on maxRetryCount', { timeout : 0 }, (done) => {
 
             const handlers = {};
             const maxRetryCount = 3;
             let retryCount = 0;
-            handlers[message.event] = (consumedMessage, ack, reject, requeue) => {
+            handlers[messageObject.event] = (consumedMessage, ack, reject, requeue) => {
 
                 ++retryCount;
 
@@ -488,6 +567,7 @@ describe('positive integration tests - Callback api', () => {
                     requeue(() => { });
                 }
                 else {
+                    expect(consumedMessage).to.equal(messageObject);
                     expect(retryCount).to.equal(maxRetryCount);
                     ack(done);
                 }
@@ -495,7 +575,38 @@ describe('positive integration tests - Callback api', () => {
 
             Async.waterfall([
                 instance.subscribe.bind(instance, queueName, handlers, { maxRetryCount }),
-                instance.publish.bind(instance, message)
+                instance.publish.bind(instance, messageObject)
+            ],
+            (err) => {
+
+                if (err) {
+                    done(err);
+                }
+            });
+        });
+
+        it('should consume message (Buffer) from queue and requeue off on maxRetryCount', { timeout : 0 }, (done) => {
+
+            const handlers = {};
+            const maxRetryCount = 3;
+            let retryCount = 0;
+            handlers[publishOptions.routeKey] = (consumedMessage, ack, reject, requeue) => {
+
+                ++retryCount;
+
+                if (retryCount < maxRetryCount) {
+                    requeue(() => { });
+                }
+                else {
+                    expect(consumedMessage).to.equal(messageBuffer);
+                    expect(retryCount).to.equal(maxRetryCount);
+                    ack(done);
+                }
+            };
+
+            Async.waterfall([
+                instance.subscribe.bind(instance, queueName, handlers, { maxRetryCount }),
+                instance.publish.bind(instance, messageBuffer, publishOptions)
             ],
             (err) => {
 

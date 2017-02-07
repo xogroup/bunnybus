@@ -360,7 +360,10 @@ describe('positive integration tests - Promise api', () => {
 
         const queueName = 'test-subscribe-queue-1';
         const errorQueueName = `${queueName}_error`;
-        const message = { event : 'a.b', name : 'bunnybus' };
+        const publishOptions = { routeKey : 'a.b' };
+        const messageObject = { event : 'a.b', name : 'bunnybus' };
+        const messageString = 'bunnybus';
+        const messageBuffer = new Buffer(messageString);
 
         before(() => {
 
@@ -383,63 +386,130 @@ describe('positive integration tests - Promise api', () => {
                 .then(instance.deleteQueue.bind(instance, errorQueueName));
         });
 
-        it('should consume message from queue and acknowledge off', () => {
+        it('should consume message (Object) from queue and acknowledge off', () => {
 
             return new Promise((resolve, reject) => {
 
                 const handlers = {};
 
-                handlers[message.event] = (consumedMessage, ack) => {
+                handlers[messageObject.event] = (consumedMessage, ack) => {
 
-                    expect(consumedMessage.name).to.equal(message.name);
+                    expect(consumedMessage).to.equal(messageObject);
 
                     return ack()
                         .then(resolve);
                 };
 
                 return instance.subscribe(queueName, handlers)
-                    .then(instance.publish.bind(instance, message))
+                    .then(instance.publish.bind(instance, messageObject))
                     .catch(reject);
             });
         });
 
-        it('should consume message from queue and reject off', () => {
+        it('should consume message (String) from queue and acknowledge off', () => {
 
             return new Promise((resolve, reject) => {
 
                 const handlers = {};
 
-                handlers[message.event] = (consumedMessage, ack, rej) => {
+                handlers[publishOptions.routeKey] = (consumedMessage, ack) => {
 
-                    expect(consumedMessage.name).to.equal(message.name);
+                    expect(consumedMessage).to.equal(messageString);
+
+                    return ack()
+                        .then(resolve);
+                };
+
+                return instance.subscribe(queueName, handlers)
+                    .then(instance.publish.bind(instance, messageString, publishOptions))
+                    .catch(reject);
+            });
+        });
+
+        it('should consume message (Buffer) from queue and acknowledge off', () => {
+
+            return new Promise((resolve, reject) => {
+
+                const handlers = {};
+
+                handlers[publishOptions.routeKey] = (consumedMessage, ack) => {
+
+                    expect(consumedMessage).to.equal(messageBuffer);
+
+                    return ack()
+                        .then(resolve);
+                };
+
+                return instance.subscribe(queueName, handlers)
+                    .then(instance.publish.bind(instance, messageBuffer, publishOptions))
+                    .catch(reject);
+            });
+        });
+
+        it('should consume message (Object) from queue and reject off', () => {
+
+            return new Promise((resolve, reject) => {
+
+                const handlers = {};
+
+                handlers[messageObject.event] = (consumedMessage, ack, rej) => {
+
+                    expect(consumedMessage).to.equal(messageObject);
 
                     return rej()
                         .then(instance.get.bind(instance, errorQueueName))
                         .then((payload) => {
 
                             expect(payload).to.exist();
-
                             const errorMessage = JSON.parse(payload.content.toString());
-
-                            expect(errorMessage).to.equal(message);
+                            expect(errorMessage).to.equal(messageObject);
+                            expect(payload.properties.headers.isBuffer).to.be.false();
                         })
                         .then(resolve);
                 };
 
                 return instance.subscribe(queueName, handlers)
-                    .then(instance.publish.bind(instance, message))
+                    .then(instance.publish.bind(instance, messageObject))
                     .catch(reject);
             });
         });
 
-        it('should consume message from queue and requeue off on maxRetryCount', { timeout : 0 }, () => {
+        it('should consume message (Buffer) from queue and reject off', () => {
+
+            return new Promise((resolve, reject) => {
+
+                const handlers = {};
+
+                handlers[publishOptions.routeKey] = (consumedMessage, ack, rej) => {
+
+                    expect(consumedMessage).to.equal(messageBuffer);
+
+                    return rej()
+                        .then(instance.get.bind(instance, errorQueueName))
+                        .then((payload) => {
+
+                            expect(payload).to.exist();
+                            const errorMessage = payload.content;
+                            expect(errorMessage).to.equal(messageBuffer);
+                            expect(payload.properties.headers.isBuffer).to.be.true();
+                        })
+                        .then(resolve);
+                };
+
+                return instance.subscribe(queueName, handlers)
+                    .then(instance.publish.bind(instance, messageBuffer, publishOptions))
+                    .catch(reject);
+            });
+        });
+
+        it('should consume message (Object) from queue and requeue off on maxRetryCount', { timeout : 0 }, () => {
 
             return new Promise((resolve, reject) => {
 
                 const handlers = {};
                 const maxRetryCount = 3;
                 let retryCount = 0;
-                handlers[message.event] = (consumedMessage, ack, rej, requeue) => {
+                handlers[messageObject.event] = (consumedMessage, ack, rej, requeue) => {
 
                     ++retryCount;
 
@@ -447,6 +517,7 @@ describe('positive integration tests - Promise api', () => {
                         return requeue();
                     }
 
+                    expect(consumedMessage).to.equal(messageObject);
                     expect(retryCount).to.equal(maxRetryCount);
 
                     return ack()
@@ -454,7 +525,35 @@ describe('positive integration tests - Promise api', () => {
                 };
 
                 return instance.subscribe(queueName, handlers, { maxRetryCount })
-                    .then(instance.publish.bind(instance, message))
+                    .then(instance.publish.bind(instance, messageObject))
+                    .catch(reject);
+            });
+        });
+
+        it('should consume message (Buffer) from queue and requeue off on maxRetryCount', { timeout : 0 }, () => {
+
+            return new Promise((resolve, reject) => {
+
+                const handlers = {};
+                const maxRetryCount = 3;
+                let retryCount = 0;
+                handlers[publishOptions.routeKey] = (consumedMessage, ack, rej, requeue) => {
+
+                    ++retryCount;
+
+                    if (retryCount < maxRetryCount) {
+                        return requeue();
+                    }
+
+                    expect(consumedMessage).to.equal(messageBuffer);
+                    expect(retryCount).to.equal(maxRetryCount);
+
+                    return ack()
+                        .then(resolve);
+                };
+
+                return instance.subscribe(queueName, handlers, { maxRetryCount })
+                    .then(instance.publish.bind(instance, messageBuffer, publishOptions))
                     .catch(reject);
             });
         });
