@@ -6,7 +6,7 @@
   "scripts": {
     "test": "lab test -a code -L -v",
     "build-test": ". docker/wait-on-resource.sh && npm test",
-    "run-docker": "docker run -d --name=rabbitmq -p 5671:5671 -p 15672:15672 -p 5672:5672 rabbitmq:3-management",
+    "start-docker": "docker run -d --name=rabbitmq -p 5671:5671 -p 15672:15672 -p 5672:5672 rabbitmq:3-management",
     "stop-docker": "docker rm -f rabbitmq"
   },
   "author": "Lam Chan",
