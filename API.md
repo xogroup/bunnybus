@@ -398,7 +398,7 @@ A `key` is the routeKey in RabbitMQ terminology.  `BunnyBus` specifically levera
 ##### `handler`
 
 A `handler` is a function which contains the following arity.  Order matters.
-  - `message` is what was received from the bus.  The message is a JS object and not the buffer.  The original source of this object is from `payload.content`.
+  - `message` is what was received from the bus.  The message does represent the RabbitMQ `'payload.content` buffer.  The original source of this object is from `payload.content`.
   - `ack([option, [callback]])` is a function for acknowledging the message off the bus.
     - `option` - a placeholder for future optional parameters for `ack`.  High chance of deprecation.
     - `callback` - node style callback `(err, result) => {}`. *[Function]* **Optional**
@@ -501,7 +501,7 @@ bunnyBus.send(message, 'queue1')
 
 ####`get(queue, [options, [callback]])`
 
-Pop a message directly off a queue.
+Pop a message directly off a queue.  The payload returned is the RabbitMQ `payload` with `payload.properties` and `payload.content` in its original form.
 
 #####parameter(s)
 
