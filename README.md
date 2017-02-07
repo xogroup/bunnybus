@@ -37,7 +37,7 @@ Getting yourself setup and bootstrapped is easy.  Use the following commands aft
 
 ```
 npm install
-npm run run-docker
+npm run start-docker
 npm test
 npm run stop-docker
 ```
