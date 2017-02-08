@@ -1067,6 +1067,43 @@ describe('negative integration tests', () => {
         });
     });
 
+    describe('subscribe', () => {
+
+        const queueName = 'test-queue-1';
+        const consumerTag = 'abcde12345';
+        const handlers = { event1 : () => {} };
+
+        afterEach((done) => {
+
+            instance.subscriptions._subscriptions.clear();
+            instance.subscriptions._blockQueues.clear();
+            done();
+        });
+
+        it('should throw SubscriptionExistError when calling subscribe on an active subscription exist', (done) => {
+
+            instance.subscriptions.create(queueName, handlers);
+            instance.subscriptions.tag(queueName, consumerTag);
+
+            instance.subscribe(queueName, handlers, (err) => {
+
+                expect(err).to.be.an.error(Exceptions.SubscriptionExistError);
+                done();
+            });
+        });
+
+        it('should throw SubscriptionBlockedError when calling subscribe against a blocked queue', (done) => {
+
+            instance.subscriptions.block(queueName);
+
+            instance.subscribe(queueName, handlers, (err) => {
+
+                expect(err).to.be.an.error(Exceptions.SubscriptionBlockedError);
+                done();
+            });
+        });
+    });
+
     describe('acknowledge', () => {
 
         const payload = {

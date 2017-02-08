@@ -47,6 +47,7 @@
   - [`SubscriptionManager`](#subscriptionmanager)
     - [`contains(queue, [withConsumerTag])`](#containsqueue-withconsumertag)
     - [`create(queue, [consumerTag, [handlers, [options]]])`](#createqueue-consumertag-handlers-options)
+    - [`tag(queue, consumerTag)`](#tagqueue-consumertag)
     - [`get(queue)`](#getqueue)
     - [`clear(queue)`](#clearqueue)
     - [`remove(queue)`](#removequeue)
@@ -865,13 +866,12 @@ const message = {
 }
 ```
 
-###`create(queue, [consumerTag, [handlers, [options]]])`
+###`create(queue, handlers, [options])`
 
 Creates a subscription.
 
 * `queue` - the name of the queue. *[string]* **Required**
-* `consumerTag` - a value returned from the [`consume()`](http://www.squaremobius.net/amqp.node/channel_api.html#channel_consume) method of amqplib.  *[string]* **Optional**
-* `handlers` - handlers parameter passed through the [`subscribe()`](#subscribequeue-handlers-options-callback) method.  *[Object]* **Optional**
+* `handlers` - handlers parameter passed through the [`subscribe()`](#subscribequeue-handlers-options-callback) method.  *[Object]* **Required**
 * `options` - options parameter passed through the [`subscribe()`](#subscribequeue-handlers-options-callback) method.  *[Object]* **Optional**
 
 ```Javascript
@@ -879,6 +879,21 @@ const BunnyBus = require('bunnybus');
 const bunnyBus = new BunnyBus();
 
 bunnybus.subscriptions.create('queue1');
+}
+```
+
+###`tag(queue, consumerTag)`
+
+Tag a subscription.
+
+* `queue` - the name of the queue. *[string]* **Required**
+* `consumerTag` - a value returned from the [`consume()`](http://www.squaremobius.net/amqp.node/channel_api.html#channel_consume) method of amqplib.  *[string]* **Required**
+
+```Javascript
+const BunnyBus = require('bunnybus');
+const bunnyBus = new BunnyBus();
+
+bunnybus.subscriptions.tag('queue1', 'abcd1234');
 }
 ```
 
