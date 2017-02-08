@@ -46,7 +46,7 @@
     - [`BunnyBus.AMQP_CHANNEL_ERROR_EVENT`](#bunnybusamqp_channel_error_event)   
   - [`SubscriptionManager`](#subscriptionmanager)
     - [`contains(queue, [withConsumerTag])`](#containsqueue-withconsumertag)
-    - [`create(queue, [consumerTag, [handlers, [options]]])`](#createqueue-consumertag-handlers-options)
+    - [`create(queue, handlers, [options])`](#createqueue--handlers-options)
     - [`tag(queue, consumerTag)`](#tagqueue-consumertag)
     - [`get(queue)`](#getqueue)
     - [`clear(queue)`](#clearqueue)
