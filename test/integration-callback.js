@@ -306,7 +306,7 @@ describe('positive integration tests - Callback api', () => {
             Assertions.assertSend(instance, message, queueName, null, null, done);
         });
 
-        it('should proxy `callingModule` when supplied', (done) => {
+        it('should proxy `source` when supplied', (done) => {
 
             Assertions.assertSend(instance, message, queueName, null, 'someModule', done);
         });
@@ -381,7 +381,7 @@ describe('positive integration tests - Callback api', () => {
             Assertions.assertPublish(instance, message, queueName, 'z', null, null, false, done);
         });
 
-        it('should proxy `callingModule` when supplied', (done) => {
+        it('should proxy `source` when supplied', (done) => {
 
             Assertions.assertPublish(instance, message, queueName, 'a', null, 'someModule', true, done);
         });
@@ -804,7 +804,7 @@ describe('positive integration tests - Callback api', () => {
         it('should requeue with well formed header properties', (done) => {
 
             const publishOptions = {
-                callingModule : 'test'
+                source : 'test'
             };
 
             let transactionId = null;
@@ -825,7 +825,7 @@ describe('positive integration tests - Callback api', () => {
                 expect(err).to.be.null();
                 expect(payload.properties.headers.transactionId).to.equal(transactionId);
                 expect(payload.properties.headers.createAt).to.equal(createdAt);
-                expect(payload.properties.headers.callingModule).to.equal(publishOptions.callingModule);
+                expect(payload.properties.headers.source).to.equal(publishOptions.source);
                 expect(payload.properties.headers.requeuedAt).to.exist();
                 expect(payload.properties.headers.retryCount).to.equal(1);
                 done();
@@ -900,7 +900,7 @@ describe('positive integration tests - Callback api', () => {
         it('should requeue with well formed header properties', (done) => {
 
             const publishOptions = {
-                callingModule : 'test'
+                source : 'test'
             };
             const requeuedAt = (new Date()).toISOString();
             const retryCount = 5;
@@ -924,7 +924,7 @@ describe('positive integration tests - Callback api', () => {
                 expect(err).to.be.null();
                 expect(payload.properties.headers.transactionId).to.equal(transactionId);
                 expect(payload.properties.headers.createAt).to.equal(createdAt);
-                expect(payload.properties.headers.callingModule).to.equal(publishOptions.callingModule);
+                expect(payload.properties.headers.source).to.equal(publishOptions.source);
                 expect(payload.properties.headers.requeuedAt).to.equal(requeuedAt);
                 expect(payload.properties.headers.retryCount).to.equal(retryCount);
                 expect(payload.properties.headers.errorAt).to.exist();
