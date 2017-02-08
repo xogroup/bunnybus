@@ -46,7 +46,8 @@
     - [`BunnyBus.AMQP_CHANNEL_ERROR_EVENT`](#bunnybusamqp_channel_error_event)   
   - [`SubscriptionManager`](#subscriptionmanager)
     - [`contains(queue, [withConsumerTag])`](#containsqueue-withconsumertag)
-    - [`create(queue, [consumerTag, [handlers, [options]]])`](#createqueue-consumertag-handlers-options)
+    - [`create(queue, handlers, [options])`](#createqueue--handlers-options)
+    - [`tag(queue, consumerTag)`](#tagqueue-consumertag)
     - [`get(queue)`](#getqueue)
     - [`clear(queue)`](#clearqueue)
     - [`remove(queue)`](#removequeue)
@@ -360,7 +361,7 @@ Publish a message onto the bus.
   - `options` - optional settings. *[Object]* **Optional**
     - `routeKey` - value for the route key to route the message with.  The value must be supplied here or in `message.event`.  The value can be `.` separated for namespacing. *[string]*  **Optional**
     - `transactionId` - value attached to the header of the message for tracing.  When one is not supplied, a random 40 character token is generated. *[string]*  **Optional**
-    - `callingModule` - value attached to the header of the message to help with tracking the origination point of your application.  For applications that leverage this plugin in multiple modules, each module can supply its own module name so a message can be tracked to the creator. *[string]* 
+    - `source` - value attached to the header of the message to help with tracking the origination point of your application.  For applications that leverage this plugin in multiple modules, each module can supply its own module name so a message can be tracked to the creator. *[string]* 
  **Optional**
     - `globalExchange` - value to override the exchange specified in `config`. *[string]* **Optional**
   - `callback` - node style callback `(err, result) => {}`. *[Function]* **Optional**
@@ -485,7 +486,7 @@ Send a message directly to a queue.
   - `queue` - the name of the queue. *[string]* **Required**
   - `options` - optional settings. *[Object]* **Optional**
     - `transactionId` - value attached to the header of the message for tracing.  When one is not supplied, a random 40 character token is generated. *[string]*  **Optional**
-    - `callingModule` - value attached to the header of the message to help with tracking the origination point of your application.  For applications that leverage this plugin in multiple modules, each module can supply its own module name so a message can be tracked to the creator. *[string]*  **Optional**
+    - `source` - value attached to the header of the message to help with tracking the origination point of your application.  For applications that leverage this plugin in multiple modules, each module can supply its own module name so a message can be tracked to the creator. *[string]*  **Optional**
   - `callback` - node style callback `(err, result) => {}`. *[Function]* **Optional**
 
 ```Javascript
@@ -865,13 +866,12 @@ const message = {
 }
 ```
 
-###`create(queue, [consumerTag, [handlers, [options]]])`
+###`create(queue, handlers, [options])`
 
 Creates a subscription.
 
 * `queue` - the name of the queue. *[string]* **Required**
-* `consumerTag` - a value returned from the [`consume()`](http://www.squaremobius.net/amqp.node/channel_api.html#channel_consume) method of amqplib.  *[string]* **Optional**
-* `handlers` - handlers parameter passed through the [`subscribe()`](#subscribequeue-handlers-options-callback) method.  *[Object]* **Optional**
+* `handlers` - handlers parameter passed through the [`subscribe()`](#subscribequeue-handlers-options-callback) method.  *[Object]* **Required**
 * `options` - options parameter passed through the [`subscribe()`](#subscribequeue-handlers-options-callback) method.  *[Object]* **Optional**
 
 ```Javascript
@@ -879,6 +879,21 @@ const BunnyBus = require('bunnybus');
 const bunnyBus = new BunnyBus();
 
 bunnybus.subscriptions.create('queue1');
+}
+```
+
+###`tag(queue, consumerTag)`
+
+Tag a subscription.
+
+* `queue` - the name of the queue. *[string]* **Required**
+* `consumerTag` - a value returned from the [`consume()`](http://www.squaremobius.net/amqp.node/channel_api.html#channel_consume) method of amqplib.  *[string]* **Required**
+
+```Javascript
+const BunnyBus = require('bunnybus');
+const bunnyBus = new BunnyBus();
+
+bunnybus.subscriptions.tag('queue1', 'abcd1234');
 }
 ```
 
