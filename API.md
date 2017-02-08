@@ -26,6 +26,7 @@
         - [`send(message, queue, [options, [callback]])`](#sendmessage-queue-options-callback)
         - [`get(queue, [options, [callback]])`](#getqueue-options-callback)
       - [Internal-use methods](#internal-use-methods)
+        - [`_recoverConnectChannel()`](#_recoverconnectchannel)
         - [`_createConnection([callback])`](#_createConnectioncallback)
         - [`_closeConnection([callback])`](#_closeConnectioncallback)
         - [`_createChannel([callback])`](#_createChannelcallback)
@@ -39,6 +40,10 @@
     - [`BunnyBus.PUBLISHED_EVENT`](#bunnybuspublished_event)
     - [`BunnyBus.SUBSCRIBED_EVENT`](#bunnybussubscribed_event)
     - [`BunnyBus.UNSUBSCRIBED_EVENT`](#bunnybusunsubscribed_event)
+    - [`BunnyBus.RECOVERING_EVENT`](#bunnybusrecovering_event)
+    - [`BunnyBus.RECOVERED_EVENT`](#bunnybusrecovered_event)
+    - [`BunnyBus.AMQP_CONNECTION_ERROR_EVENT`](#bunnybusamqp_connection_error_event)
+    - [`BunnyBus.AMQP_CHANNEL_ERROR_EVENT`](#bunnybusamqp_channel_error_event)   
   - [`SubscriptionManager`](#subscriptionmanager)
     - [`contains(queue, [withConsumerTag])`](#containsqueue-withconsumertag)
     - [`create(queue, [consumerTag, [handlers, [options]]])`](#createqueue-consumertag-handlers-options)
@@ -533,6 +538,19 @@ bunnyBus.get('queue1')
 The following methods are available in the public API, but manual use of them is highly discouraged.
 Please see the [Public API](#public-api) for the primary BunnyBus methods.
 
+####`_recoverConnectChannel()`
+
+Auto retry mechanism when to restore either a connection or channel when it goes corrupt.  The retry mechanism will attempt 240 times every 15 seconds.  When a connection can not be restored, `process.exit(1)` will be called.  This is invoked internally through error handlers.
+
+```Javascript
+const BunnyBus = require('bunnybus');
+const bunnyBus = new BunnyBus();
+
+// something bad happened
+
+bunnyBus._recoverConnectChannel();
+```
+
 ####`_createConnection([callback])`
 
 Create a connection from settings defined through custom or default configurations.
@@ -755,6 +773,74 @@ bunnyBus.on('BunnyBus.UNSUBSCRIBED_EVENT', (queue) => {
 
     console.log(queue);
     // output : 'queue1'
+});
+```
+
+###`BunnyBus.RECOVERING_EVENT`
+
+####event key
+
+* `bunnybus.recovering` - emitted when [`_recoverConnectChannel()`](#recoverconnectchannel) is first invoked.
+
+```Javascript
+const BunnyBus = require('bunnybus');
+
+bunnyBus.on('BunnyBus.RECOVERING_EVENT', () => {
+
+    // do work to handle the case when a connection or channel is having a failure
+});
+```
+
+###`BunnyBus.RECOVERED_EVENT`
+
+####event key
+
+* `bunnybus.recovered` - emitted when [`_recoverConnectChannel()`](#recoverconnectchannel) is successfully restores connections and channel.
+
+```Javascript
+const BunnyBus = require('bunnybus');
+
+bunnyBus.on('BunnyBus.RECOVERED_EVENT', () => {
+
+    // do work to handle the case when a connection or channel is restored
+});
+```
+
+###`BunnyBus.AMQP_CONNECTION_ERROR_EVENT`
+
+####event key
+
+* `amqp.connection.error'` - emitted when amqplib encounters a corrupted connection state.
+
+####handler parameter(s)
+
+* `err` - error from amqplib. *[Object]*
+
+```Javascript
+const BunnyBus = require('bunnybus');
+
+bunnyBus.on('BunnyBus.AMQP_CONNECTION_ERROR_EVENT', (err) => {
+
+    // do work
+});
+```
+
+###`BunnyBus.AMQP_CHANNEL_ERROR_EVENT`
+
+####event key
+
+* `amqp.channel.error'` - emitted when amqplib encounters a corrupted channel state.
+
+####handler parameter(s)
+
+* `err` - error from amqplib. *[Object]*
+
+```Javascript
+const BunnyBus = require('bunnybus');
+
+bunnyBus.on('BunnyBus.AMQP_CHANNEL_ERROR_EVENT', (err) => {
+
+    // do work
 });
 ```
 

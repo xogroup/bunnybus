@@ -172,7 +172,7 @@ describe('positive integration tests - Callback api', () => {
                 expect(instance.connection).to.exist();
                 expect(instance.channel).to.exist();
                 done();
-            }, 100);
+            }, 50);
         });
 
         it('should recreate connection when channel error occurs', (done) => {
@@ -184,7 +184,7 @@ describe('positive integration tests - Callback api', () => {
                 expect(instance.connection).to.exist();
                 expect(instance.channel).to.exist();
                 done();
-            }, 100);
+            }, 50);
         });
     });
 
@@ -276,6 +276,13 @@ describe('positive integration tests - Callback api', () => {
                 expect(err).to.be.null();
                 done();
             });
+        });
+
+        it('should recover from a non existent exchange', (done) => {
+
+            instance.once(BunnyBus.RECOVERED_EVENT, done);
+
+            instance.checkExchange(exchangeName, () => {});
         });
     });
 
