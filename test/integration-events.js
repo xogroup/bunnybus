@@ -26,6 +26,36 @@ describe('positive integration tests - events', () => {
         done();
     });
 
+    describe('recovering', () =>  {
+
+        before((done) => {
+
+            instance._autoConnectChannel(done);
+        });
+
+        it('should be evented when connection is recovering', (done) => {
+
+            instance.once(BunnyBus.RECOVERING_EVENT, done);
+
+            instance.connection.emit('error');
+        });
+    });
+
+    describe('recovered', () => {
+
+        before((done) => {
+
+            instance._autoConnectChannel(done);
+        });
+
+        it('should be evented when connection is recovering', (done) => {
+
+            instance.once(BunnyBus.RECOVERED_EVENT, done);
+
+            instance.connection.emit('error');
+        });
+    });
+
     describe('published', () => {
 
         const message = { event : 'published-event', name : 'bunnybus' };
