@@ -51,6 +51,7 @@
     - [`tag(queue, consumerTag)`](#tagqueue-consumertag)
     - [`get(queue)`](#getqueue)
     - [`clear(queue)`](#clearqueue)
+    - [`clearAll()`](#clearall)
     - [`remove(queue)`](#removequeue)
     - [`list()`](#list)
     - [`block(queue)`](#blockqueue)
@@ -943,6 +944,18 @@ const BunnyBus = require('bunnybus');
 const bunnyBus = new BunnyBus();
 
 bunnybus.subscriptions.clear('queue1');
+}
+```
+
+###`clearAll()`
+
+Clears all subscriptions of the `consumerTag`.
+
+```Javascript
+const BunnyBus = require('bunnybus');
+const bunnyBus = new BunnyBus();
+
+bunnybus.subscriptions.clearAll();
 }
 ```
 
