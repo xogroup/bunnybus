@@ -23,9 +23,13 @@ npm install bunnybus
 
 ## Usage
 
-## API
+### API
 
 See the [API Reference](http://github.com/xogroup/bunnybus/blob/master/API.md).
+
+### Examples
+
+Check out the [Examples](http://github.com/xogroup/bunnybus/blob/master/Example.md).
 
 ## Contributing
 
