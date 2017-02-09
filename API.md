@@ -33,6 +33,7 @@
         - [`_closeChannel([callback])`](#_closeChannelcallback)
   - [Events (`EventEmitter`)](#events-eventemitter)
     - [`BunnyBus.LOG_DEBUG_EVENT`](#bunnybuslog_debug_event)
+    - [`BunnyBus.LOG_TRACE_EVENT`](#bunnybuslog_trace_event)
     - [`BunnyBus.LOG_INFO_EVENT`](#bunnybuslog_info_event)
     - [`BunnyBus.LOG_WARN_EVENT`](#bunnybuslog_warn_event)
     - [`BunnyBus.LOG_ERROR_EVENT`](#bunnybuslog_error_event)
@@ -86,7 +87,7 @@ Setter and Getter for singleton configuration. Accepts the following optional pr
  * `globalExchange` - value of the exchange to transact through for message publishing.  This is the default used when one is not provided as an within the `options` for any `BunnyBus` methods that supports one transactionally.  Defaults to `default-exchange`. *[string]* **Optional**
  * `prefetch` - value of the maximum number of unacknowledged messages allowable in a channel.  Defaults to `5`. *[number]* **Optional**
 
-Note that updates in the options directed at changing connection string will not take affect immediately.  `_closeConnection()`](#_closeConnectioncallback) needs to be called manually to invoke a new connection with new settings.
+Note that updates in the options directed at changing connection string will not take affect immediately.  [`_closeConnection()`](#_closeConnectioncallback) needs to be called manually to invoke a new connection with new settings.
 
   ```Javascript
   const BunnyBus = require('bunnybus');
@@ -646,6 +647,24 @@ const pino = require('pino')();
 
 bunnyBus.on('BunnyBus.LOG_DEBUG_EVENT', pino.debug);
 bunnyBus.on('log.debug', pino.debug);
+```
+
+###`BunnyBus.LOG_TRACE_EVENT`
+
+####event key
+
+* `log.trace` - trace level logging message.
+
+####handler parameter(s)
+
+* `message` - debug message sent. *[string]*
+
+```Javascript
+const BunnyBus = require('bunnybus');
+const pino = require('pino')();
+
+bunnyBus.on('BunnyBus.LOG_TRACE_EVENT', pino.trace);
+bunnyBus.on('log.trace', pino.trace);
 ```
 
 ###`BunnyBus.LOG_INFO_EVENT`
