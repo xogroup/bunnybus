@@ -1,6 +1,6 @@
 {
   "name": "bunnybus",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "RabbitMQ driver for pub/sub with error queue / retry management",
   "main": "lib/index.js",
   "scripts": {
