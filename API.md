@@ -86,6 +86,8 @@ Setter and Getter for singleton configuration. Accepts the following optional pr
  * `globalExchange` - value of the exchange to transact through for message publishing.  This is the default used when one is not provided as an within the `options` for any `BunnyBus` methods that supports one transactionally.  Defaults to `default-exchange`. *[string]* **Optional**
  * `prefetch` - value of the maximum number of unacknowledged messages allowable in a channel.  Defaults to `5`. *[number]* **Optional**
 
+Note that updates in the options directed at changing connection string will not take affect immediately.  `_closeConnection()`](#_closeConnectioncallback) needs to be called manually to invoke a new connection with new settings.
+
   ```Javascript
   const BunnyBus = require('bunnybus');
   const bunnybus = new BunnyBus();

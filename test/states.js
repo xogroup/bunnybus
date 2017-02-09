@@ -235,6 +235,41 @@ describe('state management', () => {
             });
         });
 
+        describe('clearAll', () => {
+
+            const baseQueueName = 'subscription-clearAllSubscription';
+
+            it('should return true when subscription is cleared', (done) => {
+
+                const handlers = { event1 : () => {} };
+                const options = {};
+                const iterationLimit = 5;
+                let iterationCount = 0;
+
+                for (let i = 1; i <= iterationLimit; ++i) {
+                    const queueName = `${baseQueueName}-${i}`;
+                    const consumerTag = `abcdefg012345-${1}`;
+                    instance.create(queueName, handlers, options);
+                    instance.tag(queueName, consumerTag);
+                }
+
+                const eventHandler = (subscription) => {
+
+                    ++iterationCount;
+
+                    expect(subscription).to.exist();
+
+                    if (iterationCount === iterationLimit) {
+                        instance.removeListener(SubscriptionManager.CLEARED_EVENT, eventHandler);
+                        done();
+                    }
+                };
+
+                instance.on(SubscriptionManager.CLEARED_EVENT, eventHandler);
+                instance.clearAll();
+            });
+        });
+
         describe('contains', () => {
 
             const baseQueueName = 'subscription-contains';
