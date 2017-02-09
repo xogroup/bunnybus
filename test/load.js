@@ -14,7 +14,7 @@ const it = lab.it;
 const BunnyBus = require('../lib');
 let instance = undefined;
 
-describe.only('integration load test', () => {
+describe('integration load test', () => {
 
     const publishTarget = 1000;
 
