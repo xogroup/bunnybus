@@ -15,7 +15,7 @@ let instance = undefined;
 
 describe('state management', () => {
 
-    describe('subscriptions', () => {
+    describe('SubscriptionManager', () => {
 
         before((done) => {
 
