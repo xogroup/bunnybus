@@ -88,6 +88,6 @@ describe('logging', () => {
         it('should call custom trace handler', (done) => {
 
             Assertions.assertCustomLogger(instance, 'trace', inputMessage, done);
-        });        
+        });
     });
 });
