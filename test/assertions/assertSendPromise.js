@@ -3,11 +3,11 @@
 const Code = require('code');
 const expect = Code.expect;
 
-const assertSendPromise = (instance, message, queueName, transactionId, callingModule) => {
+const assertSendPromise = (instance, message, queueName, transactionId, source) => {
 
     const options = {
         transactionId,
-        callingModule
+        source
     };
 
     return instance.send(message, queueName, options)
@@ -23,16 +23,16 @@ const assertSendPromise = (instance, message, queueName, transactionId, callingM
             expect(payload.properties.headers.transactionId).to.be.string();
             expect(payload.properties.headers.createdAt).to.exist();
 
-            if (callingModule) {
-                expect(payload.properties.headers.callingModule).to.be.string();
+            if (source) {
+                expect(payload.properties.headers.source).to.be.string();
             }
 
             if (transactionId) {
                 expect(payload.properties.headers.transactionId).to.equal(transactionId);
             }
 
-            if (callingModule) {
-                expect(payload.properties.headers.callingModule).to.equal(callingModule);
+            if (source) {
+                expect(payload.properties.headers.source).to.equal(source);
             }
 
             return instance.channel.ack(payload);

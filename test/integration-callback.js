@@ -306,7 +306,7 @@ describe('positive integration tests - Callback api', () => {
             Assertions.assertSend(instance, message, queueName, null, null, done);
         });
 
-        it('should proxy `callingModule` when supplied', (done) => {
+        it('should proxy `source` when supplied', (done) => {
 
             Assertions.assertSend(instance, message, queueName, null, 'someModule', done);
         });
@@ -381,7 +381,7 @@ describe('positive integration tests - Callback api', () => {
             Assertions.assertPublish(instance, message, queueName, 'z', null, null, false, done);
         });
 
-        it('should proxy `callingModule` when supplied', (done) => {
+        it('should proxy `source` when supplied', (done) => {
 
             Assertions.assertPublish(instance, message, queueName, 'a', null, 'someModule', true, done);
         });
@@ -804,7 +804,7 @@ describe('positive integration tests - Callback api', () => {
         it('should requeue with well formed header properties', (done) => {
 
             const publishOptions = {
-                callingModule : 'test'
+                source : 'test'
             };
 
             let transactionId = null;
@@ -825,7 +825,7 @@ describe('positive integration tests - Callback api', () => {
                 expect(err).to.be.null();
                 expect(payload.properties.headers.transactionId).to.equal(transactionId);
                 expect(payload.properties.headers.createAt).to.equal(createdAt);
-                expect(payload.properties.headers.callingModule).to.equal(publishOptions.callingModule);
+                expect(payload.properties.headers.source).to.equal(publishOptions.source);
                 expect(payload.properties.headers.requeuedAt).to.exist();
                 expect(payload.properties.headers.retryCount).to.equal(1);
                 done();
@@ -900,7 +900,7 @@ describe('positive integration tests - Callback api', () => {
         it('should requeue with well formed header properties', (done) => {
 
             const publishOptions = {
-                callingModule : 'test'
+                source : 'test'
             };
             const requeuedAt = (new Date()).toISOString();
             const retryCount = 5;
@@ -924,7 +924,7 @@ describe('positive integration tests - Callback api', () => {
                 expect(err).to.be.null();
                 expect(payload.properties.headers.transactionId).to.equal(transactionId);
                 expect(payload.properties.headers.createAt).to.equal(createdAt);
-                expect(payload.properties.headers.callingModule).to.equal(publishOptions.callingModule);
+                expect(payload.properties.headers.source).to.equal(publishOptions.source);
                 expect(payload.properties.headers.requeuedAt).to.equal(requeuedAt);
                 expect(payload.properties.headers.retryCount).to.equal(retryCount);
                 expect(payload.properties.headers.errorAt).to.exist();
@@ -1062,6 +1062,43 @@ describe('negative integration tests', () => {
             instance.publish(message, (err) => {
 
                 expect(err).to.be.an.error(Exceptions.NoRouteKeyError);
+                done();
+            });
+        });
+    });
+
+    describe('subscribe', () => {
+
+        const queueName = 'test-queue-1';
+        const consumerTag = 'abcde12345';
+        const handlers = { event1 : () => {} };
+
+        afterEach((done) => {
+
+            instance.subscriptions._subscriptions.clear();
+            instance.subscriptions._blockQueues.clear();
+            done();
+        });
+
+        it('should throw SubscriptionExistError when calling subscribe on an active subscription exist', (done) => {
+
+            instance.subscriptions.create(queueName, handlers);
+            instance.subscriptions.tag(queueName, consumerTag);
+
+            instance.subscribe(queueName, handlers, (err) => {
+
+                expect(err).to.be.an.error(Exceptions.SubscriptionExistError);
+                done();
+            });
+        });
+
+        it('should throw SubscriptionBlockedError when calling subscribe against a blocked queue', (done) => {
+
+            instance.subscriptions.block(queueName);
+
+            instance.subscribe(queueName, handlers, (err) => {
+
+                expect(err).to.be.an.error(Exceptions.SubscriptionBlockedError);
                 done();
             });
         });

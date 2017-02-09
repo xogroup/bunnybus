@@ -3,12 +3,12 @@
 const Code = require('code');
 const expect = Code.expect;
 
-const assertPublishPromise = (instance, message, queueName, routeKey, transactionId, callingModule, shouldRoute) => {
+const assertPublishPromise = (instance, message, queueName, routeKey, transactionId, source, shouldRoute) => {
 
     const options = {
         routeKey,
         transactionId,
-        callingModule
+        source
     };
 
     return instance.publish(message, options)
@@ -32,16 +32,16 @@ const assertPublishPromise = (instance, message, queueName, routeKey, transactio
                     expect(payload.properties.headers.routeKey).to.equal(message.event);
                 }
 
-                if (callingModule) {
-                    expect(payload.properties.headers.callingModule).to.be.string();
+                if (source) {
+                    expect(payload.properties.headers.source).to.be.string();
                 }
 
                 if (transactionId) {
                     expect(payload.properties.headers.transactionId).to.equal(transactionId);
                 }
 
-                if (callingModule) {
-                    expect(payload.properties.headers.callingModule).to.equal(callingModule);
+                if (source) {
+                    expect(payload.properties.headers.source).to.equal(source);
                 }
 
                 instance.channel.ack(payload);
