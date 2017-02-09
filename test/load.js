@@ -14,7 +14,9 @@ const it = lab.it;
 const BunnyBus = require('../lib');
 let instance = undefined;
 
-describe('integration load test', () => {
+describe.only('integration load test', () => {
+
+    const publishTarget = 1000;
 
     before((done) => {
 
@@ -23,13 +25,12 @@ describe('integration load test', () => {
         done();
     });
 
-    describe('with callback interface', () => {
+    describe('with asynclib callback interface', () => {
 
         const queueName = 'load-callback-queue-1';
         const errorQueueName = `${queueName}_error`;
         const message = { event : 'a.b', name : 'bunnybus' };
         const patterns = ['a.b'];
-        const publishTarget = 2;
 
         before((done) => {
 
@@ -109,13 +110,12 @@ describe('integration load test', () => {
         });
     });
 
-    describe('with promises interface', () => {
+    describe('with ES6 native promises interface', () => {
 
         const queueName = 'load-promise-queue-1';
         const errorQueueName = `${queueName}_error`;
         const message = { event : 'a.promise', name : 'bunnybus' };
         const patterns = ['a.promise'];
-        const publishTarget = 2;
 
         before(() => {
 
@@ -179,13 +179,12 @@ describe('integration load test', () => {
         });
     });
 
-    describe('with third-party promise interface', () => {
+    describe('with third-party (bluebird) promise interface', () => {
 
         const queueName = 'load-promise-queue-2';
         const errorQueueName = `${queueName}_error`;
         const message = { event : 'b.promise', name : 'bunnybus' };
         const patterns = ['b.promise'];
-        const publishTarget = 2;
 
         before(() => {
 
@@ -201,7 +200,7 @@ describe('integration load test', () => {
                         return instance.channel.bindQueue(queueName, instance.config.globalExchange, pattern);
                     });
 
-                    return Promise.all(promises);
+                    return Bluebird.all(promises);
                 });
         });
 
@@ -231,7 +230,7 @@ describe('integration load test', () => {
                 promises.push(instance.publish(message));
             }
 
-            return Promise.all(promises);
+            return Bluebird.all(promises);
         });
 
         it('should consume all messages within 2 seconds', (done) => {
