@@ -51,6 +51,11 @@ describe('logging', () => {
 
             Assertions.assertLogger(instance, 'debug', inputMessage, done);
         });
+
+        it('should subscribe to `log.trace` event when log.trace() is called', (done) => {
+
+            Assertions.assertLogger(instance, 'trace', inputMessage, done);
+        });
     });
 
     describe('with custom logger', () => {
@@ -78,6 +83,11 @@ describe('logging', () => {
         it('should call custom debug handler', (done) => {
 
             Assertions.assertCustomLogger(instance, 'debug', inputMessage, done);
+        });
+
+        it('should call custom trace handler', (done) => {
+
+            Assertions.assertCustomLogger(instance, 'trace', inputMessage, done);
         });
     });
 });
