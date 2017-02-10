@@ -2,11 +2,17 @@
 
 Examples are based on usage of Promises.
 
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+**Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
+
 - [General usage of publish and subscribe](#general-usage-of-publish-and-subscribe)
 - [Integrating with the `SubscriptionManager`](#integrating-with-the-subscriptionmanager)
   - [Fire and Forget](#fire-and-forget)
   - [Fire and Wait for Resolution](#fire-and-wait-for-resolution)
-- [Logging with `BunnyBus` Logging events](#logging-with-bunnybus-logging-events)  
+- [Logging with `BunnyBus` Logging events](#logging-with-bunnybus-logging-events)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
 ## General usage of publish and subscribe
 
