@@ -172,7 +172,7 @@ describe('positive integration tests - Callback api', () => {
                 expect(instance.connection).to.exist();
                 expect(instance.channel).to.exist();
                 done();
-            }, 50);
+            }, 70);
         });
 
         it('should recreate connection when channel error occurs', (done) => {
@@ -184,7 +184,7 @@ describe('positive integration tests - Callback api', () => {
                 expect(instance.connection).to.exist();
                 expect(instance.channel).to.exist();
                 done();
-            }, 50);
+            }, 70);
         });
     });
 
