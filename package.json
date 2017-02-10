@@ -16,8 +16,7 @@
   },
   "dependencies": {
     "amqplib": "^0.5.1",
-    "async": "^2.1.4",
-    "hoek": "^4.1.0"
+    "async": "^2.1.4"
   },
   "devDependencies": {
     "bluebird": "^3.4.6",
