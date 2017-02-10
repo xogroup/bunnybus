@@ -4,8 +4,8 @@ Examples are based on usage of Promises.
 
 - [General usage of publish and subscribe](#general-usage-of-publish-and-subscribe)
 - [Integrating with the `SubscriptionManager`](#integrating-with-the-subscriptionmanager)
-  -[Fire and Forget](#fire-and-forget)
-  -[Fire and Wait for Resolution](#fire-and-wait-for-resolution)
+  - [Fire and Forget](#fire-and-forget)
+  - [Fire and Wait for Resolution](#fire-and-wait-for-resolution)
 - [Logging with `BunnyBus` Logging events](#logging-with-bunnybus-logging-events)  
 
 ## General usage of publish and subscribe
