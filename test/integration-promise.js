@@ -733,7 +733,7 @@ describe('positive integration tests - Promise api', () => {
                 .then((payload) => {
 
                     expect(payload.properties.headers.transactionId).to.equal(transactionId);
-                    expect(payload.properties.headers.createAt).to.equal(createdAt);
+                    expect(payload.properties.headers.createdAt).to.equal(createdAt);
                     expect(payload.properties.headers.source).to.equal(publishOptions.source);
                     expect(payload.properties.headers.requeuedAt).to.exist();
                     expect(payload.properties.headers.retryCount).to.equal(1);
@@ -822,11 +822,11 @@ describe('positive integration tests - Promise api', () => {
                 .then((payload) => {
 
                     expect(payload.properties.headers.transactionId).to.equal(transactionId);
-                    expect(payload.properties.headers.createAt).to.equal(createdAt);
+                    expect(payload.properties.headers.createdAt).to.equal(createdAt);
                     expect(payload.properties.headers.source).to.equal(publishOptions.source);
                     expect(payload.properties.headers.requeuedAt).to.equal(requeuedAt);
                     expect(payload.properties.headers.retryCount).to.equal(retryCount);
-                    expect(payload.properties.headers.errorAt).to.exist();
+                    expect(payload.properties.headers.erroredAt).to.exist();
                 });
         });
     });
