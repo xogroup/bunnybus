@@ -361,6 +361,7 @@ describe('positive integration tests - Promise api', () => {
         const queueName = 'test-subscribe-queue-1';
         const errorQueueName = `${queueName}_error`;
         const publishOptions = { routeKey : 'a.b' };
+        const subscribeOptions = { meta : true };
         const messageObject = { event : 'a.b', name : 'bunnybus' };
         const messageString = 'bunnybus';
         const messageBuffer = new Buffer(messageString);
@@ -406,6 +407,28 @@ describe('positive integration tests - Promise api', () => {
             });
         });
 
+        it('should consume message (Object) and meta from queue and acknowledge off', () => {
+
+            return new Promise((resolve, reject) => {
+
+                const handlers = {};
+
+                handlers[messageObject.event] = (consumedMessage, meta, ack) => {
+
+                    expect(consumedMessage).to.equal(messageObject);
+                    expect(meta).to.not.be.a.function();
+                    expect(meta.headers).to.exist();
+
+                    return ack()
+                        .then(resolve);
+                };
+
+                return instance.subscribe(queueName, handlers, subscribeOptions)
+                    .then(instance.publish.bind(instance, messageObject))
+                    .catch(reject);
+            });
+        });
+
         it('should consume message (String) from queue and acknowledge off', () => {
 
             return new Promise((resolve, reject) => {
@@ -426,6 +449,28 @@ describe('positive integration tests - Promise api', () => {
             });
         });
 
+        it('should consume message (String) and meta from queue and acknowledge off', () => {
+
+            return new Promise((resolve, reject) => {
+
+                const handlers = {};
+
+                handlers[publishOptions.routeKey] = (consumedMessage, meta, ack) => {
+
+                    expect(consumedMessage).to.equal(messageString);
+                    expect(meta).to.not.be.a.function();
+                    expect(meta.headers).to.exist();
+
+                    return ack()
+                        .then(resolve);
+                };
+
+                return instance.subscribe(queueName, handlers, subscribeOptions)
+                    .then(instance.publish.bind(instance, messageString, publishOptions))
+                    .catch(reject);
+            });
+        });
+
         it('should consume message (Buffer) from queue and acknowledge off', () => {
 
             return new Promise((resolve, reject) => {
@@ -441,6 +486,28 @@ describe('positive integration tests - Promise api', () => {
                 };
 
                 return instance.subscribe(queueName, handlers)
+                    .then(instance.publish.bind(instance, messageBuffer, publishOptions))
+                    .catch(reject);
+            });
+        });
+
+        it('should consume message (Buffer) and meta from queue and acknowledge off', () => {
+
+            return new Promise((resolve, reject) => {
+
+                const handlers = {};
+
+                handlers[publishOptions.routeKey] = (consumedMessage, meta, ack) => {
+
+                    expect(consumedMessage).to.equal(messageBuffer);
+                    expect(meta).to.not.be.a.function();
+                    expect(meta.headers).to.exist();
+
+                    return ack()
+                        .then(resolve);
+                };
+
+                return instance.subscribe(queueName, handlers, subscribeOptions)
                     .then(instance.publish.bind(instance, messageBuffer, publishOptions))
                     .catch(reject);
             });
