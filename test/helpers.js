@@ -163,6 +163,33 @@ describe('helpers', () => {
         });
     });
 
+    describe('isMajorCompatible', () => {
+
+        it('should return true when major matches', (done) => {
+
+            const result = Helpers.isMajorCompatible('1.2.3', '1.x.x');
+
+            expect(result).to.be.true();
+            done();
+        });
+
+        it('should return false when major does not match', (done) => {
+
+            const result = Helpers.isMajorCompatible('2.1.3', '1.x.x');
+
+            expect(result).to.be.false();
+            done();
+        });
+
+        it('should return true when using package defaults', (done) => {
+
+            const result = Helpers.isMajorCompatible(require('../package.json').version);
+
+            expect(result).to.be.true();
+            done();
+        });
+    });
+
     describe('reduceRouteKey', () => {
 
         const payloadHeaders = {

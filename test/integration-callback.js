@@ -692,6 +692,40 @@ describe('positive integration tests - Callback api', () => {
                 }
             });
         });
+
+        it('should reject message with mismatched version', (done) => {
+
+            const handlers = {};
+            const config = instance.config;
+            const version = '0.0.1';
+            const headers = {
+                headers : {
+                    transactionId : '1234abcd',
+                    isBuffer      : false,
+                    routeKey      : publishOptions.routeKey,
+                    createAt      : (new Date()).toISOString(),
+                    bunnyBus      : version
+                }
+            };
+
+            handlers[publishOptions.routeKey] = (consumedMessage, ack, reject, requeue) => {
+
+                //this should never be called.
+                ack(done);
+            };
+
+            instance.once(BunnyBus.LOG_WARN_EVENT, (message) => {
+
+                expect(message).to.be.equal(`message came from older bunnyBus version (${version})`);
+                done();
+            });
+
+            Async.waterfall([
+                instance.subscribe.bind(instance, queueName, handlers),
+                (cb) => instance.channel.publish(config.globalExchange, publishOptions.routeKey, new Buffer(JSON.stringify(messageObject)), headers, cb)
+            ],
+            () => {});
+        });
     });
 
     describe('subscribe / unsubscribe (multiple queue)', () => {
