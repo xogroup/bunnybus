@@ -693,6 +693,38 @@ describe('positive integration tests - Callback api', () => {
             });
         });
 
+        it('should reject message with out bunnyBus header property', (done) => {
+
+            const handlers = {};
+            const config = instance.config;
+            const headers = {
+                headers : {
+                    transactionId : '1234abcd',
+                    isBuffer      : false,
+                    routeKey      : publishOptions.routeKey,
+                    createAt      : (new Date()).toISOString()
+                }
+            };
+
+            handlers[publishOptions.routeKey] = (consumedMessage, ack, reject, requeue) => {
+
+                //this should never be called.
+                ack(done);
+            };
+
+            instance.once(BunnyBus.LOG_WARN_EVENT, (message) => {
+
+                expect(message).to.be.equal('message not of BunnyBus origin');
+                done();
+            });
+
+            Async.waterfall([
+                instance.subscribe.bind(instance, queueName, handlers),
+                (cb) => instance.channel.publish(config.globalExchange, publishOptions.routeKey, new Buffer(JSON.stringify(messageObject)), headers, cb)
+            ],
+            () => {});
+        });
+
         it('should reject message with mismatched version', (done) => {
 
             const handlers = {};
