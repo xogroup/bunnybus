@@ -31,6 +31,10 @@ See the [API Reference](http://github.com/xogroup/bunnybus/blob/master/API.md).
 
 Check out the [Examples](http://github.com/xogroup/bunnybus/blob/master/Example.md).
 
+### Diagrams
+
+[Visual Guide](http://github.com/xogroup/bunnybus/blob/master/Diagram.md) to integrating with `BunnyBus`.
+
 ## Contributing
 
 We love community and contributions! Please check out our [guidelines](http://github.com/xogroup/bunnybus/blob/master/.github/CONTRIBUTING.md) before making any PRs.
