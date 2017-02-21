@@ -72,9 +72,12 @@ describe('helpers', () => {
 
             const result = Helpers.getPackageData();
 
+            const semverMajor = require('../package.json').version.split('.', 1);
+
             expect(result).to.exist();
             expect(result.name).to.be.equal(require('../package.json').name);
             expect(result.version).to.be.equal(require('../package.json').version);
+            expect(result.semverMatch).to.be.equal(semverMajor + '.x.x');
             done();
         });
     });
