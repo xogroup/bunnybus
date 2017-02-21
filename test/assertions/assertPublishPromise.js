@@ -21,15 +21,15 @@ const assertPublishPromise = (instance, message, queueName, routeKey, transactio
             if (shouldRoute) {
                 const subscribedMessage = JSON.parse(payload.content.toString());
 
-                expect(subscribedMessage).to.equal(message);
+                expect(subscribedMessage).to.be.equal(message);
                 expect(payload.properties.headers.transactionId).to.be.string();
                 expect(payload.properties.headers.createdAt).to.exist();
 
                 if (routeKey) {
-                    expect(payload.properties.headers.routeKey).to.equal(routeKey);
+                    expect(payload.properties.headers.routeKey).to.be.equal(routeKey);
                 }
                 else {
-                    expect(payload.properties.headers.routeKey).to.equal(message.event);
+                    expect(payload.properties.headers.routeKey).to.be.equal(message.event);
                 }
 
                 if (source) {
@@ -37,11 +37,11 @@ const assertPublishPromise = (instance, message, queueName, routeKey, transactio
                 }
 
                 if (transactionId) {
-                    expect(payload.properties.headers.transactionId).to.equal(transactionId);
+                    expect(payload.properties.headers.transactionId).to.be.equal(transactionId);
                 }
 
                 if (source) {
-                    expect(payload.properties.headers.source).to.equal(source);
+                    expect(payload.properties.headers.source).to.be.equal(source);
                 }
 
                 instance.channel.ack(payload);

@@ -395,7 +395,7 @@ describe('positive integration tests - Promise api', () => {
 
                 handlers[messageObject.event] = (consumedMessage, ack) => {
 
-                    expect(consumedMessage).to.equal(messageObject);
+                    expect(consumedMessage).to.be.equal(messageObject);
 
                     return ack()
                         .then(resolve);
@@ -437,7 +437,7 @@ describe('positive integration tests - Promise api', () => {
 
                 handlers[publishOptions.routeKey] = (consumedMessage, ack) => {
 
-                    expect(consumedMessage).to.equal(messageString);
+                    expect(consumedMessage).to.be.equal(messageString);
 
                     return ack()
                         .then(resolve);
@@ -479,7 +479,7 @@ describe('positive integration tests - Promise api', () => {
 
                 handlers[publishOptions.routeKey] = (consumedMessage, ack) => {
 
-                    expect(consumedMessage).to.equal(messageBuffer);
+                    expect(consumedMessage).to.be.equal(messageBuffer);
 
                     return ack()
                         .then(resolve);
@@ -521,7 +521,7 @@ describe('positive integration tests - Promise api', () => {
 
                 handlers[messageObject.event] = (consumedMessage, ack, rej) => {
 
-                    expect(consumedMessage).to.equal(messageObject);
+                    expect(consumedMessage).to.be.equal(messageObject);
 
                     return rej()
                         .then(instance.get.bind(instance, errorQueueName))
@@ -529,7 +529,7 @@ describe('positive integration tests - Promise api', () => {
 
                             expect(payload).to.exist();
                             const errorMessage = JSON.parse(payload.content.toString());
-                            expect(errorMessage).to.equal(messageObject);
+                            expect(errorMessage).to.be.equal(messageObject);
                             expect(payload.properties.headers.isBuffer).to.be.false();
                         })
                         .then(resolve);
@@ -549,7 +549,7 @@ describe('positive integration tests - Promise api', () => {
 
                 handlers[publishOptions.routeKey] = (consumedMessage, ack, rej) => {
 
-                    expect(consumedMessage).to.equal(messageBuffer);
+                    expect(consumedMessage).to.be.equal(messageBuffer);
 
                     return rej()
                         .then(instance.get.bind(instance, errorQueueName))
@@ -557,7 +557,7 @@ describe('positive integration tests - Promise api', () => {
 
                             expect(payload).to.exist();
                             const errorMessage = payload.content;
-                            expect(errorMessage).to.equal(messageBuffer);
+                            expect(errorMessage).to.be.equal(messageBuffer);
                             expect(payload.properties.headers.isBuffer).to.be.true();
                         })
                         .then(resolve);
@@ -584,8 +584,8 @@ describe('positive integration tests - Promise api', () => {
                         return requeue();
                     }
 
-                    expect(consumedMessage).to.equal(messageObject);
-                    expect(retryCount).to.equal(maxRetryCount);
+                    expect(consumedMessage).to.be.equal(messageObject);
+                    expect(retryCount).to.be.equal(maxRetryCount);
 
                     return ack()
                         .then(resolve);
@@ -612,8 +612,8 @@ describe('positive integration tests - Promise api', () => {
                         return requeue();
                     }
 
-                    expect(consumedMessage).to.equal(messageBuffer);
-                    expect(retryCount).to.equal(maxRetryCount);
+                    expect(consumedMessage).to.be.equal(messageBuffer);
+                    expect(retryCount).to.be.equal(maxRetryCount);
 
                     return ack()
                         .then(resolve);
@@ -665,7 +665,7 @@ describe('positive integration tests - Promise api', () => {
 
                 handlers[message.event] = (consumedMessage, ack) => {
 
-                    expect(consumedMessage.name).to.equal(message.name);
+                    expect(consumedMessage.name).to.be.equal(message.name);
 
                     return ack()
                         .then(() => {
@@ -799,11 +799,13 @@ describe('positive integration tests - Promise api', () => {
                 .then(instance.get.bind(instance, queueName))
                 .then((payload) => {
 
-                    expect(payload.properties.headers.transactionId).to.equal(transactionId);
-                    expect(payload.properties.headers.createdAt).to.equal(createdAt);
-                    expect(payload.properties.headers.source).to.equal(publishOptions.source);
+                    expect(payload.properties.headers.transactionId).to.be.equal(transactionId);
+                    expect(payload.properties.headers.createdAt).to.be.equal(createdAt);
+                    expect(payload.properties.headers.source).to.be.equal(publishOptions.source);
                     expect(payload.properties.headers.requeuedAt).to.exist();
-                    expect(payload.properties.headers.retryCount).to.equal(1);
+                    expect(payload.properties.headers.retryCount).to.be.equal(1);
+                    expect(payload.properties.headers.routeKey).to.be.equal(message.event);
+                    expect(payload.properties.headers.bunnyBus).to.be.equal(require('../package.json').version);
                 });
         });
     });
@@ -888,12 +890,13 @@ describe('positive integration tests - Promise api', () => {
                 .then(instance.get.bind(instance, errorQueueName))
                 .then((payload) => {
 
-                    expect(payload.properties.headers.transactionId).to.equal(transactionId);
-                    expect(payload.properties.headers.createdAt).to.equal(createdAt);
-                    expect(payload.properties.headers.source).to.equal(publishOptions.source);
-                    expect(payload.properties.headers.requeuedAt).to.equal(requeuedAt);
-                    expect(payload.properties.headers.retryCount).to.equal(retryCount);
+                    expect(payload.properties.headers.transactionId).to.be.equal(transactionId);
+                    expect(payload.properties.headers.createdAt).to.be.equal(createdAt);
+                    expect(payload.properties.headers.source).to.be.equal(publishOptions.source);
+                    expect(payload.properties.headers.requeuedAt).to.be.equal(requeuedAt);
+                    expect(payload.properties.headers.retryCount).to.be.equal(retryCount);
                     expect(payload.properties.headers.erroredAt).to.exist();
+                    expect(payload.properties.headers.bunnyBus).to.be.equal(require('../package.json').version);
                 });
         });
     });

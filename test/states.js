@@ -127,7 +127,7 @@ describe('state management', () => {
                 instance.once(SubscriptionManager.TAGGED_EVENT, (subcription) => {
 
                     expect(subcription).to.exist();
-                    expect(subcription.consumerTag).to.equal(consumerTag);
+                    expect(subcription.consumerTag).to.be.equal(consumerTag);
                     expect(subcription.handlers).to.exist();
                     expect(subcription.handlers.event1).to.be.a.function();
                     expect(subcription.options).to.exist();
@@ -155,7 +155,7 @@ describe('state management', () => {
                 const sut = instance.get(queueName);
 
                 expect(sut).to.exist();
-                expect(sut.consumerTag).to.equal(consumerTag);
+                expect(sut.consumerTag).to.be.equal(consumerTag);
                 expect(sut.handlers).to.exist();
                 expect(sut.handlers.event1).to.be.a.function();
                 expect(sut.options).to.exist();
@@ -443,7 +443,7 @@ describe('state management', () => {
 
                 instance.once(SubscriptionManager.BLOCKED_EVENT, (queue) => {
 
-                    expect(queue).to.equal(queueName);
+                    expect(queue).to.be.equal(queueName);
                     done();
                 });
 
@@ -456,7 +456,7 @@ describe('state management', () => {
 
                 instance.once(SubscriptionManager.UNBLOCKED_EVENT, (queue) => {
 
-                    expect(queue).to.equal(queueName);
+                    expect(queue).to.be.equal(queueName);
                     done();
                 });
 

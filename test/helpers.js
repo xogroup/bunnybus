@@ -66,6 +66,22 @@ describe('helpers', () => {
         });
     });
 
+    describe('getPackageData', () => {
+
+        it('should return an identifier with {name, package} filled', (done) => {
+
+            const result = Helpers.getPackageData();
+
+            const semverMajor = require('../package.json').version.split('.', 1);
+
+            expect(result).to.exist();
+            expect(result.name).to.be.equal(require('../package.json').name);
+            expect(result.version).to.be.equal(require('../package.json').version);
+            expect(result.semverMatch).to.be.equal(semverMajor + '.x.x');
+            done();
+        });
+    });
+
     describe('cleanObject', () => {
 
         it('should clean properties that have no values at first level', (done) => {
@@ -144,6 +160,135 @@ describe('helpers', () => {
             const data = new Buffer('hello');
 
             Assertions.assertConvertToBuffer(data, done);
+        });
+    });
+
+    describe('isMajorCompatible', () => {
+
+        it('should return true when major matches', (done) => {
+
+            const result = Helpers.isMajorCompatible('1.2.3', '1.x.x');
+
+            expect(result).to.be.true();
+            done();
+        });
+
+        it('should return false when major does not match', (done) => {
+
+            const result = Helpers.isMajorCompatible('2.1.3', '1.x.x');
+
+            expect(result).to.be.false();
+            done();
+        });
+
+        it('should return true when using package defaults', (done) => {
+
+            const result = Helpers.isMajorCompatible(require('../package.json').version);
+
+            expect(result).to.be.true();
+            done();
+        });
+    });
+
+    describe('reduceRouteKey', () => {
+
+        const payloadHeaders = {
+            properties : {
+                headers : {
+                    routeKey : 'a.b'
+                }
+            }
+        };
+
+        const payloadFields = {
+            fields : {
+                routingKey : 'a.c'
+            }
+        };
+
+        const payload = {
+            properties : payloadHeaders.properties,
+            fieldds : payloadFields.fields
+        };
+
+        const message = {
+            event : 'a.d'
+        };
+
+        const options = {
+            routeKey : 'a.e'
+        };
+
+        it('should return from payload.properties.headers.routeKey when everything is supplied', (done) => {
+
+            const result = Helpers.reduceRouteKey(payload, options, message);
+
+            expect(result).to.be.equal(payload.properties.headers.routeKey);
+            done();
+        });
+
+        it('should return from options.routeKey when payload contains fields.routingKey', (done) => {
+
+            const result = Helpers.reduceRouteKey(payloadFields, options, message);
+
+            expect(result).to.be.equal(options.routeKey);
+            done();
+        });
+
+        it('should return from options.routeKey when payload is empty', (done) => {
+
+            const result = Helpers.reduceRouteKey({}, options, message);
+
+            expect(result).to.be.equal(options.routeKey);
+            done();
+        });
+
+        it('should return from options.routeKey when payload is null', (done) => {
+
+            const result = Helpers.reduceRouteKey(payloadFields, options, message);
+
+            expect(result).to.be.equal(options.routeKey);
+            done();
+        });
+
+        it('should return from message.event when options is empty', (done) => {
+
+            const result = Helpers.reduceRouteKey(payloadFields, {}, message);
+
+            expect(result).to.be.equal(message.event);
+            done();
+        });
+
+        it('should return from message.event when options is null', (done) => {
+
+            const result = Helpers.reduceRouteKey(payloadFields, null, message);
+
+            expect(result).to.be.equal(message.event);
+            done();
+        });
+
+        it('should return from payload.fields.routingKey when options is empty and message is empty', (done) => {
+
+            const result = Helpers.reduceRouteKey(payloadFields, {}, {});
+
+            expect(result).to.be.equal(payloadFields.fields.routingKey);
+            done();
+        });
+
+        it('should return from payload.fields.routingKey when options is null and message is null', (done) => {
+
+            const result = Helpers.reduceRouteKey(payloadFields, null, null);
+
+            expect(result).to.be.equal(payloadFields.fields.routingKey);
+            done();
+        });
+
+        it('should return undefined when all input is falsy', (done) => {
+
+            const result = Helpers.reduceRouteKey(null, null, null);
+
+            expect(result).to.be.undefined();
+            done();
         });
     });
 
@@ -275,7 +420,7 @@ describe('helpers', () => {
 
             it('should promisify methods using the native implementation', (done) => {
 
-                //expect(instance.promise).to.equal(Promise);
+                //expect(instance.promise).to.be.equal(Promise);
 
                 const task = Helpers.toPromise(Promise, callback);
 

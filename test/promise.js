@@ -26,7 +26,7 @@ describe('promise', () => {
 
     it('should bootstrap with ES6 Promise', (done) => {
 
-        expect(instance.promise).to.equal(Promise);
+        expect(instance.promise).to.be.equal(Promise);
         done();
     });
 
@@ -42,7 +42,7 @@ describe('promise', () => {
 
             instance.promise = Bluebird;
 
-            expect(instance.promise).to.equal(Bluebird);
+            expect(instance.promise).to.be.equal(Bluebird);
             done();
         });
 
@@ -50,7 +50,7 @@ describe('promise', () => {
 
             instance.promise = Q;
 
-            expect(instance.promise).to.equal(Promise);
+            expect(instance.promise).to.be.equal(Promise);
             done();
         });
 
@@ -70,7 +70,7 @@ describe('promise', () => {
 
             instance.promise = QWrap;
 
-            expect(instance.promise).to.equal(QWrap);
+            expect(instance.promise).to.be.equal(QWrap);
             done();
         });
     });
