@@ -5,6 +5,7 @@
 
 
 - [BunnyBus](#bunnybus)
+  - [Versioning](#versioning)
   - [`new BunnyBus(config)`](#new-bunnybusconfig)
     - [Getters and Setters](#getters-and-setters)
       - [`config`](#config)
@@ -104,6 +105,10 @@
 ## BunnyBus
 
 The `BunnyBus` is a class that instantiates into a singleton.  It hosts all features for communicating with RabbitMQ to provide an easy to use enterprise bus facade.
+
+### Versioning
+
+Note regarding versioning.  `BunnyBus` attaches the version value found in `package.json` to all messages that are sent.  Any messages subscribed which does not match the major semver will be rejected to the error queue.  As an example, message sent from BunnyBus version `1.2.3` will only be accepted from other `BunnyBus` clients with semver range of `1.x.x`.
 
 ### `new BunnyBus(config)`
 
