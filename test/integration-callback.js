@@ -403,6 +403,7 @@ describe('positive integration tests - Callback api', () => {
         const queueName = 'test-subscribe-queue-1';
         const errorQueueName = `${queueName}_error`;
         const publishOptions = { routeKey : 'a.b' };
+        const subscribeOptions = { meta : true };
         const messageObject = { event : 'a.b', name : 'bunnybus' };
         const messageString = 'bunnybus';
         const messageBuffer = new Buffer(messageString);
@@ -453,6 +454,29 @@ describe('positive integration tests - Callback api', () => {
             });
         });
 
+        it('should consume message (Object) and meta from queue and acknowledge off', (done) => {
+
+            const handlers = {};
+            handlers[messageObject.event] = (consumedMessage, meta, ack) => {
+
+                expect(consumedMessage).to.equal(messageObject);
+                expect(meta).to.not.be.a.function();
+                expect(meta.headers).to.exist();
+                ack(null, done);
+            };
+
+            Async.waterfall([
+                instance.subscribe.bind(instance, queueName, handlers, subscribeOptions),
+                instance.publish.bind(instance, messageObject)
+            ],
+            (err) => {
+
+                if (err) {
+                    done(err);
+                }
+            });
+        });
+
         it('should consume message (String) from queue and acknowledge off', (done) => {
 
             const handlers = {};
@@ -474,6 +498,29 @@ describe('positive integration tests - Callback api', () => {
             });
         });
 
+        it('should consume message (String) and meta from queue and acknowledge off', (done) => {
+
+            const handlers = {};
+            handlers[publishOptions.routeKey] = (consumedMessage, meta, ack) => {
+
+                expect(consumedMessage).to.equal(messageString);
+                expect(meta).to.not.be.a.function();
+                expect(meta.headers).to.exist();
+                ack(null, done);
+            };
+
+            Async.waterfall([
+                instance.subscribe.bind(instance, queueName, handlers, subscribeOptions),
+                instance.publish.bind(instance, messageString, publishOptions)
+            ],
+            (err) => {
+
+                if (err) {
+                    done(err);
+                }
+            });
+        });
+
         it('should consume message (Buffer) from queue and acknowledge off', (done) => {
 
             const handlers = {};
@@ -485,6 +532,29 @@ describe('positive integration tests - Callback api', () => {
 
             Async.waterfall([
                 instance.subscribe.bind(instance, queueName, handlers),
+                instance.publish.bind(instance, messageBuffer, publishOptions)
+            ],
+            (err) => {
+
+                if (err) {
+                    done(err);
+                }
+            });
+        });
+
+        it('should consume message (Buffer) and meta from queue and acknowledge off', (done) => {
+
+            const handlers = {};
+            handlers[publishOptions.routeKey] = (consumedMessage, meta, ack) => {
+
+                expect(consumedMessage).to.equal(messageBuffer);
+                expect(meta).to.not.be.a.function();
+                expect(meta.headers).to.exist();
+                ack(null, done);
+            };
+
+            Async.waterfall([
+                instance.subscribe.bind(instance, queueName, handlers, subscribeOptions),
                 instance.publish.bind(instance, messageBuffer, publishOptions)
             ],
             (err) => {
