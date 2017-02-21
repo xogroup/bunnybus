@@ -56,7 +56,7 @@ describe('positive integration tests - event handlers', () => {
 
             instance.once(BunnyBus.UNSUBSCRIBED_EVENT, (queue) => {
 
-                expect(queue).to.equal(queueName);
+                expect(queue).to.be.equal(queueName);
                 done();
             });
 
@@ -100,7 +100,7 @@ describe('positive integration tests - event handlers', () => {
 
             instance.once(BunnyBus.SUBSCRIBED_EVENT, (queue) => {
 
-                expect(queue).to.equal(queueName);
+                expect(queue).to.be.equal(queueName);
                 done();
             });
 

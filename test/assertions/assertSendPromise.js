@@ -19,7 +19,7 @@ const assertSendPromise = (instance, message, queueName, transactionId, source) 
 
             const sentMessage = JSON.parse(payload.content.toString());
 
-            expect(sentMessage).to.equal(message);
+            expect(sentMessage).to.be.equal(message);
             expect(payload.properties.headers.transactionId).to.be.string();
             expect(payload.properties.headers.createdAt).to.exist();
 
@@ -28,11 +28,11 @@ const assertSendPromise = (instance, message, queueName, transactionId, source) 
             }
 
             if (transactionId) {
-                expect(payload.properties.headers.transactionId).to.equal(transactionId);
+                expect(payload.properties.headers.transactionId).to.be.equal(transactionId);
             }
 
             if (source) {
-                expect(payload.properties.headers.source).to.equal(source);
+                expect(payload.properties.headers.source).to.be.equal(source);
             }
 
             return instance.channel.ack(payload);

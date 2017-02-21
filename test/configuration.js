@@ -33,7 +33,7 @@ describe('configuration', () => {
 
         const instance = new BunnyBus(BunnyBus.DEFAULT_SERVER_CONFIGURATION);
 
-        expect(instance.connectionString).to.equal('amqp://guest:guest@127.0.0.1:5672/%2f?heartbeat=2000');
+        expect(instance.connectionString).to.be.equal('amqp://guest:guest@127.0.0.1:5672/%2f?heartbeat=2000');
         done();
     });
 
@@ -49,7 +49,7 @@ describe('configuration', () => {
 
         const instance = new BunnyBus(config);
 
-        expect(instance.connectionString).to.equal('amqps://testUser:testPassword@test.rabbitmq.com:5672/testVirtualHost?heartbeat=2000');
+        expect(instance.connectionString).to.be.equal('amqps://testUser:testPassword@test.rabbitmq.com:5672/testVirtualHost?heartbeat=2000');
         done();
     });
 
@@ -58,7 +58,7 @@ describe('configuration', () => {
         const instance = new BunnyBus();
         instance.config = BunnyBus.DEFAULT_SERVER_CONFIGURATION;
 
-        expect(instance.connectionString).to.equal('amqp://guest:guest@127.0.0.1:5672/%2f?heartbeat=2000');
+        expect(instance.connectionString).to.be.equal('amqp://guest:guest@127.0.0.1:5672/%2f?heartbeat=2000');
         done();
     });
 
@@ -75,7 +75,7 @@ describe('configuration', () => {
         const instance = new BunnyBus();
         instance.config = config;
 
-        expect(instance.connectionString).to.equal('amqps://testUser:testPassword@test.rabbitmq.com:5672/testVirtualHost?heartbeat=2000');
+        expect(instance.connectionString).to.be.equal('amqps://testUser:testPassword@test.rabbitmq.com:5672/testVirtualHost?heartbeat=2000');
         done();
     });
 });

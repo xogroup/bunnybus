@@ -8,7 +8,7 @@ const assertValidateLoggerContract = (logger, expectation, callback) => {
 
     const result = Helpers.validateLoggerContract(logger);
 
-    expect(result).to.equal(expectation);
+    expect(result).to.be.equal(expectation);
 
     callback();
 };

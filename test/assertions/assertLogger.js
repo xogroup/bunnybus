@@ -9,7 +9,7 @@ const assertLogger = (instance, level, inputMessage, callback) => {
 
         expect(message).to.exist();
         expect(message).to.be.a.object();
-        expect(message).to.equal(inputMessage);
+        expect(message).to.be.equal(inputMessage);
         callback();
     });
 
