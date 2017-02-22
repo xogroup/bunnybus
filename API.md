@@ -99,6 +99,7 @@
   - [`list()`](#list)
   - [`block(queue)`](#blockqueue)
   - [`unblock(queue)`](#unblockqueue)
+- [Error Types](#error-types)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
   
