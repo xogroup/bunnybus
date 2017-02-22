@@ -1069,3 +1069,13 @@ const bunnyBus = new BunnyBus();
 bunnybus.subscriptions.unblock('queue1');
 }
 ```
+
+## Error Types
+
+All `BunnyBus` errors are extended from the native `Error` class.
+
+- `NoConnectionError` - thrown when no connection exist
+- `NoChannelError` - thrown when no channel exist
+- `NoRouteKeyError` - thrown when no route key can be found.  Lookup is done against `payload.properties.headers.routeKey`, `options.routeKey`, `message.event` and `payload.fields.routingKey` in that order.
+- `SubscriptionExistError` - thrown when `subscribe()` is called and handlers have already been registered against the queue
+- `SubscriptionBlockedError` - thrown when `subscribe()` is called and the queue is in a desired state of blocked.  The handlers would still have registered, but it would take an [`unblock()`](#unblockqueue) call to allow for the handlers to continue its subscriptions.
