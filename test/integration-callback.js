@@ -1035,7 +1035,7 @@ describe('positive integration tests - Callback api', () => {
             });
         });
 
-        it('should requeue with well formed header properties', (done) => {
+        it('should reject with well formed header properties', (done) => {
 
             const publishOptions = {
                 source : 'test'
