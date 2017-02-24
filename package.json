@@ -21,7 +21,7 @@
     "doctoc": "doctoc API.md && doctoc Example.md && doctoc Diagram.md"
   },
   "author": "Lam Chan",
-  "license": "ISC",
+  "license": "BSD-3-Clause",
   "engines": {
     "node": ">=6.x.x"
   },
