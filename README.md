@@ -41,7 +41,9 @@ We love community and contributions! Please check out our [guidelines](http://gi
 
 ## Setting up for development
 
-Getting yourself setup and bootstrapped is easy.  Use the following commands after you clone down.
+1. Install [Docker](https://docs.docker.com/engine/installation/)
+2. Clone this project and `cd` into the project directory
+3. Run the commands below
 
 ```
 npm install
@@ -50,4 +52,4 @@ npm test
 npm run stop-docker
 ```
 
-For normal iterations, there is no need to stop the docker container.  When the docker container is already running, just `npm test`.
+For normal development/test iterations, there is no need to stop the docker container.  When the docker container is already running, just run `npm test`.
