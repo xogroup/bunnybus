@@ -23,7 +23,7 @@ describe('positive integration tests - Callback api', () => {
         done();
     });
 
-    describe.only('edge cases', () => {
+    describe('edge cases', () => {
 
         beforeEach((done) => {
 
