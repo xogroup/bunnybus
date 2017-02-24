@@ -17,10 +17,27 @@ BunnyBus abstracts away low level queue driver details such as creating a connec
 
 ## Installation
 ```
-npm install bunnybus
+npm i bunnybus
 ```
 
-## Usage
+##Usage
+```
+const BunnyBus = require('bunnybus');
+const bunnyBus = new BunnyBus();
+
+//create a subscription
+bunnyBus.subscribe('queue1', { 
+    'create-event' : (message, ack) => {
+        console.log(message.comment);
+        ack();
+    }
+});
+
+//publish to the above subscription
+bunnyBus.publish({ event : 'create-event', comment : 'hello world!' });
+```
+
+## Documentation
 
 ### API
 
@@ -33,6 +50,10 @@ Check out the [Examples](http://github.com/xogroup/bunnybus/blob/master/Example.
 ### Diagrams
 
 [Visual Guide](http://github.com/xogroup/bunnybus/blob/master/Diagram.md) to integrating with `BunnyBus`.
+
+## Articles
+
+* [@Medium](https://medium.com/xo-tech/bunnybus-building-a-data-transit-system-b9647f6283e5#.f9ghb6mzl)
 
 ## Contributing
 
