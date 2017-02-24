@@ -2,6 +2,16 @@
   "name": "bunnybus",
   "version": "2.0.2",
   "description": "RabbitMQ driver for pub/sub with error queue / retry management",
+  "keywords": [
+    "bunnybus",
+    "rabbitmq",
+    "broker",
+    "bus",
+    "queue",
+    "pubsub",
+    "publish",
+    "subscribe"
+  ],
   "main": "lib/index.js",
   "scripts": {
     "test": "lab test",
