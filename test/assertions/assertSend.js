@@ -4,11 +4,12 @@ const Async = require('async');
 const Code = require('code');
 const expect = Code.expect;
 
-const assertSend = (instance, message, queueName, transactionId, source, callback) => {
+const assertSend = (instance, message, queueName, transactionId, source, routeKey, callback) => {
 
     const options = {
         transactionId,
-        source
+        source,
+        routeKey
     };
 
     Async.waterfall([
@@ -35,6 +36,14 @@ const assertSend = (instance, message, queueName, transactionId, source, callbac
 
         if (source) {
             expect(payload.properties.headers.source).to.be.equal(source);
+        }
+
+        if (routeKey) {
+            expect(payload.properties.headers.routeKey).to.be.equal(routeKey);
+        }
+
+        if (message.event) {
+            expect(payload.properties.headers.routeKey).to.be.equal(message.event);
         }
 
         instance.channel.ack(payload);

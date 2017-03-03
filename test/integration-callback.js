@@ -290,6 +290,7 @@ describe('positive integration tests - Callback api', () => {
 
         const queueName = 'test-send-queue-1';
         const message = { name : 'bunnybus' };
+        const messageWithEvent = { event : 'event1', name : 'bunnybus' };
 
         beforeEach((done) => {
 
@@ -303,17 +304,27 @@ describe('positive integration tests - Callback api', () => {
 
         it('should send message', (done) => {
 
-            Assertions.assertSend(instance, message, queueName, null, null, done);
+            Assertions.assertSend(instance, message, queueName, null, null, null, done);
         });
 
         it('should proxy `source` when supplied', (done) => {
 
-            Assertions.assertSend(instance, message, queueName, null, 'someModule', done);
+            Assertions.assertSend(instance, message, queueName, null, 'someModule', null, done);
         });
 
         it('should proxy `transactionId` when supplied', (done) => {
 
-            Assertions.assertSend(instance, message, queueName, 'someTransactionId', null, done);
+            Assertions.assertSend(instance, message, queueName, 'someTransactionId', null, null, done);
+        });
+
+        it('should proxy `routeKey` when supplied', (done) => {
+
+            Assertions.assertSend(instance, message, queueName, null, null, 'event1', done);
+        });
+
+        it('should proxy `routeKey` when supplied', (done) => {
+
+            Assertions.assertSend(instance, messageWithEvent, queueName, null, null, null, done);
         });
     });
 
