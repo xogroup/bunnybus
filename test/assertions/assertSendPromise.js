@@ -3,11 +3,12 @@
 const Code = require('code');
 const expect = Code.expect;
 
-const assertSendPromise = (instance, message, queueName, transactionId, source) => {
+const assertSendPromise = (instance, message, queueName, transactionId, source, routeKey) => {
 
     const options = {
         transactionId,
-        source
+        source,
+        routeKey
     };
 
     return instance.send(message, queueName, options)
@@ -33,6 +34,14 @@ const assertSendPromise = (instance, message, queueName, transactionId, source) 
 
             if (source) {
                 expect(payload.properties.headers.source).to.be.equal(source);
+            }
+
+            if (routeKey) {
+                expect(payload.properties.headers.routeKey).to.be.equal(routeKey);
+            }
+
+            if (message.event) {
+                expect(payload.properties.headers.routeKey).to.be.equal(message.event);
             }
 
             return instance.channel.ack(payload);
