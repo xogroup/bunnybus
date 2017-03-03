@@ -41,6 +41,7 @@
     - [`unsubscribe(queue, [callback])`](#unsubscribequeue-callback)
       - [parameter(s)](#parameters-8)
     - [`send(message, queue, [options, [callback]])`](#sendmessage-queue-options-callback)
+      - [note(s)](#notes)
       - [parameter(s)](#parameters-9)
     - [`get(queue, [options, [callback]])`](#getqueue-options-callback)
       - [parameter(s)](#parameters-10)
@@ -538,11 +539,17 @@ bunnyBus.unsubscribe('queue1')
 
 Send a message directly to a queue.
 
+##### note(s)
+
+When `message.event` or `options.routeKey` values are not provided for `routeKey` addressing.  The message will be lost when [`subcribe()`](#subscribequeue-handlers-options-callback) handles the queue because messages without a `routeKey` are discarded.
+
 ##### parameter(s)
 
   - `message` - the content being sent directly to specfied queue. *[string|Object|Buffer]* **Required**
+   - `event` - override value for the route key. The value must be supplied here or in `options.routeKey`.  The value can be `.` separated for namespacing. *[string]* **Optional.**
   - `queue` - the name of the queue. *[string]* **Required**
   - `options` - optional settings. *[Object]* **Optional**
+    - `routeKey` - value for the route key to route the message with.  The value must be supplied here or in `message.event`.  The value can be `.` separated for namespacing. *[string]* **Optional**
     - `transactionId` - value attached to the header of the message for tracing.  When one is not supplied, a random 40 character token is generated. *[string]*  **Optional**
     - `source` - value attached to the header of the message to help with tracking the origination point of your application.  For applications that leverage this plugin in multiple modules, each module can supply its own module name so a message can be tracked to the creator. *[string]*  **Optional**
   - `callback` - node style callback `(err, result) => {}`. *[Function]* **Optional**
