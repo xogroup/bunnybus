@@ -45,5 +45,33 @@ describe('positive integration tests - Callback api', () => {
                 done();
             });
         });
+
+        it.only('should pass when get pushes a message to a subscribed queue', (done) => {
+
+            const message = { event : 'ea', name : 'bunnybus' };
+            const queueName = 'edge-case-get-to-subscribe';
+            let counter = 0;
+            const handlers = {
+                ea : (subscribedMessaged, ack) => {
+
+                    expect(subscribedMessaged).to.be.equal(message);
+                    resolve();
+                }
+            };
+            const resolve = () => {
+
+                if (++counter === 2) {
+                    done();
+                }
+            };
+
+            Async.waterfall([
+                (cb) => instance._autoConnectChannel(cb),
+                (cb) => instance.createQueue(queueName, cb),
+                (result, cb) => instance.send(message, queueName, cb),
+                (cb) => instance.subscribe(queueName, handlers, cb),
+                (cb) => instance.deleteQueue(queueName, cb)
+            ], resolve);
+        });
     });
 });
