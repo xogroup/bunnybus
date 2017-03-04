@@ -46,7 +46,7 @@ describe('positive integration tests - Callback api', () => {
             });
         });
 
-        it.only('should pass when get pushes a message to a subscribed queue', (done) => {
+        it('should pass when get pushes a message to a subscribed queue', (done) => {
 
             const message = { event : 'ea', name : 'bunnybus' };
             const queueName = 'edge-case-get-to-subscribe';
