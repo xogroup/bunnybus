@@ -30,11 +30,12 @@ bunnyBus.subscribe('queue1', {
     'create-event' : (message, ack) => {
         console.log(message.comment);
         ack();
+    }, () => {
+
+    //publish to the above subscription
+    bunnyBus.publish({ event : 'create-event', comment : 'hello world!' });
     }
 });
-
-//publish to the above subscription
-bunnyBus.publish({ event : 'create-event', comment : 'hello world!' });
 ```
 
 ## Documentation
