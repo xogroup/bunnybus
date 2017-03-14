@@ -27,6 +27,7 @@ describe('positive integration tests - Callback api', () => {
 
         beforeEach((done) => {
 
+            instance.config = BunnyBus.DEFAULT_SERVER_CONFIGURATION;
             instance._closeConnection(done);
         });
 
@@ -46,7 +47,7 @@ describe('positive integration tests - Callback api', () => {
             });
         });
 
-        it('should pass when get pushes a message to a subscribed queue', (done) => {
+        it('should pass when send pushes a message to a subscribed queue', (done) => {
 
             const message = { event : 'ea', name : 'bunnybus' };
             const queueName = 'edge-case-get-to-subscribe';
@@ -55,7 +56,7 @@ describe('positive integration tests - Callback api', () => {
                 ea : (subscribedMessaged, ack) => {
 
                     expect(subscribedMessaged).to.be.equal(message);
-                    resolve();
+                    ack(resolve);
                 }
             };
             const resolve = () => {
@@ -72,6 +73,24 @@ describe('positive integration tests - Callback api', () => {
                 (cb) => instance.subscribe(queueName, handlers, cb),
                 (cb) => instance.deleteQueue(queueName, cb)
             ], resolve);
+        });
+
+        it('should pass when server host configuration value is not valid', (done) => {
+
+            const message = { event : 'eb', name : 'bunnybus' };
+            instance.config = { server : 'fake' };
+
+            instance
+                .publish(message)
+                .catch(() => {
+
+                    // re-up with default configs
+                    instance.config = BunnyBus.DEFAULT_SERVER_CONFIGURATION;
+
+                    return instance
+                        .publish(message)
+                        .then(done);
+                });
         });
     });
 });
