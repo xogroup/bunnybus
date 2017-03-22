@@ -20,7 +20,7 @@ BunnyBus abstracts away low level queue driver details such as creating a connec
 npm i bunnybus
 ```
 
-##Usage
+## Usage
 ```
 const BunnyBus = require('bunnybus');
 const bunnyBus = new BunnyBus();
