@@ -444,7 +444,7 @@ Subscribe to messages from the queue.
 
 ##### parameter(s)
 
-  - `queue` - the name of the queue to subscribe messages to. *[string]* **Required**
+  - `queue` - the name of the queue to subscribe messages to. A queue with the provided name will be created if one does not exist. *[string]* **Required**
   - `handlers` - a `key` / `handler` hash where the key reflects the name of the `message.event` or `routeKey`.  And the handler reflects a `Function` as `(message, [ack, [reject, [requeue]]]) => {}`. *[Object]* **Required**
   - `options` - optional settings. *[Object]* **Optional**
     - `queue` - settings for the queue. [Settings](http://www.squaremobius.net/amqp.node/channel_api.html#channel_assertQueue) are proxied through to amqplib `assertQueue`. *[Object]* **Optional**
