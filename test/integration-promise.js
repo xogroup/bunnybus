@@ -290,6 +290,32 @@ describe('positive integration tests - Promise api', () => {
         });
     });
 
+    describe('getAll', () => {
+
+        const queueName = 'test-get-all-queue-1';
+        const message = { name : 'bunnybus' };
+
+        beforeEach(() => {
+
+            return instance._closeConnection();
+        });
+
+        afterEach(() => {
+
+            return instance.deleteQueue(queueName);
+        });
+
+        it('should retrieve all message without meta flag', () => {
+
+            return Assertions.assertGetAllPromise(instance, message, queueName, false, 10);
+        });
+
+        it('should retrieve all message with meta flag', () => {
+
+            return Assertions.assertGetAllPromise(instance, message, queueName, true, 10);
+        });
+    });
+
     describe('publish', () => {
 
         const queueName = 'test-publish-queue-1';

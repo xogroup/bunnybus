@@ -328,6 +328,32 @@ describe('positive integration tests - Callback api', () => {
         });
     });
 
+    describe('getAll', () => {
+
+        const queueName = 'test-get-all-queue-1';
+        const message = { name : 'bunnybus' };
+
+        beforeEach((done) => {
+
+            instance._closeConnection(done);
+        });
+
+        afterEach((done) => {
+
+            instance.deleteQueue(queueName, done);
+        });
+
+        it('should retrieve all message without meta flag', (done) => {
+
+            Assertions.assertGetAll(instance, message, queueName, false, 10, done);
+        });
+
+        it('should retrieve all message with meta flag', (done) => {
+
+            Assertions.assertGetAll(instance, message, queueName, true, 10, done);
+        });
+    });
+
     describe('publish', () => {
 
         const queueName = 'test-publish-queue-1';
@@ -414,7 +440,7 @@ describe('positive integration tests - Callback api', () => {
         const queueName = 'test-subscribe-queue-1';
         const errorQueueName = `${queueName}_error`;
         const publishOptions = { routeKey : 'a.b' };
-        const subscribeOptions = { meta : true };
+        const subscribeOptionsWithMeta = { meta : true };
         const messageObject = { event : 'a.b', name : 'bunnybus' };
         const messageString = 'bunnybus';
         const messageBuffer = new Buffer(messageString);
@@ -477,7 +503,7 @@ describe('positive integration tests - Callback api', () => {
             };
 
             Async.waterfall([
-                instance.subscribe.bind(instance, queueName, handlers, subscribeOptions),
+                instance.subscribe.bind(instance, queueName, handlers, subscribeOptionsWithMeta),
                 instance.publish.bind(instance, messageObject)
             ],
             (err) => {
@@ -521,7 +547,7 @@ describe('positive integration tests - Callback api', () => {
             };
 
             Async.waterfall([
-                instance.subscribe.bind(instance, queueName, handlers, subscribeOptions),
+                instance.subscribe.bind(instance, queueName, handlers, subscribeOptionsWithMeta),
                 instance.publish.bind(instance, messageString, publishOptions)
             ],
             (err) => {
@@ -565,7 +591,7 @@ describe('positive integration tests - Callback api', () => {
             };
 
             Async.waterfall([
-                instance.subscribe.bind(instance, queueName, handlers, subscribeOptions),
+                instance.subscribe.bind(instance, queueName, handlers, subscribeOptionsWithMeta),
                 instance.publish.bind(instance, messageBuffer, publishOptions)
             ],
             (err) => {

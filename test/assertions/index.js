@@ -5,6 +5,8 @@ module.exports = {
     assertPublishPromise          : require('./assertPublishPromise'),
     assertSend                    : require('./assertSend'),
     assertSendPromise             : require('./assertSendPromise'),
+    assertGetAll                  : require('./assertGetAll'),
+    assertGetAllPromise           : require('./assertGetAllPromise'),
     assertConvertToBuffer         : require('./assertConvertToBuffer'),
     assertReduceCallback          : require('./assertReduceCallback'),
     assertUndefinedReduceCallback : require('./assertUndefinedReduceCallback'),

@@ -444,8 +444,8 @@ Subscribe to messages from the queue.
 
 ##### parameter(s)
 
-  - `queue` - the name of the queue to subscribe messages to. *[string]* **Required**
-  - `handlers` - a `key` / `handler` hash where the key reflects the name of the `message.event` or `routeKey`.  And the handler reflects a `Function` as `(message, [ack, [reject, [requeue]]]) => {}`. *[Object]* **Required**
+  - `queue` - the name of the queue to subscribe messages to. A queue with the provided name will be created if one does not exist. *[string]* **Required**
+  - `handlers` - a `key` / `handler` hash where the key reflects the name of the `message.event` or `routeKey`.  And the handler reflects a `Function` as `(message, [meta, [ack, [reject, [requeue]]]]) => {}`. *[Object]* **Required**
   - `options` - optional settings. *[Object]* **Optional**
     - `queue` - settings for the queue. [Settings](http://www.squaremobius.net/amqp.node/channel_api.html#channel_assertQueue) are proxied through to amqplib `assertQueue`. *[Object]* **Optional**
     - `globalExchange` - value of the exchange to transact through for message publishing.  Defaults to one provided in the [config](#config). *[string]* **Optional**
@@ -584,10 +584,6 @@ Pop a message directly off a queue.  The payload returned is the RabbitMQ `paylo
 const BunnyBus = require('bunnybus');
 const bunnyBus = new BunnyBus();
 
-const message = {
-    // other stuff you want to send
-}
-
 bunnyBus.get('queue1', (err, result) => {
     //result contains an rabbit payload object
     //JSON.tostring(result.content) will contain the message that was sent.
@@ -596,6 +592,34 @@ bunnyBus.get('queue1', (err, result) => {
 // promise api
 bunnyBus.get('queue1')
     .then((result) => {})
+    .catch((err) =>{});
+```
+
+#### `getAll(queue, handler, [options, [callback]])`
+
+Pop all messages directly off a queue until there is no more.  Handler is called for each message that is popped.
+
+##### parameter(s)
+
+  - `queue` - the name of the queue. *[string]* **Required**
+  - `handler` - a handler reflects a `Function` as `(message, [meta, [ack]]) => {}`. *[Function]* **Required**
+  - `options` - optional settings. *[Object]* **Optional**
+    - `get` - [Settings](http://www.squaremobius.net/amqp.node/channel_api.html#channel_get) are proxied through to amqplib `get`. *[Object]* **Optional**
+    - `meta` - allows for meta data regarding the payload to be returned.  Turning this on will adjust the handler to be a `Function` as `(message, meta, [ack]) => {}`.  *[boolean]* **Optional**
+  - `callback` - node style callback `(err) => {}`.  This is called when all currently retrievable items have been passed to the provided `handler`.  *[Function]* **Optional**
+
+```Javascript
+const BunnyBus = require('bunnybus');
+const bunnyBus = new BunnyBus();
+
+const handler = (message, ack) => {
+    ack(() => {});
+}
+
+bunnyBus.getAll('queue1', handler, (err) => {});
+
+// promise api
+bunnyBus.getAll('queue1', handler)
     .catch((err) =>{});
 ```
 
