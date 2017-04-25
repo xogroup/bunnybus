@@ -45,6 +45,8 @@
       - [parameter(s)](#parameters-9)
     - [`get(queue, [options, [callback]])`](#getqueue-options-callback)
       - [parameter(s)](#parameters-10)
+    - [`getAll(queue, handler, [options, [callback]])`](#getallqueue-handler-options-callback)
+      - [parameter(s)](#parameters-11)
   - [Internal-use Methods](#internal-use-methods)
     - [`_recoverConnectChannel()`](#_recoverconnectchannel)
     - [`_createConnection([callback])`](#_createconnectioncallback)
