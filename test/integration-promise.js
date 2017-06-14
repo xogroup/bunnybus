@@ -279,14 +279,14 @@ describe('positive integration tests - Promise api', () => {
             return Assertions.assertSendPromise(instance, message, queueName, 'someTransactionId', null, null);
         });
 
-        it('should proxy `routeKey` when supplied', (done) => {
+        it('should proxy `routeKey` when supplied', () => {
 
-            return Assertions.assertSendPromise(instance, message, queueName, null, null, 'event1', done);
+            return Assertions.assertSendPromise(instance, message, queueName, null, null, 'event1');
         });
 
-        it('should proxy `routeKey` when supplied', (done) => {
+        it('should proxy `routeKey` when supplied', () => {
 
-            return Assertions.assertSendPromise(instance, messageWithEvent, queueName, null, null, null, done);
+            return Assertions.assertSendPromise(instance, messageWithEvent, queueName, null, null, null);
         });
     });
 
