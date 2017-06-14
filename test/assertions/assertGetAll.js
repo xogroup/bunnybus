@@ -49,7 +49,7 @@ const assertGetAll = (instance, message, queueName, meta, limit, callback) => {
     ],
     (err) => {
 
-        expect(err).to.be.null();
+        expect(err).to.not.exist();
         callbackReconciler();
     });
 };

@@ -39,12 +39,11 @@ describe('positive integration tests - Callback api', () => {
             instance._closeConnection(done);
         });
 
-        it.only('should create connection with default values', (done) => {
+        it('should create connection with default values', (done) => {
 
             instance._createConnection((err) => {
-console.log(err);
-console.log(instance.connection);
-                expect(err).to.be.undefined();
+
+                expect(err).to.not.exist();
                 expect(instance.connection).to.exist();
                 done();
             });
@@ -57,8 +56,8 @@ console.log(instance.connection);
                 instance._closeConnection
             ], (err) => {
 
-                expect(err).to.be.null();
-                expect(instance.connection).to.be.null();
+                expect(err).to.not.exist();
+                expect(instance.connection).to.not.exist();
                 done(err);
             });
         });
@@ -83,7 +82,7 @@ console.log(instance.connection);
 
             instance._createChannel((err) => {
 
-                expect(err).to.be.null();
+                expect(err).to.not.exist();
                 expect(instance.channel).to.exist();
                 done();
             });
@@ -96,8 +95,8 @@ console.log(instance.connection);
                 instance._closeChannel
             ], (err) => {
 
-                expect(err).to.be.null();
-                expect(instance.channel).to.be.null();
+                expect(err).to.not.exist();
+                expect(instance.channel).to.not.exist();
                 done(err);
             });
         });
@@ -109,9 +108,9 @@ console.log(instance.connection);
                 instance._closeConnection
             ], (err) => {
 
-                expect(err).to.be.null();
-                expect(instance.connection).to.be.null();
-                expect(instance.channel).to.be.null();
+                expect(err).to.not.exist();
+                expect(instance.connection).to.not.exist();
+                expect(instance.channel).to.not.exist();
                 done(err);
             });
         });
@@ -128,7 +127,7 @@ console.log(instance.connection);
 
             instance._autoConnectChannel((err) => {
 
-                expect(err).to.be.null();
+                expect(err).to.not.exist();
                 expect(instance.connection).to.exist();
                 expect(instance.channel).to.exist();
                 done();
@@ -144,7 +143,7 @@ console.log(instance.connection);
                 instance._autoConnectChannel
             ],(err) => {
 
-                expect(err).to.be.null();
+                expect(err).to.not.exist();
                 expect(instance.connection).to.exist();
                 expect(instance.channel).to.exist();
                 done();
@@ -202,7 +201,7 @@ console.log(instance.connection);
 
             instance.createQueue(queueName, (err, result) => {
 
-                expect(err).to.be.null();
+                expect(err).to.not.exist();
                 expect(result.queue).to.be.equal(queueName);
                 expect(result.messageCount).to.be.equal(0);
                 done();
@@ -213,7 +212,7 @@ console.log(instance.connection);
 
             instance.checkQueue(queueName, (err, result) => {
 
-                expect(err).to.be.null();
+                expect(err).to.not.exist();
                 expect(result.queue).to.be.equal(queueName);
                 expect(result.messageCount).to.be.equal(0);
                 done();
@@ -224,7 +223,7 @@ console.log(instance.connection);
 
             instance.deleteQueue(queueName, (err, result) => {
 
-                expect(err).to.be.null();
+                expect(err).to.not.exist();
                 expect(result.messageCount).to.be.equal(0);
                 done();
             });
@@ -255,8 +254,7 @@ console.log(instance.connection);
 
             instance.createExchange(exchangeName, 'topic', (err, result) => {
 
-                expect(err).to.be.null();
-
+                expect(err).to.not.exist();
                 done();
             });
         });
@@ -265,7 +263,7 @@ console.log(instance.connection);
 
             instance.checkExchange(exchangeName, (err, result) => {
 
-                expect(err).to.be.null();
+                expect(err).to.not.exist();
                 done();
             });
         });
@@ -274,7 +272,7 @@ console.log(instance.connection);
 
             instance.deleteExchange(exchangeName, (err, result) => {
 
-                expect(err).to.be.null();
+                expect(err).to.not.exist();
                 done();
             });
         });
@@ -968,7 +966,7 @@ console.log(instance.connection);
                 instance.checkQueue.bind(instance, queueName)
             ], (err, result) => {
 
-                expect(err).to.be.null();
+                expect(err).to.not.exist();
                 expect(result.queue).to.be.equal(queueName);
                 expect(result.messageCount).to.be.equal(1);
                 done();
@@ -996,7 +994,7 @@ console.log(instance.connection);
                 instance.get.bind(instance, queueName)
             ], (err, payload) => {
 
-                expect(err).to.be.null();
+                expect(err).to.not.exist();
                 expect(payload.properties.headers.transactionId).to.be.equal(transactionId);
                 expect(payload.properties.headers.createdAt).to.be.equal(createdAt);
                 expect(payload.properties.headers.source).to.be.equal(publishOptions.source);
@@ -1066,7 +1064,7 @@ console.log(instance.connection);
                 instance.checkQueue.bind(instance, errorQueueName)
             ], (err, result) => {
 
-                expect(err).to.be.null();
+                expect(err).to.not.exist();
                 expect(result.queue).to.be.equal(errorQueueName);
                 expect(result.messageCount).to.be.equal(1);
                 done();
@@ -1097,7 +1095,7 @@ console.log(instance.connection);
                 instance.get.bind(instance, errorQueueName)
             ], (err, payload) => {
 
-                expect(err).to.be.null();
+                expect(err).to.not.exist();
                 expect(payload.properties.headers.transactionId).to.be.equal(transactionId);
                 expect(payload.properties.headers.createdAt).to.be.equal(createdAt);
                 expect(payload.properties.headers.source).to.be.equal(publishOptions.source);

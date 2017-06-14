@@ -33,7 +33,7 @@ describe('helpers', () => {
 
             Helpers.createTransactionId((err, result) => {
 
-                expect(err).to.be.null();
+                expect(err).to.not.exist();
                 expect(result).to.be.a.string();
                 expect(result).to.have.length(40);
                 expect(result).to.match(/^([\d\w]*)$/);
@@ -60,7 +60,7 @@ describe('helpers', () => {
                         expect(hash[tokens[i]]).to.be.equal(1);
                     }
 
-                    expect(err).to.be.null();
+                    expect(err).to.not.exist();
                     done();
                 });
         });

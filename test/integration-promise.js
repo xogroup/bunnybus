@@ -58,7 +58,7 @@ describe('positive integration tests - Promise api', () => {
                 .then(instance._closeConnection)
                 .then(() => {
 
-                    expect(instance.connection).to.be.null();
+                    expect(instance.connection).to.not.exist();
                 });
         });
     });
@@ -91,7 +91,7 @@ describe('positive integration tests - Promise api', () => {
                 .then(instance._closeChannel)
                 .then(() => {
 
-                    expect(instance.channel).to.be.null();
+                    expect(instance.channel).to.not.exist();
                 });
         });
 
@@ -101,8 +101,8 @@ describe('positive integration tests - Promise api', () => {
                 .then(instance._closeConnection)
                 .then(() => {
 
-                    expect(instance.connection).to.be.null();
-                    expect(instance.channel).to.be.null();
+                    expect(instance.connection).to.not.exist();
+                    expect(instance.channel).to.not.exist();
                 });
         });
     });

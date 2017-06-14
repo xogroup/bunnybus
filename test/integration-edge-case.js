@@ -42,7 +42,7 @@ describe('positive integration tests - Callback api', () => {
             ],
             (err, result) => {
 
-                expect(err).to.be.null();
+                expect(err).to.not.exist();
                 done();
             });
         });
