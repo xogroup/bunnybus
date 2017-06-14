@@ -970,9 +970,6 @@ const BunnyBus = require('bunnybus');
 const bunnyBus = new BunnyBus();
 
 bunnybus.subscriptions.contains('queue1');
-const message = {
-    // other stuff you want to send
-}
 ```
 
 ### `create(queue, handlers, [options])`

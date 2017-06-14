@@ -19,7 +19,7 @@ Examples are based on usage of Promises.
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 ## BunnyBus Layout
 
-At the core of BunnyBus exist the `amqplib` abstraction to help with connection management, exchange creation, queue creation and route key subscriptions.  BunnyBus also contains other sub components which it relies on to handle subscriptions when handlers are registered to log eventing when a logging request is made.
+At the core of BunnyBus exist the `amqplib` abstraction to help with connection management, exchange creation, queue creation and route key subscriptions.  BunnyBus also contains other sub components which it relies on to handle queue subscriptions when handlers are registered and also to log with when a logging request is made.
 
 ![Image of Bunny Components](/image/components.png)
 
