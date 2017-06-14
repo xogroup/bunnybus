@@ -39,10 +39,11 @@ describe('positive integration tests - Callback api', () => {
             instance._closeConnection(done);
         });
 
-        it('should create connection with default values', (done) => {
+        it.only('should create connection with default values', (done) => {
 
             instance._createConnection((err) => {
-
+console.log(err);
+console.log(instance.connection);
                 expect(err).to.be.null();
                 expect(instance.connection).to.exist();
                 done();
