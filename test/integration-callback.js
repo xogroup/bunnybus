@@ -44,7 +44,7 @@ describe('positive integration tests - Callback api', () => {
             instance._createConnection((err) => {
 console.log(err);
 console.log(instance.connection);
-                expect(err).to.be.null();
+                expect(err).to.be.undefined();
                 expect(instance.connection).to.exist();
                 done();
             });
