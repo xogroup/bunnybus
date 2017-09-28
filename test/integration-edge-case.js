@@ -80,17 +80,17 @@ describe('positive integration tests - Callback api', () => {
             const message = { event : 'eb', name : 'bunnybus' };
             instance.config = { server : 'fake' };
 
-            instance
-                .publish(message)
-                .catch(() => {
+            instance.publish(message, (err) => {
 
-                    // re-up with default configs
+                if (err) {
                     instance.config = BunnyBus.DEFAULT_SERVER_CONFIGURATION;
 
-                    return instance
-                        .publish(message)
-                        .then(done);
-                });
+                    instance.publish(message, done);
+                }
+                else {
+                    done(new Error('fake configuration took'));
+                }
+            });
         });
     });
 });
