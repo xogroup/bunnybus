@@ -730,7 +730,7 @@ describe('positive integration tests - Callback api', () => {
             });
         });
 
-        it('should reject message with out bunnyBus header property', (done) => {
+        it('should reject message without bunnyBus header property', (done) => {
 
             const handlers = {};
             const config = instance.config;
@@ -791,6 +791,62 @@ describe('positive integration tests - Callback api', () => {
 
             Async.waterfall([
                 instance.subscribe.bind(instance, queueName, handlers),
+                (cb) => instance.channel.publish(config.globalExchange, publishOptions.routeKey, new Buffer(JSON.stringify(messageObject)), headers, cb)
+            ],
+            () => {});
+        });
+
+        it('should accept message without bunnyBus header when overridden', (done) => {
+
+            const handlers = {};
+            const validatePublisher = false;
+            const config = instance.config;
+            const headers = {
+                headers : {
+                    transactionId : '1234abcd',
+                    isBuffer      : false,
+                    routeKey      : publishOptions.routeKey,
+                    createAt      : (new Date()).toISOString()
+                }
+            };
+
+            handlers[publishOptions.routeKey] = (consumedMessage, ack, reject, requeue) => {
+
+                //this should never be called.
+                ack(done);
+            };
+
+            Async.waterfall([
+                instance.subscribe.bind(instance, queueName, handlers, { validatePublisher }),
+                (cb) => instance.channel.publish(config.globalExchange, publishOptions.routeKey, new Buffer(JSON.stringify(messageObject)), headers, cb)
+            ],
+            () => {});
+        });
+
+        it('should accept message with bunnyBus header with mismatched version when overriden', (done) => {
+
+            const handlers = {};
+            const validateVersion = false;
+            const config = instance.config;
+            const version = '0.0.1';
+            const headers = {
+                headers : {
+                    transactionId : '1234abcd',
+                    isBuffer      : false,
+                    routeKey      : publishOptions.routeKey,
+                    createAt      : (new Date()).toISOString(),
+                    bunnyBus      : version
+                }
+            };
+
+            handlers[publishOptions.routeKey] = (consumedMessage, ack, reject, requeue) => {
+
+                //this should never be called.
+                ack(done);
+            };
+
+            Async.waterfall([
+                instance.subscribe.bind(instance, queueName, handlers, { validateVersion }),
                 (cb) => instance.channel.publish(config.globalExchange, publishOptions.routeKey, new Buffer(JSON.stringify(messageObject)), headers, cb)
             ],
             () => {});

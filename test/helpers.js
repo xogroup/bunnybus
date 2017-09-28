@@ -123,6 +123,24 @@ describe('helpers', () => {
 
             done();
         });
+
+        it('should not clean properties that are false', (done) => {
+
+            const obj = {
+                a : 'value1',
+                b : true,
+                c : false,
+                d : undefined
+            };
+
+            Helpers.cleanObject(obj);
+
+            const cleanedKeys = Object.keys(obj);
+
+            expect(cleanedKeys.find((key) => key === 'd')).to.be.undefined();
+
+            done();
+        });
     });
 
     describe('convertToBuffer', () => {
