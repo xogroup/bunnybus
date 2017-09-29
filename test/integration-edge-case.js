@@ -75,7 +75,7 @@ describe('positive integration tests - Callback api', () => {
             ], resolve);
         });
 
-        it.only('should pass when server host configuration value is not valid', (done) => {
+        it('should pass when server host configuration value is not valid', (done) => {
 
             const message = { event : 'eb', name : 'bunnybus' };
             instance.config = { server : 'fake' };
