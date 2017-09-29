@@ -1,4 +1,3 @@
-
 'use strict';
 
 const Async = require('async');
@@ -28,16 +27,37 @@ describe('positive integration tests - events', () => {
 
     describe('recovering', () =>  {
 
-        before((done) => {
+        beforeEach((done) => {
 
             instance._autoConnectChannel(done);
         });
 
-        it('should be evented when connection is recovering', (done) => {
+        it('should be evented when connection was errored and is recovering', (done) => {
 
             instance.once(BunnyBus.RECOVERING_EVENT, done);
 
             instance.connection.emit('error');
+        });
+
+        it('should be evented when channel was errored and is recovering', (done) => {
+
+            instance.once(BunnyBus.RECOVERING_EVENT, done);
+
+            instance.channel.emit('error');
+        });
+
+        it('should be evented when connection was closed and is recovering', (done) => {
+
+            instance.once(BunnyBus.RECOVERING_EVENT, done);
+
+            instance.connection.emit('close');
+        });
+
+        it('should be evented when channel was closed and is recovering', (done) => {
+
+            instance.once(BunnyBus.RECOVERING_EVENT, done);
+
+            instance.channel.emit('close');
         });
     });
 
@@ -48,11 +68,32 @@ describe('positive integration tests - events', () => {
             instance._autoConnectChannel(done);
         });
 
-        it('should be evented when connection is recovering', (done) => {
+        it('should be evented when connection was errored and is recovering', (done) => {
 
             instance.once(BunnyBus.RECOVERED_EVENT, done);
 
             instance.connection.emit('error');
+        });
+
+        it('should be evented when channel was errored and is recovering', (done) => {
+
+            instance.once(BunnyBus.RECOVERED_EVENT, done);
+
+            instance.channel.emit('error');
+        });
+
+        it('should be evented when connection was closed and is recovering', (done) => {
+
+            instance.once(BunnyBus.RECOVERED_EVENT, done);
+
+            instance.connection.emit('close');
+        });
+
+        it('should be evented when channel was closed and is recovering', (done) => {
+
+            instance.once(BunnyBus.RECOVERED_EVENT, done);
+
+            instance.channel.emit('close');
         });
     });
 
