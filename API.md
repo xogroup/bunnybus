@@ -88,9 +88,15 @@
   - [`BunnyBus.AMQP_CONNECTION_ERROR_EVENT`](#bunnybusamqp_connection_error_event)
     - [event key](#event-key-11)
     - [handler parameter(s)](#handler-parameters-9)
-  - [`BunnyBus.AMQP_CHANNEL_ERROR_EVENT`](#bunnybusamqp_channel_error_event)
+  - [`BunnyBus.AMQP_CONNECTION_CLOSE_EVENT`](#bunnybusamqp_connection_close_event)
     - [event key](#event-key-12)
     - [handler parameter(s)](#handler-parameters-10)
+  - [`BunnyBus.AMQP_CHANNEL_ERROR_EVENT`](#bunnybusamqp_channel_error_event)
+    - [event key](#event-key-13)
+    - [handler parameter(s)](#handler-parameters-11)
+  - [`BunnyBus.AMQP_CHANNEL_CLOSE_EVENT`](#bunnybusamqp_channel_close_event)
+    - [event key](#event-key-14)
+    - [handler parameter(s)](#handler-parameters-12)
 - [`SubscriptionManager`](#subscriptionmanager)
   - [`contains(queue, [withConsumerTag])`](#containsqueue-withconsumertag)
   - [`create(queue, handlers, [options])`](#createqueue-handlers-options)
@@ -925,7 +931,7 @@ bunnyBus.on('BunnyBus.RECOVERED_EVENT', () => {
 
 #### event key
 
-* `amqp.connection.error'` - emitted when amqplib encounters a corrupted connection state.
+* `amqp.connection.error` - emitted when amqplib encounters a corrupted connection state.
 
 #### handler parameter(s)
 
@@ -940,11 +946,30 @@ bunnyBus.on('BunnyBus.AMQP_CONNECTION_ERROR_EVENT', (err) => {
 });
 ```
 
+### `BunnyBus.AMQP_CONNECTION_CLOSE_EVENT`
+
+#### event key
+
+* `amqp.connection.close` - emitted when amqplib connection closes.
+
+#### handler parameter(s)
+
+* `err` - error from amqplib. *[Object]*
+
+```Javascript
+const BunnyBus = require('bunnybus');
+
+bunnyBus.on('BunnyBus.AMQP_CONNECTION_CLOSE_EVENT', (err) => {
+
+    // do work
+});
+```
+
 ### `BunnyBus.AMQP_CHANNEL_ERROR_EVENT`
 
 #### event key
 
-* `amqp.channel.error'` - emitted when amqplib encounters a corrupted channel state.
+* `amqp.channel.error` - emitted when amqplib encounters a corrupted channel state.
 
 #### handler parameter(s)
 
@@ -954,6 +979,25 @@ bunnyBus.on('BunnyBus.AMQP_CONNECTION_ERROR_EVENT', (err) => {
 const BunnyBus = require('bunnybus');
 
 bunnyBus.on('BunnyBus.AMQP_CHANNEL_ERROR_EVENT', (err) => {
+
+    // do work
+});
+```
+
+### `BunnyBus.AMQP_CHANNEL_CLOSE_EVENT`
+
+#### event key
+
+* `amqp.channel.close` - emitted when amqplib channel closes.
+
+#### handler parameter(s)
+
+* `err` - error from amqplib. *[Object]*
+
+```Javascript
+const BunnyBus = require('bunnybus');
+
+bunnyBus.on('BunnyBus.AMQP_CHANNEL_CLOSE_EVENT', (err) => {
 
     // do work
 });
