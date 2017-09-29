@@ -20,7 +20,7 @@ const assertPublish = (instance, message, queueName, routeKey, transactionId, so
 
         if (shouldRoute) {
             const subscribedMessage = JSON.parse(payload.content.toString());
-            expect(err).to.be.null();
+            expect(err).to.not.exist();
             expect(subscribedMessage).to.be.equal(message);
             expect(payload.properties.headers.transactionId).to.be.string();
             expect(payload.properties.headers.createdAt).to.exist();
@@ -49,7 +49,7 @@ const assertPublish = (instance, message, queueName, routeKey, transactionId, so
             instance.channel.ack(payload);
         }
         else {
-            expect(err).to.be.null();
+            expect(err).to.not.exist();
             expect(payload).to.be.false();
         }
 

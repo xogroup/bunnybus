@@ -31,11 +31,10 @@
   },
   "devDependencies": {
     "bluebird": "^3.4.6",
-    "code": "^4.0.0",
     "doctoc": "^1.2.0",
     "eslint-config-hapi": "^10.0.0",
     "eslint-plugin-hapi": "^4.0.0",
-    "lab": "^11.2.1",
+    "lab": "^14.0.1",
     "q": "^1.4.1"
   }
 }

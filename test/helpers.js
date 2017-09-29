@@ -33,7 +33,7 @@ describe('helpers', () => {
 
             Helpers.createTransactionId((err, result) => {
 
-                expect(err).to.be.null();
+                expect(err).to.not.exist();
                 expect(result).to.be.a.string();
                 expect(result).to.have.length(40);
                 expect(result).to.match(/^([\d\w]*)$/);
@@ -60,7 +60,7 @@ describe('helpers', () => {
                         expect(hash[tokens[i]]).to.be.equal(1);
                     }
 
-                    expect(err).to.be.null();
+                    expect(err).to.not.exist();
                     done();
                 });
         });
@@ -120,6 +120,24 @@ describe('helpers', () => {
 
             expect(cleanedKeys.find((key) => key === 'a2')).to.be.undefined();
             expect(cleanedKeys.find((key) => key === 'a3')).to.be.undefined();
+
+            done();
+        });
+
+        it('should not clean properties that are false', (done) => {
+
+            const obj = {
+                a : 'value1',
+                b : true,
+                c : false,
+                d : undefined
+            };
+
+            Helpers.cleanObject(obj);
+
+            const cleanedKeys = Object.keys(obj);
+
+            expect(cleanedKeys.find((key) => key === 'd')).to.be.undefined();
 
             done();
         });

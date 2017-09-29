@@ -43,7 +43,7 @@ describe('positive integration tests - Callback api', () => {
 
             instance._createConnection((err) => {
 
-                expect(err).to.be.null();
+                expect(err).to.not.exist();
                 expect(instance.connection).to.exist();
                 done();
             });
@@ -56,8 +56,8 @@ describe('positive integration tests - Callback api', () => {
                 instance._closeConnection
             ], (err) => {
 
-                expect(err).to.be.null();
-                expect(instance.connection).to.be.null();
+                expect(err).to.not.exist();
+                expect(instance.connection).to.not.exist();
                 done(err);
             });
         });
@@ -82,7 +82,7 @@ describe('positive integration tests - Callback api', () => {
 
             instance._createChannel((err) => {
 
-                expect(err).to.be.null();
+                expect(err).to.not.exist();
                 expect(instance.channel).to.exist();
                 done();
             });
@@ -95,8 +95,8 @@ describe('positive integration tests - Callback api', () => {
                 instance._closeChannel
             ], (err) => {
 
-                expect(err).to.be.null();
-                expect(instance.channel).to.be.null();
+                expect(err).to.not.exist();
+                expect(instance.channel).to.not.exist();
                 done(err);
             });
         });
@@ -108,9 +108,9 @@ describe('positive integration tests - Callback api', () => {
                 instance._closeConnection
             ], (err) => {
 
-                expect(err).to.be.null();
-                expect(instance.connection).to.be.null();
-                expect(instance.channel).to.be.null();
+                expect(err).to.not.exist();
+                expect(instance.connection).to.not.exist();
+                expect(instance.channel).to.not.exist();
                 done(err);
             });
         });
@@ -127,7 +127,7 @@ describe('positive integration tests - Callback api', () => {
 
             instance._autoConnectChannel((err) => {
 
-                expect(err).to.be.null();
+                expect(err).to.not.exist();
                 expect(instance.connection).to.exist();
                 expect(instance.channel).to.exist();
                 done();
@@ -143,7 +143,7 @@ describe('positive integration tests - Callback api', () => {
                 instance._autoConnectChannel
             ],(err) => {
 
-                expect(err).to.be.null();
+                expect(err).to.not.exist();
                 expect(instance.connection).to.exist();
                 expect(instance.channel).to.exist();
                 done();
@@ -201,7 +201,7 @@ describe('positive integration tests - Callback api', () => {
 
             instance.createQueue(queueName, (err, result) => {
 
-                expect(err).to.be.null();
+                expect(err).to.not.exist();
                 expect(result.queue).to.be.equal(queueName);
                 expect(result.messageCount).to.be.equal(0);
                 done();
@@ -212,7 +212,7 @@ describe('positive integration tests - Callback api', () => {
 
             instance.checkQueue(queueName, (err, result) => {
 
-                expect(err).to.be.null();
+                expect(err).to.not.exist();
                 expect(result.queue).to.be.equal(queueName);
                 expect(result.messageCount).to.be.equal(0);
                 done();
@@ -223,7 +223,7 @@ describe('positive integration tests - Callback api', () => {
 
             instance.deleteQueue(queueName, (err, result) => {
 
-                expect(err).to.be.null();
+                expect(err).to.not.exist();
                 expect(result.messageCount).to.be.equal(0);
                 done();
             });
@@ -254,8 +254,7 @@ describe('positive integration tests - Callback api', () => {
 
             instance.createExchange(exchangeName, 'topic', (err, result) => {
 
-                expect(err).to.be.null();
-
+                expect(err).to.not.exist();
                 done();
             });
         });
@@ -264,7 +263,7 @@ describe('positive integration tests - Callback api', () => {
 
             instance.checkExchange(exchangeName, (err, result) => {
 
-                expect(err).to.be.null();
+                expect(err).to.not.exist();
                 done();
             });
         });
@@ -273,7 +272,7 @@ describe('positive integration tests - Callback api', () => {
 
             instance.deleteExchange(exchangeName, (err, result) => {
 
-                expect(err).to.be.null();
+                expect(err).to.not.exist();
                 done();
             });
         });
@@ -730,7 +729,7 @@ describe('positive integration tests - Callback api', () => {
             });
         });
 
-        it('should reject message with out bunnyBus header property', (done) => {
+        it('should reject message without bunnyBus header property', (done) => {
 
             const handlers = {};
             const config = instance.config;
@@ -791,6 +790,62 @@ describe('positive integration tests - Callback api', () => {
 
             Async.waterfall([
                 instance.subscribe.bind(instance, queueName, handlers),
+                (cb) => instance.channel.publish(config.globalExchange, publishOptions.routeKey, new Buffer(JSON.stringify(messageObject)), headers, cb)
+            ],
+            () => {});
+        });
+
+        it('should accept message without bunnyBus header when overridden', (done) => {
+
+            const handlers = {};
+            const validatePublisher = false;
+            const config = instance.config;
+            const headers = {
+                headers : {
+                    transactionId : '1234abcd',
+                    isBuffer      : false,
+                    routeKey      : publishOptions.routeKey,
+                    createAt      : (new Date()).toISOString()
+                }
+            };
+
+            handlers[publishOptions.routeKey] = (consumedMessage, ack, reject, requeue) => {
+
+                //this should never be called.
+                ack(done);
+            };
+
+            Async.waterfall([
+                instance.subscribe.bind(instance, queueName, handlers, { validatePublisher }),
+                (cb) => instance.channel.publish(config.globalExchange, publishOptions.routeKey, new Buffer(JSON.stringify(messageObject)), headers, cb)
+            ],
+            () => {});
+        });
+
+        it('should accept message with bunnyBus header with mismatched version when overriden', (done) => {
+
+            const handlers = {};
+            const validateVersion = false;
+            const config = instance.config;
+            const version = '0.0.1';
+            const headers = {
+                headers : {
+                    transactionId : '1234abcd',
+                    isBuffer      : false,
+                    routeKey      : publishOptions.routeKey,
+                    createAt      : (new Date()).toISOString(),
+                    bunnyBus      : version
+                }
+            };
+
+            handlers[publishOptions.routeKey] = (consumedMessage, ack, reject, requeue) => {
+
+                //this should never be called.
+                ack(done);
+            };
+
+            Async.waterfall([
+                instance.subscribe.bind(instance, queueName, handlers, { validateVersion }),
                 (cb) => instance.channel.publish(config.globalExchange, publishOptions.routeKey, new Buffer(JSON.stringify(messageObject)), headers, cb)
             ],
             () => {});
@@ -967,7 +1022,7 @@ describe('positive integration tests - Callback api', () => {
                 instance.checkQueue.bind(instance, queueName)
             ], (err, result) => {
 
-                expect(err).to.be.null();
+                expect(err).to.not.exist();
                 expect(result.queue).to.be.equal(queueName);
                 expect(result.messageCount).to.be.equal(1);
                 done();
@@ -995,7 +1050,7 @@ describe('positive integration tests - Callback api', () => {
                 instance.get.bind(instance, queueName)
             ], (err, payload) => {
 
-                expect(err).to.be.null();
+                expect(err).to.not.exist();
                 expect(payload.properties.headers.transactionId).to.be.equal(transactionId);
                 expect(payload.properties.headers.createdAt).to.be.equal(createdAt);
                 expect(payload.properties.headers.source).to.be.equal(publishOptions.source);
@@ -1065,7 +1120,7 @@ describe('positive integration tests - Callback api', () => {
                 instance.checkQueue.bind(instance, errorQueueName)
             ], (err, result) => {
 
-                expect(err).to.be.null();
+                expect(err).to.not.exist();
                 expect(result.queue).to.be.equal(errorQueueName);
                 expect(result.messageCount).to.be.equal(1);
                 done();
@@ -1096,7 +1151,7 @@ describe('positive integration tests - Callback api', () => {
                 instance.get.bind(instance, errorQueueName)
             ], (err, payload) => {
 
-                expect(err).to.be.null();
+                expect(err).to.not.exist();
                 expect(payload.properties.headers.transactionId).to.be.equal(transactionId);
                 expect(payload.properties.headers.createdAt).to.be.equal(createdAt);
                 expect(payload.properties.headers.source).to.be.equal(publishOptions.source);

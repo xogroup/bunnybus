@@ -8,7 +8,7 @@ const assertConvertToBuffer = (data, callback) => {
 
     Helpers.convertToBuffer(data, (err, result) => {
 
-        expect(err).to.be.null();
+        expect(err).to.not.exist();
         expect(result.buffer).to.be.a.instanceof(Buffer);
 
         if (Buffer.isBuffer(data)) {

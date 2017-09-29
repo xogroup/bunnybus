@@ -19,7 +19,7 @@ const assertSend = (instance, message, queueName, transactionId, source, routeKe
     (err, payload) => {
 
         const sentMessage = JSON.parse(payload.content.toString());
-        expect(err).to.be.null();
+        expect(err).to.not.exist();
         expect(sentMessage).to.be.equal(message);
         expect(payload.properties.headers.transactionId).to.be.string();
         expect(payload.properties.headers.createdAt).to.exist();
