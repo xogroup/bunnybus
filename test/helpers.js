@@ -700,4 +700,51 @@ describe('helpers', () => {
             });
         });
     });
+
+    describe.only('handlerMatcher', () => {
+
+        it('should not match any handler', (done) => {
+
+            const handlers = {
+                'abc.#.xyz' : () => {},
+                'abc.*.hello.world': () => {},
+                'abc.xyz' : () => {}
+            };
+
+            const result = Helpers.handlerMatcher(handlers, 'world.hello');
+
+            expect(result).to.be.an.array();
+            expect(result).to.have.length(0);
+            done();
+        });
+
+        it('should match a single handler', (done) => {
+
+            const handlers = {
+                'hello.world' : () => {},
+                'world.hello' : () => {}
+            };
+
+            const result = Helpers.handlerMatcher(handlers, 'world.hello');
+
+            expect(result).to.be.an.array();
+            expect(result).to.have.length(1);
+            done();
+        });
+
+        it('should match multiple handlers', (done) => {
+
+            const handlers = {
+                'abc.#.xyz' : () => {},
+                'abc.*.xyz' : () => {},
+                'abc.xyz' : () => {}
+            };
+
+            const result = Helpers.handlerMatcher(handlers, 'abc.hello.xyz');
+
+            expect(result).to.be.an.array();
+            expect(result).to.have.length(2);
+            done();
+        });
+    });
 });

@@ -856,8 +856,8 @@ describe('positive integration tests - Callback api', () => {
 
         const queueName = 'test-subscribe-queue-with-star-routing-1';
         const errorQueueName = `${queueName}_error`;
-        const subscriptionKey = 'a.*';
-        const routableObject = { event : 'a.b', name : 'bunnybus' };
+        const subscriptionKey = 'abc.*.xyz';
+        const routableObject = { event : 'abc.helloworld.xyz', name : 'bunnybus' };
 
         before((done) => {
 
