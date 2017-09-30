@@ -2,5 +2,8 @@
     "extends" : ["hapi"],
     "rules": {
         "consistent-this" : [ 0, "self", "$" ]
+    },
+    "parserOptions": {
+        "ecmaVersion": 8
     }
 }

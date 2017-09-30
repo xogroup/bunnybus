@@ -24,7 +24,7 @@ const assertSend = (instance, message, queueName, transactionId, source, routeKe
         expect(payload.properties.headers.transactionId).to.be.string();
         expect(payload.properties.headers.createdAt).to.exist();
         expect(payload.properties.headers.bunnyBus).to.exist();
-        expect(payload.properties.headers.bunnyBus).to.be.equal(require('../../package.json').version);
+        expect(payload.properties.headers.bunnyBus).to.be.equal(require('../../../package.json').version);
 
         if (source) {
             expect(payload.properties.headers.source).to.be.string();
