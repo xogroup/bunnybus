@@ -2,10 +2,6 @@ language: node_js
 sudo: required
 services:
 - docker
-node_js:
-- '6'
-- '8'
-- 'latest'
 matrix:
   include:
     - node_js: '6'
