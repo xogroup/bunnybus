@@ -884,12 +884,66 @@ describe('positive integration tests - Callback api', () => {
             ], done);
         });
 
-        it.skip('should consume message (Object) from queue and acknowledge off', (done) => {
+        it('should consume message (Object) from queue and acknowledge off', (done) => {
 
             const handlers = {};
             handlers[subscriptionKey] = (consumedMessage, ack) => {
 
-                expect(consumedMessage).to.be.equal(messageObject);
+                expect(consumedMessage).to.be.equal(routableObject);
+                ack(null, done);
+            };
+
+            Async.waterfall([
+                instance.subscribe.bind(instance, queueName, handlers),
+                instance.publish.bind(instance, routableObject)
+            ],
+            (err) => {
+
+                if (err) {
+                    done(err);
+                }
+            });
+        });
+    });
+
+    describe('subscribe / unsubscribe (single queue with # route)', () => {
+
+        const queueName = 'test-subscribe-queue-with-hash-routing-1';
+        const errorQueueName = `${queueName}_error`;
+        const subscriptionKey = 'abc.#.xyz';
+        const routableObject = { event : 'abc.hello.world.xyz', name : 'bunnybus' };
+
+        before((done) => {
+
+            Async.waterfall([
+                instance._autoConnectChannel,
+                instance.deleteExchange.bind(instance, instance.config.globalExchange),
+                instance.deleteQueue.bind(instance, queueName),
+                instance.deleteQueue.bind(instance, errorQueueName)
+            ], done);
+        });
+
+        afterEach((done) => {
+
+            instance.unsubscribe(queueName, done);
+        });
+
+        after((done) => {
+
+            Async.waterfall([
+                instance._autoConnectChannel,
+                instance.deleteExchange.bind(instance, instance.config.globalExchange),
+                instance.deleteQueue.bind(instance, queueName),
+                instance.deleteQueue.bind(instance, errorQueueName)
+            ], done);
+        });
+
+        it('should consume message (Object) from queue and acknowledge off', (done) => {
+
+            const handlers = {};
+            handlers[subscriptionKey] = (consumedMessage, ack) => {
+
+                expect(consumedMessage).to.be.equal(routableObject);
                 ack(null, done);
             };
 

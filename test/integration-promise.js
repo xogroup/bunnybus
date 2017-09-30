@@ -663,6 +663,104 @@ describe('positive integration tests - Promise api', () => {
         });
     });
 
+    describe('subscribe / unsubscribe (single queue with * route)', () => {
+
+        const queueName = 'test-subscribe-queue-with-star-routing-1';
+        const errorQueueName = `${queueName}_error`;
+        const subscriptionKey = 'abc.*.xyz';
+        const routableObject = { event : 'abc.helloworld.xyz', name : 'bunnybus' };
+
+        before(() => {
+
+            return instance._autoConnectChannel()
+                .then(instance.deleteExchange.bind(instance, instance.config.globalExchange))
+                .then(instance.deleteQueue.bind(instance, queueName))
+                .then(instance.deleteQueue.bind(instance, errorQueueName));
+        });
+
+        afterEach(() => {
+
+            return instance.unsubscribe(queueName);
+        });
+
+        after(() => {
+
+            return instance._autoConnectChannel()
+                .then(instance.deleteExchange.bind(instance, instance.config.globalExchange))
+                .then(instance.deleteQueue.bind(instance, queueName))
+                .then(instance.deleteQueue.bind(instance, errorQueueName));
+        });
+
+        it('should consume message (Object) from queue and acknowledge off', () => {
+
+            return new Promise((resolve, reject) => {
+
+                const handlers = {};
+
+                handlers[subscriptionKey] = (consumedMessage, ack) => {
+
+                    expect(consumedMessage).to.be.equal(routableObject);
+
+                    return ack()
+                        .then(resolve);
+                };
+
+                return instance.subscribe(queueName, handlers)
+                    .then(instance.publish.bind(instance, routableObject))
+                    .catch(reject);
+            });
+        });
+    });
+
+    describe('subscribe / unsubscribe (single queue with * route)', () => {
+
+        const queueName = 'test-subscribe-queue-with-hash-routing-1';
+        const errorQueueName = `${queueName}_error`;
+        const subscriptionKey = 'abc.#.xyz';
+        const routableObject = { event : 'abc.hello.world.xyz', name : 'bunnybus' };
+
+        before(() => {
+
+            return instance._autoConnectChannel()
+                .then(instance.deleteExchange.bind(instance, instance.config.globalExchange))
+                .then(instance.deleteQueue.bind(instance, queueName))
+                .then(instance.deleteQueue.bind(instance, errorQueueName));
+        });
+
+        afterEach(() => {
+
+            return instance.unsubscribe(queueName);
+        });
+
+        after(() => {
+
+            return instance._autoConnectChannel()
+                .then(instance.deleteExchange.bind(instance, instance.config.globalExchange))
+                .then(instance.deleteQueue.bind(instance, queueName))
+                .then(instance.deleteQueue.bind(instance, errorQueueName));
+        });
+
+        it('should consume message (Object) from queue and acknowledge off', () => {
+
+            return new Promise((resolve, reject) => {
+
+                const handlers = {};
+
+                handlers[subscriptionKey] = (consumedMessage, ack) => {
+
+                    expect(consumedMessage).to.be.equal(routableObject);
+
+                    return ack()
+                        .then(resolve);
+                };
+
+                return instance.subscribe(queueName, handlers)
+                    .then(instance.publish.bind(instance, routableObject))
+                    .catch(reject);
+            });
+        });
+    });
+
     describe('subscribe / unsubscribe (multiple queue)', () => {
 
         const queueName1 = 'test-subscribe-multiple-queue-1';

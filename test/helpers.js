@@ -701,7 +701,7 @@ describe('helpers', () => {
         });
     });
 
-    describe.only('handlerMatcher', () => {
+    describe('handlerMatcher', () => {
 
         it('should not match any handler', (done) => {
 
