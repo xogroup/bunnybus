@@ -36,14 +36,11 @@ const assertPublish = (instance, message, queueName, routeKey, transactionId, so
 
             if (source) {
                 expect(payload.properties.headers.source).to.be.string();
+                expect(payload.properties.headers.source).to.be.equal(source);
             }
 
             if (transactionId) {
                 expect(payload.properties.headers.transactionId).to.be.equal(transactionId);
-            }
-
-            if (source) {
-                expect(payload.properties.headers.source).to.be.equal(source);
             }
 
             instance.channel.ack(payload);

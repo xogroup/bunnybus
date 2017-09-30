@@ -852,6 +852,60 @@ describe('positive integration tests - Callback api', () => {
         });
     });
 
+    describe('subscribe / unsubscribe (single queue with * route)', () => {
+
+        const queueName = 'test-subscribe-queue-with-star-routing-1';
+        const errorQueueName = `${queueName}_error`;
+        const subscriptionKey = 'a.*';
+        const routableObject = { event : 'a.b', name : 'bunnybus' };
+
+        before((done) => {
+
+            Async.waterfall([
+                instance._autoConnectChannel,
+                instance.deleteExchange.bind(instance, instance.config.globalExchange),
+                instance.deleteQueue.bind(instance, queueName),
+                instance.deleteQueue.bind(instance, errorQueueName)
+            ], done);
+        });
+
+        afterEach((done) => {
+
+            instance.unsubscribe(queueName, done);
+        });
+
+        after((done) => {
+
+            Async.waterfall([
+                instance._autoConnectChannel,
+                instance.deleteExchange.bind(instance, instance.config.globalExchange),
+                instance.deleteQueue.bind(instance, queueName),
+                instance.deleteQueue.bind(instance, errorQueueName)
+            ], done);
+        });
+
+        it.skip('should consume message (Object) from queue and acknowledge off', (done) => {
+
+            const handlers = {};
+            handlers[subscriptionKey] = (consumedMessage, ack) => {
+
+                expect(consumedMessage).to.be.equal(messageObject);
+                ack(null, done);
+            };
+
+            Async.waterfall([
+                instance.subscribe.bind(instance, queueName, handlers),
+                instance.publish.bind(instance, routableObject)
+            ],
+            (err) => {
+
+                if (err) {
+                    done(err);
+                }
+            });
+        });
+    });
+
     describe('subscribe / unsubscribe (multiple queue)', () => {
 
         const queueName1 = 'test-subscribe-multiple-queue-1';
