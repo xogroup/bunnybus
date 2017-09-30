@@ -7,6 +7,7 @@ Examples are based on usage of Promises.
 
 
 - [General usage of publish and subscribe](#general-usage-of-publish-and-subscribe)
+- [Publish and subscribe using RabbitMQ topic exchange wildcards](#publish-and-subscribe-using-rabbitmq-topic-exchange-wildcards)
 - [Integrating with the `SubscriptionManager`](#integrating-with-the-subscriptionmanager)
   - [Fire and Forget](#fire-and-forget)
   - [Fire and Wait for Resolution](#fire-and-wait-for-resolution)
@@ -74,6 +75,81 @@ Promises
         return bunnyBus.publish({
             id : 23,
             event : 'message-deleted'
+        });
+    })
+    .catch((err) => {
+        logger.error('failed to publish', err);
+    })
+```
+
+## Publish and subscribe using RabbitMQ topic exchange wildcards
+
+Configuration and registration of handlers to a couple queues that listens to some events and handles them.
+
+```Javascirpt
+const config = require('ez-config');
+const BunnyBus = require('bunnybus');
+const bunnyBus = new BunnyBus(config.get('rabbit'));
+const logger = require('pino');
+
+bunnyBus.logger = logger;
+
+const handlers = {
+    'email.*' : (message, ack, reject, requeue) => {
+
+        //do work
+        ack();
+    },
+    'voicemail.#' : (message, ack, reject, requeue) => {
+
+        //do work
+        ack();
+    }
+};
+
+Promises
+    .resolve()
+    .then(() => subscribe('communictionQueue', handlers))
+    .catch((err) =>  {
+        logger.error('failed to subscribe', err);
+    });
+```
+
+With the above handlers registered, let's publish some events to the bus.
+
+```Javascirpt
+const config = require('ez-config');
+const BunnyBus = require('bunnybus');
+const bunnyBus = new BunnyBus(config.get('rabbit'));
+const logger = require('pino');
+
+bunnyBus.logger = logger;
+
+Promises
+    .resolve()
+    .then(()) => {
+        // this will make it to the queue and subscribed handler
+        return bunnyBus.publish({
+            id : 1001,
+            event : 'email.created',
+            body : 'hello world'
+        });
+    })
+    .then(()) => {
+        // this will not make it to the queue because the wildcard
+        // assigned by the subscribing handler will not catch this route
+        return bunnyBus.publish({
+            id : 1002,
+            event : 'email.created.highpriority',
+            body : 'hello world on fire'
+        });
+    })
+    .then(()) => {
+        // this will make it to the queue and subscribed handler
+        return bunnyBus.publish({
+            id : 9001,
+            event : 'voicemail.crated.lowpriority'
+            body : 'translation was world hello'
         });
     })
     .catch((err) => {

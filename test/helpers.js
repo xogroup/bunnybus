@@ -460,4 +460,291 @@ describe('helpers', () => {
             });
         });
     });
+
+    describe('routeMatcher', () => {
+
+        describe('when binding pattern is abc.xyz', () =>  {
+
+            const pattern = 'abc.xyz';
+
+            it('should match for abc.xyz', (done) => {
+
+                expect(Helpers.routeMatcher(pattern, 'abc.xyz')).to.be.true();
+                done();
+            });
+
+            it('should not match for xyz.abc', (done) => {
+
+                expect(Helpers.routeMatcher(pattern, 'xyz.abc')).to.be.false();
+                done();
+            });
+        });
+
+        describe('when binding pattern is a.*', () => {
+
+            const pattern = 'a.*';
+
+            it('should match for a.hello', (done) => {
+
+                expect(Helpers.routeMatcher(pattern, 'a.hello')).to.be.true();
+                done();
+            });
+
+            it('should match for a.hello', (done) => {
+
+                expect(Helpers.routeMatcher(pattern, 'a.')).to.be.true();
+                done();
+            });
+
+            it('should not match for a.hello.world', (done) => {
+
+                expect(Helpers.routeMatcher(pattern, 'a.hello.world')).to.be.false();
+                done();
+            });
+        });
+
+        describe('when binding pattern is *.a', () => {
+
+            const pattern = '*.a';
+
+            it('should match for hello.a', (done) => {
+
+                expect(Helpers.routeMatcher(pattern, 'hello.a')).to.be.true();
+                done();
+            });
+
+            it('should match for .a', (done) => {
+
+                expect(Helpers.routeMatcher(pattern, '.a')).to.be.true();
+                done();
+            });
+
+            it('should not match for world.hello.a', (done) => {
+
+                expect(Helpers.routeMatcher(pattern, 'world.hello.a')).to.be.false();
+                done();
+            });
+        });
+
+        describe('when binding pattern is a.#', () => {
+
+            const pattern = 'a.#';
+
+            it('should match for a.hello', (done) => {
+
+                expect(Helpers.routeMatcher(pattern, 'a.hello')).to.be.true();
+                done();
+            });
+
+            it('should match for a.hello.world', (done) => {
+
+                expect(Helpers.routeMatcher(pattern, 'a.hello.world')).to.be.true();
+                done();
+            });
+
+            it('should match for a.', (done) => {
+
+                expect(Helpers.routeMatcher(pattern, 'a.')).to.be.true();
+                done();
+            });
+
+            it('should not match for b.a.hello.world', (done) => {
+
+                expect(Helpers.routeMatcher(pattern, 'b.a.hello.world')).to.be.false();
+                done();
+            });
+        });
+
+        describe('when binding pattern is a.*.b', () => {
+
+            const pattern = 'a.*.b';
+
+            it('should match for a.c.b', (done) => {
+
+                expect(Helpers.routeMatcher(pattern, 'a.c.b')).to.be.true();
+                done();
+            });
+
+            it('should match for a..b', (done) => {
+
+                expect(Helpers.routeMatcher(pattern, 'a..b')).to.be.true();
+                done();
+            });
+
+            it('should match for a.b', (done) => {
+
+                expect(Helpers.routeMatcher(pattern, 'a.b')).to.be.false();
+                done();
+            });
+        });
+
+        describe('when binding pattern is a.#.b', () => {
+
+            const pattern = 'a.#.b';
+
+            it('should match for a.hello.b', (done) => {
+
+                expect(Helpers.routeMatcher(pattern, 'a.hello.b')).to.be.true();
+                done();
+            });
+
+            it('should match for a.hello.world.b', (done) => {
+
+                expect(Helpers.routeMatcher(pattern, 'a.hello.world.b')).to.be.true();
+                done();
+            });
+
+            it('should not match for a.b', (done) => {
+
+                expect(Helpers.routeMatcher(pattern, 'a.b')).to.be.false();
+                done();
+            });
+
+            it('should match for a..b', (done) => {
+
+                expect(Helpers.routeMatcher(pattern, 'a..b')).to.be.true();
+                done();
+            });
+
+            it('should not match for hello.world.b', (done) => {
+
+                expect(Helpers.routeMatcher(pattern, 'hello.world.b')).to.be.false();
+                done();
+            });
+
+            it('should match for a.hello.world', (done) => {
+
+                expect(Helpers.routeMatcher(pattern, 'a.hello.world')).to.be.false();
+                done();
+            });
+        });
+
+        describe('when binding pattern is abc.#.xyz', () => {
+
+            const pattern = 'abc.#.xyz';
+
+            it('should match for abc.hello.xyz', (done) => {
+
+                expect(Helpers.routeMatcher(pattern, 'abc.hello.xyz')).to.be.true();
+                done();
+            });
+
+            it('should match for abc.hello.world.xyz', (done) => {
+
+                expect(Helpers.routeMatcher(pattern, 'abc.hello.world.xyz')).to.be.true();
+                done();
+            });
+
+            it('should match for abc..xyz', (done) => {
+
+                expect(Helpers.routeMatcher(pattern, 'abc..xyz')).to.be.true();
+                done();
+            });
+
+            it('should not match for abc.xyz', (done) => {
+
+                expect(Helpers.routeMatcher(pattern, 'abc.xyz')).to.be.false();
+                done();
+            });
+        });
+
+        describe('when binding pattern is .#.', () => {
+
+            const pattern = '.#.';
+
+            it('should match for .a.', (done) => {
+
+                expect(Helpers.routeMatcher(pattern, '.a.')).to.be.true();
+                done();
+            });
+
+            it('should match for .#.', (done) => {
+
+                expect(Helpers.routeMatcher(pattern, '.#.')).to.be.true();
+                done();
+            });
+
+            it('should match for ..', (done) => {
+
+                expect(Helpers.routeMatcher(pattern, '..')).to.be.true();
+                done();
+            });
+
+            it('should match for ....', (done) => {
+
+                expect(Helpers.routeMatcher(pattern, '....')).to.be.true();
+                done();
+            });
+        });
+
+        describe('when binding pattern is .*.', () => {
+
+            const pattern = '.#.';
+
+            it('should match for .a.', (done) => {
+
+                expect(Helpers.routeMatcher(pattern, '.a.')).to.be.true();
+                done();
+            });
+
+            it('should match for .#.', (done) => {
+
+                expect(Helpers.routeMatcher(pattern, '.#.')).to.be.true();
+                done();
+            });
+
+            it('should match for .#.', (done) => {
+
+                expect(Helpers.routeMatcher(pattern, '..')).to.be.true();
+                done();
+            });
+        });
+    });
+
+    describe('handlerMatcher', () => {
+
+        it('should not match any handler', (done) => {
+
+            const handlers = {
+                'abc.#.xyz' : () => {},
+                'abc.*.hello.world': () => {},
+                'abc.xyz' : () => {}
+            };
+
+            const result = Helpers.handlerMatcher(handlers, 'world.hello');
+
+            expect(result).to.be.an.array();
+            expect(result).to.have.length(0);
+            done();
+        });
+
+        it('should match a single handler', (done) => {
+
+            const handlers = {
+                'hello.world' : () => {},
+                'world.hello' : () => {}
+            };
+
+            const result = Helpers.handlerMatcher(handlers, 'world.hello');
+
+            expect(result).to.be.an.array();
+            expect(result).to.have.length(1);
+            done();
+        });
+
+        it('should match multiple handlers', (done) => {
+
+            const handlers = {
+                'abc.#.xyz' : () => {},
+                'abc.*.xyz' : () => {},
+                'abc.xyz' : () => {}
+            };
+
+            const result = Helpers.handlerMatcher(handlers, 'abc.hello.xyz');
+
+            expect(result).to.be.an.array();
+            expect(result).to.have.length(2);
+            done();
+        });
+    });
 });
