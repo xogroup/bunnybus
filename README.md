@@ -21,6 +21,27 @@ npm i bunnybus
 ```
 
 ## Usage
+
+### Async / Await
+```
+const BunnyBus = require('bunnybus');
+const bunnyBus = new BunnyBus();
+
+//create a subscription
+await bunnyBus.subscribe('queue1', { 
+    'create-event' : (message, ack) => {
+        console.log(message.comment);
+        ack();
+    }});
+
+
+//publish to the above subscription
+bunnyBus.publish({ event : 'create-event', comment : 'hello world!' });
+
+);
+```
+
+### With Callbacks
 ```
 const BunnyBus = require('bunnybus');
 const bunnyBus = new BunnyBus();

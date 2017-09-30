@@ -10,7 +10,7 @@ const beforeEach = lab.beforeEach;
 const it = lab.it;
 const expect = Code.expect;
 
-const SubscriptionManager = require('../lib/states/subscriptionManager');
+const SubscriptionManager = require('../../lib/states/subscriptionManager');
 let instance = undefined;
 
 describe('state management', () => {

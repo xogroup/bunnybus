@@ -2,7 +2,7 @@
 
 const Code = require('code');
 const Lab = require('lab');
-const Exceptions = require('../lib/exceptions');
+const Exceptions = require('../../lib/exceptions');
 const Assertions = require('./assertions');
 
 const lab = exports.lab = Lab.script();
@@ -14,7 +14,7 @@ const describe = lab.describe;
 const it = lab.it;
 const expect = Code.expect;
 
-const BunnyBus = require('../lib');
+const BunnyBus = require('../../lib');
 let instance = undefined;
 
 const throwError = () => {
@@ -940,7 +940,7 @@ describe('positive integration tests - Promise api', () => {
                     expect(payload.properties.headers.requeuedAt).to.exist();
                     expect(payload.properties.headers.retryCount).to.be.equal(1);
                     expect(payload.properties.headers.routeKey).to.be.equal(message.event);
-                    expect(payload.properties.headers.bunnyBus).to.be.equal(require('../package.json').version);
+                    expect(payload.properties.headers.bunnyBus).to.be.equal(require('../../package.json').version);
                 });
         });
     });
@@ -1031,7 +1031,7 @@ describe('positive integration tests - Promise api', () => {
                     expect(payload.properties.headers.requeuedAt).to.be.equal(requeuedAt);
                     expect(payload.properties.headers.retryCount).to.be.equal(retryCount);
                     expect(payload.properties.headers.erroredAt).to.exist();
-                    expect(payload.properties.headers.bunnyBus).to.be.equal(require('../package.json').version);
+                    expect(payload.properties.headers.bunnyBus).to.be.equal(require('../../package.json').version);
                 });
         });
     });

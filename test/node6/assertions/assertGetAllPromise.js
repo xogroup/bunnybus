@@ -4,7 +4,7 @@ const Promise = require('bluebird');
 const Code = require('code');
 const expect = Code.expect;
 
-const assertGetAll = (instance, message, queueName, meta, limit) => {
+const assertGetAllPromise = (instance, message, queueName, meta, limit) => {
 
     return new Promise((resolve, reject) => {
 
@@ -47,4 +47,4 @@ const assertGetAll = (instance, message, queueName, meta, limit) => {
     });
 };
 
-module.exports = assertGetAll;
+module.exports = assertGetAllPromise;

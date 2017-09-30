@@ -11,7 +11,7 @@ const afterEach = lab.afterEach;
 const describe = lab.describe;
 const it = lab.it;
 
-const BunnyBus = require('../lib');
+const BunnyBus = require('../../lib');
 let instance = undefined;
 
 describe('integration load test', () => {

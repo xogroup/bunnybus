@@ -14,8 +14,8 @@
   ],
   "main": "lib/index.js",
   "scripts": {
-    "test": "lab test",
-    "build-test": ". docker/wait-on-resource.sh && npm test",
+    "test": "lab test/node6",
+    "build-test": ". docker/wait-on-resource.sh && if [ $NODE_VERSION -eq 8 ]; then lab test/node6 && lab test/node8; else lab test/node6; fi",
     "start-docker": "docker run -d --name=rabbitmq -p 5671:5671 -p 15672:15672 -p 5672:5672 rabbitmq:3-management",
     "stop-docker": "docker rm -f rabbitmq",
     "doctoc": "doctoc API.md && doctoc Example.md && doctoc Diagram.md"
@@ -23,18 +23,18 @@
   "author": "Lam Chan",
   "license": "BSD-3-Clause",
   "engines": {
-    "node": ">=6.x.x"
+    "node": "6.x.x || 8.x.x"
   },
   "dependencies": {
     "amqplib": "^0.5.1",
-    "async": "^2.1.4"
+    "async": "^2.3.0"
   },
   "devDependencies": {
-    "bluebird": "^3.4.6",
+    "bluebird": "^3.5.0",
     "doctoc": "^1.2.0",
     "eslint-config-hapi": "^10.0.0",
     "eslint-plugin-hapi": "^4.0.0",
-    "lab": "^14.0.1",
+    "lab": "^14.3.1",
     "q": "^1.4.1"
   }
 }

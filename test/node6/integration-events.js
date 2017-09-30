@@ -13,7 +13,7 @@ const describe = lab.describe;
 const it = lab.it;
 const expect = Code.expect;
 
-const BunnyBus = require('../lib');
+const BunnyBus = require('../../lib');
 let instance = undefined;
 
 describe('positive integration tests - events', () => {

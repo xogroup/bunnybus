@@ -1,6 +1,6 @@
 'use strict';
 
-const Helpers = require('../../lib/helpers');
+const Helpers = require('../../../lib/helpers');
 const Code = require('code');
 const expect = Code.expect;
 
