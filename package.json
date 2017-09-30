@@ -23,18 +23,18 @@
   "author": "Lam Chan",
   "license": "BSD-3-Clause",
   "engines": {
-    "node": ">=6.x.x"
+    "node": "6.x.x || 8.x.x"
   },
   "dependencies": {
     "amqplib": "^0.5.1",
-    "async": "^2.1.4"
+    "async": "^2.3.0"
   },
   "devDependencies": {
     "bluebird": "^3.4.6",
     "doctoc": "^1.2.0",
     "eslint-config-hapi": "^10.0.0",
     "eslint-plugin-hapi": "^4.0.0",
-    "lab": "^14.0.1",
+    "lab": "^14.3.1",
     "q": "^1.4.1"
   }
 }
