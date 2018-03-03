@@ -43,7 +43,7 @@ describe('helpers', () => {
 
         it('should create only unique tokens', (done) => {
 
-            const iterations = 10000;
+            const iterations = 1000;
 
             Async.times(
                 iterations,
