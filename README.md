@@ -23,7 +23,7 @@ npm i bunnybus
 ## Usage
 
 ### Async / Await
-```
+```javascript
 const BunnyBus = require('bunnybus');
 const bunnyBus = new BunnyBus();
 
@@ -42,7 +42,7 @@ bunnyBus.publish({ event : 'create-event', comment : 'hello world!' });
 ```
 
 ### With Callbacks
-```
+```javascript
 const BunnyBus = require('bunnybus');
 const bunnyBus = new BunnyBus();
 
