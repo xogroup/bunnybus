@@ -17,9 +17,9 @@ Examples are based on usage of Promises.
 
 ## General usage of publish and subscribe
 
-Configuration and registration of handlers to a couple queues that listens to some events and handles them.
+Configure and register handlers to a couple queues. When a subscribed event is published to one of those queues, it will be processed by the handler.
 
-```Javascirpt
+```javascript
 const config = require('ez-config');
 const BunnyBus = require('bunnybus');
 const bunnyBus = new BunnyBus(config.get('rabbit'));
@@ -43,10 +43,10 @@ const handlersForQueue2 = {
     }   
 }
 
-Promises
+return Promise
     .resolve()
     .then(() => subscribe('queue1', handlersForQueue1))
-    .then(() => subscribe('queue2), handlersForQueue2))
+    .then(() => subscribe('queue2', handlersForQueue2))
     .catch((err) =>  {
         logger.error('failed to subscribe', err);
     });
@@ -54,7 +54,7 @@ Promises
 
 With the above handlers registered, let's publish some events to the bus.
 
-```Javascirpt
+```javascript
 const config = require('ez-config');
 const BunnyBus = require('bunnybus');
 const bunnyBus = new BunnyBus(config.get('rabbit'));
@@ -62,7 +62,7 @@ const logger = require('pino');
 
 bunnyBus.logger = logger;
 
-Promises
+return Promise
     .resolve()
     .then(()) => {
         return bunnyBus.publish({
@@ -86,7 +86,7 @@ Promises
 
 Configuration and registration of handlers to a couple queues that listens to some events and handles them.
 
-```Javascirpt
+```javascript
 const config = require('ez-config');
 const BunnyBus = require('bunnybus');
 const bunnyBus = new BunnyBus(config.get('rabbit'));
@@ -107,7 +107,7 @@ const handlers = {
     }
 };
 
-Promises
+return Promise
     .resolve()
     .then(() => subscribe('communictionQueue', handlers))
     .catch((err) =>  {
@@ -117,7 +117,7 @@ Promises
 
 With the above handlers registered, let's publish some events to the bus.
 
-```Javascirpt
+```javascript
 const config = require('ez-config');
 const BunnyBus = require('bunnybus');
 const bunnyBus = new BunnyBus(config.get('rabbit'));
@@ -125,7 +125,7 @@ const logger = require('pino');
 
 bunnyBus.logger = logger;
 
-Promises
+return Promise
     .resolve()
     .then(()) => {
         // this will make it to the queue and subscribed handler
@@ -159,7 +159,7 @@ Promises
 
 ## Integrating with the `SubscriptionManager`
 
-The use of `SubscriptionManager` is completely optional.  There are times when more control of the bus is needed to stop events from being consumed when debugging needs to occur in a runtime environment.  The `SubscriptionManager` allows an entrypoint to stop events from being consumed without stopping the overall process.  Along the same lines, the consuming of events can be restarted.  A facilitation of this could be provided via a HTTP endpoint that is signaled to stop events from being consumed and a handler for this endpoint can call on `SubscriptionManager` to block the intended queue the `BunnyBus` instance is registered for.
+The use of `SubscriptionManager` is completely optional.  When debugging needs to occur in a runtime environment or during a deployment, it can be help to temporarily stop events from being consumed.  The `SubscriptionManager` provides an entrypoint to stop events from being consumed without stopping the overall process.  Along the same lines, the consumption of events can be restarted with the `SubscriptionManager`.  For example, you could create an HTTP endpoint to pause a queue so that events aren't processed. In the handler for this hypothetical endpoint, you would invoke `SubscriptionManager` to block the target queue that the `BunnyBus` instance is subscribed to.
 
 ### Fire and Forget
 
@@ -178,7 +178,7 @@ app.get('/stopSubscription/:queue', function(req, res) => {
 
 And to unblock the queues
 
-```Javascirpt
+```javascript
 app.get('/restartSubscription/:queue', function(req, res) => {
 
     bunnyBus.subscriptions.unblock(req.params.queue);
@@ -207,7 +207,7 @@ app.get('/stopSubscription/:queue', function(req, res) => {
 
 And to unblock the queues
 
-```Javascirpt
+```javascript
 app.get('/restartSubscription/:queue', function(req, res) => {
 
     bunnyBus.once(BunnyBus.UNSUBSCRIBED_EVENT, (queue) => {
@@ -221,9 +221,9 @@ app.get('/restartSubscription/:queue', function(req, res) => {
 
 ## Logging with `BunnyBus` Logging events
 
-`BunnyBus` allows use of events to observe log events with.  While the `logger` property is an easy way to replace the default logging mechanism with another like `pino` or `winston`, it could be over kill at times when you just want to simply log one log level to the console.
+`BunnyBus` allows for logging to be used in conjunction with events.  While the `logger` property is an easy way to replace the default logging mechanism with another like `pino` or `winston`, it could be overkill at times when you just want to simply log one log level to the console.
 
-```Javascirpt
+```javascript
 const app = require('express')();
 const BunnyBus = require('bunnybus');
 const bunnyBus = new BunnyBus();

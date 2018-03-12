@@ -114,17 +114,17 @@
   
 ## BunnyBus
 
-The `BunnyBus` is a class that instantiates into a singleton.  It hosts all features for communicating with RabbitMQ to provide an easy to use enterprise bus facade.
+`BunnyBus` is a class that instantiates into a singleton.  It hosts all features for communicating with RabbitMQ to provide an easy to use enterprise bus facade.
 
 ### Versioning
 
-Note regarding versioning.  `BunnyBus` attaches the version value found in `package.json` to all messages that are sent.  Any messages subscribed which does not match the major semver will be rejected to the error queue.  As an example, message sent from BunnyBus version `1.2.3` will only be accepted from other `BunnyBus` clients with semver range of `1.x.x`.
+A note regarding versioning:  `BunnyBus` attaches the version value found in its `package.json` file to all messages that are sent.  By default, any messages that are picked up from a subscribed queue which do not match the major semver will be rejected to the error queue.  As an example, message sent from BunnyBus version `1.2.3` will only be accepted from other `BunnyBus` clients with semver range of `1.x.x`.
 
 ### `new BunnyBus(config)`
 
 Creates a new singleton instance of `bunnybus`. Accepts a configuration parameter. See [`config`](#config) for allowed options.
 
-```Javascript
+```javascript
 const BunnyBus = require('bunnybus');
 const bunnyBus = new BunnyBus({ server : 'red-bee.cloudamqp.com' });
 
@@ -148,17 +148,17 @@ Setter and Getter for singleton configuration. Accepts the following optional pr
  * `globalExchange` - value of the exchange to transact through for message publishing.  This is the default used when one is not provided within the `options` for any `BunnyBus` methods that supports one transactionally.  Defaults to `default-exchange`. *[string]* **Optional**
  * `prefetch` - value of the maximum number of unacknowledged messages allowable in a channel.  Defaults to `5`. *[number]* **Optional**
  * `maxRetryCount` - maximum amount of attempts a message can be requeued.  This is the default used when one is not provided within the `options` for any `BunnyBus` methods that supports one transactionally. Defaults to `10`. *[number]* **Optional**
- * `validatePublisher` - flag to dictate if consuming messages should be validated for a signature of publishing source.  This is a safe guard to prevent unexpected message sources from entering the subscribing realm. A value of `bunnyBus` is stamped as a header property on the message during `publish()`.  The `subscribe()` method will use the same value for authentication.  Defaults to `true`. *[boolean]* **Optional**
+ * `validatePublisher` - flag to dictate if the publishing source for messages being consumed must be `bunnyBus`.  This is a safe guard to prevent unexpected message sources from entering the subscribing realm. A value of `bunnyBus` is stamped as a header property on the message during `publish()`.  The `subscribe()` method will use the same value for authentication.  Consumers detecting mismatched publishers will auto reject the message into an error queue.  Defaults to `true`. *[boolean]* **Optional**
  * `validateVersion` - flag to dictate if major semver should be matched as part of the message subscription valiation.  This is a safe guard to prevent mismatched `bunnyBus` drivers from pub/sub to each other.  Consumers detecting mismatched major values will auto reject the message into an error queue.  In order for this layer of validation to occur, `validatePublisher` must be allowed because the version value is set against the `bunnyBus` header.   Defaults to `true`. *[boolean]* **Optional**
 
 Note that updates in the options directed at changing connection string will not take affect immediately.  [`_closeConnection()`](#_closeConnectioncallback) needs to be called manually to invoke a new connection with new settings.
 
-  ```Javascript
+  ```javascript
   const BunnyBus = require('bunnybus');
-  const bunnybus = new BunnyBus();
+  const bunnyBus = new BunnyBus();
   
   //deferred configuration
-  bunnybus.config = { server : 'red-bee.cloudamqp.com'};
+  bunnyBus.config = { server : 'red-bee.cloudamqp.com'};
   
   //do work
   ```
@@ -167,9 +167,9 @@ Note that updates in the options directed at changing connection string will not
 
 Getter for subscriptions.  A reference to the [Subscription Manager](#subscription-manager).
 
-```Javascript
+```javascript
 const BunnyBus = require('bunnybus');
-const bunnybus = new BunnyBus();
+const bunnyBus = new BunnyBus();
 
 console.log(bunnyBus.subscriptions.get('queue'));
 
@@ -180,9 +180,9 @@ console.log(bunnyBus.subscriptions.get('queue'));
 
 Setter and Getter for logger.  By default, `BunnyBus` will instantiate and set a logger using the `EventEmitter`.  When a custom logger is set, `BunnyBus` will **no** longer emit log messages through the `EventEmitter`.  The Setter will also validate the contract of the logger to ensure the following keys exist [`debug`, `info`, `warn`, `error`, `fatal`] and are of type `Function`.  When validation fails, the existing logger will not be overriden.
   
-```Javascript
+```javascript
 const BunnyBus = require('bunnybus');
-const bunnybus = new BunnyBus();
+const bunnyBus = new BunnyBus();
 
 const logHandler = (message) => {
   
@@ -190,10 +190,10 @@ const logHandler = (message) => {
 };
 
 //custom logger
-bunnybus.logger = { 
-    info = logHandler,
+bunnyBus.logger = { 
+    info  = logHandler,
     debug = logHandler,
-    warn = logHandler,
+    warn  = logHandler,
     error = logHandler,
     fatal = logHandler
 };
@@ -203,24 +203,24 @@ bunnybus.logger = {
 
 Setter and Getter for promise. By default, `BunnyBus` will utilize the native Promise implementation. Supported promise implementations must be initialized as Constructor functions and must pass `resolve` and `reject` functions to the provided callback. If an unsupported promise library is passed, the existing promise implementation will not be overridden.
 
-```Javascript
+```javascript
 const Bluebird = require('bluebird');
 const BunnyBus = require('bunnybus');
-const bunnybus = new BunnyBus();
+const bunnyBus = new BunnyBus();
 
-bunnybus.promise = Bluebird
-// All promises returned by bunnybus will now be Bluebird promises
+bunnyBus.promise = Bluebird
+// All promises returned by bunnyBus will now be Bluebird promises
 ```
 
 ##### `connectionString`
 
 Getter for AMQP connection string.
 
-```Javascript
+```javascript
 const BunnyBus = require('bunnybus');
 const bunnyBus = new BunnyBus();
 
-console.log(bunnybus.connectionString);
+console.log(bunnyBus.connectionString);
 //output : amqp://guest:guest@127.0.0.1:5672/%2f?heartbeat=2000
 ```
 
@@ -228,7 +228,7 @@ console.log(bunnybus.connectionString);
 
 Setter and Getter for AMQP connection object.  While this property setter is available, it is strongly discouraged to set this manually.  Connections and channels have lifecycle responsibilties to objects already instantiated through them.  Consequences of switching out a connection or channel midway through an operation will result in corruption of all messages that are in progress of being delivered.  If a connection has to be manually set, it is highly recommended to do so before any other operation have been invoked.
 
-```Javascript
+```javascript
 const Amqp = require('amqplib');
 const BunnyBus = require('bunnybus');
 const bunnyBus = new BunnyBus();
@@ -240,9 +240,9 @@ Amqp.connect('<connection-string>', (err, connection) => {
 
 ##### `hasConnection`
 
-Getter for existence for an active AMQP connection object.
+Getter to check the existence of an active AMQP connection object.
 
-```Javascript
+```javascript
 const Amqp = require('amqplib');
 const BunnyBus = require('bunnybus');
 const bunnyBus = new BunnyBus();
@@ -255,7 +255,7 @@ bunnyBus.hasConnection;
 
 Setter and Getter for AMQP confirmation channel object.  While this property setter is available, it is strongly discouraged to set this manually.  Connections and channels have lifecycle responsibilties to objects already instantiated through them.  Consequences of switching out a connection or channel midway through an operation will result in corruption of all messages that are in progress of being delivered.  If a channel has to be manually set, it is highly recommended to do so before any other operation have been invoked.
 
-```Javascript
+```javascript
 const Amqp = require('amqplib');
 const BunnyBus = require('bunnybus');
 const bunnyBus = new BunnyBus();
@@ -269,7 +269,7 @@ bunnyBus.connection.createConfirmationChannel((err, channel) => {
 
 Getter for existence for an active AMQP channel object
 
-```Javascript
+```javascript
 const Amqp = require('amqplib');
 const BunnyBus = require('bunnybus');
 const bunnyBus = new BunnyBus();
@@ -297,7 +297,7 @@ Creates an exchange.
   - `options` - optional settings.  [Settings](http://www.squaremobius.net/amqp.node/channel_api.html#channel_assertExchange) are proxied through to amqplib `assertExchange`. *[Object]* **Optional**
   - `callback` - node style callback `(err, result) => {}`. *[Function]* **Optional**
 
-```Javascript
+```javascript
 const BunnyBus = require('bunnybus');
 const bunnyBus = new BunnyBus();
 
@@ -319,7 +319,7 @@ Delete an exchange.
   - `options` - optional settings. [Settings](http://www.squaremobius.net/amqp.node/channel_api.html#channel_deleteExchange) are proxed through to amqplib `deleteExchange`. *[Object]* **Optional**
   - `callback` - node style callback `(err, result) => {}`. *[Function]* **Optional**
 
-```Javascript
+```javascript
 const BunnyBus = require('bunnybus');
 const bunnyBus = new BunnyBus();
 
@@ -333,14 +333,14 @@ bunnyBus.deleteExchange('default-exchange')
 
 #### `checkExchange(name, [callback])`
 
-Checks an exchange exist.  Channel closes when exchange does not exist.
+Checks if an exchange exists.  The channel closes when the exchange does not exist.
 
 ##### parameter(s)
 
   - `name` - name of the exchange to be checked. *[string]* **Required**
   - `callback` - node style callback `(err, result) => {}`. *[Function]* **Optional**
 
-```Javascript
+```javascript
 const BunnyBus = require('bunnybus');
 const bunnyBus = new BunnyBus();
 
@@ -362,7 +362,7 @@ Creates a queue.
   - `options` - optional settings.  [Settings](http://www.squaremobius.net/amqp.node/channel_api.html#channel_assertQueue) are proxied through to amqplib `assertQueue`. *[Object]* **Optional**
   - `callback` - node style callback `(err, result) => {}`. *[Function]* **Optional**
 
-```Javascript
+```javascript
 const BunnyBus = require('bunnybus');
 const bunnyBus = new BunnyBus();
 
@@ -384,7 +384,7 @@ Delete a queue.
   - `options` - optional settings.  [Settings](http://www.squaremobius.net/amqp.node/channel_api.html#channel_deleteQueue) are proxied through to amqplib `deleteQueue`. *[Object]* **Optional**
   - `callback` - node style callback `(err, result) => {}`. *[Function]* **Optional**
 
-```Javascript
+```javascript
 const BunnyBus = require('bunnybus');
 const bunnyBus = new BunnyBus();
 
@@ -398,14 +398,14 @@ bunnyBus.deleteQueue('queue1')
 
 #### `checkQueue(name, [callback])`
 
-Checks a queue exist.  Channel closes when queue does not exist.
+Checks if a queue exists.  The channel closes when the queue does not exist.
 
 ##### parameter(s)
 
   - `name` - name of the queue to be checked. *[string]* **Required**
   - `callback` - node style callback `(err, result) => {}`. *[Function]* **Optional**
 
-```Javascript
+```javascript
 const BunnyBus = require('bunnybus');
 const bunnyBus = new BunnyBus();
 
@@ -428,11 +428,11 @@ Publish a message onto the bus.
   - `options` - optional settings. *[Object]* **Optional**
     - `routeKey` - value for the route key to route the message with.  The value must be supplied here or in `message.event`.  The value can be `.` separated for namespacing. *[string]* **Optional**
     - `transactionId` - value attached to the header of the message for tracing.  When one is not supplied, a random 40 character token is generated. *[string]* **Optional**
-    - `source` - value attached to the header of the message to help with tracking the origination point of your application.  For applications that leverage this plugin in multiple modules, each module can supply its own module name so a message can be tracked to the creator. *[string]* **Optional**
+    - `source` - value attached to the header of the message to help with track the origin of messages in your application.  For applications that leverage this plugin in multiple modules, each module can supply its own module name so a message can be tracked to the creator. *[string]* **Optional**
     - `globalExchange` - value to override the exchange specified in `config`. *[string]* **Optional**
   - `callback` - node style callback `(err, result) => {}`. *[Function]* **Optional**
 
-```Javascript
+```javascript
 const BunnyBus = require('bunnybus');
 const bunnyBus = new BunnyBus();
 
@@ -451,7 +451,7 @@ bunnyBus.publish(message)
 
 #### `subscribe(queue, handlers, [options, [callback]])`
 
-Subscribe to messages from the queue.
+Subscribe to messages from a given queue.
 
 ##### parameter(s)
 
@@ -463,7 +463,7 @@ Subscribe to messages from the queue.
     - `maxRetryCount` - maximum amount of attempts a message can be requeued.  Defaults to one provided in the [config](#config). *[number]* **Optional**
     - `validatePublisher` - flag for validating messages having `bunnyBus` header.  More info can be found in [config](#config). Defaults to one provided in the [config](#config). *[boolean]* **Optional**
     - `validateVersion` - flag for validating messages generated from the same major version.  More info can be found in [config](#config). Defaults to one provided in the [config](#config). *[boolean]* **Optional**
-    - `meta` - allows for meta data regarding the payload to be returned.  Turning this on will adjust the handler to be a `Function` as `(message, meta, [ack, [reject, [requeue]]]) => {}`. *[boolean]* **Optional**
+    - `meta` - allows for meta data regarding the payload to be returned.  Headers like the `createdAt` ISO string timestamp and the `transactionId` are included in the `meta.headers` object.  Turning this on will adjust the handler to be a `Function` as `(message, meta, [ack, [reject, [requeue]]]) => {}`. *[boolean]* **Optional**
   - `callback` - node style callback `(err, result) => {}`. *[Function]* **Optional**
 
 ##### handlers
@@ -476,7 +476,7 @@ A `key` is the routeKey in RabbitMQ terminology.  `BunnyBus` specifically levera
 
 A `handler` is a function which contains the following arity.  Order matters.
   - `message` is what was received from the bus.  The message does represent the RabbitMQ `'payload.content` buffer.  The original source of this object is from `payload.content`.
-  - `meta` is only available when `options.meta` is set to `true`.  This object will contain all payload related meta information like `payload.properties.headers`.
+  - `meta` is only available when `options.meta` is set to `true`.  This object will contain all payload related meta information like `payload.properties.headers`. Headers like the `createdAt` ISO string timestamp and the `transactionId` are included in the `meta.headers` object.
   - `ack([option, [callback]])` is a function for acknowledging the message off the bus.
     - `option` - a placeholder for future optional parameters for `ack`.  High chance of deprecation.
     - `callback` - node style callback `(err, result) => {}`. *[Function]* **Optional**
@@ -486,7 +486,7 @@ A `handler` is a function which contains the following arity.  Order matters.
   - `requeue([callback])` is a function for requeuing the message back to the back of the queue.  This is feature circumvents Rabbit's `nack` RPC.  `nack` natively requeues but pushes the message to the front of the queue.
     - `callback` - node style callback `(err, result) => {}`. *[Function]* **Optional**
 
-```Javascript
+```javascript
 const BunnyBus = require('bunnybus');
 const bunnyBus = new BunnyBus();
 
@@ -536,7 +536,7 @@ Unsubscribe from listening to a queue.
   - `queue` - the name of the queue. *[string]* **Required**
   - `callback` - node style callback `(err, result) => {}`. *[Function]* **Optional**
 
-```Javascript
+```javascript
 const BunnyBus = require('bunnybus');
 const bunnyBus = new BunnyBus();
 
@@ -550,7 +550,7 @@ bunnyBus.unsubscribe('queue1')
 
 #### `send(message, queue, [options, [callback]])`
 
-Send a message directly to a queue.
+Send a message directly to a specified queue.
 
 ##### note(s)
 
@@ -567,7 +567,7 @@ When `message.event` or `options.routeKey` values are not provided for `routeKey
     - `source` - value attached to the header of the message to help with tracking the origination point of your application.  For applications that leverage this plugin in multiple modules, each module can supply its own module name so a message can be tracked to the creator. *[string]*  **Optional**
   - `callback` - node style callback `(err, result) => {}`. *[Function]* **Optional**
 
-```Javascript
+```javascript
 const BunnyBus = require('bunnybus');
 const bunnyBus = new BunnyBus();
 
@@ -593,7 +593,7 @@ Pop a message directly off a queue.  The payload returned is the RabbitMQ `paylo
   - `options` - optional settings.  [Settings](http://www.squaremobius.net/amqp.node/channel_api.html#channel_get) are proxied through to amqplib `get`. *[Object]* **Optional**
   - `callback` - node style callback `(err, result) => {}`. *[Function]* **Optional**
 
-```Javascript
+```javascript
 const BunnyBus = require('bunnybus');
 const bunnyBus = new BunnyBus();
 
@@ -610,7 +610,7 @@ bunnyBus.get('queue1')
 
 #### `getAll(queue, handler, [options, [callback]])`
 
-Pop all messages directly off a queue until there is no more.  Handler is called for each message that is popped.
+Pop all messages directly off of a queue until there are no more.  Handler is called for each message that is popped.
 
 ##### parameter(s)
 
@@ -618,10 +618,10 @@ Pop all messages directly off a queue until there is no more.  Handler is called
   - `handler` - a handler reflects a `Function` as `(message, [meta, [ack]]) => {}`. *[Function]* **Required**
   - `options` - optional settings. *[Object]* **Optional**
     - `get` - [Settings](http://www.squaremobius.net/amqp.node/channel_api.html#channel_get) are proxied through to amqplib `get`. *[Object]* **Optional**
-    - `meta` - allows for meta data regarding the payload to be returned.  Turning this on will adjust the handler to be a `Function` as `(message, meta, [ack]) => {}`.  *[boolean]* **Optional**
+    - `meta` - allows for meta data regarding the payload to be returned.  Headers like the `createdAt` ISO string timestamp and the `transactionId` are included in the `meta.headers` object.  Turning this on will adjust the handler to be a `Function` as `(message, meta, [ack]) => {}`.  *[boolean]* **Optional**
   - `callback` - node style callback `(err) => {}`.  This is called when all currently retrievable items have been passed to the provided `handler`.  *[Function]* **Optional**
 
-```Javascript
+```javascript
 const BunnyBus = require('bunnybus');
 const bunnyBus = new BunnyBus();
 
@@ -643,9 +643,9 @@ Please see the [Public API](#public-api) for the primary BunnyBus methods.
 
 #### `_recoverConnectChannel()`
 
-Auto retry mechanism when to restore either a connection or channel when it goes corrupt.  The retry mechanism will attempt 240 times every 15 seconds.  When a connection can not be restored, `process.exit(1)` will be called.  This is invoked internally through error handlers.
+Auto retry mechanism when to restore either a connection or channel when it gets corrupted.  The retry mechanism will attempt 240 times every 15 seconds.  When a connection can not be restored, `process.exit(1)` will be called.  This is invoked internally through error handlers.
 
-```Javascript
+```javascript
 const BunnyBus = require('bunnybus');
 const bunnyBus = new BunnyBus();
 
@@ -660,7 +660,7 @@ Create a connection from settings defined through custom or default configuratio
 
   - `callback` - node style callback `(err, result) => {}`. *[Function]* **Optional**
 
-```Javascript
+```javascript
 const BunnyBus = require('bunnybus');
 const bunnyBus = new BunnyBus();
 
@@ -674,11 +674,11 @@ bunnyBus._createConnection()
 
 #### `_closeConnection([callback])`
 
-Closes an opened connection if one exist.
+Closes an opened connection if one exists.
 
   - `callback` - node style callback `(err, result) => {}`. *[Function]* **Optional**
 
-```Javascript
+```javascript
 const BunnyBus = require('bunnybus');
 const bunnyBus = new BunnyBus();
 
@@ -696,7 +696,7 @@ Create a channel from an existing connection.
 
   - `callback` - node style callback `(err, result) => {}`. *[Function]* **Optional**
 
-```Javascript
+```javascript
 const BunnyBus = require('bunnybus');
 const bunnyBus = new BunnyBus();
 
@@ -710,11 +710,11 @@ bunnyBus._createChannel()
 
 #### `_closeChannel([callback])`
 
-Closes an channel if one exist.
+Closes an channel if one exists.
 
   - `callback` - node style callback `(err, result) => {}`. *[Function]* **Optional**
 
-```Javascript
+```javascript
 const BunnyBus = require('bunnybus');
 const bunnyBus = new BunnyBus();
 
@@ -728,7 +728,7 @@ bunnyBus._closeChannel()
 
 ## Events (`EventEmitter`)
 
-`BunnyBus` extends `EventEmitter` for emitting logs and system specific events.  Subscription to these events are optional.  `BunnyBus` class also exposes static Getter properties for the name of these public events.
+`BunnyBus` extends `EventEmitter` for emitting logs and system specific events.  Subscription to these events is optional.  `BunnyBus` class also exposes static Getter properties for the name of these public events.
 
 ### `BunnyBus.LOG_DEBUG_EVENT`
 
@@ -740,8 +740,9 @@ bunnyBus._closeChannel()
 
 * `message` - debug message sent. *[string]*
 
-```Javascript
+```javascript
 const BunnyBus = require('bunnybus');
+const bunnyBus = new BunnyBus();
 const pino = require('pino')();
 
 bunnyBus.on('BunnyBus.LOG_DEBUG_EVENT', pino.debug);
@@ -758,8 +759,9 @@ bunnyBus.on('log.debug', pino.debug);
 
 * `message` - debug message sent. *[string]*
 
-```Javascript
+```javascript
 const BunnyBus = require('bunnybus');
+const bunnyBus = new BunnyBus();
 const pino = require('pino')();
 
 bunnyBus.on('BunnyBus.LOG_TRACE_EVENT', pino.trace);
@@ -776,8 +778,9 @@ bunnyBus.on('log.trace', pino.trace);
 
 * `message` - info message sent. *[string]*
 
-```Javascript
+```javascript
 const BunnyBus = require('bunnybus');
+const bunnyBus = new BunnyBus();
 const pino = require('pino')();
 
 bunnyBus.on('BunnyBus.LOG_INFO_EVENT', pino.info);
@@ -794,8 +797,9 @@ bunnyBus.on('log.info', pino.info);
 
 * `message` - warn message sent. *[string]*
 
-```Javascript
+```javascript
 const BunnyBus = require('bunnybus');
+const bunnyBus = new BunnyBus();
 const pino = require('pino')();
 
 bunnyBus.on('BunnyBus.LOG_WARN_EVENT', pino.warn);
@@ -812,8 +816,9 @@ bunnyBus.on('log.warn', pino.warn);
 
 * `message` - error message sent. *[string]*
 
-```Javascript
+```javascript
 const BunnyBus = require('bunnybus');
+const bunnyBus = new BunnyBus();
 const pino = require('pino')();
 
 bunnyBus.on('BunnyBus.LOG_ERROR_EVENT', pino.error);
@@ -830,8 +835,9 @@ bunnyBus.on('log.error', pino.error);
 
 * `message` - fatal message sent. *[string]*
 
-```Javascript
+```javascript
 const BunnyBus = require('bunnybus');
+const bunnyBus = new BunnyBus();
 const pino = require('pino')();
 
 bunnyBus.on('BunnyBus.LOG_FATAL_EVENT', pino.fatal);
@@ -848,8 +854,9 @@ bunnyBus.on('log.fatal', pino.fatal);
 
 * `message` - original payload published. *[string|Object|Buffer]*
 
-```Javascript
+```javascript
 const BunnyBus = require('bunnybus');
+const bunnyBus = new BunnyBus();
 
 bunnyBus.on('BunnyBus.PUBLISHED_EVENT', (message) => {
 
@@ -867,8 +874,9 @@ bunnyBus.on('BunnyBus.PUBLISHED_EVENT', (message) => {
 
 * `queue` - name of queue subcribed for. *[string]*
 
-```Javascript
+```javascript
 const BunnyBus = require('bunnybus');
+const bunnyBus = new BunnyBus();
 
 bunnyBus.on('BunnyBus.SUBSCRIBED_EVENT', (queue) => {
 
@@ -887,8 +895,9 @@ bunnyBus.on('BunnyBus.SUBSCRIBED_EVENT', (queue) => {
 
 * `queue` - name of queue unsubscribed from. *[string]*
 
-```Javascript
+```javascript
 const BunnyBus = require('bunnybus');
+const bunnyBus = new BunnyBus();
 
 bunnyBus.on('BunnyBus.UNSUBSCRIBED_EVENT', (queue) => {
 
@@ -903,8 +912,9 @@ bunnyBus.on('BunnyBus.UNSUBSCRIBED_EVENT', (queue) => {
 
 * `bunnybus.recovering` - emitted when [`_recoverConnectChannel()`](#recoverconnectchannel) is first invoked.
 
-```Javascript
+```javascript
 const BunnyBus = require('bunnybus');
+const bunnyBus = new BunnyBus();
 
 bunnyBus.on('BunnyBus.RECOVERING_EVENT', () => {
 
@@ -918,8 +928,9 @@ bunnyBus.on('BunnyBus.RECOVERING_EVENT', () => {
 
 * `bunnybus.recovered` - emitted when [`_recoverConnectChannel()`](#recoverconnectchannel) is successfully restores connections and channel.
 
-```Javascript
+```javascript
 const BunnyBus = require('bunnybus');
+const bunnyBus = new BunnyBus();
 
 bunnyBus.on('BunnyBus.RECOVERED_EVENT', () => {
 
@@ -937,8 +948,9 @@ bunnyBus.on('BunnyBus.RECOVERED_EVENT', () => {
 
 * `err` - error from amqplib. *[Object]*
 
-```Javascript
+```javascript
 const BunnyBus = require('bunnybus');
+const bunnyBus = new BunnyBus();
 
 bunnyBus.on('BunnyBus.AMQP_CONNECTION_ERROR_EVENT', (err) => {
 
@@ -956,7 +968,7 @@ bunnyBus.on('BunnyBus.AMQP_CONNECTION_ERROR_EVENT', (err) => {
 
 * `err` - error from amqplib. *[Object]*
 
-```Javascript
+```javascript
 const BunnyBus = require('bunnybus');
 
 bunnyBus.on('BunnyBus.AMQP_CONNECTION_CLOSE_EVENT', (err) => {
@@ -975,8 +987,9 @@ bunnyBus.on('BunnyBus.AMQP_CONNECTION_CLOSE_EVENT', (err) => {
 
 * `err` - error from amqplib. *[Object]*
 
-```Javascript
+```javascript
 const BunnyBus = require('bunnybus');
+const bunnyBus = new BunnyBus();
 
 bunnyBus.on('BunnyBus.AMQP_CHANNEL_ERROR_EVENT', (err) => {
 
@@ -994,8 +1007,9 @@ bunnyBus.on('BunnyBus.AMQP_CHANNEL_ERROR_EVENT', (err) => {
 
 * `err` - error from amqplib. *[Object]*
 
-```Javascript
+```javascript
 const BunnyBus = require('bunnybus');
+const bunnyBus = new BunnyBus();
 
 bunnyBus.on('BunnyBus.AMQP_CHANNEL_CLOSE_EVENT', (err) => {
 
@@ -1014,7 +1028,7 @@ Checks if a queue has a subscription.
 * `queue` - the name of the queue. *[string]* **Required**
 * `withConsumerTag` - requires the condition of a subscription to be active.  Defaults to `true`. *[boolean]* **Optional**
 
-```Javascript
+```javascript
 const BunnyBus = require('bunnybus');
 const bunnyBus = new BunnyBus();
 
@@ -1029,7 +1043,7 @@ Creates a subscription.
 * `handlers` - handlers parameter passed through the [`subscribe()`](#subscribequeue-handlers-options-callback) method.  *[Object]* **Required**
 * `options` - options parameter passed through the [`subscribe()`](#subscribequeue-handlers-options-callback) method.  *[Object]* **Optional**
 
-```Javascript
+```javascript
 const BunnyBus = require('bunnybus');
 const bunnyBus = new BunnyBus();
 
@@ -1044,7 +1058,7 @@ Tag a subscription.
 * `queue` - the name of the queue. *[string]* **Required**
 * `consumerTag` - a value returned from the [`consume()`](http://www.squaremobius.net/amqp.node/channel_api.html#channel_consume) method of amqplib.  *[string]* **Required**
 
-```Javascript
+```javascript
 const BunnyBus = require('bunnybus');
 const bunnyBus = new BunnyBus();
 
@@ -1054,11 +1068,11 @@ bunnybus.subscriptions.tag('queue1', 'abcd1234');
 
 ### `get(queue)`
 
-Returns a clone of the subscription if the queue exist.  Returns `undefined` when it does not exist.
+Returns a clone of the subscription if the queue exists.  Returns `undefined` when it does not exist.
 
 * `queue` - the name of the queue. *[string]* **Required**
 
-```Javascript
+```javascript
 const BunnyBus = require('bunnybus');
 const bunnyBus = new BunnyBus();
 
@@ -1072,7 +1086,7 @@ Clears a subscription of the `consumerTag`.  Returns `true` when successful and 
 
 * `queue` - the name of the queue. *[string]* **Required**
 
-```Javascript
+```javascript
 const BunnyBus = require('bunnybus');
 const bunnyBus = new BunnyBus();
 
@@ -1084,7 +1098,7 @@ bunnybus.subscriptions.clear('queue1');
 
 Clears all subscriptions of the `consumerTag`.
 
-```Javascript
+```javascript
 const BunnyBus = require('bunnybus');
 const bunnyBus = new BunnyBus();
 
@@ -1094,11 +1108,11 @@ bunnybus.subscriptions.clearAll();
 
 ### `remove(queue)`
 
-Removes a subscription from registrar.  Returns `true` when successful and `false` when not.
+Removes a subscription from the registrar.  Returns `true` when successful and `false` when not.
 
 * `queue` - the name of the queue. *[string]* **Required**
 
-```Javascript
+```javascript
 const BunnyBus = require('bunnybus');
 const bunnyBus = new BunnyBus();
 
@@ -1108,10 +1122,10 @@ bunnybus.subscriptions.remove('queue1');
 
 ### `list()`
 
-Returns a list of cloned subscriptions in registrar.
+Returns a list of cloned subscriptions in the registrar.
 
 
-```Javascript
+```javascript
 const BunnyBus = require('bunnybus');
 const bunnyBus = new BunnyBus();
 
@@ -1123,11 +1137,11 @@ bunnybus.subscriptions.list();
 
 ### `block(queue)`
 
-Adds a queue to a ban list.  Queues in this list lives in a desired state.  Once a queue name is added to this list, `BunnyBus` will try to unsubscribe any active consumed queues.
+Adds a queue to the ban list.  Queues in this list live in the desired state.  Once a queue name is added to this list, `BunnyBus` will try to unsubscribe any active consumed queues.
 
 * `queue` - the name of the queue. *[string]* **Required**
 
-```Javascript
+```javascript
 const BunnyBus = require('bunnybus');
 const bunnyBus = new BunnyBus();
 
@@ -1137,11 +1151,11 @@ bunnybus.subscriptions.block('queue1');
 
 ### `unblock(queue)`
 
-Removes a queue to a ban list.  Queues in this list lives in a desired state.  Once a queue name is removed from this list, `BunnyBus` will try to re-subscribe any unactive queues.
+Removes a queue from the ban list.  Queues in this list live in the desired state.  Once a queue name is removed from this list, `BunnyBus` will try to re-subscribe any unactive queues.
 
 * `queue` - the name of the queue. *[string]* **Required**
 
-```Javascript
+```javascript
 const BunnyBus = require('bunnybus');
 const bunnyBus = new BunnyBus();
 

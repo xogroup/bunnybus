@@ -19,7 +19,7 @@ Examples are based on usage of Promises.
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 ## BunnyBus Layout
 
-At the core of BunnyBus exist the `amqplib` abstraction to help with connection management, exchange creation, queue creation and route key subscriptions.  BunnyBus also contains other sub components which it relies on to handle queue subscriptions when handlers are registered and also to log with when a logging request is made.
+At the core of BunnyBus exists the `amqplib` abstraction to help with connection management, exchange creation, queue creation and route key subscriptions.  BunnyBus also contains other subcomponents which it relies on to handle queue subscriptions when handlers are registered and also to log with when a logging request is made.
 
 ![Image of Bunny Components](/image/components.png)
 
@@ -37,7 +37,7 @@ The above diagram shows the relationship between BunnyBus Core with the supporti
 ## Possible Service Container Setup
 
 BunnyBus is nothing without an ecosystem to support it.  While it is easy to setup a pub/sub mechanism, there are supporting controls and monitoring which enhances
-the experience of operational maintenance of an enterprise service bus (ESB).  What is provided here is an example of an application setup to facilitate with 
+the experience of operational maintenance of an Enterprise Service Bus (ESB).  What is provided here is an example of an application setup to facilitate with 
 production level management.
 
 ![Image of Possible Usage](/image/possible-usage.png)
@@ -59,11 +59,11 @@ The above diagram is based on `hapijs` as the service container.  `hapijs` allow
 
 ## Bus Strategies
 
-The topography of an ESB is important and it is that which enables you to connect many services together especially in a microservice landscape.
+The topography of an ESB is important, and it is what enables you to connect many services together, especially in a microservice landscape.
 
 ![Image of Bus Strategy](/image/bus-strategy.png)
 
-Not all subscriptions are equal.  Some subscriptions requires queues to be persistent while others would queues to live as long as the consumer is alive.  Strategies around short lived queues are useful for realtime data consumers for things like websocket edge services.
+Not all subscriptions are equal.  Some subscriptions require queues to be persistent while others would queues to live as long as the consumer is alive.  Strategies around short-lived queues are useful for realtime data consumers for things like websocket edge services.
 
 ### Components of the Diagram
 
