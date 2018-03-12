@@ -25,6 +25,10 @@
   "engines": {
     "node": "6.x.x || 8.x.x"
   },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/xogroup/bunnybus"
+  },
   "dependencies": {
     "amqplib": "^0.5.1",
     "async": "^2.3.0"
