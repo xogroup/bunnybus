@@ -165,7 +165,7 @@ Note that updates in the options directed at changing connection string will not
 
 ##### `subscriptions`
 
-Getter for subscriptions.  A reference to the [Subscription Manager](#subscription-manager).
+Getter for subscriptions.  A reference to the [Subscription Manager](#subscriptionmanager).
 
 ```javascript
 const BunnyBus = require('bunnybus');
