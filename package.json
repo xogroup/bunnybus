@@ -39,6 +39,7 @@
     "eslint-config-hapi": "^10.0.0",
     "eslint-plugin-hapi": "^4.0.0",
     "lab": "^14.3.1",
-    "q": "^1.4.1"
+    "q": "^1.4.1",
+    "superagent": "^3.8.3"
   }
 }

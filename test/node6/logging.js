@@ -11,7 +11,7 @@ const Assertions = require('./assertions');
 const BunnyBus = require('../../lib');
 let instance = undefined;
 
-describe('logging', () => {
+describe('logging', { skip: true }, () => {
 
     const inputMessage = {
         prop1 : 'message value 1',
