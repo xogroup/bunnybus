@@ -1345,7 +1345,7 @@ describe('negative integration tests', () => {
             instance._closeConnection(done);
         });
 
-        it('should throw NoChannelError when calling createExcahnge and connection does not pre-exist', (done) => {
+        it('should throw NoChannelError when calling createExchange and connection does not pre-exist', (done) => {
 
             instance.createExchange(exchangeName, '', (err) => {
 
