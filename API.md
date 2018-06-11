@@ -111,7 +111,7 @@
 - [Error Types](#error-types)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
-  
+
 ## BunnyBus
 
 `BunnyBus` is a class that instantiates into a singleton.  It hosts all features for communicating with RabbitMQ to provide an easy to use enterprise bus facade.
@@ -144,7 +144,7 @@ Setter and Getter for singleton configuration. Accepts the following optional pr
  * `port` - value of the port for client connections.  Used in the conneciton string.  Defaults to `5672`. *[number]* **Optional**
  * `vhost` - value of the virtual host the user connects to.  Used in the connection string.  Defaults to `%2f`. *[string]* **Optional**
  * `heartbeat` -  value negotiated between client and server on when the TCP tunnel is considered dead.  Unit is a measurement of milliseconds.  Used in the connection string.  Defaults to `2000`. *[number]* **Optional**
- * `timeout` - value for timing out any network operations.  Unit is a measurement of milliseconds.  Defaults to `500`. *[number]* **Optional**
+ * `timeout` - value for timing out any network operations.  Unit is a measurement of milliseconds.  Defaults to `2000`. *[number]* **Optional**
  * `globalExchange` - value of the exchange to transact through for message publishing.  This is the default used when one is not provided within the `options` for any `BunnyBus` methods that supports one transactionally.  Defaults to `default-exchange`. *[string]* **Optional**
  * `prefetch` - value of the maximum number of unacknowledged messages allowable in a channel.  Defaults to `5`. *[number]* **Optional**
  * `maxRetryCount` - maximum amount of attempts a message can be requeued.  This is the default used when one is not provided within the `options` for any `BunnyBus` methods that supports one transactionally. Defaults to `10`. *[number]* **Optional**
@@ -156,10 +156,10 @@ Note that updates in the options directed at changing connection string will not
   ```javascript
   const BunnyBus = require('bunnybus');
   const bunnyBus = new BunnyBus();
-  
+
   //deferred configuration
   bunnyBus.config = { server : 'red-bee.cloudamqp.com'};
-  
+
   //do work
   ```
 
@@ -179,18 +179,18 @@ console.log(bunnyBus.subscriptions.get('queue'));
 ##### `logger`
 
 Setter and Getter for logger.  By default, `BunnyBus` will instantiate and set a logger using the `EventEmitter`.  When a custom logger is set, `BunnyBus` will **no** longer emit log messages through the `EventEmitter`.  The Setter will also validate the contract of the logger to ensure the following keys exist [`debug`, `info`, `warn`, `error`, `fatal`] and are of type `Function`.  When validation fails, the existing logger will not be overriden.
-  
+
 ```javascript
 const BunnyBus = require('bunnybus');
 const bunnyBus = new BunnyBus();
 
 const logHandler = (message) => {
-  
+
     //log something to some where
 };
 
 //custom logger
-bunnyBus.logger = { 
+bunnyBus.logger = {
     info  = logHandler,
     debug = logHandler,
     warn  = logHandler,
