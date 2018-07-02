@@ -24,6 +24,8 @@ describe('positive integration tests - Callback api', () => {
 
         instance = new BunnyBus();
         instance.config = BunnyBus.DEFAULT_SERVER_CONFIGURATION;
+        instance.config.validatePublisher = true;
+        instance.config.validateVersion = true;
         done();
     });
 
