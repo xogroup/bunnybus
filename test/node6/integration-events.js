@@ -32,20 +32,6 @@ describe('positive integration tests - events', () => {
             instance._autoConnectChannel(done);
         });
 
-        it('should be evented when connection was errored and is recovering', (done) => {
-
-            instance.once(BunnyBus.RECOVERING_EVENT, done);
-
-            instance.connection.emit('error');
-        });
-
-        it('should be evented when channel was errored and is recovering', (done) => {
-
-            instance.once(BunnyBus.RECOVERING_EVENT, done);
-
-            instance.channel.emit('error');
-        });
-
         it('should be evented when connection was closed and is recovering', (done) => {
 
             instance.once(BunnyBus.RECOVERING_EVENT, done);
@@ -66,20 +52,6 @@ describe('positive integration tests - events', () => {
         before((done) => {
 
             instance._autoConnectChannel(done);
-        });
-
-        it('should be evented when connection was errored and is recovering', (done) => {
-
-            instance.once(BunnyBus.RECOVERED_EVENT, done);
-
-            instance.connection.emit('error');
-        });
-
-        it('should be evented when channel was errored and is recovering', (done) => {
-
-            instance.once(BunnyBus.RECOVERED_EVENT, done);
-
-            instance.channel.emit('error');
         });
 
         it('should be evented when connection was closed and is recovering', (done) => {
