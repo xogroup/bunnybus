@@ -305,27 +305,52 @@ describe('positive integration tests - Callback api', () => {
 
         it('should send message', (done) => {
 
-            Assertions.assertSend(instance, message, queueName, null, null, null, done);
+            Assertions.assertSend(instance, message, queueName, null, null, null, null, done);
+        });
+
+        it('should send message when miscellaneous amqplib options are included', (done) => {
+
+            const amqpOptions = {
+                expiration: '1000',
+                userId: 'guest',
+                CC: 'a',
+                priority: 1,
+                persistent: false,
+                deliveryMode: false,
+                mandatory:false,
+                BCC: 'b',
+                immediate: false,
+                contentType: 'text/plain',
+                contentEncoding: 'text/plain',
+                correlationId: 'some_id',
+                replyTo: 'other_queue',
+                messageId: 'message_id',
+                timestamp: 1555099550198,
+                type: 'some_type',
+                appId: 'test_app'
+            };
+
+            Assertions.assertSend(instance, message, queueName, null, null, null, amqpOptions, done);
         });
 
         it('should proxy `source` when supplied', (done) => {
 
-            Assertions.assertSend(instance, message, queueName, null, 'someModule', null, done);
+            Assertions.assertSend(instance, message, queueName, null, 'someModule', null, null, done);
         });
 
         it('should proxy `transactionId` when supplied', (done) => {
 
-            Assertions.assertSend(instance, message, queueName, 'someTransactionId', null, null, done);
+            Assertions.assertSend(instance, message, queueName, 'someTransactionId', null, null, null, done);
         });
 
         it('should proxy `routeKey` when supplied', (done) => {
 
-            Assertions.assertSend(instance, message, queueName, null, null, 'event1', done);
+            Assertions.assertSend(instance, message, queueName, null, null, 'event1', null, done);
         });
 
         it('should proxy `routeKey` when supplied', (done) => {
 
-            Assertions.assertSend(instance, messageWithEvent, queueName, null, null, null, done);
+            Assertions.assertSend(instance, messageWithEvent, queueName, null, null, null, null, done);
         });
     });
 
@@ -391,48 +416,73 @@ describe('positive integration tests - Callback api', () => {
 
         it('should publish for route `a`', (done) => {
 
-            Assertions.assertPublish(instance, message, queueName, 'a', null, null, true, done);
+            Assertions.assertPublish(instance, message, queueName, 'a', null, null, true, null, done);
+        });
+
+        it('should publish for route `a`  when miscellaneous amqplib options are included', (done) => {
+
+            const amqpOptions = {
+                expiration: '1000',
+                userId: 'guest',
+                CC: 'a',
+                priority: 1,
+                persistent: false,
+                deliveryMode: false,
+                mandatory:false,
+                BCC: 'b',
+                immediate: false,
+                contentType: 'text/plain',
+                contentEncoding: 'text/plain',
+                correlationId: 'some_id',
+                replyTo: 'other_queue',
+                messageId: 'message_id',
+                timestamp: 1555099550198,
+                type: 'some_type',
+                appId: 'test_app'
+            };
+
+            Assertions.assertPublish(instance, message, queueName, 'a', null, null, true, amqpOptions, done);
         });
 
         it('should publish for route `a.b`', (done) => {
 
-            Assertions.assertPublish(instance, message, queueName, 'a.b', null, null, true, done);
+            Assertions.assertPublish(instance, message, queueName, 'a.b', null, null, true, null, done);
         });
 
         it('should publish for route `b`', (done) => {
 
-            Assertions.assertPublish(instance, message, queueName, 'b', null, null, true, done);
+            Assertions.assertPublish(instance, message, queueName, 'b', null, null, true, null, done);
         });
 
         it('should publish for route `b.b`', (done) => {
 
-            Assertions.assertPublish(instance, message, queueName, 'b.b', null, null, true, done);
+            Assertions.assertPublish(instance, message, queueName, 'b.b', null, null, true, null, done);
         });
 
         it('should publish for route `z.a`', (done) => {
 
-            Assertions.assertPublish(instance, message, queueName, 'z.a', null, null, true, done);
+            Assertions.assertPublish(instance, message, queueName, 'z.a', null, null, true, null, done);
         });
 
         it('should publish for route `z` but not route to queue', (done) => {
 
-            Assertions.assertPublish(instance, message, queueName, 'z', null, null, false, done);
+            Assertions.assertPublish(instance, message, queueName, 'z', null, null, false, null, done);
         });
 
         it('should proxy `source` when supplied', (done) => {
 
-            Assertions.assertPublish(instance, message, queueName, 'a', null, 'someModule', true, done);
+            Assertions.assertPublish(instance, message, queueName, 'a', null, 'someModule', true, null, done);
         });
 
         it('should proxy `transactionId` when supplied', (done) => {
 
-            Assertions.assertPublish(instance, message, queueName, 'a', 'someTransactionId', null, true, done);
+            Assertions.assertPublish(instance, message, queueName, 'a', 'someTransactionId', null, true, null, done);
         });
 
         it('should publish for route `a` when route key is provided in the message', (done) => {
 
             const messageWithRoute = Object.assign({}, message, { event : 'a' });
-            Assertions.assertPublish(instance, messageWithRoute, queueName, null, null, null, true, done);
+            Assertions.assertPublish(instance, messageWithRoute, queueName, null, null, null, true, null, done);
         });
     });
 

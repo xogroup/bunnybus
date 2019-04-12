@@ -3,13 +3,17 @@
 const Code = require('code');
 const expect = Code.expect;
 
-const assertPublishPromise = (instance, message, queueName, routeKey, transactionId, source, shouldRoute) => {
+const assertPublishPromise = (instance, message, queueName, routeKey, transactionId, source, shouldRoute, miscOptions) => {
 
     const options = {
         routeKey,
         transactionId,
         source
     };
+
+    if (typeof miscOptions === 'object' && miscOptions !== null){
+        Object.assign(options, miscOptions);
+    }
 
     return instance.publish(message, options)
         .then(() => {

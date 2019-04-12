@@ -269,6 +269,31 @@ describe('positive integration tests - Promise api', () => {
             return Assertions.assertSendPromise(instance, message, queueName, null, null, null);
         });
 
+        it('should send message when miscellaneous amqplib options are included', () => {
+
+            const amqpOptions = {
+                expiration: '1000',
+                userId: 'guest',
+                CC: 'a',
+                priority: 1,
+                persistent: false,
+                deliveryMode: false,
+                mandatory:false,
+                BCC: 'b',
+                immediate: false,
+                contentType: 'text/plain',
+                contentEncoding: 'text/plain',
+                correlationId: 'some_id',
+                replyTo: 'other_queue',
+                messageId: 'message_id',
+                timestamp: 1555099550198,
+                type: 'some_type',
+                appId: 'test_app'
+            };
+
+            return Assertions.assertSendPromise(instance, message, queueName, null, null, null, amqpOptions);
+        });
+
         it('should proxy `source` when supplied', () => {
 
             return Assertions.assertSendPromise(instance, message, queueName, null, 'someModule', null);
@@ -343,6 +368,31 @@ describe('positive integration tests - Promise api', () => {
             return instance._autoConnectChannel()
                 .then(instance.deleteExchange.bind(instance, instance.config.globalExchange))
                 .then(instance.deleteQueue.bind(instance, queueName));
+        });
+
+        it('should publish for route `a` when miscellaneous amqplib options are included', () => {
+
+            const amqpOptions = {
+                expiration: '1000',
+                userId: 'guest',
+                CC: 'a',
+                priority: 1,
+                persistent: false,
+                deliveryMode: false,
+                mandatory:false,
+                BCC: 'b',
+                immediate: false,
+                contentType: 'text/plain',
+                contentEncoding: 'text/plain',
+                correlationId: 'some_id',
+                replyTo: 'other_queue',
+                messageId: 'message_id',
+                timestamp: 1555099550198,
+                type: 'some_type',
+                appId: 'test_app'
+            };
+
+            return Assertions.assertPublishPromise(instance, message, queueName, 'a', null, null, true, amqpOptions);
         });
 
         it('should publish for route `a`', () => {

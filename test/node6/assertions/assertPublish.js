@@ -4,13 +4,17 @@ const Async = require('async');
 const Code = require('code');
 const expect = Code.expect;
 
-const assertPublish = (instance, message, queueName, routeKey, transactionId, source, shouldRoute, callback) => {
+const assertPublish = (instance, message, queueName, routeKey, transactionId, source, shouldRoute, miscOptions, callback) => {
 
     const options = {
         routeKey,
         transactionId,
         source
     };
+
+    if (typeof miscOptions === 'object' && miscOptions !== null){
+        Object.assign(options, miscOptions);
+    }
 
     Async.waterfall([
         instance.publish.bind(instance, message, options),
