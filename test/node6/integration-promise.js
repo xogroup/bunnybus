@@ -401,7 +401,7 @@ describe('positive integration tests - Promise api', () => {
         const subscribeOptions = { meta : true };
         const messageObject = { event : 'a.b', name : 'bunnybus' };
         const messageString = 'bunnybus';
-        const messageBuffer = new Buffer(messageString);
+        const messageBuffer = Buffer.from(messageString);
 
         before(() => {
 
@@ -1221,7 +1221,7 @@ describe('negative integration tests', () => {
     describe('acknowledge', () => {
 
         const payload = {
-            content : new Buffer('hello')
+            content : Buffer.from('hello')
         };
 
         beforeEach(() => {
@@ -1243,7 +1243,7 @@ describe('negative integration tests', () => {
     describe('requeue', () => {
 
         const payload = {
-            content : new Buffer('hello')
+            content : Buffer.from('hello')
         };
 
         beforeEach(() => {
@@ -1265,7 +1265,7 @@ describe('negative integration tests', () => {
     describe('reject', () => {
 
         const payload = {
-            content : new Buffer('hello')
+            content : Buffer.from('hello')
         };
 
         beforeEach(() => {

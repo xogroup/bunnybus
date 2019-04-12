@@ -444,7 +444,7 @@ describe('positive integration tests - Callback api', () => {
         const subscribeOptionsWithMeta = { meta : true };
         const messageObject = { event : 'a.b', name : 'bunnybus' };
         const messageString = 'bunnybus';
-        const messageBuffer = new Buffer(messageString);
+        const messageBuffer = Buffer.from(messageString);
 
         before((done) => {
 
@@ -758,7 +758,7 @@ describe('positive integration tests - Callback api', () => {
 
             Async.waterfall([
                 instance.subscribe.bind(instance, queueName, handlers),
-                (cb) => instance.channel.publish(config.globalExchange, publishOptions.routeKey, new Buffer(JSON.stringify(messageObject)), headers, cb)
+                (cb) => instance.channel.publish(config.globalExchange, publishOptions.routeKey, Buffer.from(JSON.stringify(messageObject)), headers, cb)
             ],
             () => {});
         });
@@ -792,7 +792,7 @@ describe('positive integration tests - Callback api', () => {
 
             Async.waterfall([
                 instance.subscribe.bind(instance, queueName, handlers),
-                (cb) => instance.channel.publish(config.globalExchange, publishOptions.routeKey, new Buffer(JSON.stringify(messageObject)), headers, cb)
+                (cb) => instance.channel.publish(config.globalExchange, publishOptions.routeKey, Buffer.from(JSON.stringify(messageObject)), headers, cb)
             ],
             () => {});
         });
@@ -819,7 +819,7 @@ describe('positive integration tests - Callback api', () => {
 
             Async.waterfall([
                 instance.subscribe.bind(instance, queueName, handlers, { validatePublisher }),
-                (cb) => instance.channel.publish(config.globalExchange, publishOptions.routeKey, new Buffer(JSON.stringify(messageObject)), headers, cb)
+                (cb) => instance.channel.publish(config.globalExchange, publishOptions.routeKey, Buffer.from(JSON.stringify(messageObject)), headers, cb)
             ],
             () => {});
         });
@@ -848,7 +848,7 @@ describe('positive integration tests - Callback api', () => {
 
             Async.waterfall([
                 instance.subscribe.bind(instance, queueName, handlers, { validateVersion }),
-                (cb) => instance.channel.publish(config.globalExchange, publishOptions.routeKey, new Buffer(JSON.stringify(messageObject)), headers, cb)
+                (cb) => instance.channel.publish(config.globalExchange, publishOptions.routeKey, Buffer.from(JSON.stringify(messageObject)), headers, cb)
             ],
             () => {});
         });
@@ -1448,7 +1448,7 @@ describe('negative integration tests', () => {
     describe('acknowledge', () => {
 
         const payload = {
-            content : new Buffer('hello')
+            content : Buffer.from('hello')
         };
 
         beforeEach((done) => {
@@ -1469,7 +1469,7 @@ describe('negative integration tests', () => {
     describe('requeue', () => {
 
         const payload = {
-            content : new Buffer('hello')
+            content : Buffer.from('hello')
         };
 
         beforeEach((done) => {
@@ -1490,7 +1490,7 @@ describe('negative integration tests', () => {
     describe('reject', () => {
 
         const payload = {
-            content : new Buffer('hello')
+            content : Buffer.from('hello')
         };
 
         beforeEach((done) => {
