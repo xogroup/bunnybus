@@ -430,6 +430,7 @@ Publish a message onto the bus.
     - `transactionId` - value attached to the header of the message for tracing.  When one is not supplied, a random 40 character token is generated. *[string]* **Optional**
     - `source` - value attached to the header of the message to help with track the origin of messages in your application.  For applications that leverage this plugin in multiple modules, each module can supply its own module name so a message can be tracked to the creator. *[string]* **Optional**
     - `globalExchange` - value to override the exchange specified in `config`. *[string]* **Optional**
+    - In addition to the above options, all of `amqplib`'s [configuration options](http://www.squaremobius.net/amqp.node/channel_api.html#channel_publish) (except for `headers`) from its `sendToQueue` and `publish` methods can also be passed as top-level properties in the `publish` options.
   - `callback` - node style callback `(err, result) => {}`. *[Function]* **Optional**
 
 ```javascript
@@ -565,6 +566,7 @@ When `message.event` or `options.routeKey` values are not provided for `routeKey
     - `routeKey` - value for the route key to route the message with.  The value must be supplied here or in `message.event`.  The value can be `.` separated for namespacing. *[string]* **Optional**
     - `transactionId` - value attached to the header of the message for tracing.  When one is not supplied, a random 40 character token is generated. *[string]*  **Optional**
     - `source` - value attached to the header of the message to help with tracking the origination point of your application.  For applications that leverage this plugin in multiple modules, each module can supply its own module name so a message can be tracked to the creator. *[string]*  **Optional**
+    - In addition to the above options, all of `amqplib`'s [configuration options](http://www.squaremobius.net/amqp.node/channel_api.html#channel_publish) (except for `headers`) from its `sendToQueue` and `publish` methods can also be passed as top-level properties in the `send` options.
   - `callback` - node style callback `(err, result) => {}`. *[Function]* **Optional**
 
 ```javascript
