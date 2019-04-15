@@ -269,6 +269,30 @@ describe('positive integration tests - Promise api', () => {
             return Assertions.assertSendPromise(instance, message, queueName, null, null, null);
         });
 
+        it('should send message when miscellaneous amqplib options are included', () => {
+
+            const amqpOptions = {
+                expiration: '1000',
+                userId: 'guest',
+                CC: 'a',
+                priority: 1,
+                persistent: false,
+                deliveryMode: false,
+                mandatory:false,
+                BCC: 'b',
+                contentType: 'text/plain',
+                contentEncoding: 'text/plain',
+                correlationId: 'some_id',
+                replyTo: 'other_queue',
+                messageId: 'message_id',
+                timestamp: 1555099550198,
+                type: 'some_type',
+                appId: 'test_app'
+            };
+
+            return Assertions.assertSendPromise(instance, message, queueName, null, null, null, amqpOptions);
+        });
+
         it('should proxy `source` when supplied', () => {
 
             return Assertions.assertSendPromise(instance, message, queueName, null, 'someModule', null);
@@ -345,6 +369,30 @@ describe('positive integration tests - Promise api', () => {
                 .then(instance.deleteQueue.bind(instance, queueName));
         });
 
+        it('should publish for route `a` when miscellaneous amqplib options are included', () => {
+
+            const amqpOptions = {
+                expiration: '1000',
+                userId: 'guest',
+                CC: 'a',
+                priority: 1,
+                persistent: false,
+                deliveryMode: false,
+                mandatory:false,
+                BCC: 'b',
+                contentType: 'text/plain',
+                contentEncoding: 'text/plain',
+                correlationId: 'some_id',
+                replyTo: 'other_queue',
+                messageId: 'message_id',
+                timestamp: 1555099550198,
+                type: 'some_type',
+                appId: 'test_app'
+            };
+
+            return Assertions.assertPublishPromise(instance, message, queueName, 'a', null, null, true, amqpOptions);
+        });
+
         it('should publish for route `a`', () => {
 
             return Assertions.assertPublishPromise(instance, message, queueName, 'a', null, null, true);
@@ -401,7 +449,7 @@ describe('positive integration tests - Promise api', () => {
         const subscribeOptions = { meta : true };
         const messageObject = { event : 'a.b', name : 'bunnybus' };
         const messageString = 'bunnybus';
-        const messageBuffer = new Buffer(messageString);
+        const messageBuffer = Buffer.from(messageString);
 
         before(() => {
 
@@ -1221,7 +1269,7 @@ describe('negative integration tests', () => {
     describe('acknowledge', () => {
 
         const payload = {
-            content : new Buffer('hello')
+            content : Buffer.from('hello')
         };
 
         beforeEach(() => {
@@ -1243,7 +1291,7 @@ describe('negative integration tests', () => {
     describe('requeue', () => {
 
         const payload = {
-            content : new Buffer('hello')
+            content : Buffer.from('hello')
         };
 
         beforeEach(() => {
@@ -1265,7 +1313,7 @@ describe('negative integration tests', () => {
     describe('reject', () => {
 
         const payload = {
-            content : new Buffer('hello')
+            content : Buffer.from('hello')
         };
 
         beforeEach(() => {

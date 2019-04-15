@@ -4,13 +4,17 @@ const Async = require('async');
 const Code = require('code');
 const expect = Code.expect;
 
-const assertSend = (instance, message, queueName, transactionId, source, routeKey, callback) => {
+const assertSend = (instance, message, queueName, transactionId, source, routeKey, miscOptions, callback) => {
 
     const options = {
         transactionId,
         source,
         routeKey
     };
+
+    if (typeof miscOptions === 'object' && miscOptions !== null){
+        Object.assign(options, miscOptions);
+    }
 
     Async.waterfall([
         instance.send.bind(instance, message, queueName, options),

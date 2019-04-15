@@ -3,13 +3,17 @@
 const Code = require('code');
 const expect = Code.expect;
 
-const assertPublishAsyncAwait = async (instance, message, queueName, routeKey, transactionId, source, shouldRoute) => {
+const assertPublishAsyncAwait = async (instance, message, queueName, routeKey, transactionId, source, shouldRoute, miscOptions) => {
 
     const options = {
         routeKey,
         transactionId,
         source
     };
+
+    if (typeof miscOptions === 'object' && miscOptions !== null){
+        Object.assign(options, miscOptions);
+    }
 
     await instance.publish(message, options);
     const payload = await instance.get(queueName);

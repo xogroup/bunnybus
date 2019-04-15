@@ -3,13 +3,17 @@
 const Code = require('code');
 const expect = Code.expect;
 
-const assertSendPromise = (instance, message, queueName, transactionId, source, routeKey) => {
+const assertSendPromise = (instance, message, queueName, transactionId, source, routeKey, miscOptions) => {
 
     const options = {
         transactionId,
         source,
         routeKey
     };
+
+    if (typeof miscOptions === 'object' && miscOptions !== null){
+        Object.assign(options, miscOptions);
+    }
 
     return instance.send(message, queueName, options)
         .then(() => {

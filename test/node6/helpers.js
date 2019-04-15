@@ -175,7 +175,7 @@ describe('helpers', () => {
 
         it('should not alter a Buffer input', (done) => {
 
-            const data = new Buffer('hello');
+            const data = Buffer.from('hello');
 
             Assertions.assertConvertToBuffer(data, done);
         });
