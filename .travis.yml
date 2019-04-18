@@ -1,13 +1,13 @@
 language: node_js
 sudo: required
 services:
-- docker
+  - docker
 matrix:
   include:
-    - node_js: '6'
-      env: NODE_VERSION=6
     - node_js: '8'
       env: NODE_VERSION=8
+    - node_js: '10'
+      env: NODE_VERSION=10
 deploy:
   provider: npm
   email: xo-npmjs.group@xogrp.com
@@ -17,9 +17,9 @@ deploy:
   api_key:
     secure: oait4R8EE25e4/qNVLMzul8E13FTmuxfUKD9E11T0+/bOq3mLJkG+6Y7xbN08eCAnFwd2H5thsFAW98YP8dCqXz5lpKxRHSjpaGGY7yMbRCJkoXEqn8I7RY3vcJMP7d6XYTulmQDrdHAjG7JbIXu57/iWguQ7RN+wb6zFjkatICJeKovSxmewIsVKOXHWmry5ZxmfCHoBwUU2aIPNeOyyygDzL3jInpmV9XBWgt+Ig1tCbkqGquW/4PUo1ZTO9ICZ4hiXHOtL+VuitWwwudKkiNMlbjB/F1AtQABsDwTn1rzYN7GS+phPKwpS/oDTfK9qPX9kfodRFsWgiCwaL4L45svwaUarwRsXhlC2i91h467dfz5KiBwsEe9idwzE6wSAhLHZdXUZ9MO85W2FmQD3rObpWVQmA95ddR7wXKbktxFkVl+6hNDsAXCTFB5oaPWOYJ/5oVFvaR2+bcOuExZA8GCnuUslwgs/qf7hI9L40SCbv9xwqLmHLhGdNSUk6qvjCEdRWRcPRblPyn086HByl6mkEv9OcgQ63ArDoF9sY8vZg2OEboXoBNFBzICw6z3ccvp7QeHceVFXNZdxfoZ1prH/g1Kut1WT7i+GQoBUgClPRSojZxF2c3ivXpfoEPjpn2OE+4CwlBlkMXEDXDlZzG+zqFXqOVqZ5TX08pwdKg=
 before_install:
-- npm install -g npm@'>=2.13.5'
-- docker pull rabbitmq:3-management
-- docker run -d -p 5671:5671 -p 15672:15672 -p 5672:5672 rabbitmq:3-management
+  - npm install -g npm@'>=2.13.5'
+  - docker pull rabbitmq:3-management
+  - docker run -d -p 5671:5671 -p 15672:15672 -p 5672:5672 rabbitmq:3-management
 script: npm run build-test
 notifications:
   slack:

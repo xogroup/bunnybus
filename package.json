@@ -23,7 +23,7 @@
   "author": "Lam Chan",
   "license": "BSD-3-Clause",
   "engines": {
-    "node": "6.x.x || 8.x.x"
+    "node": "8.x || 10.x"
   },
   "repository": {
     "type": "git",
