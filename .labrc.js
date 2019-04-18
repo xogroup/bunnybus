@@ -1,9 +1,11 @@
 'use strict';
 
 const LabConfig = {
-    assert : 'code',
-    lint : true,
-    verbose : true
+    coverage: false,
+    // reporter: ['console', 'html'],
+    // output: ['stdout', 'coverage/coverage.html'],
+    lint: false,
+    verbose: false
 };
 
 module.exports = LabConfig;

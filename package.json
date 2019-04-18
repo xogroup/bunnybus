@@ -14,8 +14,8 @@
   ],
   "main": "lib/index.js",
   "scripts": {
-    "test": "lab test/node6",
-    "build-test": ". docker/wait-on-resource.sh && if [ $NODE_VERSION -eq 8 ]; then lab test/node6 && lab test/node8; else lab test/node6; fi",
+    "test": "lab test",
+    "build-test": ". docker/wait-on-resource.sh && lab test",
     "start-docker": "docker run -d --name=rabbitmq -p 5671:5671 -p 15672:15672 -p 5672:5672 rabbitmq:3-management",
     "stop-docker": "docker rm -f rabbitmq",
     "doctoc": "doctoc API.md && doctoc Example.md && doctoc Diagram.md"
@@ -30,15 +30,13 @@
     "url": "https://github.com/xogroup/bunnybus"
   },
   "dependencies": {
-    "amqplib": "^0.5.1",
-    "async": "^2.3.0"
+    "amqplib": "^0.5.1"
   },
   "devDependencies": {
-    "bluebird": "^3.5.0",
+    "@hapi/code": "^5.3.1",
+    "@hapi/lab": "^18.1.1",
     "doctoc": "^1.2.0",
-    "eslint-config-hapi": "^10.0.0",
-    "eslint-plugin-hapi": "^4.0.0",
-    "lab": "^14.3.1",
-    "q": "^1.4.1"
+    "eslint-config-hapi": "^12.0.0",
+    "eslint-plugin-hapi": "^4.0.0"
   }
 }
