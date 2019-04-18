@@ -12,7 +12,7 @@ const {
 } = (exports.lab = require('@hapi/lab').script());
 const Exceptions = require('../lib/exceptions');
 const Assertions = require('./assertions');
-const pkg = require('../package.json');
+const Pkg = require('../package.json');
 
 const BunnyBus = require('../lib');
 
@@ -1108,7 +1108,7 @@ describe('positive integration tests', () => {
             await instance.createQueue.bind(instance, queueName)();
 
             await Promise.all(
-                patterns.map(async (pattern) =>
+                patterns.map((pattern) =>
                     instance.channel.bindQueue(
                         queueName,
                         instance.config.globalExchange,
@@ -1224,7 +1224,7 @@ describe('positive integration tests', () => {
                 message.event
             );
             expect(payload2.properties.headers.bunnyBus).to.be.equal(
-                pkg.version
+                Pkg.version
             );
         });
     });
@@ -1325,7 +1325,7 @@ describe('positive integration tests', () => {
             );
             expect(payload2.properties.headers.erroredAt).to.exist();
             expect(payload2.properties.headers.bunnyBus).to.be.equal(
-                pkg.version
+                Pkg.version
             );
         });
     });

@@ -19,7 +19,7 @@ describe('positive integration tests ', () => {
         instance.config = BunnyBus.DEFAULT_SERVER_CONFIGURATION;
     });
 
-    describe('edge cases', async () => {
+    describe('edge cases', () => {
         beforeEach(async () => {
             instance.config = BunnyBus.DEFAULT_SERVER_CONFIGURATION;
             await instance._closeConnection();

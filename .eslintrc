@@ -1,9 +1,11 @@
 {
-    "extends" : ["hapi"],
-    "rules": {
-        "consistent-this" : [ 0, "self", "$" ]
-    },
-    "parserOptions": {
-        "ecmaVersion": 8
-    }
+  "extends": ["hapi"],
+  "rules": {
+    "hapi/hapi-scope-start": [0],
+    "consistent-this": [0, "instance"],
+    "no-constant-condition": [0]
+  },
+  "parserOptions": {
+    "ecmaVersion": 10
+  }
 }

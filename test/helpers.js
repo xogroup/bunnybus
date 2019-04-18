@@ -6,7 +6,7 @@ const { describe, it } = (exports.lab = require('@hapi/lab').script());
 const Assertions = require('./assertions');
 const Helpers = require('../lib/helpers');
 const EventLogger = require('../lib/eventLogger');
-const pkg = require('../package.json');
+const Pkg = require('../package.json');
 
 const FakeLoggerFactory = (...levels) => {
     const logger = {};
@@ -49,11 +49,11 @@ describe('helpers', () => {
         it('should return an identifier with {name, package} filled', () => {
             const result = Helpers.getPackageData();
 
-            const semverMajor = pkg.version.split('.', 1);
+            const semverMajor = Pkg.version.split('.', 1);
 
             expect(result).to.exist();
-            expect(result.name).to.be.equal(pkg.name);
-            expect(result.version).to.be.equal(pkg.version);
+            expect(result.name).to.be.equal(Pkg.name);
+            expect(result.version).to.be.equal(Pkg.version);
             expect(result.semverMatch).to.be.equal(semverMajor + '.x.x');
         });
     });
@@ -156,7 +156,7 @@ describe('helpers', () => {
         });
 
         it('should return true when using package defaults', () => {
-            const result = Helpers.isMajorCompatible(pkg.version);
+            const result = Helpers.isMajorCompatible(Pkg.version);
 
             expect(result).to.be.true();
         });

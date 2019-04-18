@@ -3,7 +3,7 @@
 const { expect } = require('@hapi/code');
 
 const assertLogger = async (instance, level, inputMessage) => {
-    await new Promise(async (resolve) => {
+    await new Promise((resolve) => {
         instance.once(`log.${level}`, (message) => {
             expect(message).to.exist();
             expect(message).to.be.a.object();

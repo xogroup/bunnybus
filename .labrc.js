@@ -4,7 +4,7 @@ const LabConfig = {
     coverage: false,
     // reporter: ['console', 'html'],
     // output: ['stdout', 'coverage/coverage.html'],
-    lint: false,
+    lint: true,
     verbose: false
 };
 

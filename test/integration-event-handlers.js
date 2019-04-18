@@ -101,7 +101,7 @@ describe('positive integration tests - event handlers', () => {
         });
 
         it('should cause `subscribed()` to be called', async () => {
-            await new Promise(async (resolve) => {
+            await new Promise((resolve) => {
                 instance.once(BunnyBus.SUBSCRIBED_EVENT, (queue) => {
                     expect(queue).to.be.equal(queueName);
                     resolve();

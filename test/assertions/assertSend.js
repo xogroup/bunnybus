@@ -1,7 +1,7 @@
 'use strict';
 
 const { expect } = require('@hapi/code');
-const pkg = require('../../package.json');
+const Pkg = require('../../package.json');
 
 const assertSend = async ({
     instance,
@@ -27,7 +27,7 @@ const assertSend = async ({
     expect(payload.properties.headers.transactionId).to.be.string();
     expect(payload.properties.headers.createdAt).to.exist();
     expect(payload.properties.headers.bunnyBus).to.exist();
-    expect(payload.properties.headers.bunnyBus).to.be.equal(pkg.version);
+    expect(payload.properties.headers.bunnyBus).to.be.equal(Pkg.version);
 
     if (source) {
         expect(payload.properties.headers.source).to.be.string();
