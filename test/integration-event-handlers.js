@@ -18,7 +18,7 @@ let instance;
 describe('positive integration tests - event handlers', () => {
     before(() => {
         instance = new BunnyBus();
-        instance.config = BunnyBus.DEFAULT_SERVER_CONFIGURATION;
+        instance.config = BunnyBus.Defaults.SERVER_CONFIGURATION;
     });
 
     describe('blocked', () => {
@@ -53,7 +53,7 @@ describe('positive integration tests - event handlers', () => {
 
         it('should cause `unsubscribed()` to be called', async () => {
             await new Promise(async (resolve) => {
-                instance.once(BunnyBus.UNSUBSCRIBED_EVENT, (queue) => {
+                instance.once(BunnyBus.Events.UNSUBSCRIBED, (queue) => {
                     expect(queue).to.be.equal(queueName);
                     resolve();
                 });
@@ -102,7 +102,7 @@ describe('positive integration tests - event handlers', () => {
 
         it('should cause `subscribed()` to be called', async () => {
             await new Promise((resolve) => {
-                instance.once(BunnyBus.SUBSCRIBED_EVENT, (queue) => {
+                instance.once(BunnyBus.Events.SUBSCRIBED, (queue) => {
                     expect(queue).to.be.equal(queueName);
                     resolve();
                 });

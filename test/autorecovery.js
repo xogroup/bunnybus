@@ -16,7 +16,7 @@ let instance;
 describe('automatic recovery cases', () => {
     before(() => {
         instance = new BunnyBus();
-        instance.config = BunnyBus.DEFAULT_SERVER_CONFIGURATION;
+        instance.config = BunnyBus.Defaults.SERVER_CONFIGURATION;
     });
 
     describe('channel', () => {
@@ -29,7 +29,7 @@ describe('automatic recovery cases', () => {
             { timeout: 5000 },
             async () => {
                 await new Promise(async (resolve) => {
-                    instance.once(BunnyBus.RECOVERED_EVENT, () => {
+                    instance.once(BunnyBus.Events.RECOVERED, () => {
                         expect(
                             Object.keys(instance.channel.consumers).length
                         ).to.be.at.least(1);

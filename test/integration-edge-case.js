@@ -16,12 +16,12 @@ let instance;
 describe('positive integration tests ', () => {
     before(() => {
         instance = new BunnyBus();
-        instance.config = BunnyBus.DEFAULT_SERVER_CONFIGURATION;
+        instance.config = BunnyBus.Defaults.SERVER_CONFIGURATION;
     });
 
     describe('edge cases', () => {
         beforeEach(async () => {
-            instance.config = BunnyBus.DEFAULT_SERVER_CONFIGURATION;
+            instance.config = BunnyBus.Defaults.SERVER_CONFIGURATION;
             await instance._closeConnection();
         });
 
@@ -75,7 +75,7 @@ describe('positive integration tests ', () => {
                 throw new Error('fake configuration took');
             }
             catch (error) {
-                instance.config = BunnyBus.DEFAULT_SERVER_CONFIGURATION;
+                instance.config = BunnyBus.Defaults.SERVER_CONFIGURATION;
 
                 await instance.publish(message);
             }

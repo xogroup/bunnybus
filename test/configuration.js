@@ -22,7 +22,7 @@ describe('configuration', () => {
     });
 
     it('should generate a connections string when default values are passed through the constructor', () => {
-        const instance = new BunnyBus(BunnyBus.DEFAULT_SERVER_CONFIGURATION);
+        const instance = new BunnyBus(BunnyBus.Defaults.SERVER_CONFIGURATION);
 
         expect(instance.connectionString).to.be.equal(
             'amqp://guest:guest@127.0.0.1:5672/%2f?heartbeat=60'
@@ -47,7 +47,7 @@ describe('configuration', () => {
 
     it('should generate a connection string with default values', () => {
         const instance = new BunnyBus();
-        instance.config = BunnyBus.DEFAULT_SERVER_CONFIGURATION;
+        instance.config = BunnyBus.Defaults.SERVER_CONFIGURATION;
 
         expect(instance.connectionString).to.be.equal(
             'amqp://guest:guest@127.0.0.1:5672/%2f?heartbeat=60'

@@ -21,7 +21,7 @@ let instance;
 describe('positive integration tests', () => {
     before(() => {
         instance = new BunnyBus();
-        instance.config = BunnyBus.DEFAULT_SERVER_CONFIGURATION;
+        instance.config = BunnyBus.Defaults.SERVER_CONFIGURATION;
         instance.config.validatePublisher = true;
         instance.config.validateVersion = true;
     });
@@ -107,13 +107,13 @@ describe('positive integration tests', () => {
             await instance._closeConnection();
         });
 
-        const delay = async (timeout) => {
-            await new Promise((resolve) => setTimeout(resolve, timeout));
+        const delay = (timeout) => {
+            return new Promise((resolve) => setTimeout(resolve, timeout));
         };
 
         it('should recreate connection when connection error occurs', async () => {
             instance.connection.emit('error');
-            await delay(70);
+            await delay(1500);
             expect(instance.connection).to.exist();
             expect(instance.channel).to.exist();
         });
@@ -177,7 +177,7 @@ describe('positive integration tests', () => {
 
         it('should recover from a non existent exchange', async () => {
             await new Promise(async (resolve) => {
-                instance.once(BunnyBus.RECOVERED_EVENT, () => {
+                instance.once(BunnyBus.Events.RECOVERED, () => {
                     resolve();
                 });
 
@@ -807,7 +807,7 @@ describe('positive integration tests', () => {
                     }
                 };
 
-                instance.once(BunnyBus.LOG_WARN_EVENT, (message) => {
+                instance.once(BunnyBus.Events.LOG_WARN, (message) => {
                     expect(message).to.be.equal(
                         'message not of BunnyBus origin'
                     );
@@ -848,7 +848,7 @@ describe('positive integration tests', () => {
                     }
                 };
 
-                instance.once(BunnyBus.LOG_WARN_EVENT, (message) => {
+                instance.once(BunnyBus.Events.LOG_WARN, (message) => {
                     expect(message).to.be.equal(
                         `message came from older bunnyBus version (${version})`
                     );
@@ -1334,7 +1334,7 @@ describe('positive integration tests', () => {
 describe('negative integration tests', () => {
     before(() => {
         instance = new BunnyBus();
-        instance.config = BunnyBus.DEFAULT_SERVER_CONFIGURATION;
+        instance.config = BunnyBus.Defaults.SERVER_CONFIGURATION;
     });
 
     describe('channel', () => {

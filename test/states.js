@@ -59,7 +59,7 @@ describe('state management', () => {
                 const options = {};
 
                 instance.once(
-                    SubscriptionManager.CREATED_EVENT,
+                    SubscriptionManager.Events.CREATED,
                     (subcription) => {
                         expect(subcription).to.exist();
                         expect(subcription.handlers).to.exist();
@@ -107,7 +107,7 @@ describe('state management', () => {
                 const options = {};
 
                 instance.once(
-                    SubscriptionManager.TAGGED_EVENT,
+                    SubscriptionManager.Events.TAGGED,
                     (subcription) => {
                         expect(subcription).to.exist();
                         expect(subcription.consumerTag).to.be.equal(
@@ -198,7 +198,7 @@ describe('state management', () => {
                 const options = {};
 
                 instance.once(
-                    SubscriptionManager.CLEARED_EVENT,
+                    SubscriptionManager.Events.CLEARED,
                     (subcription) => {
                         expect(subcription).to.exist();
                     }
@@ -233,13 +233,13 @@ describe('state management', () => {
 
                     if (iterationCount === iterationLimit) {
                         instance.removeListener(
-                            SubscriptionManager.CLEARED_EVENT,
+                            SubscriptionManager.Events.CLEARED,
                             eventHandler
                         );
                     }
                 };
 
-                instance.on(SubscriptionManager.CLEARED_EVENT, eventHandler);
+                instance.on(SubscriptionManager.Events.CLEARED, eventHandler);
                 instance.clearAll();
             });
         });
@@ -321,7 +321,7 @@ describe('state management', () => {
                 const options = {};
 
                 instance.once(
-                    SubscriptionManager.REMOVED_EVENT,
+                    SubscriptionManager.Events.REMOVED,
                     (subscription) => {
                         expect(subscription).to.exist();
                     }
@@ -388,7 +388,7 @@ describe('state management', () => {
             it('should subscribe to `subscription.blocked` event', () => {
                 const queueName = 'queue5';
 
-                instance.once(SubscriptionManager.BLOCKED_EVENT, (queue) => {
+                instance.once(SubscriptionManager.Events.BLOCKED, (queue) => {
                     expect(queue).to.be.equal(queueName);
                 });
 
@@ -398,7 +398,7 @@ describe('state management', () => {
             it('should subscribe to `subscription.unblocked` event', () => {
                 const queueName = 'queue6';
 
-                instance.once(SubscriptionManager.UNBLOCKED_EVENT, (queue) => {
+                instance.once(SubscriptionManager.Events.UNBLOCKED, (queue) => {
                     expect(queue).to.be.equal(queueName);
                 });
 

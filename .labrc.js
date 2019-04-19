@@ -1,9 +1,9 @@
 'use strict';
 
 const LabConfig = {
-    coverage: false,
-    // reporter: ['console', 'html'],
-    // output: ['stdout', 'coverage/coverage.html'],
+    coverage: true,
+    reporter: ['console', 'html'],
+    output: ['stdout', 'coverage/coverage.html'],
     lint: true,
     verbose: false
 };

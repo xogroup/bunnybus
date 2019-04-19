@@ -18,7 +18,7 @@ let instance;
 describe('positive integration tests - events', () => {
     before(() => {
         instance = new BunnyBus();
-        instance.config = BunnyBus.DEFAULT_SERVER_CONFIGURATION;
+        instance.config = BunnyBus.Defaults.SERVER_CONFIGURATION;
     });
 
     describe('recovering', () => {
@@ -28,14 +28,14 @@ describe('positive integration tests - events', () => {
 
         it('should be evented when connection was closed and is recovering', async () => {
             await new Promise((resolve) => {
-                instance.once(BunnyBus.RECOVERING_EVENT, resolve);
+                instance.once(BunnyBus.Events.RECOVERING, resolve);
                 instance.connection.emit('close');
             });
         });
 
         it('should be evented when channel was closed and is recovering', async () => {
             await new Promise((resolve) => {
-                instance.once(BunnyBus.RECOVERING_EVENT, resolve);
+                instance.once(BunnyBus.Events.RECOVERING, resolve);
                 instance.channel.emit('close');
             });
         });
@@ -48,14 +48,14 @@ describe('positive integration tests - events', () => {
 
         it('should be evented when connection was closed and is recovering', async () => {
             await new Promise((resolve) => {
-                instance.once(BunnyBus.RECOVERED_EVENT, resolve);
+                instance.once(BunnyBus.Events.RECOVERED, resolve);
                 instance.connection.emit('close');
             });
         });
 
         it('should be evented when channel was closed and is recovering', async () => {
             await new Promise((resolve) => {
-                instance.once(BunnyBus.RECOVERED_EVENT, resolve);
+                instance.once(BunnyBus.Events.RECOVERED, resolve);
                 instance.channel.emit('close');
             });
         });
@@ -74,7 +74,7 @@ describe('positive integration tests - events', () => {
 
         it('should be evented when message is published', async () => {
             await new Promise(async (resolve) => {
-                instance.once(BunnyBus.PUBLISHED_EVENT, (sentMessage) => {
+                instance.once(BunnyBus.Events.PUBLISHED, (sentMessage) => {
                     expect(sentMessage).to.be.equal(message);
                     resolve();
                 });
@@ -119,7 +119,7 @@ describe('positive integration tests - events', () => {
                     ) => {}
                 };
 
-                instance.once(BunnyBus.SUBSCRIBED_EVENT, (queue) => {
+                instance.once(BunnyBus.Events.SUBSCRIBED, (queue) => {
                     expect(queue).to.be.equal(queueName);
                     resolve();
                 });
@@ -147,7 +147,7 @@ describe('positive integration tests - events', () => {
 
         it('should be evented when queue is unsubscribed', async () => {
             await new Promise(async (resolve) => {
-                instance.once(BunnyBus.UNSUBSCRIBED_EVENT, (queue) => {
+                instance.once(BunnyBus.Events.UNSUBSCRIBED, (queue) => {
                     expect(queue).to.be.equal(queueName);
                     resolve();
                 });
