@@ -18,6 +18,9 @@ const BunnyBus = require('../lib');
 
 let instance;
 
+const delay = (timeout) =>
+    new Promise((resolve) => setTimeout(resolve, timeout));
+
 describe('positive integration tests', () => {
     before(() => {
         instance = new BunnyBus();
@@ -107,13 +110,9 @@ describe('positive integration tests', () => {
             await instance._closeConnection();
         });
 
-        const delay = (timeout) => {
-            return new Promise((resolve) => setTimeout(resolve, timeout));
-        };
-
         it('should recreate connection when connection error occurs', async () => {
             instance.connection.emit('error');
-            await delay(1500);
+            await delay(70);
             expect(instance.connection).to.exist();
             expect(instance.channel).to.exist();
         });
@@ -177,9 +176,7 @@ describe('positive integration tests', () => {
 
         it('should recover from a non existent exchange', async () => {
             await new Promise(async (resolve) => {
-                instance.once(BunnyBus.Events.RECOVERED, () => {
-                    resolve();
-                });
+                instance.once(BunnyBus.Events.RECOVERED, resolve);
 
                 try {
                     await instance.checkExchange(exchangeName);
@@ -1268,6 +1265,7 @@ describe('positive integration tests', () => {
                 instance.config.globalExchange
             )();
             await instance.deleteQueue.bind(instance, queueName)();
+            await instance.deleteQueue.bind(instance, errorQueueName)();
         });
 
         afterEach(async () => {
@@ -1327,6 +1325,32 @@ describe('positive integration tests', () => {
             expect(payload2.properties.headers.bunnyBus).to.be.equal(
                 Pkg.version
             );
+        });
+
+        it('should reject when exceeding max requeues', async () => {
+            let retryCount = 0;
+            const { maxRetryCount } = instance.config;
+            await new Promise(async (resolve) => {
+                const handlers = {
+                    [message.event]: async (
+                        consumedMessage,
+                        ack,
+                        reject,
+                        requeue
+                    ) => {
+                        expect(consumedMessage).to.be.equal(message);
+                        ++retryCount;
+                        if (retryCount >= maxRetryCount) {
+                            resolve();
+                        }
+
+                        await requeue();
+                    }
+                };
+
+                await instance.subscribe.bind(instance, queueName, handlers)();
+                await instance.publish.bind(instance, message)();
+            });
         });
     });
 });
