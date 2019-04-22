@@ -21,46 +21,6 @@ describe('positive integration tests - events', () => {
         instance.config = BunnyBus.Defaults.SERVER_CONFIGURATION;
     });
 
-    describe('recovering', () => {
-        beforeEach(async () => {
-            await instance._autoConnectChannel();
-        });
-
-        it('should be evented when connection was closed and is recovering', async () => {
-            await new Promise((resolve) => {
-                instance.once(BunnyBus.Events.RECOVERING, resolve);
-                instance.connection.emit('close');
-            });
-        });
-
-        it('should be evented when channel was closed and is recovering', async () => {
-            await new Promise((resolve) => {
-                instance.once(BunnyBus.Events.RECOVERING, resolve);
-                instance.channel.emit('close');
-            });
-        });
-    });
-
-    describe('recovered', () => {
-        before(async () => {
-            await instance._autoConnectChannel();
-        });
-
-        it('should be evented when connection was closed and is recovering', async () => {
-            await new Promise((resolve) => {
-                instance.once(BunnyBus.Events.RECOVERED, resolve);
-                instance.connection.emit('close');
-            });
-        });
-
-        it('should be evented when channel was closed and is recovering', async () => {
-            await new Promise((resolve) => {
-                instance.once(BunnyBus.Events.RECOVERED, resolve);
-                instance.channel.emit('close');
-            });
-        });
-    });
-
     describe('published', () => {
         const message = { event: 'published-event', name: 'bunnybus' };
 

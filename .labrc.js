@@ -4,8 +4,8 @@ const LabConfig = {
     coverage: true,
     reporter: ['console', 'html'],
     output: ['stdout', 'coverage/coverage.html'],
-    lint: true,
-    verbose: false
+    lint: false,
+    verbose: true
 };
 
 module.exports = LabConfig;

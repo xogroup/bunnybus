@@ -7,6 +7,7 @@ const Assertions = require('./assertions');
 const Helpers = require('../lib/helpers');
 const EventLogger = require('../lib/eventLogger');
 const Pkg = require('../package.json');
+const Sinon = require('sinon');
 
 const FakeLoggerFactory = (...levels) => {
     const logger = {};
@@ -534,4 +535,38 @@ describe('helpers', () => {
             expect(result).to.have.length(2);
         });
     });
+
+    // describe.only('loop', () => {
+    //     it('should loop until condition', async () => {
+    //         let retry = 0;
+    //         const max = 5;
+
+    //         const condition = () => true;
+    //         const exec = async () => {
+    //             try {
+    //                 console.log(`Retry # ${retry}`);
+    //                 throw new Error();
+    //             }
+    //             catch (error) {
+    //                 if (++retry >= max) {
+    //                     throw new Error('ay si');
+    //                 }
+    //             }
+    //         };
+
+    //         const spyExec = Sinon.spy(exec);
+
+    //         try {
+
+    //             await Helpers.loop({ condition, exec });
+    //         }
+    //         catch (error) {
+    //             console.log(error);
+    //         }
+
+    //         console.log('ay no');
+
+    //         expect(spyExec.called).to.be.true();
+    //     });
+    // });
 });

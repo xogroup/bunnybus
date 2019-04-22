@@ -13,13 +13,9 @@ const {
 const Exceptions = require('../lib/exceptions');
 const Assertions = require('./assertions');
 const Pkg = require('../package.json');
-
 const BunnyBus = require('../lib');
 
 let instance;
-
-const delay = (timeout) =>
-    new Promise((resolve) => setTimeout(resolve, timeout));
 
 describe('positive integration tests', () => {
     before(() => {
@@ -101,30 +97,6 @@ describe('positive integration tests', () => {
         });
     });
 
-    describe('_recoverConnectChannel', () => {
-        beforeEach(async () => {
-            await instance._autoConnectChannel();
-        });
-
-        afterEach(async () => {
-            await instance._closeConnection();
-        });
-
-        it('should recreate connection when connection error occurs', async () => {
-            instance.connection.emit('error');
-            await delay(70);
-            expect(instance.connection).to.exist();
-            expect(instance.channel).to.exist();
-        });
-
-        it('should recreate connection when channel error occurs', async () => {
-            instance.channel.emit('error');
-            await delay(70);
-            expect(instance.connection).to.exist();
-            expect(instance.channel).to.exist();
-        });
-    });
-
     describe('queue', () => {
         const queueName = 'test-queue-1';
 
@@ -172,17 +144,6 @@ describe('positive integration tests', () => {
 
         it('should delete exchange with name `test-exchange-1`', async () => {
             await instance.deleteExchange(exchangeName);
-        });
-
-        it('should recover from a non existent exchange', async () => {
-            await new Promise(async (resolve) => {
-                instance.once(BunnyBus.Events.RECOVERED, resolve);
-
-                try {
-                    await instance.checkExchange(exchangeName);
-                }
-                catch (error) {}
-            });
         });
     });
 
@@ -324,8 +285,7 @@ describe('positive integration tests', () => {
                         await instance.channel.bindQueue(
                             queueName,
                             instance.config.globalExchange,
-                            item,
-                            null
+                            item
                         )
                 )
             );
@@ -1109,8 +1069,7 @@ describe('positive integration tests', () => {
                     instance.channel.bindQueue(
                         queueName,
                         instance.config.globalExchange,
-                        pattern,
-                        null
+                        pattern
                     )
                 )
             );
@@ -1162,8 +1121,7 @@ describe('positive integration tests', () => {
                         await instance.channel.bindQueue(
                             queueName,
                             instance.config.globalExchange,
-                            item,
-                            null
+                            item
                         )
                 )
             );
@@ -1251,8 +1209,7 @@ describe('positive integration tests', () => {
                         await instance.channel.bindQueue(
                             queueName,
                             instance.config.globalExchange,
-                            pattern,
-                            null
+                            pattern
                         )
                 )
             );

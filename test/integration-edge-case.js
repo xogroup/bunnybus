@@ -64,21 +64,5 @@ describe('positive integration tests ', () => {
                 done();
             });
         });
-
-        it('should pass when server host configuration value is not valid', async () => {
-            const message = { event: 'eb', name: 'bunnybus' };
-            instance.config = { server: 'fake' };
-
-            try {
-                await instance.publish(message);
-
-                throw new Error('fake configuration took');
-            }
-            catch (error) {
-                instance.config = BunnyBus.Defaults.SERVER_CONFIGURATION;
-
-                await instance.publish(message);
-            }
-        });
     });
 });
