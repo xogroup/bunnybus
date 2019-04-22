@@ -1,10 +1,10 @@
 'use strict';
 
-const Amqp = require('amqplib');
 const { expect } = require('@hapi/code');
 const Sinon = require('sinon');
 
 const {
+    after,
     before,
     beforeEach,
     describe,
@@ -15,10 +15,10 @@ const BunnyBus = require('../lib');
 
 let instance;
 
-describe('automatic recovery cases', { skip: true }, () => {
+describe('automatic recovery cases', { skip: false }, () => {
     beforeEach(() => {
         instance = new BunnyBus();
-        instance.config = { autoRecovery: true, autoRecoveryRetryCount: 2 };
+        instance.config = { autoRecovery: true, autoRecoveryRetryCount: 3 };
     });
 
     describe('channel', () => {
@@ -45,26 +45,27 @@ describe('automatic recovery cases', { skip: true }, () => {
             });
         });
 
-        it('should fire FATAL event after exceeding channel attempts', async () => {
-            await new Promise((resolve) => {
-                const stub = Sinon.stub(
-                    instance.connection,
-                    'createConfirmChannel'
-                ).rejects(new Error('ay no'));
+        it(
+            'should fire FATAL event after exceeding channel attempts',
+            { timeout: 5000, skip: true },
+            async () => {
+                await new Promise(async (resolve) => {
+                    const stub = Sinon.stub(instance, '_createChannel').rejects(
+                        Error('ay no')
+                    );
 
-                instance.once(BunnyBus.Events.FATAL, () => {
-                    expect(stub.calledTwice).to.be.true();
-                    stub.reset();
-                    Sinon.reset();
-                    //kill connection as reset isn't reseting
-                    instance.connection.close();
-                    resolve();
+                    instance.once(BunnyBus.Events.FATAL, (error) => {
+                        expect(stub.calledThrice).to.be.true();
+                        stub.reset();
+                        Sinon.reset();
+                        resolve();
+                    });
+
+                    //force reconnect
+                    instance.channel.emit('close');
                 });
-
-                //force reconnect
-                instance.channel.emit('close', new Error('ay no'));
-            });
-        });
+            }
+        );
     });
 
     describe('events', () => {
@@ -73,47 +74,63 @@ describe('automatic recovery cases', { skip: true }, () => {
                 await instance._autoConnectChannel();
             });
 
-            it('should be evented when connection was closed and is recovering', async () => {
-                await new Promise((resolve) => {
-                    instance.once(BunnyBus.Events.RECOVERING, resolve);
-                    instance.connection.emit('close');
-                });
-            });
+            it(
+                'should be evented when connection was closed and is recovering',
+                { timeout: 5000 },
+                async () => {
+                    await new Promise((resolve) => {
+                        instance.once(BunnyBus.Events.RECOVERING, resolve);
+                        instance.connection.emit('close');
+                    });
+                }
+            );
 
-            it('should be evented when channel was closed and is recovering', async () => {
-                await new Promise((resolve) => {
-                    instance.once(BunnyBus.Events.RECOVERING, resolve);
-                    instance.channel.emit('close');
-                });
-            });
+            it(
+                'should be evented when channel was closed and is recovering',
+                { timeout: 5000 },
+                async () => {
+                    await new Promise((resolve) => {
+                        instance.once(BunnyBus.Events.RECOVERING, resolve);
+                        instance.channel.emit('close');
+                    });
+                }
+            );
         });
 
         describe('recovered', () => {
-            before(async () => {
+            beforeEach(async () => {
                 await instance._autoConnectChannel();
             });
 
-            it('should be evented when connection was closed and is recovering', async () => {
-                await new Promise((resolve) => {
-                    instance.once(BunnyBus.Events.RECOVERED, () => {
-                        expect(instance.connection).to.exist();
-                        expect(instance.channel).to.exist();
-                        resolve();
+            it(
+                'should be evented when connection was closed and is recovering',
+                { timeout: 5000 },
+                async () => {
+                    await new Promise((resolve) => {
+                        instance.once(BunnyBus.Events.RECOVERED, () => {
+                            expect(instance.connection).to.exist();
+                            expect(instance.channel).to.exist();
+                            resolve();
+                        });
+                        instance.connection.emit('close');
                     });
-                    instance.connection.emit('close');
-                });
-            });
+                }
+            );
 
-            it('should be evented when channel was closed and is recovering', async () => {
-                await new Promise((resolve) => {
-                    instance.once(BunnyBus.Events.RECOVERED, () => {
-                        expect(instance.connection).to.exist();
-                        expect(instance.channel).to.exist();
-                        resolve();
+            it(
+                'should be evented when channel was closed and is recovering',
+                { timeout: 5000 },
+                async () => {
+                    await new Promise((resolve) => {
+                        instance.once(BunnyBus.Events.RECOVERED, () => {
+                            expect(instance.connection).to.exist();
+                            expect(instance.channel).to.exist();
+                            resolve();
+                        });
+                        instance.channel.emit('close');
                     });
-                    instance.channel.emit('close');
-                });
-            });
+                }
+            );
         });
     });
 
@@ -135,27 +152,32 @@ describe('automatic recovery cases', { skip: true }, () => {
             await instance._closeConnection();
         });
 
-        it('should pass when server host configuration value is not valid', async () => {
-            await new Promise(async (resolve) => {
-                const message = { event: 'eb', name: 'bunnybus' };
+        it(
+            'should pass when server host configuration value is not valid',
+            { timeout: 5000, skip: true },
+            async () => {
+                await new Promise(async (resolve) => {
+                    const message = { event: 'eb', name: 'bunnybus' };
 
-                instance.once(BunnyBus.Events.FATAL, async () => {
-                    //reset config
-                    instance.config = {
-                        server: BunnyBus.Defaults.SERVER_CONFIGURATION.server
-                    };
+                    instance.once(BunnyBus.Events.FATAL, async () => {
+                        //reset config
+                        instance.config = {
+                            server:
+                                BunnyBus.Defaults.SERVER_CONFIGURATION.server
+                        };
 
-                    //this should pass
-                    await instance.publish(message);
+                        //this should pass
+                        await instance.publish(message);
 
-                    resolve();
+                        resolve();
+                    });
+
+                    //inject bad config
+                    instance.config = { server: 'fake' };
+                    //this should fail
+                    await expect(instance.publish(message)).to.reject();
                 });
-
-                //inject bad config
-                instance.config = { server: 'fake' };
-                //this should fail
-                await expect(instance.publish(message)).to.reject();
-            });
-        });
+            }
+        );
     });
 });
