@@ -25,7 +25,7 @@ describe('positive integration tests - events', () => {
         const message = { event: 'published-event', name: 'bunnybus' };
 
         after(async () => {
-            await instance._autoConnectChannel();
+            await instance.connect();
             await instance.deleteExchange.bind(
                 instance,
                 instance.config.globalExchange
@@ -47,7 +47,7 @@ describe('positive integration tests - events', () => {
         const queueName = 'test-event-subscribed-queue-1';
 
         after(async () => {
-            await instance._autoConnectChannel();
+            await instance.connect();
             await instance.deleteExchange.bind(
                 instance,
                 instance.config.globalExchange

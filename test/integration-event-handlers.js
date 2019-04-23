@@ -42,7 +42,7 @@ describe('positive integration tests - event handlers', () => {
         });
 
         after(async () => {
-            await instance._autoConnectChannel();
+            await instance.connect();
             await instance.deleteExchange.bind(
                 instance,
                 instance.config.globalExchange
@@ -89,7 +89,7 @@ describe('positive integration tests - event handlers', () => {
         });
 
         after(async () => {
-            await instance._autoConnectChannel();
+            await instance.connect();
             await instance.deleteExchange.bind(
                 instance,
                 instance.config.globalExchange

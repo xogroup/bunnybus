@@ -28,7 +28,7 @@ describe('integration load test', () => {
 
         before(() => {
             return instance
-                ._autoConnectChannel()
+                .connect()
                 .then(
                     instance.createExchange.bind(
                         instance,
@@ -53,13 +53,13 @@ describe('integration load test', () => {
 
         afterEach(() => {
             return instance
-                ._autoConnectChannel()
+                .connect()
                 .then(instance.unsubscribe.bind(instance, queueName));
         });
 
         after(() => {
             return instance
-                ._autoConnectChannel()
+                .connect()
                 .then(
                     instance.deleteExchange.bind(
                         instance,

@@ -15,15 +15,14 @@ const BunnyBus = require('../lib');
 
 let instance;
 
-describe('automatic recovery cases', { skip: false }, () => {
+describe('automatic recovery cases', () => {
     beforeEach(() => {
         instance = new BunnyBus();
-        instance.config = { autoRecovery: true, autoRecoveryRetryCount: 3 };
     });
 
     describe('channel', () => {
         beforeEach(async () => {
-            await instance._autoConnectChannel();
+            await instance.connect();
         });
 
         it('should correctly recover consumers', async () => {
@@ -71,7 +70,7 @@ describe('automatic recovery cases', { skip: false }, () => {
     describe('events', () => {
         describe('recovering', () => {
             beforeEach(async () => {
-                await instance._autoConnectChannel();
+                await instance.connect();
             });
 
             it(
@@ -99,7 +98,7 @@ describe('automatic recovery cases', { skip: false }, () => {
 
         describe('recovered', () => {
             beforeEach(async () => {
-                await instance._autoConnectChannel();
+                await instance.connect;
             });
 
             it(
@@ -136,7 +135,7 @@ describe('automatic recovery cases', { skip: false }, () => {
 
     describe('exchange', () => {
         before(async () => {
-            await instance._autoConnectChannel();
+            await instance.connect();
         });
 
         it('should recover from a non existent exchange', async () => {

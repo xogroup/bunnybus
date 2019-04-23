@@ -53,7 +53,7 @@ describe('positive integration tests ', () => {
                     }
                 };
 
-                await instance._autoConnectChannel();
+                await instance.connect();
                 await instance.createQueue(queueName);
                 await instance.send(message, queueName);
                 await instance.subscribe(queueName, handlers);

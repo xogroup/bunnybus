@@ -75,22 +75,20 @@ describe('positive integration tests', () => {
         });
     });
 
-    describe('_autoConnectChannel', () => {
+    describe('connect', () => {
         beforeEach(async () => {
             await instance._closeConnection();
         });
 
         it('should create connection and channel', async () => {
-            await instance._autoConnectChannel();
+            await instance.connect();
             expect(instance.connection).to.exist();
             expect(instance.channel).to.exist();
         });
 
         it('should create connection and channel properly with no race condition', async () => {
             await Promise.all(
-                [1, 2, 3, 4].map(
-                    async () => await instance._autoConnectChannel()
-                )
+                [1, 2, 3, 4].map(async () => await instance.connect())
             );
             expect(instance.connection).to.exist();
             expect(instance.channel).to.exist();
@@ -101,7 +99,7 @@ describe('positive integration tests', () => {
         const queueName = 'test-queue-1';
 
         beforeEach(async () => {
-            await instance._autoConnectChannel();
+            await instance.connect();
         });
 
         it('should create queue with name `test-queue-1`', async () => {
@@ -126,12 +124,12 @@ describe('positive integration tests', () => {
         const exchangeName = 'test-exchange-1';
 
         before(async () => {
-            await instance._autoConnectChannel();
+            await instance.connect();
             await instance.deleteExchange(exchangeName);
         });
 
         beforeEach(async () => {
-            await instance._autoConnectChannel();
+            await instance.connect();
         });
 
         it('should create exchange with name `test-exchange-1`', async () => {
@@ -270,7 +268,7 @@ describe('positive integration tests', () => {
         const patterns = ['a', 'a.b', 'b', 'b.b', 'z.*'];
 
         before(async () => {
-            await instance._autoConnectChannel();
+            await instance.connect();
             await instance.createExchange.bind(
                 instance,
                 instance.config.globalExchange,
@@ -290,7 +288,7 @@ describe('positive integration tests', () => {
         });
 
         after(async () => {
-            await instance._autoConnectChannel();
+            await instance.connect();
             await instance.deleteExchange.bind(
                 instance,
                 instance.config.globalExchange
@@ -430,7 +428,7 @@ describe('positive integration tests', () => {
         const messageBuffer = Buffer.from(messageString);
 
         before(async () => {
-            await instance._autoConnectChannel();
+            await instance.connect();
             await instance.deleteExchange.bind(
                 instance,
                 instance.config.globalExchange
@@ -444,7 +442,7 @@ describe('positive integration tests', () => {
         });
 
         after(async () => {
-            await instance._autoConnectChannel();
+            await instance.connect();
             await instance.deleteExchange.bind(
                 instance,
                 instance.config.globalExchange
@@ -888,7 +886,7 @@ describe('positive integration tests', () => {
         };
 
         before(async () => {
-            await instance._autoConnectChannel();
+            await instance.connect();
             await instance.deleteExchange.bind(
                 instance,
                 instance.config.globalExchange
@@ -902,7 +900,7 @@ describe('positive integration tests', () => {
         });
 
         after(async () => {
-            await instance._autoConnectChannel();
+            await instance.connect();
             await instance.deleteExchange.bind(
                 instance,
                 instance.config.globalExchange
@@ -936,7 +934,7 @@ describe('positive integration tests', () => {
         };
 
         before(async () => {
-            await instance._autoConnectChannel();
+            await instance.connect();
             await instance.deleteExchange.bind(
                 instance,
                 instance.config.globalExchange
@@ -950,7 +948,7 @@ describe('positive integration tests', () => {
         });
 
         after(async () => {
-            await instance._autoConnectChannel();
+            await instance.connect();
             await instance.deleteExchange.bind(
                 instance,
                 instance.config.globalExchange
@@ -980,7 +978,7 @@ describe('positive integration tests', () => {
         const message = { event: 'a.b', name: 'bunnybus' };
 
         before(async () => {
-            await instance._autoConnectChannel();
+            await instance.connect();
             await instance.deleteExchange.bind(
                 instance,
                 instance.config.globalExchange
@@ -995,7 +993,7 @@ describe('positive integration tests', () => {
         });
 
         after(async () => {
-            await instance._autoConnectChannel();
+            await instance.connect();
             await instance.deleteExchange.bind(
                 instance,
                 instance.config.globalExchange
@@ -1035,7 +1033,7 @@ describe('positive integration tests', () => {
         const patterns = ['a'];
 
         before(async () => {
-            await instance._autoConnectChannel();
+            await instance.connect();
             await instance.createExchange.bind(
                 instance,
                 instance.config.globalExchange,
@@ -1054,7 +1052,7 @@ describe('positive integration tests', () => {
         });
 
         after(async () => {
-            await instance._autoConnectChannel();
+            await instance.connect();
             await instance.deleteExchange.bind(
                 instance,
                 instance.config.globalExchange
@@ -1085,7 +1083,7 @@ describe('positive integration tests', () => {
         });
 
         before(async () => {
-            await instance._autoConnectChannel();
+            await instance.connect();
             await instance.createExchange.bind(
                 instance,
                 instance.config.globalExchange,
@@ -1105,7 +1103,7 @@ describe('positive integration tests', () => {
         });
 
         after(async () => {
-            await instance._autoConnectChannel();
+            await instance.connect();
             await instance.deleteExchange.bind(
                 instance,
                 instance.config.globalExchange
@@ -1131,7 +1129,7 @@ describe('positive integration tests', () => {
             };
             let transactionId = null;
             let createdAt = null;
-            
+
             await instance.publish.bind(instance, message, publishOptions)();
             const payload1 = await instance.get.bind(instance, queueName)();
             transactionId = payload1.properties.headers.transactionId;
@@ -1170,7 +1168,7 @@ describe('positive integration tests', () => {
         });
 
         before(async () => {
-            await instance._autoConnectChannel();
+            await instance.connect();
             await instance.createExchange.bind(
                 instance,
                 instance.config.globalExchange,
@@ -1191,7 +1189,7 @@ describe('positive integration tests', () => {
         });
 
         after(async () => {
-            await instance._autoConnectChannel();
+            await instance.connect();
             await instance.deleteExchange.bind(
                 instance,
                 instance.config.globalExchange
