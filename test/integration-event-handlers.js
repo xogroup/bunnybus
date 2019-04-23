@@ -33,7 +33,6 @@ describe('positive integration tests - event handlers', () => {
                     requeue
                 ) => {}
             };
-
             await instance.subscribe(queueName, handlers);
         });
 
@@ -57,7 +56,6 @@ describe('positive integration tests - event handlers', () => {
                     expect(queue).to.be.equal(queueName);
                     resolve();
                 });
-
                 await instance.subscriptions.block(queueName);
             });
         });
@@ -75,7 +73,6 @@ describe('positive integration tests - event handlers', () => {
                     requeue
                 ) => {}
             };
-
             instance.subscriptions.create(queueName, null, handlers);
             instance.subscriptions._blockQueues.add(queueName);
         });
@@ -106,7 +103,6 @@ describe('positive integration tests - event handlers', () => {
                     expect(queue).to.be.equal(queueName);
                     resolve();
                 });
-
                 instance.subscriptions.unblock(queueName);
             });
         });

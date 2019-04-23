@@ -38,7 +38,6 @@ describe('positive integration tests - events', () => {
                     expect(sentMessage).to.be.equal(message);
                     resolve();
                 });
-
                 await instance.publish(message);
             });
         });
@@ -78,12 +77,10 @@ describe('positive integration tests - events', () => {
                         requeue
                     ) => {}
                 };
-
                 instance.once(BunnyBus.Events.SUBSCRIBED, (queue) => {
                     expect(queue).to.be.equal(queueName);
                     resolve();
                 });
-
                 await instance.subscribe(queueName, handlers);
             });
         });
@@ -101,7 +98,6 @@ describe('positive integration tests - events', () => {
                     requeue
                 ) => {}
             };
-
             await instance.subscribe(queueName, handlers);
         });
 
@@ -111,7 +107,6 @@ describe('positive integration tests - events', () => {
                     expect(queue).to.be.equal(queueName);
                     resolve();
                 });
-
                 await instance.unsubscribe(queueName);
             });
         });

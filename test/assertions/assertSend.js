@@ -21,35 +21,27 @@ const assertSend = async ({
 
     await instance.send.bind(instance, message, queueName, options)();
     const payload = await instance.get.bind(instance, queueName, null)();
+    const {
+        content,
+        properties: { headers }
+    } = payload;
 
-    const sentMessage = JSON.parse(payload.content.toString());
+    const sentMessage = JSON.parse(content.toString());
     expect(sentMessage).to.be.equal(message);
-    expect(payload.properties.headers.transactionId).to.be.string();
-    expect(payload.properties.headers.createdAt).to.exist();
-    expect(payload.properties.headers.bunnyBus).to.exist();
-    expect(payload.properties.headers.bunnyBus).to.be.equal(Pkg.version);
+    expect(headers.transactionId).to.be.string();
+    expect(headers.createdAt).to.exist();
+    expect(headers.bunnyBus)
+        .to.exist()
+        .and.be.equal(Pkg.version);
 
-    if (source) {
-        expect(payload.properties.headers.source).to.be.string();
-    }
+    source &&
+        expect(headers.source)
+            .to.be.string()
+            .and.to.be.equal(source);
 
-    if (transactionId) {
-        expect(payload.properties.headers.transactionId).to.be.equal(
-            transactionId
-        );
-    }
-
-    if (source) {
-        expect(payload.properties.headers.source).to.be.equal(source);
-    }
-
-    if (routeKey) {
-        expect(payload.properties.headers.routeKey).to.be.equal(routeKey);
-    }
-
-    if (message.event) {
-        expect(payload.properties.headers.routeKey).to.be.equal(message.event);
-    }
+    transactionId && expect(headers.transactionId).to.be.equal(transactionId);
+    routeKey && expect(headers.routeKey).to.be.equal(routeKey);
+    message.event && expect(headers.routeKey).to.be.equal(message.event);
 
     await instance.channel.ack(payload);
 };

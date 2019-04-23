@@ -187,7 +187,6 @@ describe('positive integration tests', () => {
                 type: 'some_type',
                 appId: 'test_app'
             };
-
             await Assertions.assertSend({
                 instance,
                 message,
@@ -278,7 +277,6 @@ describe('positive integration tests', () => {
                 'topic'
             )();
             await instance.createQueue.bind(instance, queueName)();
-
             await Promise.all(
                 patterns.map(
                     async (item) =>
@@ -329,7 +327,6 @@ describe('positive integration tests', () => {
                 type: 'some_type',
                 appId: 'test_app'
             };
-
             await Assertions.assertPublish({
                 instance,
                 message,
@@ -465,7 +462,6 @@ describe('positive integration tests', () => {
                         resolve();
                     }
                 };
-
                 await instance.subscribe.bind(instance, queueName, handlers)();
                 await instance.publish.bind(instance, messageObject)();
             });
@@ -486,7 +482,6 @@ describe('positive integration tests', () => {
                         resolve();
                     }
                 };
-
                 await instance.subscribe.bind(
                     instance,
                     queueName,
@@ -506,7 +501,6 @@ describe('positive integration tests', () => {
                         resolve();
                     }
                 };
-
                 await instance.subscribe.bind(instance, queueName, handlers)();
                 await instance.publish.bind(
                     instance,
@@ -531,7 +525,6 @@ describe('positive integration tests', () => {
                         resolve();
                     }
                 };
-
                 await instance.subscribe.bind(
                     instance,
                     queueName,
@@ -555,7 +548,6 @@ describe('positive integration tests', () => {
                         resolve();
                     }
                 };
-
                 await instance.subscribe.bind(instance, queueName, handlers)();
                 await instance.publish.bind(
                     instance,
@@ -580,7 +572,6 @@ describe('positive integration tests', () => {
                         resolve();
                     }
                 };
-
                 await instance.subscribe.bind(
                     instance,
                     queueName,
@@ -618,7 +609,6 @@ describe('positive integration tests', () => {
                         resolve();
                     }
                 };
-
                 await instance.subscribe.bind(instance, queueName, handlers)();
                 await instance.publish.bind(instance, messageObject)();
             });
@@ -645,7 +635,6 @@ describe('positive integration tests', () => {
                         resolve();
                     }
                 };
-
                 await instance.subscribe.bind(instance, queueName, handlers)();
                 await instance.publish.bind(
                     instance,
@@ -679,10 +668,8 @@ describe('positive integration tests', () => {
                             resolve();
                         }
                     };
-
                     const maxRetryCount = 3;
                     let retryCount = 0;
-
                     await instance.subscribe.bind(
                         instance,
                         queueName,
@@ -720,10 +707,8 @@ describe('positive integration tests', () => {
                             resolve();
                         }
                     };
-
                     const maxRetryCount = 3;
                     let retryCount = 0;
-
                     await instance.subscribe.bind(
                         instance,
                         queueName,
@@ -763,7 +748,6 @@ describe('positive integration tests', () => {
                         createAt: new Date().toISOString()
                     }
                 };
-
                 instance.once(BunnyBus.Events.LOG_WARN, (message) => {
                     expect(message).to.be.equal(
                         'message not of BunnyBus origin'
@@ -844,7 +828,6 @@ describe('positive integration tests', () => {
                         createAt: new Date().toISOString()
                     }
                 };
-
                 await instance.subscribe.bind(instance, queueName, handlers, {
                     validatePublisher
                 })();
@@ -882,7 +865,6 @@ describe('positive integration tests', () => {
                         bunnyBus: version
                     }
                 };
-
                 await instance.subscribe.bind(instance, queueName, handlers, {
                     validateVersion
                 })();
@@ -938,7 +920,6 @@ describe('positive integration tests', () => {
                         resolve();
                     }
                 };
-
                 await instance.subscribe.bind(instance, queueName, handlers)();
                 await instance.publish.bind(instance, routableObject)();
             });
@@ -987,7 +968,6 @@ describe('positive integration tests', () => {
                         resolve();
                     }
                 };
-
                 await instance.subscribe.bind(instance, queueName, handlers)();
                 await instance.publish.bind(instance, routableObject)();
             });
@@ -1042,7 +1022,6 @@ describe('positive integration tests', () => {
                         }
                     }
                 };
-
                 await instance.subscribe.bind(instance, queueName1, handlers)();
                 await instance.subscribe.bind(instance, queueName2, handlers)();
                 await instance.publish.bind(instance, message)();
@@ -1063,7 +1042,6 @@ describe('positive integration tests', () => {
                 'topic'
             )();
             await instance.createQueue.bind(instance, queueName)();
-
             await Promise.all(
                 patterns.map((pattern) =>
                     instance.channel.bindQueue(
@@ -1114,7 +1092,6 @@ describe('positive integration tests', () => {
                 'topic'
             )();
             await instance.createQueue.bind(instance, queueName)();
-
             await Promise.all(
                 patterns.map(
                     async (item) =>
@@ -1144,7 +1121,6 @@ describe('positive integration tests', () => {
                 instance,
                 queueName
             )();
-
             expect(result.queue).to.be.equal(queueName);
             expect(result.messageCount).to.be.equal(1);
         });
@@ -1153,10 +1129,9 @@ describe('positive integration tests', () => {
             const publishOptions = {
                 source: 'test'
             };
-
             let transactionId = null;
             let createdAt = null;
-
+            
             await instance.publish.bind(instance, message, publishOptions)();
             const payload1 = await instance.get.bind(instance, queueName)();
             transactionId = payload1.properties.headers.transactionId;

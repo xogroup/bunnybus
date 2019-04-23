@@ -28,30 +28,27 @@ const assertPublish = async ({
         return;
     }
 
-    const subscribedMessage = JSON.parse(payload.content.toString());
+    const {
+        content,
+        properties: { headers }
+    } = payload;
+    const subscribedMessage = JSON.parse(content.toString());
     expect(subscribedMessage).to.be.equal(message);
-    expect(payload.properties.headers.transactionId).to.be.string();
-    expect(payload.properties.headers.createdAt).to.exist();
-    expect(payload.properties.headers.bunnyBus).to.exist();
-    expect(payload.properties.headers.bunnyBus).to.be.equal(Pkg.version);
+    expect(headers.transactionId).to.be.string();
+    expect(headers.createdAt).to.exist();
+    expect(headers.bunnyBus)
+        .to.exist()
+        .and.be.equal(Pkg.version);
 
-    if (routeKey) {
-        expect(payload.properties.headers.routeKey).to.be.equal(routeKey);
-    }
-    else {
-        expect(payload.properties.headers.routeKey).to.be.equal(message.event);
-    }
+    routeKey && expect(headers.routeKey).to.be.equal(routeKey);
+    !routeKey && expect(headers.routeKey).to.be.equal(message.event);
 
-    if (source) {
-        expect(payload.properties.headers.source).to.be.string();
-        expect(payload.properties.headers.source).to.be.equal(source);
-    }
+    source &&
+        expect(headers.source)
+            .to.be.string()
+            .and.be.equal(source);
 
-    if (transactionId) {
-        expect(payload.properties.headers.transactionId).to.be.equal(
-            transactionId
-        );
-    }
+    transactionId && expect(headers.transactionId).to.be.equal(transactionId);
 
     await instance.channel.ack(payload);
 };

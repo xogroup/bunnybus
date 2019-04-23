@@ -5,7 +5,6 @@ const { expect } = require('@hapi/code');
 
 const assertValidateLoggerContract = (logger, expectation) => {
     const result = Helpers.validateLoggerContract(logger);
-
     expect(result).to.be.equal(expectation);
 };
 

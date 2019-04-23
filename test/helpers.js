@@ -23,22 +23,20 @@ describe('helpers', () => {
     describe('createTransactionId', () => {
         it('should create an 40 character long alphanumeric token', async () => {
             const result = await Helpers.createTransactionId();
-            expect(result).to.be.a.string();
-            expect(result).to.have.length(40);
-            expect(result).to.match(/^([\d\w]*)$/);
+            expect(result)
+                .to.be.a.string()
+                .and.to.have.length(40)
+                .and.to.match(/^([\d\w]*)$/);
         });
 
         it('should create only unique tokens', async () => {
             const iterations = 1000;
-
             const tokens = await Promise.all(
                 new Array(iterations)
                     .fill('')
                     .map(async () => await Helpers.createTransactionId())
             );
-
             const hash = {};
-
             for (let i = 0; i < iterations; ++i) {
                 hash[tokens[i]] = (hash[tokens[i]] || 0) + 1;
                 expect(hash[tokens[i]]).to.be.equal(1);
@@ -49,13 +47,12 @@ describe('helpers', () => {
     describe('getPackageData', () => {
         it('should return an identifier with {name, package} filled', () => {
             const result = Helpers.getPackageData();
-
-            const semverMajor = Pkg.version.split('.', 1);
-
             expect(result).to.exist();
-            expect(result.name).to.be.equal(Pkg.name);
-            expect(result.version).to.be.equal(Pkg.version);
-            expect(result.semverMatch).to.be.equal(semverMajor + '.x.x');
+            const semverMajor = Pkg.version.split('.', 1);
+            const { name, version, semverMatch } = result;
+            expect(name).to.be.equal(Pkg.name);
+            expect(version).to.be.equal(Pkg.version);
+            expect(semverMatch).to.be.equal(semverMajor + '.x.x');
         });
     });
 
@@ -69,9 +66,7 @@ describe('helpers', () => {
             };
 
             Helpers.cleanObject(obj);
-
             const cleanedKeys = Object.keys(obj);
-
             expect(cleanedKeys.find((key) => key === 'b')).to.be.undefined();
             expect(cleanedKeys.find((key) => key === 'c')).to.be.undefined();
         });
@@ -85,11 +80,8 @@ describe('helpers', () => {
                     a4: 'value2'
                 }
             };
-
             Helpers.cleanObject(obj);
-
             const cleanedKeys = Object.keys(obj.a);
-
             expect(cleanedKeys.find((key) => key === 'a2')).to.be.undefined();
             expect(cleanedKeys.find((key) => key === 'a3')).to.be.undefined();
         });
@@ -101,11 +93,8 @@ describe('helpers', () => {
                 c: false,
                 d: undefined
             };
-
             Helpers.cleanObject(obj);
-
             const cleanedKeys = Object.keys(obj);
-
             expect(cleanedKeys.find((key) => key === 'd')).to.be.undefined();
         });
     });
@@ -113,7 +102,6 @@ describe('helpers', () => {
     describe('convertToBuffer', () => {
         it('should convert a string to a Buffer', async () => {
             const data = 'hello';
-
             await Assertions.assertConvertToBuffer(data);
         });
 
@@ -126,19 +114,16 @@ describe('helpers', () => {
                     c2: 'sub2'
                 }
             };
-
             await Assertions.assertConvertToBuffer(data);
         });
 
         it('should convert an array to a Buffer', async () => {
             const data = ['a', 'b', 1, 2];
-
             await Assertions.assertConvertToBuffer(data);
         });
 
         it('should not alter a Buffer input', async () => {
             const data = Buffer.from('hello');
-
             await Assertions.assertConvertToBuffer(data);
         });
     });
@@ -146,19 +131,16 @@ describe('helpers', () => {
     describe('isMajorCompatible', () => {
         it('should return true when major matches', () => {
             const result = Helpers.isMajorCompatible('1.2.3', '1.x.x');
-
             expect(result).to.be.true();
         });
 
         it('should return false when major does not match', () => {
             const result = Helpers.isMajorCompatible('2.1.3', '1.x.x');
-
             expect(result).to.be.false();
         });
 
         it('should return true when using package defaults', () => {
             const result = Helpers.isMajorCompatible(Pkg.version);
-
             expect(result).to.be.true();
         });
     });
@@ -171,22 +153,18 @@ describe('helpers', () => {
                 }
             }
         };
-
         const payloadFields = {
             fields: {
                 routingKey: 'a.c'
             }
         };
-
         const payload = {
             properties: payloadHeaders.properties,
-            fieldds: payloadFields.fields
+            fields: payloadFields.fields
         };
-
         const message = {
             event: 'a.d'
         };
-
         const options = {
             routeKey: 'a.e'
         };
@@ -197,7 +175,6 @@ describe('helpers', () => {
                 options,
                 message
             });
-
             expect(result).to.be.equal(payload.properties.headers.routeKey);
         });
 
@@ -207,13 +184,11 @@ describe('helpers', () => {
                 options,
                 message
             });
-
             expect(result).to.be.equal(options.routeKey);
         });
 
         it('should return from options.routeKey when payload is empty', () => {
             const result = Helpers.reduceRouteKey({ options, message });
-
             expect(result).to.be.equal(options.routeKey);
         });
 
@@ -223,7 +198,6 @@ describe('helpers', () => {
                 options,
                 message
             });
-
             expect(result).to.be.equal(options.routeKey);
         });
 
@@ -232,7 +206,6 @@ describe('helpers', () => {
                 payload: payloadFields,
                 message
             });
-
             expect(result).to.be.equal(message.event);
         });
 
@@ -241,25 +214,21 @@ describe('helpers', () => {
                 payload: payloadFields,
                 message
             });
-
             expect(result).to.be.equal(message.event);
         });
 
         it('should return from payload.fields.routingKey when options is empty and message is empty', () => {
             const result = Helpers.reduceRouteKey({ payload: payloadFields });
-
             expect(result).to.be.equal(payloadFields.fields.routingKey);
         });
 
         it('should return from payload.fields.routingKey when options is null and message is null', () => {
             const result = Helpers.reduceRouteKey({ payload: payloadFields });
-
             expect(result).to.be.equal(payloadFields.fields.routingKey);
         });
 
         it('should return undefined when all input is falsy', () => {
             const result = Helpers.reduceRouteKey();
-
             expect(result).to.be.undefined();
         });
     });
@@ -503,11 +472,10 @@ describe('helpers', () => {
                 'abc.*.hello.world': () => {},
                 'abc.xyz': () => {}
             };
-
             const result = Helpers.handlerMatcher(handlers, 'world.hello');
-
-            expect(result).to.be.an.array();
-            expect(result).to.have.length(0);
+            expect(result)
+                .to.be.an.array()
+                .and.to.have.length(0);
         });
 
         it('should match a single handler', () => {
@@ -515,11 +483,10 @@ describe('helpers', () => {
                 'hello.world': () => {},
                 'world.hello': () => {}
             };
-
             const result = Helpers.handlerMatcher(handlers, 'world.hello');
-
-            expect(result).to.be.an.array();
-            expect(result).to.have.length(1);
+            expect(result)
+                .to.be.an.array()
+                .and.to.have.length(1);
         });
 
         it('should match multiple handlers', () => {
@@ -528,45 +495,10 @@ describe('helpers', () => {
                 'abc.*.xyz': () => {},
                 'abc.xyz': () => {}
             };
-
             const result = Helpers.handlerMatcher(handlers, 'abc.hello.xyz');
-
-            expect(result).to.be.an.array();
-            expect(result).to.have.length(2);
+            expect(result)
+                .to.be.an.array()
+                .and.to.have.length(2);
         });
     });
-
-    // describe.only('loop', () => {
-    //     it('should loop until condition', async () => {
-    //         let retry = 0;
-    //         const max = 5;
-
-    //         const condition = () => true;
-    //         const exec = async () => {
-    //             try {
-    //                 console.log(`Retry # ${retry}`);
-    //                 throw new Error();
-    //             }
-    //             catch (error) {
-    //                 if (++retry >= max) {
-    //                     throw new Error('ay si');
-    //                 }
-    //             }
-    //         };
-
-    //         const spyExec = Sinon.spy(exec);
-
-    //         try {
-
-    //             await Helpers.loop({ condition, exec });
-    //         }
-    //         catch (error) {
-    //             console.log(error);
-    //         }
-
-    //         console.log('ay no');
-
-    //         expect(spyExec.called).to.be.true();
-    //     });
-    // });
 });
