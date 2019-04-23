@@ -4,7 +4,7 @@ const { expect } = require('@hapi/code');
 const Sinon = require('sinon');
 
 const {
-    after,
+    afterEach,
     before,
     beforeEach,
     describe,
@@ -22,7 +22,14 @@ describe('automatic recovery cases', () => {
 
     describe('channel', () => {
         beforeEach(async () => {
+            //reset config
+            instance.config = BunnyBus.Defaults.SERVER_CONFIGURATION;
             await instance.connect();
+        });
+
+        afterEach(async () => {
+            //reset config
+            instance.config = BunnyBus.Defaults.SERVER_CONFIGURATION;
         });
 
         it('should correctly recover consumers', async () => {
@@ -49,18 +56,13 @@ describe('automatic recovery cases', () => {
             { timeout: 5000, skip: true },
             async () => {
                 await new Promise(async (resolve) => {
-                    const stub = Sinon.stub(instance, '_createChannel').rejects(
-                        Error('ay no')
-                    );
-
-                    instance.once(BunnyBus.Events.FATAL, (error) => {
-                        expect(stub.calledThrice).to.be.true();
-                        stub.reset();
-                        Sinon.reset();
+                    instance.once(BunnyBus.Events.FATAL, () => {
                         resolve();
                     });
 
-                    //force reconnect
+                    //invalid config
+                    instance.config = { server: 'fake' };
+                    //force close
                     instance.channel.emit('close');
                 });
             }
@@ -78,7 +80,7 @@ describe('automatic recovery cases', () => {
                 { timeout: 5000 },
                 async () => {
                     await new Promise((resolve) => {
-                        instance.once(BunnyBus.Events.RECOVERING, resolve);
+                        instance.once(BunnyBus.Events.RECOVERED, resolve);
                         instance.connection.emit('close');
                     });
                 }
@@ -89,7 +91,7 @@ describe('automatic recovery cases', () => {
                 { timeout: 5000 },
                 async () => {
                     await new Promise((resolve) => {
-                        instance.once(BunnyBus.Events.RECOVERING, resolve);
+                        instance.once(BunnyBus.Events.RECOVERED, resolve);
                         instance.channel.emit('close');
                     });
                 }
@@ -98,7 +100,7 @@ describe('automatic recovery cases', () => {
 
         describe('recovered', () => {
             beforeEach(async () => {
-                await instance.connect;
+                await instance.connect();
             });
 
             it(
@@ -151,32 +153,16 @@ describe('automatic recovery cases', () => {
             await instance._closeConnection();
         });
 
-        it(
-            'should pass when server host configuration value is not valid',
-            { timeout: 5000, skip: true },
-            async () => {
-                await new Promise(async (resolve) => {
-                    const message = { event: 'eb', name: 'bunnybus' };
+        it('should fail when server host configuration value is not valid', async () => {
+            const message = { event: 'eb', name: 'bunnybus' };
+            //inject bad config
+            instance.config = { server: 'fake' };
+            //this should fail
+            await expect(instance.publish(message)).to.reject();
 
-                    instance.once(BunnyBus.Events.FATAL, async () => {
-                        //reset config
-                        instance.config = {
-                            server:
-                                BunnyBus.Defaults.SERVER_CONFIGURATION.server
-                        };
-
-                        //this should pass
-                        await instance.publish(message);
-
-                        resolve();
-                    });
-
-                    //inject bad config
-                    instance.config = { server: 'fake' };
-                    //this should fail
-                    await expect(instance.publish(message)).to.reject();
-                });
-            }
-        );
+            //restore config
+            instance.config = BunnyBus.Defaults.SERVER_CONFIGURATION;
+            await instance.publish(message);
+        });
     });
 });
