@@ -468,7 +468,7 @@ Send a message directly to a specified queue.
 
 ##### note(s)
 
-When `message.event` or `options.routeKey` values are not provided for `routeKey` addressing.  The message will be lost when [`subcribe()`](#subscribequeue-handlers-options-callback) handles the queue because messages without a `routeKey` are discarded.
+When `message.event` or `options.routeKey` values are not provided for `routeKey` addressing.  The message will be lost when [`subcribe()`](#subscribequeue-handlers-options) handles the queue because messages without a `routeKey` are discarded.
 
 ##### parameter(s)
 
@@ -721,7 +721,7 @@ bunnyBus.on(BunnyBus.Events.LOG_FATAL, pino.fatal);
 
 #### event key
 
-* `bunnybus.published` - emitted when [`publish()`](#publishmessage-options-callback) is successfully called.
+* `bunnybus.published` - emitted when [`publish()`](#publishmessage-options) is successfully called.
 
 #### handler parameter(s)
 
@@ -738,7 +738,7 @@ bunnyBus.on(BunnyBus.Events.PUBLISHED, (message) => {});
 
 #### event key
 
-* `bunnybus.subscribed` - emitted when [`subcribe()`](#subscribequeue-handlers-options-callback) is successfully called.
+* `bunnybus.subscribed` - emitted when [`subcribe()`](#subscribequeue-handlers-options) is successfully called.
 
 #### handler parameter(s)
 
@@ -755,7 +755,7 @@ bunnyBus.on(BunnyBus.Events.SUBSCRIBED, (queue) => {});
 
 #### event key
 
-* `bunnybus.unsubscribed` - emitted when [`unsubcribe()`](#unsubscribequeue-callback) is successfully called.
+* `bunnybus.unsubscribed` - emitted when [`unsubcribe()`](#unsubscribequeue) is successfully called.
 
 #### handler parameter(s)
 
@@ -881,7 +881,7 @@ bunnyBus.on(BunnyBus.Events.AMQP_CHANNEL_CLOSE, (err) => {});
 
 ## `SubscriptionManager`
 
-This class manages the state for all subscriptions registered with queues.  A subscription is an association between a queue and handlers associated with it.  A subscription is created when [`subscribe()`](#subscribequeue-handlers-options-callback) is invoked succesfully. The `SubscriptionManager` is also an `EventEmitter` so when actions like `create`, `clear` and `remove` are called, events are emitted so `BunnyBus` can apply the corresponding behavior to meet the desired state.
+This class manages the state for all subscriptions registered with queues.  A subscription is an association between a queue and handlers associated with it.  A subscription is created when [`subscribe()`](#subscribequeue-handlers-options) is invoked succesfully. The `SubscriptionManager` is also an `EventEmitter` so when actions like `create`, `clear` and `remove` are called, events are emitted so `BunnyBus` can apply the corresponding behavior to meet the desired state.
 
 ### `contains(queue, [withConsumerTag])`
 
@@ -902,8 +902,8 @@ bunnybus.subscriptions.contains('queue1');
 Creates a subscription.
 
 * `queue` - the name of the queue. *[string]* **Required**
-* `handlers` - handlers parameter passed through the [`subscribe()`](#subscribequeue-handlers-options-callback) method.  *[Object]* **Required**
-* `options` - options parameter passed through the [`subscribe()`](#subscribequeue-handlers-options-callback) method.  *[Object]* **Optional**
+* `handlers` - handlers parameter passed through the [`subscribe()`](#subscribequeue-handlers-options) method.  *[Object]* **Required**
+* `options` - options parameter passed through the [`subscribe()`](#subscribequeue-handlers-options) method.  *[Object]* **Optional**
 
 ```javascript
 const BunnyBus = require('bunnybus');

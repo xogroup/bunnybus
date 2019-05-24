@@ -24,24 +24,20 @@ npm i bunnybus
 ```
 
 ## Usage
-
-### Async / Await
 ```javascript
 const BunnyBus = require('bunnybus');
 const bunnyBus = new BunnyBus();
 
 //create a subscription
 await bunnyBus.subscribe('queue1', { 
-    'create-event' : (message, ack) => {
+    'create-event' : async (message, ack) => {
         console.log(message.comment);
-        ack();
+        await ack();
     }});
 
 
 //publish to the above subscription
 await bunnyBus.publish({ event : 'create-event', comment : 'hello world!' });
-
-);
 ```
 
 ## Documentation
