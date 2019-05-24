@@ -31,14 +31,14 @@
     "url": "https://github.com/xogroup/bunnybus"
   },
   "dependencies": {
-    "amqplib": "^0.5.1"
+    "amqplib": "0.5.x"
   },
   "devDependencies": {
-    "@hapi/code": "^5.3.1",
-    "@hapi/lab": "^18.1.1",
-    "doctoc": "^1.2.0",
-    "eslint-config-hapi": "^12.0.0",
-    "eslint-plugin-hapi": "^4.0.0",
-    "sinon": "^7.3.2"
+    "@hapi/code": "5.x.x",
+    "@hapi/lab": "18.x.x",
+    "doctoc": "1.x.x",
+    "eslint-config-hapi": "12.x.x",
+    "eslint-plugin-hapi": "4.x.x",
+    "sinon": "7.x.x"
   }
 }
