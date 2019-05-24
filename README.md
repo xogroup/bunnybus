@@ -28,6 +28,9 @@ npm i bunnybus
 const BunnyBus = require('bunnybus');
 const bunnyBus = new BunnyBus();
 
+//open connection
+await bunnyBus.connect();
+
 //create a subscription
 await bunnyBus.subscribe('queue1', { 
     'create-event' : async (message, ack) => {

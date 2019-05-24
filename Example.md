@@ -4,13 +4,12 @@
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
 
-- [Examples](#examples)
-  - [General usage of publish and subscribe](#general-usage-of-publish-and-subscribe)
-  - [Publish and subscribe using RabbitMQ topic exchange wildcards](#publish-and-subscribe-using-rabbitmq-topic-exchange-wildcards)
-  - [Integrating with the `SubscriptionManager`](#integrating-with-the-subscriptionmanager)
-    - [Fire and Forget](#fire-and-forget)
-    - [Fire and Wait for Resolution](#fire-and-wait-for-resolution)
-  - [Logging with `BunnyBus` Logging events](#logging-with-bunnybus-logging-events)
+- [General usage of publish and subscribe](#general-usage-of-publish-and-subscribe)
+- [Publish and subscribe using RabbitMQ topic exchange wildcards](#publish-and-subscribe-using-rabbitmq-topic-exchange-wildcards)
+- [Integrating with the `SubscriptionManager`](#integrating-with-the-subscriptionmanager)
+  - [Fire and Forget](#fire-and-forget)
+  - [Fire and Wait for Resolution](#fire-and-wait-for-resolution)
+- [Logging with `BunnyBus` Logging events](#logging-with-bunnybus-logging-events)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
