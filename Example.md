@@ -1,17 +1,16 @@
 # Examples
 
-Examples are based on usage of Promises.
-
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
 
-- [General usage of publish and subscribe](#general-usage-of-publish-and-subscribe)
-- [Publish and subscribe using RabbitMQ topic exchange wildcards](#publish-and-subscribe-using-rabbitmq-topic-exchange-wildcards)
-- [Integrating with the `SubscriptionManager`](#integrating-with-the-subscriptionmanager)
-  - [Fire and Forget](#fire-and-forget)
-  - [Fire and Wait for Resolution](#fire-and-wait-for-resolution)
-- [Logging with `BunnyBus` Logging events](#logging-with-bunnybus-logging-events)
+- [Examples](#examples)
+  - [General usage of publish and subscribe](#general-usage-of-publish-and-subscribe)
+  - [Publish and subscribe using RabbitMQ topic exchange wildcards](#publish-and-subscribe-using-rabbitmq-topic-exchange-wildcards)
+  - [Integrating with the `SubscriptionManager`](#integrating-with-the-subscriptionmanager)
+    - [Fire and Forget](#fire-and-forget)
+    - [Fire and Wait for Resolution](#fire-and-wait-for-resolution)
+  - [Logging with `BunnyBus` Logging events](#logging-with-bunnybus-logging-events)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -28,28 +27,26 @@ const logger = require('pino');
 bunnyBus.logger = logger;
 
 const handlersForQueue1 = {
-    'message_created' : (message, ack, reject, requeue) => {
-        
+    'message_created' : async (message, ack, reject, requeue) => {
         //write to elasticsearch
-        ack();
+        await ack();
     }
 };
 
 const handlersForQueue2 = {
-     'message_deleted' : (message, ack, reject, requeue) => {
-        
+     'message_deleted' : async (message, ack, reject, requeue) => {
         //delete from elastic search
-        ack();
-    }   
-}
+        await ack();
+    }
+};
 
-return Promise
-    .resolve()
-    .then(() => subscribe('queue1', handlersForQueue1))
-    .then(() => subscribe('queue2', handlersForQueue2))
-    .catch((err) =>  {
-        logger.error('failed to subscribe', err);
-    });
+try {
+    await subscribe('queue1', handlersForQueue1);
+    await subscribe('queue2', handlersForQueue2);
+}
+catch (error) {
+    logger.error('failed to subscribe', error);
+}
 ```
 
 With the above handlers registered, let's publish some events to the bus.
@@ -62,24 +59,21 @@ const logger = require('pino');
 
 bunnyBus.logger = logger;
 
-return Promise
-    .resolve()
-    .then(()) => {
-        return bunnyBus.publish({
-            id : 23,
-            event : 'message-created',
-            body : 'hello world'
-        });
-    })
-    .then(()) => {
-        return bunnyBus.publish({
-            id : 23,
-            event : 'message-deleted'
-        });
-    })
-    .catch((err) => {
-        logger.error('failed to publish', err);
-    })
+try {
+    await bunnyBus.publish({
+        id : 23,
+        event : 'message-created',
+        body : 'hello world'
+    });
+
+    await bunnyBus.publish({
+        id : 23,
+        event : 'message-deleted'
+    });
+}
+catch(error) {
+    logger.error('failed to publish', error);
+}
 ```
 
 ## Publish and subscribe using RabbitMQ topic exchange wildcards
@@ -95,24 +89,22 @@ const logger = require('pino');
 bunnyBus.logger = logger;
 
 const handlers = {
-    'email.*' : (message, ack, reject, requeue) => {
-
+    'email.*': async (message, ack, reject, requeue) => {
         //do work
-        ack();
+        await ack();
     },
-    'voicemail.#' : (message, ack, reject, requeue) => {
-
+    'voicemail.#': async (message, ack, reject, requeue) => {
         //do work
-        ack();
+        await ack();
     }
 };
 
-return Promise
-    .resolve()
-    .then(() => subscribe('communictionQueue', handlers))
-    .catch((err) =>  {
-        logger.error('failed to subscribe', err);
-    });
+try {
+    await subscribe('communictionQueue', handlers);
+}
+catch(error){
+    logger.error('failed to subscribe', error);
+}
 ```
 
 With the above handlers registered, let's publish some events to the bus.
@@ -125,36 +117,32 @@ const logger = require('pino');
 
 bunnyBus.logger = logger;
 
-return Promise
-    .resolve()
-    .then(()) => {
-        // this will make it to the queue and subscribed handler
-        return bunnyBus.publish({
-            id : 1001,
-            event : 'email.created',
-            body : 'hello world'
-        });
-    })
-    .then(()) => {
-        // this will not make it to the queue because the wildcard
-        // assigned by the subscribing handler will not catch this route
-        return bunnyBus.publish({
-            id : 1002,
-            event : 'email.created.highpriority',
-            body : 'hello world on fire'
-        });
-    })
-    .then(()) => {
-        // this will make it to the queue and subscribed handler
-        return bunnyBus.publish({
-            id : 9001,
-            event : 'voicemail.crated.lowpriority'
-            body : 'translation was world hello'
-        });
-    })
-    .catch((err) => {
-        logger.error('failed to publish', err);
-    })
+try {
+    // this will make it to the queue and subscribed handler
+    await bunnyBus.publish({
+        id : 1001,
+        event : 'email.created',
+        body : 'hello world'
+    });
+
+    // this will not make it to the queue because the wildcard
+    // assigned by the subscribing handler will not catch this route
+    await bunnyBus.publish({
+        id : 1002,
+        event : 'email.created.highpriority',
+        body : 'hello world on fire'
+    });
+
+    // this will make it to the queue and subscribed handler
+    await bunnyBus.publish({
+        id : 9001,
+        event : 'voicemail.crated.lowpriority'
+        body : 'translation was world hello'
+    });
+}
+catch(error) {
+    logger.error('failed to publish', error);
+}
 ```
 
 ## Integrating with the `SubscriptionManager`
@@ -170,7 +158,6 @@ const BunnyBus = require('bunnybus');
 const bunnyBus = new BunnyBus(config.get('rabbit'));
 
 app.get('/stopSubscription/:queue', function(req, res) => {
-
     bunnyBus.subscriptions.block(req.params.queue);
     res.send('success');
 });
@@ -179,8 +166,7 @@ app.get('/stopSubscription/:queue', function(req, res) => {
 And to unblock the queues
 
 ```javascript
-app.get('/restartSubscription/:queue', function(req, res) => {
-
+app.get('/restartSubscription/:queue', (req, res) => {
     bunnyBus.subscriptions.unblock(req.params.queue);
     res.send('success');
 });
@@ -194,10 +180,8 @@ const config = require('ez-config');
 const BunnyBus = require('bunnybus');
 const bunnyBus = new BunnyBus(config.get('rabbit'));
 
-app.get('/stopSubscription/:queue', function(req, res) => {
-
-    bunnyBus.once(BunnyBus.SUBSCRIBED_EVENT, (queue) => {
-
+app.get('/stopSubscription/:queue', (req, res) => {
+    bunnyBus.once(BunnyBus.Events.SUBSCRIBED, (queue) => {
         if (queue === req.params.queue) {
             res.send('success');
         }
@@ -208,10 +192,8 @@ app.get('/stopSubscription/:queue', function(req, res) => {
 And to unblock the queues
 
 ```javascript
-app.get('/restartSubscription/:queue', function(req, res) => {
-
-    bunnyBus.once(BunnyBus.UNSUBSCRIBED_EVENT, (queue) => {
-
+app.get('/restartSubscription/:queue', (req, res) => {
+    bunnyBus.once(BunnyBus.Events.UNSUBSCRIBED, (queue) => {
         if (queue === req.params.queue) {
             res.send('success');
         }
@@ -228,8 +210,7 @@ const app = require('express')();
 const BunnyBus = require('bunnybus');
 const bunnyBus = new BunnyBus();
 
-bunnyBus.on(BunnyBus.LOG_INFO_EVENT, (message) => [
-
+bunnyBus.on(BunnyBus.Events.LOG_INFO, (message) => [
     console.log(message);
 ]);
 ```

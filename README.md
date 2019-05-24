@@ -8,12 +8,15 @@ Currently supports the following queueing frameworks.
 [![npm version](https://badge.fury.io/js/bunnybus.svg)](https://badge.fury.io/js/bunnybus)
 [![Build Status](https://travis-ci.org/xogroup/bunnybus.svg?branch=development)](https://travis-ci.org/xogroup/bunnybus)
 [![Known Vulnerabilities](https://snyk.io/test/github/xogroup/bunnybus/badge.svg)](https://snyk.io/test/github/xogroup/bunnybus)
-[![NSP Status](https://nodesecurity.io/orgs/xo-group/projects/599e335d-8668-4f77-89ea-ebac0d607378/badge)](https://nodesecurity.io/orgs/xo-group/projects/599e335d-8668-4f77-89ea-ebac0d607378)
 
-Lead Maintainer: [Lam Chan](https://github.com/lamchakchan)
+
+Maintainer: [XO Group](https://github.com/xogroup)
 
 ## Introduction
-BunnyBus abstracts away low level queue driver details such as creating a connection, creating a channel, creating bindings, creating subscribing queues and etc.  BunnyBus provides safe defaults for many setups which can also be configured.  The core of BunnyBus implements native node callbacks providing maximum performance.  BunnyBus provides two flavors of API for callbacks and Promise alike.  The BunnyBus CLI can be found [here](https://github.com/xogroup/bunnybus-cli) implementing this core driver.
+BunnyBus abstracts away low level queue driver details such as creating a connection, creating a channel, creating bindings, creating subscribing queues and etc.  BunnyBus provides safe defaults for many setups which can also be configured.
+
+BunnyBus supports async/await and promises for the modern javascript developer.
+
 
 ## Installation
 ```
@@ -36,26 +39,8 @@ await bunnyBus.subscribe('queue1', {
 
 
 //publish to the above subscription
-bunnyBus.publish({ event : 'create-event', comment : 'hello world!' });
+await bunnyBus.publish({ event : 'create-event', comment : 'hello world!' });
 
-);
-```
-
-### With Callbacks
-```javascript
-const BunnyBus = require('bunnybus');
-const bunnyBus = new BunnyBus();
-
-//create a subscription
-bunnyBus.subscribe('queue1', { 
-    'create-event' : (message, ack) => {
-        console.log(message.comment);
-        ack();
-    }}, () => {
-
-    //publish to the above subscription
-    bunnyBus.publish({ event : 'create-event', comment : 'hello world!' });
-    }
 );
 ```
 

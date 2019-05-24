@@ -4,111 +4,112 @@
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
 
-- [BunnyBus](#bunnybus)
-  - [Versioning](#versioning)
-  - [`new BunnyBus(config)`](#new-bunnybusconfig)
-    - [Getters and Setters](#getters-and-setters)
-      - [`config`](#config)
-      - [`subscriptions`](#subscriptions)
-      - [`logger`](#logger)
-      - [`promise`](#promise)
-      - [`connectionString`](#connectionstring)
-      - [`connection`](#connection)
-      - [`hasConnection`](#hasconnection)
-      - [`channel`](#channel)
-      - [`hasChannel`](#haschannel)
-    - [Methods](#methods)
-  - [Public API](#public-api)
-    - [`createExchange(name, type, [options, [callback]])`](#createexchangename-type-options-callback)
-      - [parameter(s)](#parameters)
-    - [`deleteExchange(name, [options, [callback]])`](#deleteexchangename-options-callback)
-      - [parameter(s)](#parameters-1)
-    - [`checkExchange(name, [callback])`](#checkexchangename-callback)
-      - [parameter(s)](#parameters-2)
-    - [`createQueue(name, [options, [callback]])`](#createqueuename-options-callback)
-      - [parameter(s)](#parameters-3)
-    - [`deleteQueue(name, [options, [callback]])`](#deletequeuename-options-callback)
-      - [parameter(s)](#parameters-4)
-    - [`checkQueue(name, [callback])`](#checkqueuename-callback)
-      - [parameter(s)](#parameters-5)
-    - [`publish(message, [options, [callback]])`](#publishmessage-options-callback)
-      - [parameter(s)](#parameters-6)
-    - [`subscribe(queue, handlers, [options, [callback]])`](#subscribequeue-handlers-options-callback)
-      - [parameter(s)](#parameters-7)
-      - [handlers](#handlers)
-      - [`key`](#key)
-      - [`handler`](#handler)
-    - [`unsubscribe(queue, [callback])`](#unsubscribequeue-callback)
-      - [parameter(s)](#parameters-8)
-    - [`send(message, queue, [options, [callback]])`](#sendmessage-queue-options-callback)
-      - [note(s)](#notes)
-      - [parameter(s)](#parameters-9)
-    - [`get(queue, [options, [callback]])`](#getqueue-options-callback)
-      - [parameter(s)](#parameters-10)
-    - [`getAll(queue, handler, [options, [callback]])`](#getallqueue-handler-options-callback)
-      - [parameter(s)](#parameters-11)
-  - [Internal-use Methods](#internal-use-methods)
-    - [`_recoverConnectChannel()`](#_recoverconnectchannel)
-    - [`_createConnection([callback])`](#_createconnectioncallback)
-    - [`_closeConnection([callback])`](#_closeconnectioncallback)
-    - [`_createChannel([callback])`](#_createchannelcallback)
-    - [`_closeChannel([callback])`](#_closechannelcallback)
-- [Events (`EventEmitter`)](#events-eventemitter)
-  - [`BunnyBus.LOG_DEBUG_EVENT`](#bunnybuslog_debug_event)
-    - [event key](#event-key)
-    - [handler parameter(s)](#handler-parameters)
-  - [`BunnyBus.LOG_TRACE_EVENT`](#bunnybuslog_trace_event)
-    - [event key](#event-key-1)
-    - [handler parameter(s)](#handler-parameters-1)
-  - [`BunnyBus.LOG_INFO_EVENT`](#bunnybuslog_info_event)
-    - [event key](#event-key-2)
-    - [handler parameter(s)](#handler-parameters-2)
-  - [`BunnyBus.LOG_WARN_EVENT`](#bunnybuslog_warn_event)
-    - [event key](#event-key-3)
-    - [handler parameter(s)](#handler-parameters-3)
-  - [`BunnyBus.LOG_ERROR_EVENT`](#bunnybuslog_error_event)
-    - [event key](#event-key-4)
-    - [handler parameter(s)](#handler-parameters-4)
-  - [`BunnyBus.LOG_FATAL_EVENT`](#bunnybuslog_fatal_event)
-    - [event key](#event-key-5)
-    - [handler parameter(s)](#handler-parameters-5)
-  - [`BunnyBus.PUBLISHED_EVENT`](#bunnybuspublished_event)
-    - [event key](#event-key-6)
-    - [handler parameter(s)](#handler-parameters-6)
-  - [`BunnyBus.SUBSCRIBED_EVENT`](#bunnybussubscribed_event)
-    - [event key](#event-key-7)
-    - [handler parameter(s)](#handler-parameters-7)
-  - [`BunnyBus.UNSUBSCRIBED_EVENT`](#bunnybusunsubscribed_event)
-    - [event key](#event-key-8)
-    - [handler parameter(s)](#handler-parameters-8)
-  - [`BunnyBus.RECOVERING_EVENT`](#bunnybusrecovering_event)
-    - [event key](#event-key-9)
-  - [`BunnyBus.RECOVERED_EVENT`](#bunnybusrecovered_event)
-    - [event key](#event-key-10)
-  - [`BunnyBus.AMQP_CONNECTION_ERROR_EVENT`](#bunnybusamqp_connection_error_event)
-    - [event key](#event-key-11)
-    - [handler parameter(s)](#handler-parameters-9)
-  - [`BunnyBus.AMQP_CONNECTION_CLOSE_EVENT`](#bunnybusamqp_connection_close_event)
-    - [event key](#event-key-12)
-    - [handler parameter(s)](#handler-parameters-10)
-  - [`BunnyBus.AMQP_CHANNEL_ERROR_EVENT`](#bunnybusamqp_channel_error_event)
-    - [event key](#event-key-13)
-    - [handler parameter(s)](#handler-parameters-11)
-  - [`BunnyBus.AMQP_CHANNEL_CLOSE_EVENT`](#bunnybusamqp_channel_close_event)
-    - [event key](#event-key-14)
-    - [handler parameter(s)](#handler-parameters-12)
-- [`SubscriptionManager`](#subscriptionmanager)
-  - [`contains(queue, [withConsumerTag])`](#containsqueue-withconsumertag)
-  - [`create(queue, handlers, [options])`](#createqueue-handlers-options)
-  - [`tag(queue, consumerTag)`](#tagqueue-consumertag)
-  - [`get(queue)`](#getqueue)
-  - [`clear(queue)`](#clearqueue)
-  - [`clearAll()`](#clearall)
-  - [`remove(queue)`](#removequeue)
-  - [`list()`](#list)
-  - [`block(queue)`](#blockqueue)
-  - [`unblock(queue)`](#unblockqueue)
-- [Error Types](#error-types)
+- [2.0.0 API Reference](#200-api-reference)
+  - [BunnyBus](#bunnybus)
+    - [Versioning](#versioning)
+    - [`new BunnyBus(config)`](#new-bunnybusconfig)
+      - [Getters and Setters](#getters-and-setters)
+        - [`config`](#config)
+        - [`subscriptions`](#subscriptions)
+        - [`logger`](#logger)
+        - [`connectionString`](#connectionstring)
+        - [`connection`](#connection)
+        - [`hasConnection`](#hasconnection)
+        - [`channel`](#channel)
+        - [`hasChannel`](#haschannel)
+    - [Public API](#public-api)
+      - [`createExchange(name, type, [options])`](#createexchangename-type-options)
+        - [parameter(s)](#parameters)
+      - [`deleteExchange(name, [options)`](#deleteexchangename-options)
+        - [parameter(s)](#parameters-1)
+      - [`checkExchange(name)`](#checkexchangename)
+        - [parameter(s)](#parameters-2)
+      - [`createQueue(name, [options)`](#createqueuename-options)
+        - [parameter(s)](#parameters-3)
+      - [`deleteQueue(name, [options)`](#deletequeuename-options)
+        - [parameter(s)](#parameters-4)
+      - [`checkQueue(name)`](#checkqueuename)
+        - [parameter(s)](#parameters-5)
+      - [`publish(message, [options])`](#publishmessage-options)
+        - [parameter(s)](#parameters-6)
+      - [`subscribe(queue, handlers, [options])`](#subscribequeue-handlers-options)
+        - [parameter(s)](#parameters-7)
+        - [handlers](#handlers)
+        - [`key`](#key)
+        - [`handler`](#handler)
+      - [`unsubscribe(queue)`](#unsubscribequeue)
+        - [parameter(s)](#parameters-8)
+      - [`send(message, queue, [options])`](#sendmessage-queue-options)
+        - [note(s)](#notes)
+        - [parameter(s)](#parameters-9)
+      - [`get(queue, [options])`](#getqueue-options)
+        - [parameter(s)](#parameters-10)
+      - [`getAll(queue, handler, [options])`](#getallqueue-handler-options)
+        - [parameter(s)](#parameters-11)
+    - [Internal-use Methods](#internal-use-methods)
+      - [`_recoverConnectChannel()`](#recoverconnectchannel)
+      - [`_createConnection()`](#createconnection)
+      - [`_closeConnection()`](#closeconnection)
+      - [`_createChannel()`](#createchannel)
+      - [`_closeChannel()`](#closechannel)
+  - [Events (`EventEmitter`)](#events-eventemitter)
+    - [`BunnyBus.Events.LOG_DEBUG`](#bunnybuseventslogdebug)
+      - [event key](#event-key)
+      - [handler parameter(s)](#handler-parameters)
+    - [`BunnyBus.Events.LOG_TRACE`](#bunnybuseventslogtrace)
+      - [event key](#event-key-1)
+      - [handler parameter(s)](#handler-parameters-1)
+    - [`BunnyBus.LOG_INFO`](#bunnybusloginfo)
+      - [event key](#event-key-2)
+      - [handler parameter(s)](#handler-parameters-2)
+    - [`BunnyBus.Events.LOG_WARN`](#bunnybuseventslogwarn)
+      - [event key](#event-key-3)
+      - [handler parameter(s)](#handler-parameters-3)
+    - [`BunnyBus.Events.LOG_ERROR`](#bunnybuseventslogerror)
+      - [event key](#event-key-4)
+      - [handler parameter(s)](#handler-parameters-4)
+    - [`BunnyBus.Events.LOG_FATAL`](#bunnybuseventslogfatal)
+      - [event key](#event-key-5)
+      - [handler parameter(s)](#handler-parameters-5)
+    - [`BunnyBus.Events.PUBLISHED`](#bunnybuseventspublished)
+      - [event key](#event-key-6)
+      - [handler parameter(s)](#handler-parameters-6)
+    - [`BunnyBus.Events.SUBSCRIBED`](#bunnybuseventssubscribed)
+      - [event key](#event-key-7)
+      - [handler parameter(s)](#handler-parameters-7)
+    - [`BunnyBus.Events.UNSUBSCRIBED`](#bunnybuseventsunsubscribed)
+      - [event key](#event-key-8)
+      - [handler parameter(s)](#handler-parameters-8)
+    - [`BunnyBus.Events.RECOVERING`](#bunnybuseventsrecovering)
+      - [event key](#event-key-9)
+    - [`BunnyBus.Events.RECOVERED`](#bunnybuseventsrecovered)
+      - [event key](#event-key-10)
+    - [`BunnyBus.Events.FATAL`](#bunnybuseventsfatal)
+      - [event key](#event-key-11)
+    - [`BunnyBus.Events.AMQP_CONNECTION_ERROR`](#bunnybuseventsamqpconnectionerror)
+      - [event key](#event-key-12)
+      - [handler parameter(s)](#handler-parameters-9)
+    - [`BunnyBus.Events.AMQP_CONNECTION_CLOSE`](#bunnybuseventsamqpconnectionclose)
+      - [event key](#event-key-13)
+      - [handler parameter(s)](#handler-parameters-10)
+    - [`BunnyBus.Events.AMQP_CHANNEL_ERROR`](#bunnybuseventsamqpchannelerror)
+      - [event key](#event-key-14)
+      - [handler parameter(s)](#handler-parameters-11)
+    - [`BunnyBus.Events.AMQP_CHANNEL_CLOSE`](#bunnybuseventsamqpchannelclose)
+      - [event key](#event-key-15)
+      - [handler parameter(s)](#handler-parameters-12)
+  - [`SubscriptionManager`](#subscriptionmanager)
+    - [`contains(queue, [withConsumerTag])`](#containsqueue-withconsumertag)
+    - [`create(queue, handlers, [options])`](#createqueue-handlers-options)
+    - [`tag(queue, consumerTag)`](#tagqueue-consumertag)
+    - [`get(queue)`](#getqueue)
+    - [`clear(queue)`](#clearqueue)
+    - [`clearAll()`](#clearall)
+    - [`remove(queue)`](#removequeue)
+    - [`list()`](#list)
+    - [`block(queue)`](#blockqueue)
+    - [`unblock(queue)`](#unblockqueue)
+  - [Error Types](#error-types)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -143,13 +144,15 @@ Setter and Getter for singleton configuration. Accepts the following optional pr
  * `server` - value of the server address.  Just the host portion of the URI.  eg `red-bee.cloudamqp.com` or `rabbitbox` or `56.23.0.123`.  Used in the connection string.  Defaults to `127.0.0.1`. *[string]* **Optional**
  * `port` - value of the port for client connections.  Used in the conneciton string.  Defaults to `5672`. *[number]* **Optional**
  * `vhost` - value of the virtual host the user connects to.  Used in the connection string.  Defaults to `%2f`. *[string]* **Optional**
- * `heartbeat` -  value negotiated between client and server on when the TCP tunnel is considered dead.  Unit is a measurement of milliseconds.  Used in the connection string.  Defaults to `2000`. *[number]* **Optional**
- * `timeout` - value for timing out any network operations.  Unit is a measurement of milliseconds.  Defaults to `2000`. *[number]* **Optional**
+ * `heartbeat` -  value negotiated between client and server on when the TCP tunnel is considered dead.  Unit is a measurement of seconds.  Used in the connection string.  Defaults to `60`. *[number]* **Optional**
  * `globalExchange` - value of the exchange to transact through for message publishing.  This is the default used when one is not provided within the `options` for any `BunnyBus` methods that supports one transactionally.  Defaults to `default-exchange`. *[string]* **Optional**
  * `prefetch` - value of the maximum number of unacknowledged messages allowable in a channel.  Defaults to `5`. *[number]* **Optional**
+ * `errorQueue` - name of the queue where rejected messages will be sent to.  Defaults to `error-bus`. *[string]* **Optional**
  * `maxRetryCount` - maximum amount of attempts a message can be requeued.  This is the default used when one is not provided within the `options` for any `BunnyBus` methods that supports one transactionally. Defaults to `10`. *[number]* **Optional**
  * `validatePublisher` - flag to dictate if the publishing source for messages being consumed must be `bunnyBus`.  This is a safe guard to prevent unexpected message sources from entering the subscribing realm. A value of `bunnyBus` is stamped as a header property on the message during `publish()`.  The `subscribe()` method will use the same value for authentication.  Consumers detecting mismatched publishers will auto reject the message into an error queue.  Defaults to `false`. *[boolean]* **Optional**
  * `validateVersion` - flag to dictate if major semver should be matched as part of the message subscription valiation.  This is a safe guard to prevent mismatched `bunnyBus` drivers from pub/sub to each other.  Consumers detecting mismatched major values will auto reject the message into an error queue.  In order for this layer of validation to occur, `validatePublisher` must be allowed because the version value is set against the `bunnyBus` header.   Defaults to `false`. *[boolean]* **Optional**
+* `autoRecovery` - flag to control reconnection attempts after losing connection with the server. Defaults to `true`. *[boolean]* **Optional**
+* `autoRecoveryRetryCount` - tells how many attempts to reconnect. Defaults to `3`. *[number]* **Optional**
 
 Note that updates in the options directed at changing connection string will not take affect immediately.  [`_closeConnection()`](#_closeConnectioncallback) needs to be called manually to invoke a new connection with new settings.
 
@@ -197,19 +200,6 @@ bunnyBus.logger = {
     error = logHandler,
     fatal = logHandler
 };
-```
-
-##### `promise`
-
-Setter and Getter for promise. By default, `BunnyBus` will utilize the native Promise implementation. Supported promise implementations must be initialized as Constructor functions and must pass `resolve` and `reject` functions to the provided callback. If an unsupported promise library is passed, the existing promise implementation will not be overridden.
-
-```javascript
-const Bluebird = require('bluebird');
-const BunnyBus = require('bunnybus');
-const bunnyBus = new BunnyBus();
-
-bunnyBus.promise = Bluebird
-// All promises returned by bunnyBus will now be Bluebird promises
 ```
 
 ##### `connectionString`
@@ -278,15 +268,11 @@ bunnyBus.hasChannel;
 //true|false
 ```
 
-#### Methods
-
-All methods of `bunnybus` which accept an optional callback function will return a native `Promise` instead if no callback is provided.
-
 ### Public API
 
 The following methods are the primary-use methods you should utilize for managing exchanges and queues and for sending and getting messages.
 
-#### `createExchange(name, type, [options, [callback]])`
+#### `createExchange(name, type, [options])`
 
 Creates an exchange.
 
@@ -295,21 +281,15 @@ Creates an exchange.
   - `name` - name of the exchange to be created. *[string]* **Required**
   - `type` - type of exchange to create. Possible values are (`direct`, `fanout`, `header`, `topic`) *[string]* **Required**
   - `options` - optional settings.  [Settings](http://www.squaremobius.net/amqp.node/channel_api.html#channel_assertExchange) are proxied through to amqplib `assertExchange`. *[Object]* **Optional**
-  - `callback` - node style callback `(err, result) => {}`. *[Function]* **Optional**
 
 ```javascript
 const BunnyBus = require('bunnybus');
 const bunnyBus = new BunnyBus();
 
-bunnyBus.createExchange('default-exchange', 'topic', (err) => {});
-
-// promise api
-bunnyBus.createExchange('default-exchange', 'topic')
-    .then()
-    .catch((err) => {});
+await bunnyBus.createExchange('default-exchange', 'topic');
 ```
 
-#### `deleteExchange(name, [options, [callback]])`
+#### `deleteExchange(name, [options)`
 
 Delete an exchange.
 
@@ -317,42 +297,30 @@ Delete an exchange.
 
   - `name` - name of the exchange to be deleted. *[string]* **Required**
   - `options` - optional settings. [Settings](http://www.squaremobius.net/amqp.node/channel_api.html#channel_deleteExchange) are proxed through to amqplib `deleteExchange`. *[Object]* **Optional**
-  - `callback` - node style callback `(err, result) => {}`. *[Function]* **Optional**
 
 ```javascript
 const BunnyBus = require('bunnybus');
 const bunnyBus = new BunnyBus();
 
-bunnyBus.deleteExchange('default-exchange', (err) => {});
-
-// promise api
-bunnyBus.deleteExchange('default-exchange')
-    .then()
-    .catch((err) => {});
+await bunnyBus.deleteExchange('default-exchange');
 ```
 
-#### `checkExchange(name, [callback])`
+#### `checkExchange(name)`
 
 Checks if an exchange exists.  The channel closes when the exchange does not exist.
 
 ##### parameter(s)
 
   - `name` - name of the exchange to be checked. *[string]* **Required**
-  - `callback` - node style callback `(err, result) => {}`. *[Function]* **Optional**
 
 ```javascript
 const BunnyBus = require('bunnybus');
 const bunnyBus = new BunnyBus();
 
-bunnyBus.checkExchange('default-exchange', (err) => {});
-
-// promise api
-bunnyBus.checkExchange('default-exchange')
-    .then()
-    .catch((err) => {});
+await bunnyBus.checkExchange('default-exchange');
 ```
 
-#### `createQueue(name, [options, [callback]])`
+#### `createQueue(name, [options)`
 
 Creates a queue.
 
@@ -360,21 +328,15 @@ Creates a queue.
 
   - `name` - name of the queue to be created. *[string]* **Required**
   - `options` - optional settings.  [Settings](http://www.squaremobius.net/amqp.node/channel_api.html#channel_assertQueue) are proxied through to amqplib `assertQueue`. *[Object]* **Optional**
-  - `callback` - node style callback `(err, result) => {}`. *[Function]* **Optional**
 
 ```javascript
 const BunnyBus = require('bunnybus');
 const bunnyBus = new BunnyBus();
 
-bunnyBus.createQueue('queue1', (err) => {});
-
-// promise api
-bunnyBus.createQueue('queue1')
-    .then()
-    .catch((err) => {});
+await bunnyBus.createQueue('queue1');
 ```
 
-#### `deleteQueue(name, [options, [callback]])`
+#### `deleteQueue(name, [options)`
 
 Delete a queue.
 
@@ -382,42 +344,30 @@ Delete a queue.
 
   - `name` - name of the queue to be created. *[string]* **Required**
   - `options` - optional settings.  [Settings](http://www.squaremobius.net/amqp.node/channel_api.html#channel_deleteQueue) are proxied through to amqplib `deleteQueue`. *[Object]* **Optional**
-  - `callback` - node style callback `(err, result) => {}`. *[Function]* **Optional**
-
+ 
 ```javascript
 const BunnyBus = require('bunnybus');
 const bunnyBus = new BunnyBus();
 
-bunnyBus.deleteQueue('queue1', (err) => {});
-
-// promise api
-bunnyBus.deleteQueue('queue1')
-    .then()
-    .catch((err) => {});
+await bunnyBus.deleteQueue('queue1');
 ```
 
-#### `checkQueue(name, [callback])`
+#### `checkQueue(name)`
 
 Checks if a queue exists.  The channel closes when the queue does not exist.
 
 ##### parameter(s)
 
   - `name` - name of the queue to be checked. *[string]* **Required**
-  - `callback` - node style callback `(err, result) => {}`. *[Function]* **Optional**
 
 ```javascript
 const BunnyBus = require('bunnybus');
 const bunnyBus = new BunnyBus();
 
-bunnyBus.checkQueue('queue1', (err) => {});
-
-// promise api
-bunnyBus.checkQueue('queue1')
-    .then()
-    .catch((err) => {});
+await bunnyBus.checkQueue('queue1');
 ```
 
-#### `publish(message, [options, [callback]])`
+#### `publish(message, [options])`
 
 Publish a message onto the bus.
 
@@ -431,7 +381,6 @@ Publish a message onto the bus.
     - `source` - value attached to the header of the message to help with track the origin of messages in your application.  For applications that leverage this plugin in multiple modules, each module can supply its own module name so a message can be tracked to the creator. *[string]* **Optional**
     - `globalExchange` - value to override the exchange specified in `config`. *[string]* **Optional**
     - In addition to the above options, all of `amqplib`'s [configuration options](http://www.squaremobius.net/amqp.node/channel_api.html#channel_publish) (except for `headers` and `immediate`) from its `sendToQueue` and `publish` methods can also be passed as top-level properties in the `publish` options.
-  - `callback` - node style callback `(err, result) => {}`. *[Function]* **Optional**
 
 ```javascript
 const BunnyBus = require('bunnybus');
@@ -442,15 +391,10 @@ const message = {
     // other stuff you want to send
 }
 
-bunnyBus.publish(message, (err) => {});
-
-// promise api
-bunnyBus.publish(message)
-    .then()
-    .catch((err) => {});
+await bunnyBus.publish(message);
 ```
 
-#### `subscribe(queue, handlers, [options, [callback]])`
+#### `subscribe(queue, handlers, [options])`
 
 Subscribe to messages from a given queue.
 
@@ -465,7 +409,6 @@ Subscribe to messages from a given queue.
     - `validatePublisher` - flag for validating messages having `bunnyBus` header.  More info can be found in [config](#config). Defaults to one provided in the [config](#config). *[boolean]* **Optional**
     - `validateVersion` - flag for validating messages generated from the same major version.  More info can be found in [config](#config). Defaults to one provided in the [config](#config). *[boolean]* **Optional**
     - `meta` - allows for meta data regarding the payload to be returned.  Headers like the `createdAt` ISO string timestamp and the `transactionId` are included in the `meta.headers` object.  Turning this on will adjust the handler to be a `Function` as `(message, meta, [ack, [reject, [requeue]]]) => {}`. *[boolean]* **Optional**
-  - `callback` - node style callback `(err, result) => {}`. *[Function]* **Optional**
 
 ##### handlers
 
@@ -475,81 +418,51 @@ A `key` is the routeKey in RabbitMQ terminology.  `BunnyBus` specifically levera
 
 ##### `handler`
 
-A `handler` is a function which contains the following arity.  Order matters.
+A `handler` is an async function which contains the following arity.  Order matters.
   - `message` is what was received from the bus.  The message does represent the RabbitMQ `'payload.content` buffer.  The original source of this object is from `payload.content`.
   - `meta` is only available when `options.meta` is set to `true`.  This object will contain all payload related meta information like `payload.properties.headers`. Headers like the `createdAt` ISO string timestamp and the `transactionId` are included in the `meta.headers` object.
-  - `ack([option, [callback]])` is a function for acknowledging the message off the bus.
+  - `ack([option])` is an async function for acknowledging the message off the bus.
     - `option` - a placeholder for future optional parameters for `ack`.  High chance of deprecation.
-    - `callback` - node style callback `(err, result) => {}`. *[Function]* **Optional**
-  - `reject([option, [callback]])` is a function for rejecting the message off the bus to a predefined error queue.  The error queue is named by default `<your queue name>_error`.  It will also short circuit to `error_bus` when defaults can't be found.
+  - `reject([option])` is an async function for rejecting the message off the bus to a predefined error queue.  The error queue is named by default `<your queue name>_error`.  It will also short circuit to `error_bus` when defaults can't be found.
     - `option` - a placeholder for future optional parameters for `ack`.  High chance of deprecation.
-    - `callback` - node style callback `(err, result) => {}`. *[Function]* **Optional**
-  - `requeue([callback])` is a function for requeuing the message back to the back of the queue.  This is feature circumvents Rabbit's `nack` RPC.  `nack` natively requeues but pushes the message to the front of the queue.
-    - `callback` - node style callback `(err, result) => {}`. *[Function]* **Optional**
+  - `requeue()` is an async function for requeuing the message back to the back of the queue.  This is feature circumvents Rabbit's `nack` RPC.  `nack` natively requeues but pushes the message to the front of the queue.
 
 ```javascript
 const BunnyBus = require('bunnybus');
 const bunnyBus = new BunnyBus();
 
 const handlers = {
-    route.event1 : (message, ack, reject, requeue) => {
-        ack(() => {});
+    route.event1 : async (message, ack, reject, requeue) => {
+        await ack();
     },
-    route.event2 : (message, ack, reject, requeue) => {
+    route.event2 : async (message, ack, reject, requeue) => {
         if (//something not ready) {
-            requeue(() => ());
+            await requeue();
         } else {
-            ack(() => {});
+            await ack();
         }
     }
 }
 
-bunnyBus.subscribe('queue', handlers, (err) => {});
-
-// promise api
-const handlers = {
-    route.event1 : (message, ack, reject, requeue) => {
-        return ack()
-            .then();
-    },
-    route.event2 : (message, ack, reject, requeue) => {
-        if (//something not ready) {
-            return requeue()
-                .then();
-        } else {
-            return ack()
-                .then();
-        }
-    }
-}
-
-bunnyBus.subscribe('queue', handlers)
-    .then()
-    .catch((err) => {});
+await bunnyBus.subscribe('queue', handlers);
 ```
 
-#### `unsubscribe(queue, [callback])`
+#### `unsubscribe(queue)`
 
 Unsubscribe from listening to a queue.
 
 ##### parameter(s)
 
   - `queue` - the name of the queue. *[string]* **Required**
-  - `callback` - node style callback `(err, result) => {}`. *[Function]* **Optional**
-
+  
 ```javascript
 const BunnyBus = require('bunnybus');
 const bunnyBus = new BunnyBus();
 
-bunnyBus.unsubscribe('queue1', (err) => {});
-
-// promise api
-bunnyBus.unsubscribe('queue1')
-    .then()
-    .catch((err) =>{});
+await bunnyBus.unsubscribe('queue1');
 ```
 
-#### `send(message, queue, [options, [callback]])`
+#### `send(message, queue, [options])`
 
 Send a message directly to a specified queue.
 
@@ -567,7 +480,6 @@ When `message.event` or `options.routeKey` values are not provided for `routeKey
     - `transactionId` - value attached to the header of the message for tracing.  When one is not supplied, a random 40 character token is generated. *[string]*  **Optional**
     - `source` - value attached to the header of the message to help with tracking the origination point of your application.  For applications that leverage this plugin in multiple modules, each module can supply its own module name so a message can be tracked to the creator. *[string]*  **Optional**
     - In addition to the above options, all of `amqplib`'s [configuration options](http://www.squaremobius.net/amqp.node/channel_api.html#channel_publish) (except for `headers` and `immediate`) from its `sendToQueue` and `publish` methods can also be passed as top-level properties in the `send` options.
-  - `callback` - node style callback `(err, result) => {}`. *[Function]* **Optional**
 
 ```javascript
 const BunnyBus = require('bunnybus');
@@ -577,15 +489,10 @@ const message = {
     // other stuff you want to send
 }
 
-bunnyBus.send(message, 'queue1', (err) => {});
-
-// promise api
-bunnyBus.send(message, 'queue1')
-    .then()
-    .catch((err) =>{});
+await bunnyBus.send(message, 'queue1');
 ```
 
-#### `get(queue, [options, [callback]])`
+#### `get(queue, [options])`
 
 Pop a message directly off a queue.  The payload returned is the RabbitMQ `payload` with `payload.properties` and `payload.content` in its original form.
 
@@ -593,49 +500,35 @@ Pop a message directly off a queue.  The payload returned is the RabbitMQ `paylo
 
   - `queue` - the name of the queue. *[string]* **Required**
   - `options` - optional settings.  [Settings](http://www.squaremobius.net/amqp.node/channel_api.html#channel_get) are proxied through to amqplib `get`. *[Object]* **Optional**
-  - `callback` - node style callback `(err, result) => {}`. *[Function]* **Optional**
 
 ```javascript
 const BunnyBus = require('bunnybus');
 const bunnyBus = new BunnyBus();
 
-bunnyBus.get('queue1', (err, result) => {
-    //result contains an rabbit payload object
-    //JSON.tostring(result.content) will contain the message that was sent.
-});
-
-// promise api
-bunnyBus.get('queue1')
-    .then((result) => {})
-    .catch((err) =>{});
+await bunnyBus.get('queue1');
 ```
 
-#### `getAll(queue, handler, [options, [callback]])`
+#### `getAll(queue, handler, [options])`
 
 Pop all messages directly off of a queue until there are no more.  Handler is called for each message that is popped.
 
 ##### parameter(s)
 
   - `queue` - the name of the queue. *[string]* **Required**
-  - `handler` - a handler reflects a `Function` as `(message, [meta, [ack]]) => {}`. *[Function]* **Required**
+  - `handler` - a handler reflects a `Function` as `async (message, [meta, [async ack]]) => {}`. *[Function]* **Required**
   - `options` - optional settings. *[Object]* **Optional**
     - `get` - [Settings](http://www.squaremobius.net/amqp.node/channel_api.html#channel_get) are proxied through to amqplib `get`. *[Object]* **Optional**
-    - `meta` - allows for meta data regarding the payload to be returned.  Headers like the `createdAt` ISO string timestamp and the `transactionId` are included in the `meta.headers` object.  Turning this on will adjust the handler to be a `Function` as `(message, meta, [ack]) => {}`.  *[boolean]* **Optional**
-  - `callback` - node style callback `(err) => {}`.  This is called when all currently retrievable items have been passed to the provided `handler`.  *[Function]* **Optional**
+    - `meta` - allows for meta data regarding the payload to be returned.  Headers like the `createdAt` ISO string timestamp and the `transactionId` are included in the `meta.headers` object.  Turning this on will adjust the handler to be a `Function` as `async (message, meta, [async ack]) => {}`.  *[boolean]* **Optional**
 
 ```javascript
 const BunnyBus = require('bunnybus');
 const bunnyBus = new BunnyBus();
 
-const handler = (message, ack) => {
-    ack(() => {});
+const handler = async (message, ack) => {
+    await ack();
 }
 
-bunnyBus.getAll('queue1', handler, (err) => {});
-
-// promise api
-bunnyBus.getAll('queue1', handler)
-    .catch((err) =>{});
+await bunnyBus.getAll('queue1', handler);
 ```
 
 ### Internal-use Methods
@@ -645,94 +538,78 @@ Please see the [Public API](#public-api) for the primary BunnyBus methods.
 
 #### `_recoverConnectChannel()`
 
-Auto retry mechanism when to restore either a connection or channel when it gets corrupted.  The retry mechanism will attempt 240 times every 15 seconds.  When a connection can not be restored, `process.exit(1)` will be called.  This is invoked internally through error handlers.
+Auto retry mechanism when to restore either a connection or channel when it gets closed.  The retry mechanism will attempt `config.autoRecoveryRetryCount` times with randomnly generated wait seconds (up to 10 seconds) between reconnect attempts.  
+
+`BunnyBus.Events.RECOVERING` will be emitted once this function gets invoked and `BunnyBus.Events.RECOVERED` once sucessfully restored the connection.
+
+When a connection can not be restored error will be thrown and `BunnyBus.Events.FATAL` with error object will be emitted.
+
+This function is invoked internally through error handlers.
 
 ```javascript
 const BunnyBus = require('bunnybus');
 const bunnyBus = new BunnyBus();
 
 // something bad happened
-
-bunnyBus._recoverConnectChannel();
+try {
+  await bunnyBus._recoverConnectChannel();
+}
+catch(error) {
+// something horrible happened
+  process.exit(1);
+}
 ```
 
-#### `_createConnection([callback])`
+#### `_createConnection()`
 
 Create a connection from settings defined through custom or default configurations.
 
-  - `callback` - node style callback `(err, result) => {}`. *[Function]* **Optional**
-
 ```javascript
 const BunnyBus = require('bunnybus');
 const bunnyBus = new BunnyBus();
 
-bunnyBus._createConnection((err) => {});
-
-// promise api
-bunnyBus._createConnection()
-    .then()
-    .catch((err) => {});
+await bunnyBus._createConnection();
 ```
 
-#### `_closeConnection([callback])`
+#### `_closeConnection()`
 
 Closes an opened connection if one exists.
 
-  - `callback` - node style callback `(err, result) => {}`. *[Function]* **Optional**
-
 ```javascript
 const BunnyBus = require('bunnybus');
 const bunnyBus = new BunnyBus();
 
-bunnyBus._closeConnection((err) => {});
-
-// promise api
-bunnyBus._closeConnection()
-    .then()
-    .catch((err) => {});
+await bunnyBus._closeConnection();
 ```
 
-#### `_createChannel([callback])`
+#### `_createChannel()`
 
 Create a channel from an existing connection.
 
-  - `callback` - node style callback `(err, result) => {}`. *[Function]* **Optional**
-
 ```javascript
 const BunnyBus = require('bunnybus');
 const bunnyBus = new BunnyBus();
 
-bunnyBus._createChannel((err) => {});
-
-// promise api
-bunnyBus._createChannel()
-    .then()
-    .catch((err) => {});
+await bunnyBus._createChannel();
 ```
 
-#### `_closeChannel([callback])`
+#### `_closeChannel()`
 
 Closes an channel if one exists.
 
-  - `callback` - node style callback `(err, result) => {}`. *[Function]* **Optional**
-
 ```javascript
 const BunnyBus = require('bunnybus');
 const bunnyBus = new BunnyBus();
 
-bunnyBus._closeChannel((err) => {});
-
-// promise api
-bunnyBus._closeChannel()
-    .then()
-    .catch((err) => {});
+await bunnyBus._closeChannel();
 ```
 
 ## Events (`EventEmitter`)
 
-`BunnyBus` extends `EventEmitter` for emitting logs and system specific events.  Subscription to these events is optional.  `BunnyBus` class also exposes static Getter properties for the name of these public events.
+`BunnyBus` extends `EventEmitter` for emitting logs and system specific events.  Subscription to these events is optional, except for `BunnyBus.Events.FATAL` which indicates unable to open a connection and something that needs to be dealt within your code.
+`BunnyBus` class also exposes static Getter properties for the name of these public events.
 
-### `BunnyBus.LOG_DEBUG_EVENT`
+### `BunnyBus.Events.LOG_DEBUG`
 
 #### event key
 
@@ -747,11 +624,10 @@ const BunnyBus = require('bunnybus');
 const bunnyBus = new BunnyBus();
 const pino = require('pino')();
 
-bunnyBus.on('BunnyBus.LOG_DEBUG_EVENT', pino.debug);
-bunnyBus.on('log.debug', pino.debug);
+bunnyBus.on(BunnyBus.Events.LOG_DEBUG, pino.debug);
 ```
 
-### `BunnyBus.LOG_TRACE_EVENT`
+### `BunnyBus.Events.LOG_TRACE`
 
 #### event key
 
@@ -766,11 +642,10 @@ const BunnyBus = require('bunnybus');
 const bunnyBus = new BunnyBus();
 const pino = require('pino')();
 
-bunnyBus.on('BunnyBus.LOG_TRACE_EVENT', pino.trace);
-bunnyBus.on('log.trace', pino.trace);
+bunnyBus.on(BunnyBus.Events.LOG_TRACE, pino.trace);
 ```
 
-### `BunnyBus.LOG_INFO_EVENT`
+### `BunnyBus.LOG_INFO`
 
 #### event key
 
@@ -785,11 +660,10 @@ const BunnyBus = require('bunnybus');
 const bunnyBus = new BunnyBus();
 const pino = require('pino')();
 
-bunnyBus.on('BunnyBus.LOG_INFO_EVENT', pino.info);
-bunnyBus.on('log.info', pino.info);
+bunnyBus.on(BunnyBus.Events.LOG_INFO, pino.info);
 ```
 
-### `BunnyBus.LOG_WARN_EVENT`
+### `BunnyBus.Events.LOG_WARN`
 
 #### event key
 
@@ -804,11 +678,10 @@ const BunnyBus = require('bunnybus');
 const bunnyBus = new BunnyBus();
 const pino = require('pino')();
 
-bunnyBus.on('BunnyBus.LOG_WARN_EVENT', pino.warn);
-bunnyBus.on('log.warn', pino.warn);
+bunnyBus.on(BunnyBus.Events.LOG_WARN, pino.warn);
 ```
 
-### `BunnyBus.LOG_ERROR_EVENT`
+### `BunnyBus.Events.LOG_ERROR`
 
 #### event key
 
@@ -823,11 +696,10 @@ const BunnyBus = require('bunnybus');
 const bunnyBus = new BunnyBus();
 const pino = require('pino')();
 
-bunnyBus.on('BunnyBus.LOG_ERROR_EVENT', pino.error);
-bunnyBus.on('log.error', pino.error);
+bunnyBus.on(BunnyBus.Events.LOG_ERROR, pino.error);
 ```
 
-### `BunnyBus.LOG_FATAL_EVENT`
+### `BunnyBus.Events.LOG_FATAL`
 
 #### event key
 
@@ -842,11 +714,10 @@ const BunnyBus = require('bunnybus');
 const bunnyBus = new BunnyBus();
 const pino = require('pino')();
 
-bunnyBus.on('BunnyBus.LOG_FATAL_EVENT', pino.fatal);
-bunnyBus.on('log.fatal', pino.fatal);
+bunnyBus.on(BunnyBus.Events.LOG_FATAL, pino.fatal);
 ```
 
-### `BunnyBus.PUBLISHED_EVENT`
+### `BunnyBus.Events.PUBLISHED`
 
 #### event key
 
@@ -860,13 +731,10 @@ bunnyBus.on('log.fatal', pino.fatal);
 const BunnyBus = require('bunnybus');
 const bunnyBus = new BunnyBus();
 
-bunnyBus.on('BunnyBus.PUBLISHED_EVENT', (message) => {
-
-    //do work
-});
+bunnyBus.on(BunnyBus.Events.PUBLISHED, (message) => {});
 ```
 
-### `BunnyBus.SUBSCRIBED_EVENT`
+### `BunnyBus.Events.SUBSCRIBED`
 
 #### event key
 
@@ -880,14 +748,10 @@ bunnyBus.on('BunnyBus.PUBLISHED_EVENT', (message) => {
 const BunnyBus = require('bunnybus');
 const bunnyBus = new BunnyBus();
 
-bunnyBus.on('BunnyBus.SUBSCRIBED_EVENT', (queue) => {
-
-    console.log(queue);
-    // output : 'queue1'
-});
+bunnyBus.on(BunnyBus.Events.SUBSCRIBED, (queue) => {});
 ```
 
-### `BunnyBus.UNSUBSCRIBED_EVENT`
+### `BunnyBus.Events.UNSUBSCRIBED`
 
 #### event key
 
@@ -901,14 +765,10 @@ bunnyBus.on('BunnyBus.SUBSCRIBED_EVENT', (queue) => {
 const BunnyBus = require('bunnybus');
 const bunnyBus = new BunnyBus();
 
-bunnyBus.on('BunnyBus.UNSUBSCRIBED_EVENT', (queue) => {
-
-    console.log(queue);
-    // output : 'queue1'
-});
+bunnyBus.on(BunnyBus.Events.UNSUBSCRIBED, (queue) => {});
 ```
 
-### `BunnyBus.RECOVERING_EVENT`
+### `BunnyBus.Events.RECOVERING`
 
 #### event key
 
@@ -918,34 +778,42 @@ bunnyBus.on('BunnyBus.UNSUBSCRIBED_EVENT', (queue) => {
 const BunnyBus = require('bunnybus');
 const bunnyBus = new BunnyBus();
 
-bunnyBus.on('BunnyBus.RECOVERING_EVENT', () => {
-
-    // do work to handle the case when a connection or channel is having a failure
-});
+bunnyBus.on(BunnyBus.Events.RECOVERING, () => {});
 ```
 
-### `BunnyBus.RECOVERED_EVENT`
+### `BunnyBus.Events.RECOVERED`
 
 #### event key
 
-* `bunnybus.recovered` - emitted when [`_recoverConnectChannel()`](#recoverconnectchannel) is successfully restores connections and channel.
+* `bunnybus.recovered` - emitted when [`_recoverConnectChannel()`](#recoverconnectchannel) is successfully restores connection and channel.
 
 ```javascript
 const BunnyBus = require('bunnybus');
 const bunnyBus = new BunnyBus();
 
-bunnyBus.on('BunnyBus.RECOVERED_EVENT', () => {
+bunnyBus.on(BunnyBus.Events.RECOVERED, () => {});
+```
 
-    // do work to handle the case when a connection or channel is restored
+### `BunnyBus.Events.FATAL`
+
+#### event key
+
+* `bunnybus.fatal` - emitted when [`_recoverConnectChannel()`](#recoverconnectchannel) is unable to restore connection. At this point `BunnyBus` is not operational and invoking functions will result in errors being thrown.
+
+```javascript
+const BunnyBus = require('bunnybus');
+const bunnyBus = new BunnyBus();
+
+bunnyBus.on(BunnyBus.Events.RECOVERED, () => {
+  process.exit(1);
 });
 ```
 
-### `BunnyBus.AMQP_CONNECTION_ERROR_EVENT`
+### `BunnyBus.Events.AMQP_CONNECTION_ERROR`
 
 #### event key
 
 * `amqp.connection.error` - emitted when amqplib encounters a corrupted connection state.
-
 #### handler parameter(s)
 
 * `err` - error from amqplib. *[Object]*
@@ -954,17 +822,16 @@ bunnyBus.on('BunnyBus.RECOVERED_EVENT', () => {
 const BunnyBus = require('bunnybus');
 const bunnyBus = new BunnyBus();
 
-bunnyBus.on('BunnyBus.AMQP_CONNECTION_ERROR_EVENT', (err) => {
-
-    // do work
-});
+bunnyBus.on(BunnyBus.Events.AMQP_CONNECTION_ERROR, (err) => {});
 ```
 
-### `BunnyBus.AMQP_CONNECTION_CLOSE_EVENT`
+### `BunnyBus.Events.AMQP_CONNECTION_CLOSE`
 
 #### event key
 
 * `amqp.connection.close` - emitted when amqplib connection closes.
+  
+  Will invoke `_recoverConnectChannel` if `config.autoRecovery` is enabled.
 
 #### handler parameter(s)
 
@@ -973,13 +840,10 @@ bunnyBus.on('BunnyBus.AMQP_CONNECTION_ERROR_EVENT', (err) => {
 ```javascript
 const BunnyBus = require('bunnybus');
 
-bunnyBus.on('BunnyBus.AMQP_CONNECTION_CLOSE_EVENT', (err) => {
-
-    // do work
-});
+bunnyBus.on(BunnyBus.Events.AMQP_CONNECTION_CLOSE, (err) => {});
 ```
 
-### `BunnyBus.AMQP_CHANNEL_ERROR_EVENT`
+### `BunnyBus.Events.AMQP_CHANNEL_ERROR`
 
 #### event key
 
@@ -993,17 +857,16 @@ bunnyBus.on('BunnyBus.AMQP_CONNECTION_CLOSE_EVENT', (err) => {
 const BunnyBus = require('bunnybus');
 const bunnyBus = new BunnyBus();
 
-bunnyBus.on('BunnyBus.AMQP_CHANNEL_ERROR_EVENT', (err) => {
-
-    // do work
-});
+bunnyBus.on(BunnyBus.Events.AMQP_CHANNEL_ERROR, (err) => {});
 ```
 
-### `BunnyBus.AMQP_CHANNEL_CLOSE_EVENT`
+### `BunnyBus.Events.AMQP_CHANNEL_CLOSE`
 
 #### event key
 
 * `amqp.channel.close` - emitted when amqplib channel closes.
+
+  Will invoke `_recoverConnectChannel` if `config.autoRecovery` is enabled.
 
 #### handler parameter(s)
 
@@ -1013,10 +876,7 @@ bunnyBus.on('BunnyBus.AMQP_CHANNEL_ERROR_EVENT', (err) => {
 const BunnyBus = require('bunnybus');
 const bunnyBus = new BunnyBus();
 
-bunnyBus.on('BunnyBus.AMQP_CHANNEL_CLOSE_EVENT', (err) => {
-
-    // do work
-});
+bunnyBus.on(BunnyBus.Events.AMQP_CHANNEL_CLOSE, (err) => {});
 ```
 
 ## `SubscriptionManager`
@@ -1050,7 +910,6 @@ const BunnyBus = require('bunnybus');
 const bunnyBus = new BunnyBus();
 
 bunnybus.subscriptions.create('queue1');
-}
 ```
 
 ### `tag(queue, consumerTag)`
@@ -1065,7 +924,6 @@ const BunnyBus = require('bunnybus');
 const bunnyBus = new BunnyBus();
 
 bunnybus.subscriptions.tag('queue1', 'abcd1234');
-}
 ```
 
 ### `get(queue)`
@@ -1078,8 +936,7 @@ Returns a clone of the subscription if the queue exists.  Returns `undefined` wh
 const BunnyBus = require('bunnybus');
 const bunnyBus = new BunnyBus();
 
-bunnybus.subscriptions.get('queue1');
-}
+const queue = bunnybus.subscriptions.get('queue1');
 ```
 
 ### `clear(queue)`
@@ -1093,7 +950,6 @@ const BunnyBus = require('bunnybus');
 const bunnyBus = new BunnyBus();
 
 bunnybus.subscriptions.clear('queue1');
-}
 ```
 
 ### `clearAll()`
@@ -1105,7 +961,6 @@ const BunnyBus = require('bunnybus');
 const bunnyBus = new BunnyBus();
 
 bunnybus.subscriptions.clearAll();
-}
 ```
 
 ### `remove(queue)`
@@ -1119,7 +974,6 @@ const BunnyBus = require('bunnybus');
 const bunnyBus = new BunnyBus();
 
 bunnybus.subscriptions.remove('queue1');
-}
 ```
 
 ### `list()`
@@ -1131,10 +985,7 @@ Returns a list of cloned subscriptions in the registrar.
 const BunnyBus = require('bunnybus');
 const bunnyBus = new BunnyBus();
 
-bunnybus.subscriptions.list();
-
-//output : [ subscriptions ]
-}
+const subscriptions = bunnybus.subscriptions.list();
 ```
 
 ### `block(queue)`
@@ -1148,7 +999,6 @@ const BunnyBus = require('bunnybus');
 const bunnyBus = new BunnyBus();
 
 bunnybus.subscriptions.block('queue1');
-}
 ```
 
 ### `unblock(queue)`
@@ -1162,7 +1012,6 @@ const BunnyBus = require('bunnybus');
 const bunnyBus = new BunnyBus();
 
 bunnybus.subscriptions.unblock('queue1');
-}
 ```
 
 ## Error Types
