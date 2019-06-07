@@ -1,0 +1,5 @@
+.*
+*.tgz
+/coverage
+/docker
+/test
