@@ -4,7 +4,7 @@ const { expect } = require('@hapi/code');
 
 const assertCustomLogger = async (instance, level, inputMessage) => {
     instance.logger = {
-        [level]: async (message) => {
+        [level]: (message) => {
             expect(message).to.exist();
             expect(message).to.be.a.object();
             expect(message).to.be.equal(inputMessage);

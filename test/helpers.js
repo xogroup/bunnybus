@@ -7,7 +7,6 @@ const Assertions = require('./assertions');
 const Helpers = require('../lib/helpers');
 const EventLogger = require('../lib/eventLogger');
 const Pkg = require('../package.json');
-const Sinon = require('sinon');
 
 const FakeLoggerFactory = (...levels) => {
     const logger = {};
@@ -21,8 +20,8 @@ const FakeLoggerFactory = (...levels) => {
 
 describe('helpers', () => {
     describe('createTransactionId', () => {
-        it('should create an 40 character long alphanumeric token', async () => {
-            const result = await Helpers.createTransactionId();
+        it('should create an 40 character long alphanumeric token', () => {
+            const result = Helpers.createTransactionId();
             expect(result)
                 .to.be.a.string()
                 .and.to.have.length(40)
@@ -34,7 +33,7 @@ describe('helpers', () => {
             const tokens = await Promise.all(
                 new Array(iterations)
                     .fill('')
-                    .map(async () => await Helpers.createTransactionId())
+                    .map(() => Helpers.createTransactionId())
             );
             const hash = {};
             for (let i = 0; i < iterations; ++i) {

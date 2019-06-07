@@ -5,7 +5,8 @@ const LabConfig = {
     reporter: ['console', 'html'],
     output: ['stdout', 'coverage/coverage.html'],
     lint: false,
-    verbose: true
+    verbose: true,
+    sourcemaps: true
 };
 
 module.exports = LabConfig;

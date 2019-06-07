@@ -1,10 +1,8 @@
 'use strict';
 
 const { expect } = require('@hapi/code');
-const Sinon = require('sinon');
 
 const {
-    afterEach,
     before,
     beforeEach,
     describe,
@@ -16,20 +14,10 @@ const BunnyBus = require('../lib');
 let instance;
 
 describe('automatic recovery cases', () => {
-    beforeEach(() => {
-        instance = new BunnyBus();
-    });
-
     describe('channel', () => {
         beforeEach(async () => {
-            //reset config
-            instance.config = BunnyBus.Defaults.SERVER_CONFIGURATION;
+            instance = new BunnyBus();
             await instance.connect();
-        });
-
-        afterEach(async () => {
-            //reset config
-            instance.config = BunnyBus.Defaults.SERVER_CONFIGURATION;
         });
 
         it('should correctly recover consumers', async () => {
@@ -53,17 +41,23 @@ describe('automatic recovery cases', () => {
 
         it(
             'should fire FATAL event after exceeding channel attempts',
-            { timeout: 5000, skip: true },
+            { timeout: 5000 },
             async () => {
-                await new Promise(async (resolve) => {
+                await new Promise((resolve) => {
+                    let retryCount = 0;
+                    instance.on(BunnyBus.Events.RECOVERING, () => retryCount++);
                     instance.once(BunnyBus.Events.FATAL, () => {
+                        expect(retryCount).to.equal(
+                            BunnyBus.Defaults.SERVER_CONFIGURATION
+                                .autoRecoveryRetryCount
+                        );
                         resolve();
                     });
 
                     //invalid config
-                    instance.config = { server: 'fake' };
+                    instance.config = { port: 1234 };
                     //force close
-                    instance.channel.emit('close');
+                    instance.connection.emit('close');
                 });
             }
         );
@@ -72,6 +66,7 @@ describe('automatic recovery cases', () => {
     describe('events', () => {
         describe('recovering', () => {
             beforeEach(async () => {
+                instance = new BunnyBus();
                 await instance.connect();
             });
 
@@ -80,7 +75,7 @@ describe('automatic recovery cases', () => {
                 { timeout: 5000 },
                 async () => {
                     await new Promise((resolve) => {
-                        instance.once(BunnyBus.Events.RECOVERED, resolve);
+                        instance.once(BunnyBus.Events.RECOVERING, resolve);
                         instance.connection.emit('close');
                     });
                 }
@@ -91,7 +86,7 @@ describe('automatic recovery cases', () => {
                 { timeout: 5000 },
                 async () => {
                     await new Promise((resolve) => {
-                        instance.once(BunnyBus.Events.RECOVERED, resolve);
+                        instance.once(BunnyBus.Events.RECOVERING, resolve);
                         instance.channel.emit('close');
                     });
                 }
@@ -100,6 +95,7 @@ describe('automatic recovery cases', () => {
 
         describe('recovered', () => {
             beforeEach(async () => {
+                instance = new BunnyBus();
                 await instance.connect();
             });
 
@@ -136,7 +132,8 @@ describe('automatic recovery cases', () => {
     });
 
     describe('exchange', () => {
-        before(async () => {
+        beforeEach(async () => {
+            instance = new BunnyBus();
             await instance.connect();
         });
 
@@ -150,6 +147,7 @@ describe('automatic recovery cases', () => {
 
     describe('publish', () => {
         before(async () => {
+            instance = new BunnyBus();
             await instance._closeConnection();
         });
 
