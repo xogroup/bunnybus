@@ -31,7 +31,7 @@ describe('automatic recovery cases', () => {
 
         it('should correctly recover consumers', { timeout: 5000 }, (done) => {
 
-            console.log(instance._config);
+            // console.log(instance._config);
 
             instance.once(BunnyBus.RECOVERED_EVENT, () => {
 
