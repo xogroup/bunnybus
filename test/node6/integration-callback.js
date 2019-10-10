@@ -18,43 +18,43 @@ const expect = Code.expect;
 const BunnyBus = require('../../lib');
 let instance = undefined;
 
-// describe('positive integration tests with no configuration - Callback api', () => {
+describe('positive integration tests with no configuration - Callback api', () => {
 
-//     before((done) => {
+    before((done) => {
 
-//         instance = new BunnyBus();
-//         delete instance._config;
-//         done();
-//     });
+        instance = new BunnyBus();
+        delete instance._config;
+        done();
+    });
 
-//     describe('internal configuration state', () => {
+    describe('internal configuration state', () => {
 
-//         it('should be undefined', (done) => {
+        it('should be undefined', (done) => {
 
-//             expect(instance._config).to.be.undefined();
-//             done();
-//         });
-//     });
+            expect(instance._config).to.be.undefined();
+            done();
+        });
+    });
 
-//     describe('_autoConnectChannel', () => {
+    describe('_autoConnectChannel', () => {
 
-//         beforeEach((done) => {
+        beforeEach((done) => {
 
-//             instance._closeConnection(done);
-//         });
+            instance._closeConnection(done);
+        });
 
-//         it('should create connection and channel', (done) => {
+        it('should create connection and channel', (done) => {
 
-//             instance._autoConnectChannel((err) => {
+            instance._autoConnectChannel((err) => {
 
-//                 expect(err).to.not.exist();
-//                 expect(instance.connection).to.exist();
-//                 expect(instance.channel).to.exist();
-//                 done();
-//             });
-//         });
-//     });
-// });
+                expect(err).to.not.exist();
+                expect(instance.connection).to.exist();
+                expect(instance.channel).to.exist();
+                done();
+            });
+        });
+    });
+});
 
 describe('positive integration tests with configuration - Callback api', () => {
 
@@ -67,14 +67,14 @@ describe('positive integration tests with configuration - Callback api', () => {
         done();
     });
 
-    // describe('internal configuration state', () => {
+    describe('internal configuration state', () => {
 
-    //     it('should be undefined', (done) => {
+        it('should be undefined', (done) => {
 
-    //         expect(instance._config).to.be.exist();
-    //         done();
-    //     });
-    // });
+            expect(instance._config).to.be.exist();
+            done();
+        });
+    });
 
     describe('connection', () => {
 
