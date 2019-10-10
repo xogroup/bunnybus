@@ -18,7 +18,45 @@ const expect = Code.expect;
 const BunnyBus = require('../../lib');
 let instance = undefined;
 
-describe('positive integration tests - Callback api', () => {
+describe('positive integration tests with no configuration - Callback api', () => {
+
+    before((done) => {
+
+        instance = new BunnyBus();
+        delete instance._config;
+        done();
+    });
+
+    describe('internal configuration state', () => {
+
+        it('should be undefined', (done) => {
+
+            expect(instance._config).to.be.undefined();
+            done();
+        });
+    });
+
+    describe('_autoConnectChannel', () => {
+
+        beforeEach((done) => {
+
+            instance._closeConnection(done);
+        });
+
+        it('should create connection and channel', (done) => {
+
+            instance._autoConnectChannel((err) => {
+
+                expect(err).to.not.exist();
+                expect(instance.connection).to.exist();
+                expect(instance.channel).to.exist();
+                done();
+            });
+        });
+    });
+});
+
+describe('positive integration tests with configuration - Callback api', () => {
 
     before((done) => {
 
@@ -27,6 +65,15 @@ describe('positive integration tests - Callback api', () => {
         instance.config.validatePublisher = true;
         instance.config.validateVersion = true;
         done();
+    });
+
+    describe('internal configuration state', () => {
+
+        it('should be undefined', (done) => {
+
+            expect(instance._config).to.be.exist();
+            done();
+        });
     });
 
     describe('connection', () => {
