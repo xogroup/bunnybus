@@ -5,10 +5,7 @@ Currently supports the following queueing frameworks.
 
 - [RabbitMQ](https://www.rabbitmq.com/)
 
-[![npm version](https://badge.fury.io/js/bunnybus.svg)](https://badge.fury.io/js/bunnybus)
-[![Build Status](https://travis-ci.org/xogroup/bunnybus.svg?branch=development)](https://travis-ci.org/xogroup/bunnybus)
-[![Known Vulnerabilities](https://snyk.io/test/github/xogroup/bunnybus/badge.svg)](https://snyk.io/test/github/xogroup/bunnybus)
-[![NSP Status](https://nodesecurity.io/orgs/xo-group/projects/599e335d-8668-4f77-89ea-ebac0d607378/badge)](https://nodesecurity.io/orgs/xo-group/projects/599e335d-8668-4f77-89ea-ebac0d607378)
+[![Build Status](https://travis-ci.com/tenna-llc/bunnybus.svg?branch=master)](https://travis-ci.com/tenna-llc/bunnybus)
 
 Lead Maintainer: [Lam Chan](https://github.com/lamchakchan)
 
