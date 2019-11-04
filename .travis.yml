@@ -8,6 +8,10 @@ matrix:
       env: NODE_VERSION=6
     - node_js: '8'
       env: NODE_VERSION=8
+    - node_js: '10'
+      env: NODE_VERSION=10
+    - node_js: '12'
+      env: NODE_VERSION=12
 before_install:
 - npm install -g npm@'>=2.13.5'
 - docker pull rabbitmq:3-management
