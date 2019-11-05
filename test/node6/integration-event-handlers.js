@@ -14,53 +14,82 @@ const it = lab.it;
 const expect = Code.expect;
 
 const BunnyBus = require('../../lib');
+
 let instance = undefined;
 
 describe('positive integration tests - event handlers', () => {
 
-    before((done) => {
+    before(() => {
 
         instance = new BunnyBus();
         instance.config = BunnyBus.DEFAULT_SERVER_CONFIGURATION;
-        done();
     });
 
     describe('blocked', () => {
 
         const queueName = 'test-event-handlers-blocked-queue-1';
 
-        beforeEach((done) => {
+        beforeEach(async () => {
 
-            const handlers = {};
-            handlers['subscribed-event'] = (consumedMessage, ack, reject, requeue) => {};
-            instance.subscribe(queueName, handlers, done);
+            return new Promise((res, rej) => {
+
+                const done = (err) => {
+
+                    return err
+                        ? rej(err)
+                        : res();
+                };
+
+                const handlers = {};
+                handlers['subscribed-event'] = (consumedMessage, ack, reject, requeue) => {};
+                instance.subscribe(queueName, handlers, done);
+            });
         });
 
-        afterEach((done) => {
+        afterEach(() => {
 
             instance.subscriptions._subscriptions.clear();
             instance.subscriptions._blockQueues.clear();
-            done();
         });
 
-        after((done) => {
+        after(async () => {
 
-            Async.waterfall([
-                instance._autoConnectChannel,
-                instance.deleteExchange.bind(instance, instance.config.globalExchange),
-                instance.deleteQueue.bind(instance, queueName)
-            ], done);
-        });
+            return new Promise((res, rej) => {
 
-        it('should cause `unsubscribed()` to be called', (done) => {
+                const done = (err) => {
 
-            instance.once(BunnyBus.UNSUBSCRIBED_EVENT, (queue) => {
+                    return err
+                        ? rej(err)
+                        : res();
+                };
 
-                expect(queue).to.be.equal(queueName);
-                done();
+                Async.waterfall([
+                    instance._autoConnectChannel,
+                    instance.deleteExchange.bind(instance, instance.config.globalExchange),
+                    instance.deleteQueue.bind(instance, queueName)
+                ], done);
             });
+        });
 
-            instance.subscriptions.block(queueName);
+        it('should cause `unsubscribed()` to be called', async () => {
+
+            return new Promise((res, rej) => {
+
+                const done = (err) => {
+
+                    return err
+                        ? rej(err)
+                        : res();
+                };
+
+                instance.once(BunnyBus.UNSUBSCRIBED_EVENT, (queue) => {
+
+                    expect(queue).to.be.equal(queueName);
+                    done();
+                });
+
+                instance.subscriptions.block(queueName);
+            });
         });
     });
 
@@ -68,43 +97,72 @@ describe('positive integration tests - event handlers', () => {
 
         const queueName = 'test-event-handlers-unblocked-queue-1';
 
-        beforeEach((done) => {
+        beforeEach(() => {
 
             const handlers = {};
             handlers['subscribed-event'] = (consumedMessage, ack, reject, requeue) => {};
             instance.subscriptions.create(queueName, undefined, handlers);
             instance.subscriptions._blockQueues.add(queueName);
-            done();
         });
 
-        afterEach((done) => {
+        afterEach(async () => {
 
-            instance.channel.cancel(instance.subscriptions.get(queueName).consumerTag, (err) => {
+            return new Promise((res, rej) => {
 
-                instance.subscriptions._subscriptions.clear();
-                instance.subscriptions._blockQueues.clear();
-                done(err);
+                const done = (err) => {
+
+                    return err
+                        ? rej(err)
+                        : res();
+                };
+
+                instance.channel.cancel(instance.subscriptions.get(queueName).consumerTag, (err) => {
+
+                    instance.subscriptions._subscriptions.clear();
+                    instance.subscriptions._blockQueues.clear();
+                    done(err);
+                });
             });
         });
 
-        after((done) => {
+        after(async () => {
 
-            Async.waterfall([
-                instance._autoConnectChannel,
-                instance.deleteExchange.bind(instance, instance.config.globalExchange),
-                instance.deleteQueue.bind(instance, queueName)
-            ], done);
+            return new Promise((res, rej) => {
+
+                const done = (err) => {
+
+                    return err
+                        ? rej(err)
+                        : res();
+                };
+
+                Async.waterfall([
+                    instance._autoConnectChannel,
+                    instance.deleteExchange.bind(instance, instance.config.globalExchange),
+                    instance.deleteQueue.bind(instance, queueName)
+                ], done);
+            });
         });
 
-        it('should cause `subscribed()` to be called', (done) => {
+        it('should cause `subscribed()` to be called', async () => {
 
-            instance.once(BunnyBus.SUBSCRIBED_EVENT, (queue) => {
+            return new Promise((res, rej) => {
 
-                expect(queue).to.be.equal(queueName);
-                done();
+                const done = (err) => {
+
+                    return err
+                        ? rej(err)
+                        : res();
+                };
+
+                instance.once(BunnyBus.SUBSCRIBED_EVENT, (queue) => {
+
+                    expect(queue).to.be.equal(queueName);
+                    done();
+                });
+
+                instance.subscriptions.unblock(queueName);
             });
-
-            instance.subscriptions.unblock(queueName);
         });
     });
 });

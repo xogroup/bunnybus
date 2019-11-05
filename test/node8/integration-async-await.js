@@ -4,6 +4,7 @@ const Code = require('code');
 const Lab = require('lab');
 const Exceptions = require('../../lib/exceptions');
 const Assertions = require('./assertions');
+const Promisify = require('../promisify');
 
 const lab = exports.lab = Lab.script();
 const before = lab.before;
@@ -15,6 +16,7 @@ const it = lab.it;
 const expect = Code.expect;
 
 const BunnyBus = require('../../lib');
+
 let instance = undefined;
 
 const throwError = () => {
@@ -24,11 +26,10 @@ const throwError = () => {
 
 describe('positive integration tests - async/await with Promise api', () => {
 
-    before((done) => {
+    before(() => {
 
         instance = new BunnyBus();
         instance.config = BunnyBus.DEFAULT_SERVER_CONFIGURATION;
-        done();
     });
 
     describe('connection', () => {
@@ -138,28 +139,48 @@ describe('positive integration tests - async/await with Promise api', () => {
             return instance._closeConnection();
         });
 
-        it('should recreate connection when connection error occurs', (done) => {
+        it('should recreate connection when connection error occurs', async () => {
 
-            instance.connection.emit('error');
+            return new Promise((res, rej) => {
 
-            setTimeout(() => {
+                const done = (err) => {
 
-                expect(instance.connection).to.exist();
-                expect(instance.channel).to.exist();
-                done();
-            }, 100);
+                    return err
+                        ? rej(err)
+                        : res();
+                };
+
+                instance.connection.emit('error');
+
+                setTimeout(() => {
+
+                    expect(instance.connection).to.exist();
+                    expect(instance.channel).to.exist();
+                    done();
+                }, 100);
+            });
         });
 
-        it('should recreate connection when channel error occurs', (done) => {
+        it('should recreate connection when channel error occurs', async () => {
 
-            instance.channel.emit('error');
+            return new Promise((res, rej) => {
 
-            setTimeout(() => {
+                const done = (err) => {
 
-                expect(instance.connection).to.exist();
-                expect(instance.channel).to.exist();
-                done();
-            }, 100);
+                    return err
+                        ? rej(err)
+                        : res();
+                };
+
+                instance.channel.emit('error');
+
+                setTimeout(() => {
+
+                    expect(instance.connection).to.exist();
+                    expect(instance.channel).to.exist();
+                    done();
+                }, 100);
+            });
         });
     });
 
@@ -939,9 +960,9 @@ describe('positive integration tests - async/await with Promise api', () => {
         const message = { name : 'bunnybus', event : 'a' };
         const patterns = ['a'];
 
-        beforeEach((done) => {
+        beforeEach(async () => {
 
-            instance.channel.purgeQueue(queueName, done);
+            return Promisify(instance.channel.purgeQueue.bind(instance.channel), queueName);
         });
 
         before(async () => {
@@ -1012,9 +1033,9 @@ describe('positive integration tests - async/await with Promise api', () => {
         const message = { name : 'bunnybus', event : 'a' };
         const patterns = ['a'];
 
-        beforeEach((done) => {
+        beforeEach(async () => {
 
-            instance.channel.purgeQueue(queueName, done);
+            return Promisify(instance.channel.purgeQueue.bind(instance.channel), queueName);
         });
 
         before(async () => {
@@ -1089,11 +1110,10 @@ describe('positive integration tests - async/await with Promise api', () => {
 
 describe('negative integration tests', () => {
 
-    before((done) => {
+    before(() => {
 
         instance = new BunnyBus();
         instance.config = BunnyBus.DEFAULT_SERVER_CONFIGURATION;
-        done();
     });
 
     describe('channel', () => {
@@ -1107,6 +1127,7 @@ describe('negative integration tests', () => {
 
             try {
                 await instance._createChannel();
+                console.log('Foo');
                 return throwError();
             }
             catch (err) {
@@ -1244,11 +1265,10 @@ describe('negative integration tests', () => {
         const consumerTag = 'abcde12345';
         const handlers = { event1 : () => {} };
 
-        afterEach((done) => {
+        afterEach(() => {
 
             instance.subscriptions._subscriptions.clear();
             instance.subscriptions._blockQueues.clear();
-            done();
         });
 
         it('should throw SubscriptionExistError when calling subscribe on an active subscription exist', async () => {

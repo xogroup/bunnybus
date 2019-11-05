@@ -1,6 +1,7 @@
 'use strict';
 
 const Code = require('code');
+
 const expect = Code.expect;
 
 const assertPublishPromise = (instance, message, queueName, routeKey, transactionId, source, shouldRoute, miscOptions) => {

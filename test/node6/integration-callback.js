@@ -5,6 +5,7 @@ const Code = require('code');
 const Lab = require('lab');
 const Exceptions = require('../../lib/exceptions');
 const Assertions = require('./assertions');
+const Promisify = require('../promisify');
 
 const lab = exports.lab = Lab.script();
 const before = lab.before;
@@ -16,41 +17,43 @@ const it = lab.it;
 const expect = Code.expect;
 
 const BunnyBus = require('../../lib');
+
 let instance = undefined;
 
 describe('positive integration tests with no configuration - Callback api', () => {
 
-    before((done) => {
+    before(() => {
 
         instance = new BunnyBus();
         delete instance._config;
-        done();
     });
 
     describe('internal configuration state', () => {
 
-        it('should be undefined', (done) => {
+        it('should be undefined', async () => {
 
             expect(instance._config).to.be.undefined();
-            done();
         });
     });
 
     describe('_autoConnectChannel', () => {
 
-        beforeEach((done) => {
+        beforeEach(async () => {
 
-            instance._closeConnection(done);
+            await Promisify(instance._closeConnection);
         });
 
-        it('should create connection and channel', (done) => {
+        it('should create connection and channel', async () => {
 
-            instance._autoConnectChannel((err) => {
+            return new Promise((res) => {
 
-                expect(err).to.not.exist();
-                expect(instance.connection).to.exist();
-                expect(instance.channel).to.exist();
-                done();
+                instance._autoConnectChannel((err) => {
+
+                    expect(err).to.not.exist();
+                    expect(instance.connection).to.exist();
+                    expect(instance.channel).to.exist();
+                    res();
+                });
             });
         });
     });
@@ -58,182 +61,240 @@ describe('positive integration tests with no configuration - Callback api', () =
 
 describe('positive integration tests with configuration - Callback api', () => {
 
-    before((done) => {
+    before(() => {
 
         instance = new BunnyBus();
         instance.config = BunnyBus.DEFAULT_SERVER_CONFIGURATION;
         instance.config.validatePublisher = true;
         instance.config.validateVersion = true;
-        done();
     });
 
     describe('internal configuration state', () => {
 
-        it('should be undefined', (done) => {
+        it('should be undefined', () => {
 
             expect(instance._config).to.be.exist();
-            done();
         });
     });
 
     describe('connection', () => {
 
-        before((done) => {
+        before( async () => {
 
-            instance._closeConnection(done);
+            return Promisify(instance._closeConnection);
         });
 
-        afterEach((done) => {
+        afterEach(async () => {
 
-            instance._closeConnection(done);
+            return Promisify(instance._closeConnection);
         });
 
-        it('should create connection with default values', (done) => {
+        it('should create connection with default values', () => {
 
             instance._createConnection((err) => {
 
                 expect(err).to.not.exist();
                 expect(instance.connection).to.exist();
-                done();
             });
         });
 
-        it('should close an opened connection', (done) => {
+        it('should close an opened connection', async () => {
 
-            Async.waterfall([
-                instance._createConnection,
-                instance._closeConnection
-            ], (err) => {
+            return new Promise((res, rej) => {
 
-                expect(err).to.not.exist();
-                expect(instance.connection).to.not.exist();
-                done(err);
+                Async.waterfall([
+                    instance._createConnection,
+                    instance._closeConnection
+                ], (err) => {
+
+                    expect(err).to.not.exist();
+                    expect(instance.connection).to.not.exist();
+
+                    if (err) {
+                        rej(err);
+                    }
+                    else {
+                        res();
+                    }
+                });
             });
         });
     });
 
     describe('channel', () => {
 
-        before((done) => {
+        before(async () => {
 
-            instance._closeChannel(done);
+            return Promisify(instance._closeChannel);
         });
 
-        beforeEach((done) => {
+        beforeEach(async () => {
 
-            Async.waterfall([
-                instance._closeChannel.bind(instance),
-                instance._createConnection.bind(instance)
-            ], done);
-        });
+            return new Promise((res, rej) => {
 
-        it('should create channel with default values', (done) => {
+                const done = (err) => {
 
-            instance._createChannel((err) => {
+                    return err
+                        ? rej(err)
+                        : res();
+                };
 
-                expect(err).to.not.exist();
-                expect(instance.channel).to.exist();
-                done();
+                Async.waterfall([
+                    instance._closeChannel.bind(instance),
+                    instance._createConnection.bind(instance)
+                ], done);
             });
         });
 
-        it('should close an opened channel', (done) => {
+        it('should create channel with default values', async () => {
 
-            Async.waterfall([
-                instance._createChannel,
-                instance._closeChannel
-            ], (err) => {
+            return new Promise((res) => {
 
-                expect(err).to.not.exist();
-                expect(instance.channel).to.not.exist();
-                done(err);
+                instance._createChannel((err) => {
+
+                    expect(err).to.not.exist();
+                    expect(instance.channel).to.exist();
+                    res();
+                });
             });
         });
 
-        it('should close both connection and channel when closing a connection', (done) => {
+        it('should close an opened channel', async () => {
 
-            Async.waterfall([
-                instance._createChannel,
-                instance._closeConnection
-            ], (err) => {
+            return new Promise((res, rej) => {
 
-                expect(err).to.not.exist();
-                expect(instance.connection).to.not.exist();
-                expect(instance.channel).to.not.exist();
-                done(err);
+                const done = (err) => {
+
+                    return err
+                        ? rej(err)
+                        : res();
+                };
+
+                Async.waterfall([
+                    instance._createChannel,
+                    instance._closeChannel
+                ], (err) => {
+
+                    expect(err).to.not.exist();
+                    expect(instance.channel).to.not.exist();
+                    done(err);
+                });
+            });
+        });
+
+        it('should close both connection and channel when closing a connection', async () => {
+
+            return new Promise((res, rej) => {
+
+                const done = (err) => {
+
+                    return err
+                        ? rej(err)
+                        : res();
+                };
+
+                Async.waterfall([
+                    instance._createChannel,
+                    instance._closeConnection
+                ], (err) => {
+
+                    expect(err).to.not.exist();
+                    expect(instance.connection).to.not.exist();
+                    expect(instance.channel).to.not.exist();
+                    done(err);
+                });
             });
         });
     });
 
     describe('_autoConnectChannel', () => {
 
-        beforeEach((done) => {
+        beforeEach(async () => {
 
-            instance._closeConnection(done);
+            return Promisify(instance._closeConnection);
         });
 
-        it('should create connection and channel', (done) => {
+        it('should create connection and channel', async () => {
 
-            instance._autoConnectChannel((err) => {
+            return new Promise((res) => {
 
-                expect(err).to.not.exist();
-                expect(instance.connection).to.exist();
-                expect(instance.channel).to.exist();
-                done();
+                instance._autoConnectChannel((err) => {
+
+                    expect(err).to.not.exist();
+                    expect(instance.connection).to.exist();
+                    expect(instance.channel).to.exist();
+                    res();
+                });
             });
         });
 
-        it('should create connection and channel properly with no race condition', (done) => {
+        it('should create connection and channel properly with no race condition', async () => {
 
-            Async.parallel([
-                instance._autoConnectChannel,
-                instance._autoConnectChannel,
-                instance._autoConnectChannel,
-                instance._autoConnectChannel
-            ],(err) => {
+            return new Promise((res, rej) => {
 
-                expect(err).to.not.exist();
-                expect(instance.connection).to.exist();
-                expect(instance.channel).to.exist();
-                done();
+                const done = (err) => {
+
+                    return err
+                        ? rej(err)
+                        : res();
+                };
+
+                Async.parallel([
+                    instance._autoConnectChannel,
+                    instance._autoConnectChannel,
+                    instance._autoConnectChannel,
+                    instance._autoConnectChannel
+                ],(err) => {
+
+                    expect(err).to.not.exist();
+                    expect(instance.connection).to.exist();
+                    expect(instance.channel).to.exist();
+                    done();
+                });
             });
         });
     });
 
     describe('_recoverConnectChannel', () => {
 
-        beforeEach((done) => {
+        beforeEach(async () => {
 
-            instance._autoConnectChannel(done);
+            return Promisify(instance._autoConnectChannel);
         });
 
-        afterEach((done) => {
+        afterEach(async () => {
 
-            instance._closeConnection(done);
+            return Promisify(instance._closeConnection);
         });
 
-        it('should recreate connection when connection error occurs', (done) => {
+        it('should recreate connection when connection error occurs', async () => {
 
             instance.connection.emit('error');
 
-            setTimeout(() => {
+            return new Promise((res) => {
 
-                expect(instance.connection).to.exist();
-                expect(instance.channel).to.exist();
-                done();
-            }, 70);
+                setTimeout(() => {
+
+                    expect(instance.connection).to.exist();
+                    expect(instance.channel).to.exist();
+                    res();
+                }, 70);
+            });
         });
 
-        it('should recreate connection when channel error occurs', (done) => {
+        it('should recreate connection when channel error occurs', async () => {
 
             instance.channel.emit('error');
 
-            setTimeout(() => {
+            return new Promise((res) => {
 
-                expect(instance.connection).to.exist();
-                expect(instance.channel).to.exist();
-                done();
-            }, 70);
+                setTimeout(() => {
+
+                    expect(instance.connection).to.exist();
+                    expect(instance.channel).to.exist();
+                    res();
+                }, 70);
+            });
         });
     });
 
@@ -241,40 +302,49 @@ describe('positive integration tests with configuration - Callback api', () => {
 
         const queueName = 'test-queue-1';
 
-        beforeEach((done) => {
+        beforeEach(async () => {
 
-            instance._autoConnectChannel(done);
+            return Promisify(instance._autoConnectChannel);
         });
 
-        it('should create queue with name `test-queue-1`', (done) => {
+        it('should create queue with name `test-queue-1`', async () => {
 
-            instance.createQueue(queueName, (err, result) => {
+            return new Promise((res) => {
 
-                expect(err).to.not.exist();
-                expect(result.queue).to.be.equal(queueName);
-                expect(result.messageCount).to.be.equal(0);
-                done();
+                instance.createQueue(queueName, (err, result) => {
+
+                    expect(err).to.not.exist();
+                    expect(result.queue).to.be.equal(queueName);
+                    expect(result.messageCount).to.be.equal(0);
+                    res();
+                });
             });
         });
 
-        it('should check queue with name `test-queue-1`', (done) => {
+        it('should check queue with name `test-queue-1`', async () => {
 
-            instance.checkQueue(queueName, (err, result) => {
+            return new Promise((res) => {
 
-                expect(err).to.not.exist();
-                expect(result.queue).to.be.equal(queueName);
-                expect(result.messageCount).to.be.equal(0);
-                done();
+                instance.checkQueue(queueName, (err, result) => {
+
+                    expect(err).to.not.exist();
+                    expect(result.queue).to.be.equal(queueName);
+                    expect(result.messageCount).to.be.equal(0);
+                    res();
+                });
             });
         });
 
-        it('should delete queue with name `test-queue-1`', (done) => {
+        it('should delete queue with name `test-queue-1`', async () => {
 
-            instance.deleteQueue(queueName, (err, result) => {
+            return new Promise((res) => {
 
-                expect(err).to.not.exist();
-                expect(result.messageCount).to.be.equal(0);
-                done();
+                instance.deleteQueue(queueName, (err, result) => {
+
+                    expect(err).to.not.exist();
+                    expect(result.messageCount).to.be.equal(0);
+                    res();
+                });
             });
         });
     });
@@ -283,54 +353,83 @@ describe('positive integration tests with configuration - Callback api', () => {
 
         const exchangeName = 'test-exchange-1';
 
-        before((done) => {
+        before(async () => {
 
-            Async.waterfall([
-                instance._autoConnectChannel,
-                (cb) => {
+            return new Promise((res, rej) => {
 
-                    instance.deleteExchange(exchangeName, cb);
-                }
-            ], done);
-        });
+                const done = (err) => {
 
-        beforeEach((done) => {
+                    return err
+                        ? rej(err)
+                        : res();
+                };
 
-            instance._autoConnectChannel(done);
-        });
+                Async.waterfall([
+                    instance._autoConnectChannel,
+                    (cb) => {
 
-        it('should create exchange with name `test-exchange-1`', (done) => {
-
-            instance.createExchange(exchangeName, 'topic', (err, result) => {
-
-                expect(err).to.not.exist();
-                done();
+                        instance.deleteExchange(exchangeName, cb);
+                    }
+                ], done);
             });
         });
 
-        it('should check exchange with name `test-exchange-1`', (done) => {
+        beforeEach(async () => {
 
-            instance.checkExchange(exchangeName, (err, result) => {
+            return Promisify(instance._autoConnectChannel);
+        });
 
-                expect(err).to.not.exist();
-                done();
+        it('should create exchange with name `test-exchange-1`', async () => {
+
+            return new Promise((res) => {
+
+                instance.createExchange(exchangeName, 'topic', (err, result) => {
+
+                    expect(err).to.not.exist();
+                    res();
+                });
             });
         });
 
-        it('should delete exchange with name `test-exchange-1`', (done) => {
+        it('should check exchange with name `test-exchange-1`', async () => {
 
-            instance.deleteExchange(exchangeName, (err, result) => {
+            return new Promise((res) => {
 
-                expect(err).to.not.exist();
-                done();
+                instance.checkExchange(exchangeName, (err, result) => {
+
+                    expect(err).to.not.exist();
+                    res();
+                });
             });
         });
 
-        it('should recover from a non existent exchange', (done) => {
+        it('should delete exchange with name `test-exchange-1`', async () => {
 
-            instance.once(BunnyBus.RECOVERED_EVENT, done);
+            return new Promise((res) => {
 
-            instance.checkExchange(exchangeName, () => {});
+                instance.deleteExchange(exchangeName, (err, result) => {
+
+                    expect(err).to.not.exist();
+                    res();
+                });
+            });
+        });
+
+        it('should recover from a non existent exchange', async () => {
+
+            return new Promise((res, rej) => {
+
+                const done = (err) => {
+
+                    return err
+                        ? rej(err)
+                        : res();
+                };
+
+                instance.once(BunnyBus.RECOVERED_EVENT, done);
+
+                instance.checkExchange(exchangeName, () => {});
+            });
         });
     });
 
@@ -340,22 +439,32 @@ describe('positive integration tests with configuration - Callback api', () => {
         const message = { name : 'bunnybus' };
         const messageWithEvent = { event : 'event1', name : 'bunnybus' };
 
-        beforeEach((done) => {
+        beforeEach(async () => {
 
-            instance._closeConnection(done);
+            return Promisify(instance._closeConnection);
         });
 
-        afterEach((done) => {
+        afterEach(async () => {
 
-            instance.deleteQueue(queueName, done);
+            return Promisify(instance.deleteQueue, queueName);
         });
 
-        it('should send message', (done) => {
+        it('should send message', async () => {
 
-            Assertions.assertSend(instance, message, queueName, null, null, null, null, done);
+            return new Promise((res, rej) => {
+
+                const done = (err) => {
+
+                    return err
+                        ? rej(err)
+                        : res();
+                };
+
+                Assertions.assertSend(instance, message, queueName, null, null, null, null, done);
+            });
         });
 
-        it('should send message when miscellaneous amqplib options are included', (done) => {
+        it('should send message when miscellaneous amqplib options are included', async () => {
 
             const amqpOptions = {
                 expiration: '1000',
@@ -376,27 +485,78 @@ describe('positive integration tests with configuration - Callback api', () => {
                 appId: 'test_app'
             };
 
-            Assertions.assertSend(instance, message, queueName, null, null, null, amqpOptions, done);
+            return new Promise((res, rej) => {
+
+                const done = (err) => {
+
+                    return err
+                        ? rej(err)
+                        : res();
+                };
+
+                Assertions.assertSend(instance, message, queueName, null, null, null, amqpOptions, done);
+            });
+
         });
 
-        it('should proxy `source` when supplied', (done) => {
+        it('should proxy `source` when supplied', async () => {
 
-            Assertions.assertSend(instance, message, queueName, null, 'someModule', null, null, done);
+            return new Promise((res, rej) => {
+
+                const done = (err) => {
+
+                    return err
+                        ? rej(err)
+                        : res();
+                };
+
+                Assertions.assertSend(instance, message, queueName, null, 'someModule', null, null, done);
+            });
         });
 
-        it('should proxy `transactionId` when supplied', (done) => {
+        it('should proxy `transactionId` when supplied', async () => {
 
-            Assertions.assertSend(instance, message, queueName, 'someTransactionId', null, null, null, done);
+            return new Promise((res, rej) => {
+
+                const done = (err) => {
+
+                    return err
+                        ? rej(err)
+                        : res();
+                };
+
+                Assertions.assertSend(instance, message, queueName, 'someTransactionId', null, null, null, done);
+            });
         });
 
-        it('should proxy `routeKey` when supplied', (done) => {
+        it('should proxy `routeKey` when supplied', async () => {
 
-            Assertions.assertSend(instance, message, queueName, null, null, 'event1', null, done);
+            return new Promise((res, rej) => {
+
+                const done = (err) => {
+
+                    return err
+                        ? rej(err)
+                        : res();
+                };
+
+                Assertions.assertSend(instance, message, queueName, null, null, 'event1', null, done);
+            });
         });
 
-        it('should proxy `routeKey` when supplied', (done) => {
+        it('should proxy `routeKey` when supplied', async () => {
 
-            Assertions.assertSend(instance, messageWithEvent, queueName, null, null, null, null, done);
+            return new Promise((res, rej) => {
+
+                const done = (err) => {
+
+                    return err
+                        ? rej(err)
+                        : res();
+                };
+
+                Assertions.assertSend(instance, messageWithEvent, queueName, null, null, null, null, done);
+            });
         });
     });
 
@@ -405,24 +565,44 @@ describe('positive integration tests with configuration - Callback api', () => {
         const queueName = 'test-get-all-queue-1';
         const message = { name : 'bunnybus' };
 
-        beforeEach((done) => {
+        beforeEach(async () => {
 
-            instance._closeConnection(done);
+            return Promisify(instance._closeConnection);
         });
 
-        afterEach((done) => {
+        afterEach(async () => {
 
-            instance.deleteQueue(queueName, done);
+            return Promisify(instance.deleteQueue, queueName);
         });
 
-        it('should retrieve all message without meta flag', (done) => {
+        it('should retrieve all message without meta flag', async () => {
 
-            Assertions.assertGetAll(instance, message, queueName, false, 10, done);
+            return new Promise((res, rej) => {
+
+                const done = (err) => {
+
+                    return err
+                        ? rej(err)
+                        : res();
+                };
+
+                Assertions.assertGetAll(instance, message, queueName, false, 10, done);
+            });
         });
 
-        it('should retrieve all message with meta flag', (done) => {
+        it('should retrieve all message with meta flag', async () => {
 
-            Assertions.assertGetAll(instance, message, queueName, true, 10, done);
+            return new Promise((res, rej) => {
+
+                const done = (err) => {
+
+                    return err
+                        ? rej(err)
+                        : res();
+                };
+
+                Assertions.assertGetAll(instance, message, queueName, true, 10, done);
+            });
         });
     });
 
@@ -432,40 +612,70 @@ describe('positive integration tests with configuration - Callback api', () => {
         const message = { name : 'bunnybus' };
         const patterns = ['a', 'a.b', 'b', 'b.b', 'z.*'];
 
-        before((done) => {
+        before(async () => {
 
-            Async.waterfall([
-                instance._autoConnectChannel,
-                instance.createExchange.bind(instance, instance.config.globalExchange, 'topic'),
-                instance.createQueue.bind(instance, queueName),
-                (result, cb) => {
+            return new Promise((res, rej) => {
 
-                    Async.map(
-                        patterns,
-                        (item, mapCB) => {
+                const done = (err) => {
 
-                            instance.channel.bindQueue(queueName, instance.config.globalExchange, item, null, mapCB);
-                        },
-                        cb);
-                }
-            ], done);
+                    return err
+                        ? rej(err)
+                        : res();
+                };
+
+                Async.waterfall([
+                    instance._autoConnectChannel,
+                    instance.createExchange.bind(instance, instance.config.globalExchange, 'topic'),
+                    instance.createQueue.bind(instance, queueName),
+                    (result, cb) => {
+
+                        Async.map(
+                            patterns,
+                            (item, mapCB) => {
+
+                                instance.channel.bindQueue(queueName, instance.config.globalExchange, item, null, mapCB);
+                            },
+                            cb);
+                    }
+                ], done);
+            });
         });
 
-        after((done) => {
+        after(async () => {
 
-            Async.waterfall([
-                instance._autoConnectChannel,
-                instance.deleteExchange.bind(instance, instance.config.globalExchange),
-                instance.deleteQueue.bind(instance, queueName)
-            ], done);
+            return new Promise((res, rej) => {
+
+                const done = (err) => {
+
+                    return err
+                        ? rej(err)
+                        : res();
+                };
+
+                Async.waterfall([
+                    instance._autoConnectChannel,
+                    instance.deleteExchange.bind(instance, instance.config.globalExchange),
+                    instance.deleteQueue.bind(instance, queueName)
+                ], done);
+            });
         });
 
-        it('should publish for route `a`', (done) => {
+        it('should publish for route `a`', async () => {
 
-            Assertions.assertPublish(instance, message, queueName, 'a', null, null, true, null, done);
+            return new Promise((res, rej) => {
+
+                const done = (err) => {
+
+                    return err
+                        ? rej(err)
+                        : res();
+                };
+
+                Assertions.assertPublish(instance, message, queueName, 'a', null, null, true, null, done);
+            });
         });
 
-        it('should publish for route `a`  when miscellaneous amqplib options are included', (done) => {
+        it('should publish for route `a`  when miscellaneous amqplib options are included', async () => {
 
             const amqpOptions = {
                 expiration: '1000',
@@ -486,48 +696,139 @@ describe('positive integration tests with configuration - Callback api', () => {
                 appId: 'test_app'
             };
 
-            Assertions.assertPublish(instance, message, queueName, 'a', null, null, true, amqpOptions, done);
+            return new Promise((res, rej) => {
+
+                const done = (err) => {
+
+                    return err
+                        ? rej(err)
+                        : res();
+                };
+
+                Assertions.assertPublish(instance, message, queueName, 'a', null, null, true, amqpOptions, done);
+            });
         });
 
-        it('should publish for route `a.b`', (done) => {
+        it('should publish for route `a.b`', async () => {
 
-            Assertions.assertPublish(instance, message, queueName, 'a.b', null, null, true, null, done);
+            return new Promise((res, rej) => {
+
+                const done = (err) => {
+
+                    return err
+                        ? rej(err)
+                        : res();
+                };
+
+                Assertions.assertPublish(instance, message, queueName, 'a.b', null, null, true, null, done);
+            });
         });
 
-        it('should publish for route `b`', (done) => {
+        it('should publish for route `b`', async () => {
 
-            Assertions.assertPublish(instance, message, queueName, 'b', null, null, true, null, done);
+            return new Promise((res, rej) => {
+
+                const done = (err) => {
+
+                    return err
+                        ? rej(err)
+                        : res();
+                };
+
+                Assertions.assertPublish(instance, message, queueName, 'b', null, null, true, null, done);
+            });
         });
 
-        it('should publish for route `b.b`', (done) => {
+        it('should publish for route `b.b`', async () => {
 
-            Assertions.assertPublish(instance, message, queueName, 'b.b', null, null, true, null, done);
+            return new Promise((res, rej) => {
+
+                const done = (err) => {
+
+                    return err
+                        ? rej(err)
+                        : res();
+                };
+
+                Assertions.assertPublish(instance, message, queueName, 'b.b', null, null, true, null, done);
+            });
         });
 
-        it('should publish for route `z.a`', (done) => {
+        it('should publish for route `z.a`', async () => {
 
-            Assertions.assertPublish(instance, message, queueName, 'z.a', null, null, true, null, done);
+            return new Promise((res, rej) => {
+
+                const done = (err) => {
+
+                    return err
+                        ? rej(err)
+                        : res();
+                };
+
+                Assertions.assertPublish(instance, message, queueName, 'z.a', null, null, true, null, done);
+            });
         });
 
-        it('should publish for route `z` but not route to queue', (done) => {
+        it('should publish for route `z` but not route to queue', async () => {
 
-            Assertions.assertPublish(instance, message, queueName, 'z', null, null, false, null, done);
+            return new Promise((res, rej) => {
+
+                const done = (err) => {
+
+                    return err
+                        ? rej(err)
+                        : res();
+                };
+
+                Assertions.assertPublish(instance, message, queueName, 'z', null, null, false, null, done);
+            });
         });
 
-        it('should proxy `source` when supplied', (done) => {
+        it('should proxy `source` when supplied', async () => {
 
-            Assertions.assertPublish(instance, message, queueName, 'a', null, 'someModule', true, null, done);
+            return new Promise((res, rej) => {
+
+                const done = (err) => {
+
+                    return err
+                        ? rej(err)
+                        : res();
+                };
+
+                Assertions.assertPublish(instance, message, queueName, 'a', null, 'someModule', true, null, done);
+            });
         });
 
-        it('should proxy `transactionId` when supplied', (done) => {
+        it('should proxy `transactionId` when supplied', async () => {
 
-            Assertions.assertPublish(instance, message, queueName, 'a', 'someTransactionId', null, true, null, done);
+            return new Promise((res, rej) => {
+
+                const done = (err) => {
+
+                    return err
+                        ? rej(err)
+                        : res();
+                };
+
+                Assertions.assertPublish(instance, message, queueName, 'a', 'someTransactionId', null, true, null, done);
+            });
         });
 
-        it('should publish for route `a` when route key is provided in the message', (done) => {
+        it('should publish for route `a` when route key is provided in the message', async () => {
 
             const messageWithRoute = Object.assign({}, message, { event : 'a' });
-            Assertions.assertPublish(instance, messageWithRoute, queueName, null, null, null, true, null, done);
+
+            return new Promise((res, rej) => {
+
+                const done = (err) => {
+
+                    return err
+                        ? rej(err)
+                        : res();
+                };
+
+                Assertions.assertPublish(instance, messageWithRoute, queueName, null, null, null, true, null, done);
+            });
         });
     });
 
@@ -541,411 +842,591 @@ describe('positive integration tests with configuration - Callback api', () => {
         const messageString = 'bunnybus';
         const messageBuffer = Buffer.from(messageString);
 
-        before((done) => {
+        before(async () => {
 
-            Async.waterfall([
-                instance._autoConnectChannel,
-                instance.deleteExchange.bind(instance, instance.config.globalExchange),
-                instance.deleteQueue.bind(instance, queueName),
-                instance.deleteQueue.bind(instance, errorQueueName)
-            ], done);
-        });
+            return new Promise((res, rej) => {
 
-        afterEach((done) => {
+                const done = (err) => {
 
-            instance.unsubscribe(queueName, done);
-        });
-
-        after((done) => {
-
-            Async.waterfall([
-                instance._autoConnectChannel,
-                instance.deleteExchange.bind(instance, instance.config.globalExchange),
-                instance.deleteQueue.bind(instance, queueName),
-                instance.deleteQueue.bind(instance, errorQueueName)
-            ], done);
-        });
-
-        it('should consume message (Object) from queue and acknowledge off', (done) => {
-
-            const handlers = {};
-            handlers[messageObject.event] = (consumedMessage, ack) => {
-
-                expect(consumedMessage).to.be.equal(messageObject);
-                ack(null, done);
-            };
-
-            Async.waterfall([
-                instance.subscribe.bind(instance, queueName, handlers),
-                instance.publish.bind(instance, messageObject)
-            ],
-            (err) => {
-
-                if (err) {
-                    done(err);
-                }
-            });
-        });
-
-        it('should consume message (Object) and meta from queue and acknowledge off', (done) => {
-
-            const handlers = {};
-            handlers[messageObject.event] = (consumedMessage, meta, ack) => {
-
-                expect(consumedMessage).to.equal(messageObject);
-                expect(meta).to.not.be.a.function();
-                expect(meta.headers).to.exist();
-                ack(null, done);
-            };
-
-            Async.waterfall([
-                instance.subscribe.bind(instance, queueName, handlers, subscribeOptionsWithMeta),
-                instance.publish.bind(instance, messageObject)
-            ],
-            (err) => {
-
-                if (err) {
-                    done(err);
-                }
-            });
-        });
-
-        it('should consume message (String) from queue and acknowledge off', (done) => {
-
-            const handlers = {};
-            handlers[publishOptions.routeKey] = (consumedMessage, ack) => {
-
-                expect(consumedMessage).to.be.equal(messageString);
-                ack(null, done);
-            };
-
-            Async.waterfall([
-                instance.subscribe.bind(instance, queueName, handlers),
-                instance.publish.bind(instance, messageString, publishOptions)
-            ],
-            (err) => {
-
-                if (err) {
-                    done(err);
-                }
-            });
-        });
-
-        it('should consume message (String) and meta from queue and acknowledge off', (done) => {
-
-            const handlers = {};
-            handlers[publishOptions.routeKey] = (consumedMessage, meta, ack) => {
-
-                expect(consumedMessage).to.equal(messageString);
-                expect(meta).to.not.be.a.function();
-                expect(meta.headers).to.exist();
-                ack(null, done);
-            };
-
-            Async.waterfall([
-                instance.subscribe.bind(instance, queueName, handlers, subscribeOptionsWithMeta),
-                instance.publish.bind(instance, messageString, publishOptions)
-            ],
-            (err) => {
-
-                if (err) {
-                    done(err);
-                }
-            });
-        });
-
-        it('should consume message (Buffer) from queue and acknowledge off', (done) => {
-
-            const handlers = {};
-            handlers[publishOptions.routeKey] = (consumedMessage, ack) => {
-
-                expect(consumedMessage).to.be.equal(messageBuffer);
-                ack(null, done);
-            };
-
-            Async.waterfall([
-                instance.subscribe.bind(instance, queueName, handlers),
-                instance.publish.bind(instance, messageBuffer, publishOptions)
-            ],
-            (err) => {
-
-                if (err) {
-                    done(err);
-                }
-            });
-        });
-
-        it('should consume message (Buffer) and meta from queue and acknowledge off', (done) => {
-
-            const handlers = {};
-            handlers[publishOptions.routeKey] = (consumedMessage, meta, ack) => {
-
-                expect(consumedMessage).to.equal(messageBuffer);
-                expect(meta).to.not.be.a.function();
-                expect(meta.headers).to.exist();
-                ack(null, done);
-            };
-
-            Async.waterfall([
-                instance.subscribe.bind(instance, queueName, handlers, subscribeOptionsWithMeta),
-                instance.publish.bind(instance, messageBuffer, publishOptions)
-            ],
-            (err) => {
-
-                if (err) {
-                    done(err);
-                }
-            });
-        });
-
-        it('should consume message (Object) from queue and reject off', (done) => {
-
-            const handlers = {};
-            handlers[messageObject.event] = (consumedMessage, ack, reject) => {
-
-                expect(consumedMessage).to.be.equal(messageObject);
+                    return err
+                        ? rej(err)
+                        : res();
+                };
 
                 Async.waterfall([
-                    (cb) => reject(null, cb),
-                    (cb) => instance.get(errorQueueName, null, cb),
-                    (payload, cb) => {
-
-                        expect(payload).to.exist();
-                        const errorMessage = JSON.parse(payload.content.toString());
-                        expect(errorMessage).to.be.equal(messageObject);
-                        expect(payload.properties.headers.isBuffer).to.be.false();
-                        cb();
-                    }
+                    instance._autoConnectChannel,
+                    instance.deleteExchange.bind(instance, instance.config.globalExchange),
+                    instance.deleteQueue.bind(instance, queueName),
+                    instance.deleteQueue.bind(instance, errorQueueName)
                 ], done);
-            };
-
-            Async.waterfall([
-                instance.subscribe.bind(instance, queueName, handlers),
-                instance.publish.bind(instance, messageObject)
-            ],
-            (err) => {
-
-                if (err) {
-                    done(err);
-                }
             });
         });
 
-        it('should consume message (Buffer) from queue and reject off', (done) => {
+        afterEach(async () => {
 
-            const handlers = {};
-            handlers[publishOptions.routeKey] = (consumedMessage, ack, reject) => {
+            return Promisify(instance.unsubscribe, queueName);
+        });
 
-                expect(consumedMessage).to.be.equal(messageBuffer);
+        after(async () => {
+
+            return new Promise((res, rej) => {
+
+                const done = (err) => {
+
+                    return err
+                        ? rej(err)
+                        : res();
+                };
 
                 Async.waterfall([
-                    (cb) => reject(null, cb),
-                    (cb) => instance.get(errorQueueName, null, cb),
-                    (payload, cb) => {
-
-                        expect(payload).to.exist();
-                        const errorMessage = payload.content;
-                        expect(errorMessage).to.be.equal(messageBuffer);
-                        expect(payload.properties.headers.isBuffer).to.be.true();
-                        cb();
-                    }
+                    instance._autoConnectChannel,
+                    instance.deleteExchange.bind(instance, instance.config.globalExchange),
+                    instance.deleteQueue.bind(instance, queueName),
+                    instance.deleteQueue.bind(instance, errorQueueName)
                 ], done);
-            };
-
-            Async.waterfall([
-                instance.subscribe.bind(instance, queueName, handlers),
-                instance.publish.bind(instance, messageBuffer, publishOptions)
-            ],
-            (err) => {
-
-                if (err) {
-                    done(err);
-                }
             });
         });
 
-        it('should consume message (Object) from queue and requeue off on maxRetryCount', { timeout : 0 }, (done) => {
+        it('should consume message (Object) from queue and acknowledge off', async () => {
 
-            const handlers = {};
-            const maxRetryCount = 3;
-            let retryCount = 0;
-            handlers[messageObject.event] = (consumedMessage, ack, reject, requeue) => {
+            return new Promise((res, rej) => {
 
-                ++retryCount;
+                const done = (err) => {
 
-                if (retryCount < maxRetryCount) {
-                    requeue(() => { });
-                }
-                else {
+                    return err
+                        ? rej(err)
+                        : res();
+                };
+
+                const handlers = {};
+                handlers[messageObject.event] = (consumedMessage, ack) => {
+
                     expect(consumedMessage).to.be.equal(messageObject);
-                    expect(retryCount).to.be.equal(maxRetryCount);
-                    ack(done);
-                }
-            };
+                    ack(null, done);
+                };
 
-            Async.waterfall([
-                instance.subscribe.bind(instance, queueName, handlers, { maxRetryCount }),
-                instance.publish.bind(instance, messageObject)
-            ],
-            (err) => {
+                Async.waterfall([
+                    instance.subscribe.bind(instance, queueName, handlers),
+                    instance.publish.bind(instance, messageObject)
+                ],
+                (err) => {
 
-                if (err) {
-                    done(err);
-                }
+                    if (err) {
+                        done(err);
+                    }
+                });
             });
         });
 
-        it('should consume message (Buffer) from queue and requeue off on maxRetryCount', { timeout : 0 }, (done) => {
+        it('should consume message (Object) and meta from queue and acknowledge off', async () => {
 
-            const handlers = {};
-            const maxRetryCount = 3;
-            let retryCount = 0;
-            handlers[publishOptions.routeKey] = (consumedMessage, ack, reject, requeue) => {
+            return new Promise((res, rej) => {
 
-                ++retryCount;
+                const done = (err) => {
 
-                if (retryCount < maxRetryCount) {
-                    requeue(() => { });
-                }
-                else {
+                    return err
+                        ? rej(err)
+                        : res();
+                };
+
+                const handlers = {};
+                handlers[messageObject.event] = (consumedMessage, meta, ack) => {
+
+                    expect(consumedMessage).to.equal(messageObject);
+                    expect(meta).to.not.be.a.function();
+                    expect(meta.headers).to.exist();
+                    ack(null, done);
+                };
+
+                Async.waterfall([
+                    instance.subscribe.bind(instance, queueName, handlers, subscribeOptionsWithMeta),
+                    instance.publish.bind(instance, messageObject)
+                ],
+                (err) => {
+
+                    if (err) {
+                        done(err);
+                    }
+                });
+            });
+        });
+
+        it('should consume message (String) from queue and acknowledge off', async () => {
+
+            return new Promise((res, rej) => {
+
+                const done = (err) => {
+
+                    return err
+                        ? rej(err)
+                        : res();
+                };
+
+                const handlers = {};
+                handlers[publishOptions.routeKey] = (consumedMessage, ack) => {
+
+                    expect(consumedMessage).to.be.equal(messageString);
+                    ack(null, done);
+                };
+
+                Async.waterfall([
+                    instance.subscribe.bind(instance, queueName, handlers),
+                    instance.publish.bind(instance, messageString, publishOptions)
+                ],
+                (err) => {
+
+                    if (err) {
+                        done(err);
+                    }
+                });
+            });
+        });
+
+        it('should consume message (String) and meta from queue and acknowledge off', async () => {
+
+            return new Promise((res, rej) => {
+
+                const done = (err) => {
+
+                    return err
+                        ? rej(err)
+                        : res();
+                };
+
+                const handlers = {};
+                handlers[publishOptions.routeKey] = (consumedMessage, meta, ack) => {
+
+                    expect(consumedMessage).to.equal(messageString);
+                    expect(meta).to.not.be.a.function();
+                    expect(meta.headers).to.exist();
+                    ack(null, done);
+                };
+
+                Async.waterfall([
+                    instance.subscribe.bind(instance, queueName, handlers, subscribeOptionsWithMeta),
+                    instance.publish.bind(instance, messageString, publishOptions)
+                ],
+                (err) => {
+
+                    if (err) {
+                        done(err);
+                    }
+                });
+            });
+        });
+
+        it('should consume message (Buffer) from queue and acknowledge off', async () => {
+
+            return new Promise((res, rej) => {
+
+                const done = (err) => {
+
+                    return err
+                        ? rej(err)
+                        : res();
+                };
+
+                const handlers = {};
+                handlers[publishOptions.routeKey] = (consumedMessage, ack) => {
+
                     expect(consumedMessage).to.be.equal(messageBuffer);
-                    expect(retryCount).to.be.equal(maxRetryCount);
+                    ack(null, done);
+                };
+
+                Async.waterfall([
+                    instance.subscribe.bind(instance, queueName, handlers),
+                    instance.publish.bind(instance, messageBuffer, publishOptions)
+                ],
+                (err) => {
+
+                    if (err) {
+                        done(err);
+                    }
+                });
+            });
+        });
+
+        it('should consume message (Buffer) and meta from queue and acknowledge off', async () => {
+
+            return new Promise((res, rej) => {
+
+                const done = (err) => {
+
+                    return err
+                        ? rej(err)
+                        : res();
+                };
+
+                const handlers = {};
+                handlers[publishOptions.routeKey] = (consumedMessage, meta, ack) => {
+
+                    expect(consumedMessage).to.equal(messageBuffer);
+                    expect(meta).to.not.be.a.function();
+                    expect(meta.headers).to.exist();
+                    ack(null, done);
+                };
+
+                Async.waterfall([
+                    instance.subscribe.bind(instance, queueName, handlers, subscribeOptionsWithMeta),
+                    instance.publish.bind(instance, messageBuffer, publishOptions)
+                ],
+                (err) => {
+
+                    if (err) {
+                        done(err);
+                    }
+                });
+            });
+        });
+
+        it('should consume message (Object) from queue and reject off', async () => {
+
+            return new Promise((res, rej) => {
+
+                const done = (err) => {
+
+                    return err
+                        ? rej(err)
+                        : res();
+                };
+
+                const handlers = {};
+                handlers[messageObject.event] = (consumedMessage, ack, reject) => {
+
+                    expect(consumedMessage).to.be.equal(messageObject);
+
+                    Async.waterfall([
+                        (cb) => reject(null, cb),
+                        (cb) => instance.get(errorQueueName, null, cb),
+                        (payload, cb) => {
+
+                            expect(payload).to.exist();
+                            const errorMessage = JSON.parse(payload.content.toString());
+                            expect(errorMessage).to.be.equal(messageObject);
+                            expect(payload.properties.headers.isBuffer).to.be.false();
+                            cb();
+                        }
+                    ], done);
+                };
+
+                Async.waterfall([
+                    instance.subscribe.bind(instance, queueName, handlers),
+                    instance.publish.bind(instance, messageObject)
+                ],
+                (err) => {
+
+                    if (err) {
+                        done(err);
+                    }
+                });
+            });
+        });
+
+        it('should consume message (Buffer) from queue and reject off', async () => {
+
+            return new Promise((res, rej) => {
+
+                const done = (err) => {
+
+                    return err
+                        ? rej(err)
+                        : res();
+                };
+
+                const handlers = {};
+                handlers[publishOptions.routeKey] = (consumedMessage, ack, reject) => {
+
+                    expect(consumedMessage).to.be.equal(messageBuffer);
+
+                    Async.waterfall([
+                        (cb) => reject(null, cb),
+                        (cb) => instance.get(errorQueueName, null, cb),
+                        (payload, cb) => {
+
+                            expect(payload).to.exist();
+                            const errorMessage = payload.content;
+                            expect(errorMessage).to.be.equal(messageBuffer);
+                            expect(payload.properties.headers.isBuffer).to.be.true();
+                            cb();
+                        }
+                    ], done);
+                };
+
+                Async.waterfall([
+                    instance.subscribe.bind(instance, queueName, handlers),
+                    instance.publish.bind(instance, messageBuffer, publishOptions)
+                ],
+                (err) => {
+
+                    if (err) {
+                        done(err);
+                    }
+                });
+            });
+        });
+
+        it('should consume message (Object) from queue and requeue off on maxRetryCount', { timeout : 0 }, async () => {
+
+            return new Promise((res, rej) => {
+
+                const done = (err) => {
+
+                    return err
+                        ? rej(err)
+                        : res();
+                };
+
+                const handlers = {};
+                const maxRetryCount = 3;
+                let retryCount = 0;
+                handlers[messageObject.event] = (consumedMessage, ack, reject, requeue) => {
+
+                    ++retryCount;
+
+                    if (retryCount < maxRetryCount) {
+                        requeue(() => { });
+                    }
+                    else {
+                        expect(consumedMessage).to.be.equal(messageObject);
+                        expect(retryCount).to.be.equal(maxRetryCount);
+                        ack(done);
+                    }
+                };
+
+                Async.waterfall([
+                    instance.subscribe.bind(instance, queueName, handlers, { maxRetryCount }),
+                    instance.publish.bind(instance, messageObject)
+                ],
+                (err) => {
+
+                    if (err) {
+                        done(err);
+                    }
+                });
+            });
+        });
+
+        it('should consume message (Buffer) from queue and requeue off on maxRetryCount', { timeout : 0 }, async () => {
+
+            return new Promise((res, rej) => {
+
+                const done = (err) => {
+
+                    return err
+                        ? rej(err)
+                        : res();
+                };
+
+                const handlers = {};
+                const maxRetryCount = 3;
+                let retryCount = 0;
+                handlers[publishOptions.routeKey] = (consumedMessage, ack, reject, requeue) => {
+
+                    ++retryCount;
+
+                    if (retryCount < maxRetryCount) {
+                        requeue(() => { });
+                    }
+                    else {
+                        expect(consumedMessage).to.be.equal(messageBuffer);
+                        expect(retryCount).to.be.equal(maxRetryCount);
+                        ack(done);
+                    }
+                };
+
+                Async.waterfall([
+                    instance.subscribe.bind(instance, queueName, handlers, { maxRetryCount }),
+                    instance.publish.bind(instance, messageBuffer, publishOptions)
+                ],
+                (err) => {
+
+                    if (err) {
+                        done(err);
+                    }
+                });
+            });
+        });
+
+        it('should reject message without bunnyBus header property', async () => {
+
+            return new Promise((res, rej) => {
+
+                const done = (err) => {
+
+                    return err
+                        ? rej(err)
+                        : res();
+                };
+
+                const handlers = {};
+                const config = instance.config;
+                const headers = {
+                    headers : {
+                        transactionId : '1234abcd',
+                        isBuffer      : false,
+                        routeKey      : publishOptions.routeKey,
+                        createAt      : (new Date()).toISOString()
+                    }
+                };
+
+                handlers[publishOptions.routeKey] = (consumedMessage, ack, reject, requeue) => {
+
+                    //this should never be called.
                     ack(done);
-                }
-            };
+                };
 
-            Async.waterfall([
-                instance.subscribe.bind(instance, queueName, handlers, { maxRetryCount }),
-                instance.publish.bind(instance, messageBuffer, publishOptions)
-            ],
-            (err) => {
+                instance.once(BunnyBus.LOG_WARN_EVENT, (message) => {
 
-                if (err) {
-                    done(err);
-                }
+                    expect(message).to.be.equal('message not of BunnyBus origin');
+                    done();
+                });
+
+                Async.waterfall([
+                    instance.subscribe.bind(instance, queueName, handlers),
+                    (cb) => instance.channel.publish(config.globalExchange, publishOptions.routeKey, Buffer.from(JSON.stringify(messageObject)), headers, cb)
+                ],
+                (err) => {
+
+                    if (err) {
+                        done(err);
+                    }
+                });
             });
         });
 
-        it('should reject message without bunnyBus header property', (done) => {
+        it('should reject message with mismatched version', async () => {
 
-            const handlers = {};
-            const config = instance.config;
-            const headers = {
-                headers : {
-                    transactionId : '1234abcd',
-                    isBuffer      : false,
-                    routeKey      : publishOptions.routeKey,
-                    createAt      : (new Date()).toISOString()
-                }
-            };
+            return new Promise((res, rej) => {
 
-            handlers[publishOptions.routeKey] = (consumedMessage, ack, reject, requeue) => {
+                const done = (err) => {
 
-                //this should never be called.
-                ack(done);
-            };
+                    return err
+                        ? rej(err)
+                        : res();
+                };
 
-            instance.once(BunnyBus.LOG_WARN_EVENT, (message) => {
+                const handlers = {};
+                const config = instance.config;
+                const version = '0.0.1';
+                const headers = {
+                    headers : {
+                        transactionId : '1234abcd',
+                        isBuffer      : false,
+                        routeKey      : publishOptions.routeKey,
+                        createAt      : (new Date()).toISOString(),
+                        bunnyBus      : version
+                    }
+                };
 
-                expect(message).to.be.equal('message not of BunnyBus origin');
-                done();
+                handlers[publishOptions.routeKey] = (consumedMessage, ack, reject, requeue) => {
+
+                    //this should never be called.
+                    ack(done);
+                };
+
+                instance.once(BunnyBus.LOG_WARN_EVENT, (message) => {
+
+                    expect(message).to.be.equal(`message came from older bunnyBus version (${version})`);
+                    done();
+                });
+
+                Async.waterfall([
+                    instance.subscribe.bind(instance, queueName, handlers),
+                    (cb) => instance.channel.publish(config.globalExchange, publishOptions.routeKey, Buffer.from(JSON.stringify(messageObject)), headers, cb)
+                ],
+                (err) => {
+
+                    if (err) {
+                        done(err);
+                    }
+                });
             });
-
-            Async.waterfall([
-                instance.subscribe.bind(instance, queueName, handlers),
-                (cb) => instance.channel.publish(config.globalExchange, publishOptions.routeKey, Buffer.from(JSON.stringify(messageObject)), headers, cb)
-            ],
-            () => {});
         });
 
-        it('should reject message with mismatched version', (done) => {
+        it('should accept message without bunnyBus header when overridden', async () => {
 
-            const handlers = {};
-            const config = instance.config;
-            const version = '0.0.1';
-            const headers = {
-                headers : {
-                    transactionId : '1234abcd',
-                    isBuffer      : false,
-                    routeKey      : publishOptions.routeKey,
-                    createAt      : (new Date()).toISOString(),
-                    bunnyBus      : version
-                }
-            };
+            return new Promise((res, rej) => {
 
-            handlers[publishOptions.routeKey] = (consumedMessage, ack, reject, requeue) => {
+                const done = (err) => {
 
-                //this should never be called.
-                ack(done);
-            };
+                    return err
+                        ? rej(err)
+                        : res();
+                };
 
-            instance.once(BunnyBus.LOG_WARN_EVENT, (message) => {
+                const handlers = {};
+                const validatePublisher = false;
+                const config = instance.config;
+                const headers = {
+                    headers : {
+                        transactionId : '1234abcd',
+                        isBuffer      : false,
+                        routeKey      : publishOptions.routeKey,
+                        createAt      : (new Date()).toISOString()
+                    }
+                };
 
-                expect(message).to.be.equal(`message came from older bunnyBus version (${version})`);
-                done();
+                handlers[publishOptions.routeKey] = (consumedMessage, ack, reject, requeue) => {
+
+                    //this should never be called.
+                    ack(done);
+                };
+
+                Async.waterfall([
+                    instance.subscribe.bind(instance, queueName, handlers, { validatePublisher }),
+                    (cb) => instance.channel.publish(config.globalExchange, publishOptions.routeKey, Buffer.from(JSON.stringify(messageObject)), headers, cb)
+                ],
+                (err) => {
+
+                    if (err) {
+                        done(err);
+                    }
+                });
             });
-
-            Async.waterfall([
-                instance.subscribe.bind(instance, queueName, handlers),
-                (cb) => instance.channel.publish(config.globalExchange, publishOptions.routeKey, Buffer.from(JSON.stringify(messageObject)), headers, cb)
-            ],
-            () => {});
         });
 
-        it('should accept message without bunnyBus header when overridden', (done) => {
+        it('should accept message with bunnyBus header with mismatched version when overriden', async () => {
 
-            const handlers = {};
-            const validatePublisher = false;
-            const config = instance.config;
-            const headers = {
-                headers : {
-                    transactionId : '1234abcd',
-                    isBuffer      : false,
-                    routeKey      : publishOptions.routeKey,
-                    createAt      : (new Date()).toISOString()
-                }
-            };
+            return new Promise((res, rej) => {
 
-            handlers[publishOptions.routeKey] = (consumedMessage, ack, reject, requeue) => {
+                const done = (err) => {
 
-                //this should never be called.
-                ack(done);
-            };
+                    return err
+                        ? rej(err)
+                        : res();
+                };
 
-            Async.waterfall([
-                instance.subscribe.bind(instance, queueName, handlers, { validatePublisher }),
-                (cb) => instance.channel.publish(config.globalExchange, publishOptions.routeKey, Buffer.from(JSON.stringify(messageObject)), headers, cb)
-            ],
-            () => {});
-        });
+                const handlers = {};
+                const validateVersion = false;
+                const config = instance.config;
+                const version = '0.0.1';
+                const headers = {
+                    headers : {
+                        transactionId : '1234abcd',
+                        isBuffer      : false,
+                        routeKey      : publishOptions.routeKey,
+                        createAt      : (new Date()).toISOString(),
+                        bunnyBus      : version
+                    }
+                };
 
-        it('should accept message with bunnyBus header with mismatched version when overriden', (done) => {
+                handlers[publishOptions.routeKey] = (consumedMessage, ack, reject, requeue) => {
 
-            const handlers = {};
-            const validateVersion = false;
-            const config = instance.config;
-            const version = '0.0.1';
-            const headers = {
-                headers : {
-                    transactionId : '1234abcd',
-                    isBuffer      : false,
-                    routeKey      : publishOptions.routeKey,
-                    createAt      : (new Date()).toISOString(),
-                    bunnyBus      : version
-                }
-            };
+                    //this should never be called.
+                    ack(done);
+                };
 
-            handlers[publishOptions.routeKey] = (consumedMessage, ack, reject, requeue) => {
+                Async.waterfall([
+                    instance.subscribe.bind(instance, queueName, handlers, { validateVersion }),
+                    (cb) => instance.channel.publish(config.globalExchange, publishOptions.routeKey, Buffer.from(JSON.stringify(messageObject)), headers, cb)
+                ],
+                (err) => {
 
-                //this should never be called.
-                ack(done);
-            };
-
-            Async.waterfall([
-                instance.subscribe.bind(instance, queueName, handlers, { validateVersion }),
-                (cb) => instance.channel.publish(config.globalExchange, publishOptions.routeKey, Buffer.from(JSON.stringify(messageObject)), headers, cb)
-            ],
-            () => {});
+                    if (err) {
+                        done(err);
+                    }
+                });
+            });
         });
     });
 
@@ -956,49 +1437,79 @@ describe('positive integration tests with configuration - Callback api', () => {
         const subscriptionKey = 'abc.*.xyz';
         const routableObject = { event : 'abc.helloworld.xyz', name : 'bunnybus' };
 
-        before((done) => {
+        before(async () => {
 
-            Async.waterfall([
-                instance._autoConnectChannel,
-                instance.deleteExchange.bind(instance, instance.config.globalExchange),
-                instance.deleteQueue.bind(instance, queueName),
-                instance.deleteQueue.bind(instance, errorQueueName)
-            ], done);
+            return new Promise((res, rej) => {
+
+                const done = (err) => {
+
+                    return err
+                        ? rej(err)
+                        : res();
+                };
+
+                Async.waterfall([
+                    instance._autoConnectChannel,
+                    instance.deleteExchange.bind(instance, instance.config.globalExchange),
+                    instance.deleteQueue.bind(instance, queueName),
+                    instance.deleteQueue.bind(instance, errorQueueName)
+                ], done);
+            });
         });
 
-        afterEach((done) => {
+        afterEach(async () => {
 
-            instance.unsubscribe(queueName, done);
+            return Promisify(instance.unsubscribe, queueName);
         });
 
-        after((done) => {
+        after(async () => {
 
-            Async.waterfall([
-                instance._autoConnectChannel,
-                instance.deleteExchange.bind(instance, instance.config.globalExchange),
-                instance.deleteQueue.bind(instance, queueName),
-                instance.deleteQueue.bind(instance, errorQueueName)
-            ], done);
+            return new Promise((res, rej) => {
+
+                const done = (err) => {
+
+                    return err
+                        ? rej(err)
+                        : res();
+                };
+
+                Async.waterfall([
+                    instance._autoConnectChannel,
+                    instance.deleteExchange.bind(instance, instance.config.globalExchange),
+                    instance.deleteQueue.bind(instance, queueName),
+                    instance.deleteQueue.bind(instance, errorQueueName)
+                ], done);
+            });
         });
 
-        it('should consume message (Object) from queue and acknowledge off', (done) => {
+        it('should consume message (Object) from queue and acknowledge off', async () => {
 
-            const handlers = {};
-            handlers[subscriptionKey] = (consumedMessage, ack) => {
+            return new Promise((res, rej) => {
 
-                expect(consumedMessage).to.be.equal(routableObject);
-                ack(null, done);
-            };
+                const done = (err) => {
 
-            Async.waterfall([
-                instance.subscribe.bind(instance, queueName, handlers),
-                instance.publish.bind(instance, routableObject)
-            ],
-            (err) => {
+                    return err
+                        ? rej(err)
+                        : res();
+                };
 
-                if (err) {
-                    done(err);
-                }
+                const handlers = {};
+                handlers[subscriptionKey] = (consumedMessage, ack) => {
+
+                    expect(consumedMessage).to.be.equal(routableObject);
+                    ack(null, done);
+                };
+
+                Async.waterfall([
+                    instance.subscribe.bind(instance, queueName, handlers),
+                    instance.publish.bind(instance, routableObject)
+                ],
+                (err) => {
+
+                    if (err) {
+                        done(err);
+                    }
+                });
             });
         });
     });
@@ -1010,49 +1521,79 @@ describe('positive integration tests with configuration - Callback api', () => {
         const subscriptionKey = 'abc.#.xyz';
         const routableObject = { event : 'abc.hello.world.xyz', name : 'bunnybus' };
 
-        before((done) => {
+        before(async () => {
 
-            Async.waterfall([
-                instance._autoConnectChannel,
-                instance.deleteExchange.bind(instance, instance.config.globalExchange),
-                instance.deleteQueue.bind(instance, queueName),
-                instance.deleteQueue.bind(instance, errorQueueName)
-            ], done);
+            return new Promise((res, rej) => {
+
+                const done = (err) => {
+
+                    return err
+                        ? rej(err)
+                        : res();
+                };
+
+                Async.waterfall([
+                    instance._autoConnectChannel,
+                    instance.deleteExchange.bind(instance, instance.config.globalExchange),
+                    instance.deleteQueue.bind(instance, queueName),
+                    instance.deleteQueue.bind(instance, errorQueueName)
+                ], done);
+            });
         });
 
-        afterEach((done) => {
+        afterEach(async () => {
 
-            instance.unsubscribe(queueName, done);
+            return Promisify(instance.unsubscribe, queueName);
         });
 
-        after((done) => {
+        after(async () => {
 
-            Async.waterfall([
-                instance._autoConnectChannel,
-                instance.deleteExchange.bind(instance, instance.config.globalExchange),
-                instance.deleteQueue.bind(instance, queueName),
-                instance.deleteQueue.bind(instance, errorQueueName)
-            ], done);
+            return new Promise((res, rej) => {
+
+                const done = (err) => {
+
+                    return err
+                        ? rej(err)
+                        : res();
+                };
+
+                Async.waterfall([
+                    instance._autoConnectChannel,
+                    instance.deleteExchange.bind(instance, instance.config.globalExchange),
+                    instance.deleteQueue.bind(instance, queueName),
+                    instance.deleteQueue.bind(instance, errorQueueName)
+                ], done);
+            });
         });
 
-        it('should consume message (Object) from queue and acknowledge off', (done) => {
+        it('should consume message (Object) from queue and acknowledge off', async () => {
 
-            const handlers = {};
-            handlers[subscriptionKey] = (consumedMessage, ack) => {
+            return new Promise((res, rej) => {
 
-                expect(consumedMessage).to.be.equal(routableObject);
-                ack(null, done);
-            };
+                const done = (err) => {
 
-            Async.waterfall([
-                instance.subscribe.bind(instance, queueName, handlers),
-                instance.publish.bind(instance, routableObject)
-            ],
-            (err) => {
+                    return err
+                        ? rej(err)
+                        : res();
+                };
 
-                if (err) {
-                    done(err);
-                }
+                const handlers = {};
+                handlers[subscriptionKey] = (consumedMessage, ack) => {
+
+                    expect(consumedMessage).to.be.equal(routableObject);
+                    ack(null, done);
+                };
+
+                Async.waterfall([
+                    instance.subscribe.bind(instance, queueName, handlers),
+                    instance.publish.bind(instance, routableObject)
+                ],
+                (err) => {
+
+                    if (err) {
+                        done(err);
+                    }
+                });
             });
         });
     });
@@ -1063,61 +1604,101 @@ describe('positive integration tests with configuration - Callback api', () => {
         const queueName2 = 'test-subscribe-multiple-queue-2';
         const message = { event : 'a.b', name : 'bunnybus' };
 
-        before((done) => {
+        before(async () => {
 
-            Async.waterfall([
-                instance._autoConnectChannel,
-                instance.deleteExchange.bind(instance, instance.config.globalExchange),
-                instance.deleteQueue.bind(instance, queueName1),
-                instance.deleteQueue.bind(instance, queueName2)
-            ], done);
+            return new Promise((res, rej) => {
+
+                const done = (err) => {
+
+                    return err
+                        ? rej(err)
+                        : res();
+                };
+
+                Async.waterfall([
+                    instance._autoConnectChannel,
+                    instance.deleteExchange.bind(instance, instance.config.globalExchange),
+                    instance.deleteQueue.bind(instance, queueName1),
+                    instance.deleteQueue.bind(instance, queueName2)
+                ], done);
+            });
         });
 
-        afterEach((done) => {
+        afterEach(async () => {
 
-            Async.parallel([
-                instance.unsubscribe.bind(instance, queueName1),
-                instance.unsubscribe.bind(instance, queueName2)
-            ], done);
+            return new Promise((res, rej) => {
+
+                const done = (err) => {
+
+                    return err
+                        ? rej(err)
+                        : res();
+                };
+
+                Async.parallel([
+                    instance.unsubscribe.bind(instance, queueName1),
+                    instance.unsubscribe.bind(instance, queueName2)
+                ], done);
+            });
         });
 
-        after((done) => {
+        after(async () => {
 
-            Async.waterfall([
-                instance._autoConnectChannel,
-                instance.deleteExchange.bind(instance, instance.config.globalExchange),
-                instance.deleteQueue.bind(instance, queueName1),
-                instance.deleteQueue.bind(instance, queueName2)
-            ], done);
+            return new Promise((res, rej) => {
+
+                const done = (err) => {
+
+                    return err
+                        ? rej(err)
+                        : res();
+                };
+
+                Async.waterfall([
+                    instance._autoConnectChannel,
+                    instance.deleteExchange.bind(instance, instance.config.globalExchange),
+                    instance.deleteQueue.bind(instance, queueName1),
+                    instance.deleteQueue.bind(instance, queueName2)
+                ], done);
+            });
         });
 
-        it('should consume message from two queues and acknowledge off', (done) => {
+        it('should consume message from two queues and acknowledge off', async () => {
 
-            const handlers = {};
-            let counter = 0;
+            return new Promise((res, rej) => {
 
-            handlers[message.event] = (consumedMessage, ack, reject, requeue) => {
+                const done = (err) => {
 
-                expect(consumedMessage.name).to.be.equal(message.name);
-                ack(() => {
+                    return err
+                        ? rej(err)
+                        : res();
+                };
 
-                    ++counter;
-                    if (counter === 2) {
-                        done();
+                const handlers = {};
+                let counter = 0;
+
+                handlers[message.event] = (consumedMessage, ack, reject, requeue) => {
+
+                    expect(consumedMessage.name).to.be.equal(message.name);
+                    ack(() => {
+
+                        ++counter;
+                        if (counter === 2) {
+                            done();
+                        }
+                    });
+                };
+
+                Async.waterfall([
+                    instance.subscribe.bind(instance, queueName1, handlers),
+                    instance.subscribe.bind(instance, queueName2, handlers),
+                    instance.publish.bind(instance, message)
+                ],
+                (err) => {
+
+                    if (err) {
+                        done(err);
                     }
                 });
-            };
-
-            Async.waterfall([
-                instance.subscribe.bind(instance, queueName1, handlers),
-                instance.subscribe.bind(instance, queueName2, handlers),
-                instance.publish.bind(instance, message)
-            ],
-            (err) => {
-
-                if (err) {
-                    done(err);
-                }
             });
         });
     });
@@ -1128,51 +1709,81 @@ describe('positive integration tests with configuration - Callback api', () => {
         const message = { name : 'bunnybus', event : 'a' };
         const patterns = ['a'];
 
-        before((done) => {
+        before(async () => {
 
-            Async.waterfall([
-                instance._autoConnectChannel,
-                instance.createExchange.bind(instance, instance.config.globalExchange, 'topic'),
-                instance.createQueue.bind(instance, queueName),
-                (result, cb) => {
+            return new Promise((res, rej) => {
 
-                    Async.map(
-                        patterns,
-                        (item, mapCB) => {
+                const done = (err) => {
 
-                            instance.channel.bindQueue(queueName, instance.config.globalExchange, item, null, mapCB);
-                        },
-                        cb);
-                }
-            ], done);
+                    return err
+                        ? rej(err)
+                        : res();
+                };
+
+                Async.waterfall([
+                    instance._autoConnectChannel,
+                    instance.createExchange.bind(instance, instance.config.globalExchange, 'topic'),
+                    instance.createQueue.bind(instance, queueName),
+                    (result, cb) => {
+
+                        Async.map(
+                            patterns,
+                            (item, mapCB) => {
+
+                                instance.channel.bindQueue(queueName, instance.config.globalExchange, item, null, mapCB);
+                            },
+                            cb);
+                    }
+                ], done);
+            });
         });
 
-        after((done) => {
+        after(async () => {
 
-            Async.waterfall([
-                instance._autoConnectChannel,
-                instance.deleteExchange.bind(instance, instance.config.globalExchange),
-                instance.deleteQueue.bind(instance, queueName)
-            ], done);
+            return new Promise((res, rej) => {
+
+                const done = (err) => {
+
+                    return err
+                        ? rej(err)
+                        : res();
+                };
+
+                Async.waterfall([
+                    instance._autoConnectChannel,
+                    instance.deleteExchange.bind(instance, instance.config.globalExchange),
+                    instance.deleteQueue.bind(instance, queueName)
+                ], done);
+            });
         });
 
-        it('should ack a message off the queue', (done) => {
+        it('should ack a message off the queue', async () => {
 
-            Async.waterfall([
-                instance.publish.bind(instance, message),
-                instance.get.bind(instance, queueName),
-                (payload, cb) => {
+            return new Promise((res, rej) => {
 
-                    instance._ack(payload, cb);
-                },
-                instance.checkQueue.bind(instance, queueName),
-                (result, cb) => {
+                const done = (err) => {
 
-                    expect(result.queue).to.be.equal(queueName);
-                    expect(result.messageCount).to.be.equal(0);
-                    cb();
-                }
-            ], done);
+                    return err
+                        ? rej(err)
+                        : res();
+                };
+
+                Async.waterfall([
+                    instance.publish.bind(instance, message),
+                    instance.get.bind(instance, queueName),
+                    (payload, cb) => {
+
+                        instance._ack(payload, cb);
+                    },
+                    instance.checkQueue.bind(instance, queueName),
+                    (result, cb) => {
+
+                        expect(result.queue).to.be.equal(queueName);
+                        expect(result.messageCount).to.be.equal(0);
+                        cb();
+                    }
+                ], done);
+            });
         });
     });
 
@@ -1182,88 +1793,128 @@ describe('positive integration tests with configuration - Callback api', () => {
         const message = { name : 'bunnybus', event : 'a' };
         const patterns = ['a'];
 
-        beforeEach((done) => {
+        beforeEach(async () => {
 
-            instance.channel.purgeQueue(queueName, done);
+            return Promisify(instance.channel.purgeQueue.bind(instance.channel), queueName);
         });
 
-        before((done) => {
+        before(async () => {
 
-            Async.waterfall([
-                instance._autoConnectChannel,
-                instance.createExchange.bind(instance, instance.config.globalExchange, 'topic'),
-                instance.createQueue.bind(instance, queueName),
-                (result, cb) => {
+            return new Promise((res, rej) => {
 
-                    Async.map(
-                        patterns,
-                        (item, mapCB) => {
+                const done = (err) => {
 
-                            instance.channel.bindQueue(queueName, instance.config.globalExchange, item, null, mapCB);
-                        },
-                        cb);
-                }
-            ], done);
-        });
+                    return err
+                        ? rej(err)
+                        : res();
+                };
 
-        after((done) => {
+                Async.waterfall([
+                    instance._autoConnectChannel,
+                    instance.createExchange.bind(instance, instance.config.globalExchange, 'topic'),
+                    instance.createQueue.bind(instance, queueName),
+                    (result, cb) => {
 
-            Async.waterfall([
-                instance._autoConnectChannel,
-                instance.deleteExchange.bind(instance, instance.config.globalExchange),
-                instance.deleteQueue.bind(instance, queueName)
-            ], done);
-        });
+                        Async.map(
+                            patterns,
+                            (item, mapCB) => {
 
-        it('should requeue a message off the queue', (done) => {
-
-            Async.waterfall([
-                instance.publish.bind(instance, message),
-                instance.get.bind(instance, queueName),
-                (payload, cb) => {
-
-                    instance._requeue(payload, queueName, cb);
-                },
-                instance.checkQueue.bind(instance, queueName)
-            ], (err, result) => {
-
-                expect(err).to.not.exist();
-                expect(result.queue).to.be.equal(queueName);
-                expect(result.messageCount).to.be.equal(1);
-                done();
+                                instance.channel.bindQueue(queueName, instance.config.globalExchange, item, null, mapCB);
+                            },
+                            cb);
+                    }
+                ], done);
             });
         });
 
-        it('should requeue with well formed header properties', (done) => {
+        after(async () => {
 
-            const publishOptions = {
-                source : 'test'
-            };
+            return new Promise((res, rej) => {
 
-            let transactionId = null;
-            let createdAt = null;
+                const done = (err) => {
 
-            Async.waterfall([
-                instance.publish.bind(instance, message, publishOptions),
-                instance.get.bind(instance, queueName),
-                (payload, cb) => {
+                    return err
+                        ? rej(err)
+                        : res();
+                };
 
-                    transactionId = payload.properties.headers.transactionId;
-                    createdAt = payload.properties.headers.createdAt;
-                    instance._requeue(payload, queueName, cb);
-                },
-                instance.get.bind(instance, queueName)
-            ], (err, payload) => {
+                Async.waterfall([
+                    instance._autoConnectChannel,
+                    instance.deleteExchange.bind(instance, instance.config.globalExchange),
+                    instance.deleteQueue.bind(instance, queueName)
+                ], done);
+            });
+        });
 
-                expect(err).to.not.exist();
-                expect(payload.properties.headers.transactionId).to.be.equal(transactionId);
-                expect(payload.properties.headers.createdAt).to.be.equal(createdAt);
-                expect(payload.properties.headers.source).to.be.equal(publishOptions.source);
-                expect(payload.properties.headers.requeuedAt).to.exist();
-                expect(payload.properties.headers.retryCount).to.be.equal(1);
-                expect(payload.properties.headers.routeKey).to.be.equal(message.event);
-                expect(payload.properties.headers.bunnyBus).to.be.equal(require('../../package.json').version);
-                done();
+        it('should requeue a message off the queue', async () => {
+
+            return new Promise((res, rej) => {
+
+                const done = (err) => {
+
+                    return err
+                        ? rej(err)
+                        : res();
+                };
+
+                Async.waterfall([
+                    instance.publish.bind(instance, message),
+                    instance.get.bind(instance, queueName),
+                    (payload, cb) => {
+
+                        instance._requeue(payload, queueName, cb);
+                    },
+                    instance.checkQueue.bind(instance, queueName)
+                ], (err, result) => {
+
+                    expect(err).to.not.exist();
+                    expect(result.queue).to.be.equal(queueName);
+                    expect(result.messageCount).to.be.equal(1);
+                    done();
+                });
+            });
+        });
+
+        it('should requeue with well formed header properties', async () => {
+
+            return new Promise((res, rej) => {
+
+                const done = (err) => {
+
+                    return err
+                        ? rej(err)
+                        : res();
+                };
+
+                const publishOptions = {
+                    source : 'test'
+                };
+
+                let transactionId = null;
+                let createdAt = null;
+
+                Async.waterfall([
+                    instance.publish.bind(instance, message, publishOptions),
+                    instance.get.bind(instance, queueName),
+                    (payload, cb) => {
+
+                        transactionId = payload.properties.headers.transactionId;
+                        createdAt = payload.properties.headers.createdAt;
+                        instance._requeue(payload, queueName, cb);
+                    },
+                    instance.get.bind(instance, queueName)
+                ], (err, payload) => {
+
+                    expect(err).to.not.exist();
+                    expect(payload.properties.headers.transactionId).to.be.equal(transactionId);
+                    expect(payload.properties.headers.createdAt).to.be.equal(createdAt);
+                    expect(payload.properties.headers.source).to.be.equal(publishOptions.source);
+                    expect(payload.properties.headers.requeuedAt).to.exist();
+                    expect(payload.properties.headers.retryCount).to.be.equal(1);
+                    expect(payload.properties.headers.routeKey).to.be.equal(message.event);
+                    expect(payload.properties.headers.bunnyBus).to.be.equal(require('../../package.json').version);
+                    done();
+                });
             });
         });
     });
@@ -1275,96 +1926,136 @@ describe('positive integration tests with configuration - Callback api', () => {
         const message = { name : 'bunnybus', event : 'a' };
         const patterns = ['a'];
 
-        beforeEach((done) => {
+        beforeEach(async () => {
 
-            instance.channel.purgeQueue(queueName, done);
+            return Promisify(instance.channel.purgeQueue.bind(instance.channel), queueName);
         });
 
-        before((done) => {
+        before(async () => {
 
-            Async.waterfall([
-                instance._autoConnectChannel,
-                instance.createExchange.bind(instance, instance.config.globalExchange, 'topic'),
-                instance.createQueue.bind(instance, queueName),
-                (result, cb) => {
+            return new Promise((res, rej) => {
 
-                    Async.map(
-                        patterns,
-                        (item, mapCB) => {
+                const done = (err) => {
 
-                            instance.channel.bindQueue(queueName, instance.config.globalExchange, item, null, mapCB);
-                        },
-                        cb);
-                }
-            ], done);
-        });
+                    return err
+                        ? rej(err)
+                        : res();
+                };
 
-        after((done) => {
+                Async.waterfall([
+                    instance._autoConnectChannel,
+                    instance.createExchange.bind(instance, instance.config.globalExchange, 'topic'),
+                    instance.createQueue.bind(instance, queueName),
+                    (result, cb) => {
 
-            Async.waterfall([
-                instance._autoConnectChannel,
-                instance.deleteExchange.bind(instance, instance.config.globalExchange),
-                instance.deleteQueue.bind(instance, queueName)
-            ], done);
-        });
+                        Async.map(
+                            patterns,
+                            (item, mapCB) => {
 
-        afterEach((done) => {
-
-            instance.deleteQueue(errorQueueName, done);
-        });
-
-        it('should reject a message off the queue', (done) => {
-
-            Async.waterfall([
-                instance.publish.bind(instance, message),
-                instance.get.bind(instance, queueName),
-                (payload, cb) => {
-
-                    instance._reject(payload, errorQueueName, cb);
-                },
-                instance.checkQueue.bind(instance, errorQueueName)
-            ], (err, result) => {
-
-                expect(err).to.not.exist();
-                expect(result.queue).to.be.equal(errorQueueName);
-                expect(result.messageCount).to.be.equal(1);
-                done();
+                                instance.channel.bindQueue(queueName, instance.config.globalExchange, item, null, mapCB);
+                            },
+                            cb);
+                    }
+                ], done);
             });
         });
 
-        it('should reject with well formed header properties', (done) => {
+        after(async () => {
 
-            const publishOptions = {
-                source : 'test'
-            };
-            const requeuedAt = (new Date()).toISOString();
-            const retryCount = 5;
-            let transactionId = null;
-            let createdAt = null;
+            return new Promise((res, rej) => {
 
-            Async.waterfall([
-                instance.publish.bind(instance, message, publishOptions),
-                instance.get.bind(instance, queueName),
-                (payload, cb) => {
+                const done = (err) => {
 
-                    transactionId = payload.properties.headers.transactionId;
-                    createdAt = payload.properties.headers.createdAt;
-                    payload.properties.headers.requeuedAt = requeuedAt;
-                    payload.properties.headers.retryCount = retryCount;
-                    instance._reject(payload, errorQueueName, cb);
-                },
-                instance.get.bind(instance, errorQueueName)
-            ], (err, payload) => {
+                    return err
+                        ? rej(err)
+                        : res();
+                };
 
-                expect(err).to.not.exist();
-                expect(payload.properties.headers.transactionId).to.be.equal(transactionId);
-                expect(payload.properties.headers.createdAt).to.be.equal(createdAt);
-                expect(payload.properties.headers.source).to.be.equal(publishOptions.source);
-                expect(payload.properties.headers.requeuedAt).to.be.equal(requeuedAt);
-                expect(payload.properties.headers.retryCount).to.be.equal(retryCount);
-                expect(payload.properties.headers.erroredAt).to.exist();
-                expect(payload.properties.headers.bunnyBus).to.be.equal(require('../../package.json').version);
-                done();
+                Async.waterfall([
+                    instance._autoConnectChannel,
+                    instance.deleteExchange.bind(instance, instance.config.globalExchange),
+                    instance.deleteQueue.bind(instance, queueName)
+                ], done);
+            });
+        });
+
+        afterEach(async () => {
+
+            return Promisify(instance.deleteQueue, errorQueueName);
+        });
+
+        it('should reject a message off the queue', async () => {
+
+            return new Promise((res, rej) => {
+
+                const done = (err) => {
+
+                    return err
+                        ? rej(err)
+                        : res();
+                };
+
+                Async.waterfall([
+                    instance.publish.bind(instance, message),
+                    instance.get.bind(instance, queueName),
+                    (payload, cb) => {
+
+                        instance._reject(payload, errorQueueName, cb);
+                    },
+                    instance.checkQueue.bind(instance, errorQueueName)
+                ], (err, result) => {
+
+                    expect(err).to.not.exist();
+                    expect(result.queue).to.be.equal(errorQueueName);
+                    expect(result.messageCount).to.be.equal(1);
+                    done();
+                });
+            });
+        });
+
+        it('should reject with well formed header properties', async () => {
+
+            return new Promise((res, rej) => {
+
+                const done = (err) => {
+
+                    return err
+                        ? rej(err)
+                        : res();
+                };
+
+                const publishOptions = {
+                    source : 'test'
+                };
+                const requeuedAt = (new Date()).toISOString();
+                const retryCount = 5;
+                let transactionId = null;
+                let createdAt = null;
+
+                Async.waterfall([
+                    instance.publish.bind(instance, message, publishOptions),
+                    instance.get.bind(instance, queueName),
+                    (payload, cb) => {
+
+                        transactionId = payload.properties.headers.transactionId;
+                        createdAt = payload.properties.headers.createdAt;
+                        payload.properties.headers.requeuedAt = requeuedAt;
+                        payload.properties.headers.retryCount = retryCount;
+                        instance._reject(payload, errorQueueName, cb);
+                    },
+                    instance.get.bind(instance, errorQueueName)
+                ], (err, payload) => {
+
+                    expect(err).to.not.exist();
+                    expect(payload.properties.headers.transactionId).to.be.equal(transactionId);
+                    expect(payload.properties.headers.createdAt).to.be.equal(createdAt);
+                    expect(payload.properties.headers.source).to.be.equal(publishOptions.source);
+                    expect(payload.properties.headers.requeuedAt).to.be.equal(requeuedAt);
+                    expect(payload.properties.headers.retryCount).to.be.equal(retryCount);
+                    expect(payload.properties.headers.erroredAt).to.exist();
+                    expect(payload.properties.headers.bunnyBus).to.be.equal(require('../../package.json').version);
+                    done();
+                });
             });
         });
     });
@@ -1372,26 +2063,35 @@ describe('positive integration tests with configuration - Callback api', () => {
 
 describe('negative integration tests', () => {
 
-    before((done) => {
+    before(() => {
 
         instance = new BunnyBus();
         instance.config = BunnyBus.DEFAULT_SERVER_CONFIGURATION;
-        done();
     });
 
     describe('channel', () => {
 
-        beforeEach((done) => {
+        beforeEach(async () => {
 
-            instance._closeConnection(done);
+            return Promisify(instance._closeConnection);
         });
 
-        it('should throw NoConnectionError when connection does not pre-exist', (done) => {
+        it('should throw NoConnectionError when connection does not pre-exist', async () => {
 
-            instance._createChannel((err) => {
+            return new Promise((res, rej) => {
 
-                expect(err).to.be.an.error(Exceptions.NoConnectionError);
-                done();
+                const done = (err) => {
+
+                    return err
+                        ? rej(err)
+                        : res();
+                };
+
+                instance._createChannel((err) => {
+
+                    expect(err).to.be.an.error(Exceptions.NoConnectionError);
+                    done();
+                });
             });
         });
     });
@@ -1400,35 +2100,65 @@ describe('negative integration tests', () => {
 
         const queueName = 'test-queue-1';
 
-        beforeEach((done) => {
+        beforeEach(async () => {
 
-            instance._closeConnection(done);
+            return Promisify(instance._closeConnection);
         });
 
-        it('should throw NoChannelError when calling createQueue and connection does not pre-exist', (done) => {
+        it('should throw NoChannelError when calling createQueue and connection does not pre-exist', async () => {
 
-            instance.createQueue(queueName, (err) => {
+            return new Promise((res, rej) => {
 
-                expect(err).to.be.an.error(Exceptions.NoChannelError);
-                done();
+                const done = (err) => {
+
+                    return err
+                        ? rej(err)
+                        : res();
+                };
+
+                instance.createQueue(queueName, (err) => {
+
+                    expect(err).to.be.an.error(Exceptions.NoChannelError);
+                    done();
+                });
             });
         });
 
-        it('should throw NoChannelError when calling checkQueue and connection does not pre-exist', (done) => {
+        it('should throw NoChannelError when calling checkQueue and connection does not pre-exist', async () => {
 
-            instance.checkQueue(queueName, (err) => {
+            return new Promise((res, rej) => {
 
-                expect(err).to.be.an.error(Exceptions.NoChannelError);
-                done();
+                const done = (err) => {
+
+                    return err
+                        ? rej(err)
+                        : res();
+                };
+
+                instance.checkQueue(queueName, (err) => {
+
+                    expect(err).to.be.an.error(Exceptions.NoChannelError);
+                    done();
+                });
             });
         });
 
-        it('should throw NoChannelError when calling deleteQueue and connection does not pre-exist', (done) => {
+        it('should throw NoChannelError when calling deleteQueue and connection does not pre-exist', async () => {
 
-            instance.deleteQueue(queueName, (err) => {
+            return new Promise((res, rej) => {
 
-                expect(err).to.be.an.error(Exceptions.NoChannelError);
-                done();
+                const done = (err) => {
+
+                    return err
+                        ? rej(err)
+                        : res();
+                };
+
+                instance.deleteQueue(queueName, (err) => {
+
+                    expect(err).to.be.an.error(Exceptions.NoChannelError);
+                    done();
+                });
             });
         });
     });
@@ -1437,35 +2167,65 @@ describe('negative integration tests', () => {
 
         const exchangeName = 'test-exchange-1';
 
-        beforeEach((done) => {
+        beforeEach(async () => {
 
-            instance._closeConnection(done);
+            return Promisify(instance._closeConnection);
         });
 
-        it('should throw NoChannelError when calling createExchange and connection does not pre-exist', (done) => {
+        it('should throw NoChannelError when calling createExchange and connection does not pre-exist', async () => {
 
-            instance.createExchange(exchangeName, '', (err) => {
+            return new Promise((res, rej) => {
 
-                expect(err).to.be.an.error(Exceptions.NoChannelError);
-                done();
+                const done = (err) => {
+
+                    return err
+                        ? rej(err)
+                        : res();
+                };
+
+                instance.createExchange(exchangeName, '', (err) => {
+
+                    expect(err).to.be.an.error(Exceptions.NoChannelError);
+                    done();
+                });
             });
         });
 
-        it('should throw NoChannelError when calling checkExchange and connection does not pre-exist', (done) => {
+        it('should throw NoChannelError when calling checkExchange and connection does not pre-exist', async () => {
 
-            instance.checkExchange(exchangeName, (err) => {
+            return new Promise((res, rej) => {
 
-                expect(err).to.be.an.error(Exceptions.NoChannelError);
-                done();
+                const done = (err) => {
+
+                    return err
+                        ? rej(err)
+                        : res();
+                };
+
+                instance.checkExchange(exchangeName, (err) => {
+
+                    expect(err).to.be.an.error(Exceptions.NoChannelError);
+                    done();
+                });
             });
         });
 
-        it('should throw NoChannelError when calling deleteExchange and connection does not pre-exist', (done) => {
+        it('should throw NoChannelError when calling deleteExchange and connection does not pre-exist', async () => {
 
-            instance.deleteExchange(exchangeName, (err) => {
+            return new Promise((res, rej) => {
 
-                expect(err).to.be.an.error(Exceptions.NoChannelError);
-                done();
+                const done = (err) => {
+
+                    return err
+                        ? rej(err)
+                        : res();
+                };
+
+                instance.deleteExchange(exchangeName, (err) => {
+
+                    expect(err).to.be.an.error(Exceptions.NoChannelError);
+                    done();
+                });
             });
         });
     });
@@ -1474,17 +2234,27 @@ describe('negative integration tests', () => {
 
         const queueName = 'test-queue-1';
 
-        beforeEach((done) => {
+        beforeEach(async () => {
 
-            instance._closeConnection(done);
+            return Promisify(instance._closeConnection);
         });
 
-        it('should throw NoChannelError when calling get and connection does not pre-exist', (done) => {
+        it('should throw NoChannelError when calling get and connection does not pre-exist', async () => {
 
-            instance.get(queueName, (err) => {
+            return new Promise((res, rej) => {
 
-                expect(err).to.be.an.error(Exceptions.NoChannelError);
-                done();
+                const done = (err) => {
+
+                    return err
+                        ? rej(err)
+                        : res();
+                };
+
+                instance.get(queueName, (err) => {
+
+                    expect(err).to.be.an.error(Exceptions.NoChannelError);
+                    done();
+                });
             });
         });
     });
@@ -1493,12 +2263,22 @@ describe('negative integration tests', () => {
 
         const message = { name : 'bunnybus' };
 
-        it('should throw NoRouteKeyError when calling publish and `options.routeKey` nor `message.event` exist', (done) => {
+        it('should throw NoRouteKeyError when calling publish and `options.routeKey` nor `message.event` exist', async () => {
 
-            instance.publish(message, (err) => {
+            return new Promise((res, rej) => {
 
-                expect(err).to.be.an.error(Exceptions.NoRouteKeyError);
-                done();
+                const done = (err) => {
+
+                    return err
+                        ? rej(err)
+                        : res();
+                };
+
+                instance.publish(message, (err) => {
+
+                    expect(err).to.be.an.error(Exceptions.NoRouteKeyError);
+                    done();
+                });
             });
         });
     });
@@ -1509,33 +2289,52 @@ describe('negative integration tests', () => {
         const consumerTag = 'abcde12345';
         const handlers = { event1 : () => {} };
 
-        afterEach((done) => {
+        afterEach(() => {
 
             instance.subscriptions._subscriptions.clear();
             instance.subscriptions._blockQueues.clear();
-            done();
         });
 
-        it('should throw SubscriptionExistError when calling subscribe on an active subscription exist', (done) => {
+        it('should throw SubscriptionExistError when calling subscribe on an active subscription exist', async () => {
 
-            instance.subscriptions.create(queueName, handlers);
-            instance.subscriptions.tag(queueName, consumerTag);
+            return new Promise((res, rej) => {
 
-            instance.subscribe(queueName, handlers, (err) => {
+                const done = (err) => {
 
-                expect(err).to.be.an.error(Exceptions.SubscriptionExistError);
-                done();
+                    return err
+                        ? rej(err)
+                        : res();
+                };
+
+                instance.subscriptions.create(queueName, handlers);
+                instance.subscriptions.tag(queueName, consumerTag);
+
+                instance.subscribe(queueName, handlers, (err) => {
+
+                    expect(err).to.be.an.error(Exceptions.SubscriptionExistError);
+                    done();
+                });
             });
         });
 
-        it('should throw SubscriptionBlockedError when calling subscribe against a blocked queue', (done) => {
+        it('should throw SubscriptionBlockedError when calling subscribe against a blocked queue', async () => {
 
-            instance.subscriptions.block(queueName);
+            return new Promise((res, rej) => {
 
-            instance.subscribe(queueName, handlers, (err) => {
+                const done = (err) => {
 
-                expect(err).to.be.an.error(Exceptions.SubscriptionBlockedError);
-                done();
+                    return err
+                        ? rej(err)
+                        : res();
+                };
+
+                instance.subscriptions.block(queueName);
+
+                instance.subscribe(queueName, handlers, (err) => {
+
+                    expect(err).to.be.an.error(Exceptions.SubscriptionBlockedError);
+                    done();
+                });
             });
         });
     });
@@ -1546,17 +2345,27 @@ describe('negative integration tests', () => {
             content : Buffer.from('hello')
         };
 
-        beforeEach((done) => {
+        beforeEach(async () => {
 
-            instance._closeConnection(done);
+            return Promisify(instance._closeConnection);
         });
 
-        it('should throw NoChannelError when calling _ack and connection does not pre-exist', (done) => {
+        it('should throw NoChannelError when calling _ack and connection does not pre-exist', async () => {
 
-            instance._ack(payload, (err) => {
+            return new Promise((res, rej) => {
 
-                expect(err).to.be.an.error(Exceptions.NoChannelError);
-                done();
+                const done = (err) => {
+
+                    return err
+                        ? rej(err)
+                        : res();
+                };
+
+                instance._ack(payload, (err) => {
+
+                    expect(err).to.be.an.error(Exceptions.NoChannelError);
+                    done();
+                });
             });
         });
     });
@@ -1567,17 +2376,27 @@ describe('negative integration tests', () => {
             content : Buffer.from('hello')
         };
 
-        beforeEach((done) => {
+        beforeEach(async () => {
 
-            instance._closeConnection(done);
+            return Promisify(instance._closeConnection);
         });
 
-        it('should throw NoChannelError when calling _requeue and connection does not pre-exist', (done) => {
+        it('should throw NoChannelError when calling _requeue and connection does not pre-exist', async () => {
 
-            instance._requeue(payload, '', (err) => {
+            return new Promise((res, rej) => {
 
-                expect(err).to.be.an.error(Exceptions.NoChannelError);
-                done();
+                const done = (err) => {
+
+                    return err
+                        ? rej(err)
+                        : res();
+                };
+
+                instance._requeue(payload, '', (err) => {
+
+                    expect(err).to.be.an.error(Exceptions.NoChannelError);
+                    done();
+                });
             });
         });
     });
@@ -1588,17 +2407,27 @@ describe('negative integration tests', () => {
             content : Buffer.from('hello')
         };
 
-        beforeEach((done) => {
+        beforeEach(async () => {
 
-            instance._closeConnection(done);
+            return Promisify(instance._closeConnection);
         });
 
-        it('should throw NoChannelError when calling _reject and connection does not pre-exist', (done) => {
+        it('should throw NoChannelError when calling _reject and connection does not pre-exist', async () => {
 
-            instance._reject(payload, '', (err) => {
+            return new Promise((res, rej) => {
 
-                expect(err).to.be.an.error(Exceptions.NoChannelError);
-                done();
+                const done = (err) => {
+
+                    return err
+                        ? rej(err)
+                        : res();
+                };
+
+                instance._reject(payload, '', (err) => {
+
+                    expect(err).to.be.an.error(Exceptions.NoChannelError);
+                    done();
+                });
             });
         });
     });

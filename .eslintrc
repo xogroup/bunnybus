@@ -1,7 +1,14 @@
 {
-    "extends" : ["hapi"],
+    "extends": [
+        "@hapi/eslint-config-hapi"
+    ],
+    "plugins": [
+        "@hapi/eslint-plugin-hapi"
+    ],
     "rules": {
-        "consistent-this" : [ 0, "self", "$" ]
+        "consistent-this" : [ 0, "self", "$" ],
+        "require-await": "off",
+        "no-unused-vars": "off"
     },
     "parserOptions": {
         "ecmaVersion": 8

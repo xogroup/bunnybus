@@ -2,6 +2,7 @@
 
 const Helpers = require('../../../lib/helpers');
 const Code = require('code');
+
 const expect = Code.expect;
 
 const assertValidateLoggerContract = (logger, expectation, callback) => {

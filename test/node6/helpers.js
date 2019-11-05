@@ -29,7 +29,7 @@ describe('helpers', () => {
 
     describe('createTransactionId', () => {
 
-        it('should create an 40 character long alphanumeric token', (done) => {
+        it('should create an 40 character long alphanumeric token', () => {
 
             Helpers.createTransactionId((err, result) => {
 
@@ -37,38 +37,47 @@ describe('helpers', () => {
                 expect(result).to.be.a.string();
                 expect(result).to.have.length(40);
                 expect(result).to.match(/^([\d\w]*)$/);
-                done();
             });
         });
 
-        it('should create only unique tokens', (done) => {
+        it('should create only unique tokens', async () => {
 
-            const iterations = 1000;
+            return new Promise((res, rej) => {
 
-            Async.times(
-                iterations,
-                (n, cb) => {
+                const done = (err) => {
 
-                    Helpers.createTransactionId(cb);
-                },
-                (err, tokens) => {
+                    return err
+                        ? rej(err)
+                        : res();
+                };
 
-                    const hash = {};
+                const iterations = 1000;
 
-                    for (let i = 0; i < iterations; ++i) {
-                        hash[tokens[i]] = (hash[tokens[i]] || 0) + 1;
-                        expect(hash[tokens[i]]).to.be.equal(1);
-                    }
+                Async.times(
+                    iterations,
+                    (n, cb) => {
 
-                    expect(err).to.not.exist();
-                    done();
-                });
+                        Helpers.createTransactionId(cb);
+                    },
+                    (err, tokens) => {
+
+                        const hash = {};
+
+                        for (let i = 0; i < iterations; ++i) {
+                            hash[tokens[i]] = (hash[tokens[i]] || 0) + 1;
+                            expect(hash[tokens[i]]).to.be.equal(1);
+                        }
+
+                        expect(err).to.not.exist();
+                        done();
+                    });
+            });
         });
     });
 
     describe('getPackageData', () => {
 
-        it('should return an identifier with {name, package} filled', (done) => {
+        it('should return an identifier with {name, package} filled', () => {
 
             const result = Helpers.getPackageData();
 
@@ -78,13 +87,12 @@ describe('helpers', () => {
             expect(result.name).to.be.equal(require('../../package.json').name);
             expect(result.version).to.be.equal(require('../../package.json').version);
             expect(result.semverMatch).to.be.equal(semverMajor + '.x.x');
-            done();
         });
     });
 
     describe('cleanObject', () => {
 
-        it('should clean properties that have no values at first level', (done) => {
+        it('should clean properties that have no values at first level', () => {
 
             const obj = {
                 a : 'value1',
@@ -99,11 +107,9 @@ describe('helpers', () => {
 
             expect(cleanedKeys.find((key) => key === 'b')).to.be.undefined();
             expect(cleanedKeys.find((key) => key === 'c')).to.be.undefined();
-
-            done();
         });
 
-        it('should clean properties that have no values at second level', (done) => {
+        it('should clean properties that have no values at second level', () => {
 
             const obj = {
                 a : {
@@ -120,11 +126,9 @@ describe('helpers', () => {
 
             expect(cleanedKeys.find((key) => key === 'a2')).to.be.undefined();
             expect(cleanedKeys.find((key) => key === 'a3')).to.be.undefined();
-
-            done();
         });
 
-        it('should not clean properties that are false', (done) => {
+        it('should not clean properties that are false', () => {
 
             const obj = {
                 a : 'value1',
@@ -138,73 +142,108 @@ describe('helpers', () => {
             const cleanedKeys = Object.keys(obj);
 
             expect(cleanedKeys.find((key) => key === 'd')).to.be.undefined();
-
-            done();
         });
     });
 
     describe('convertToBuffer', () => {
 
-        it('should convert a string to a Buffer', (done) => {
+        it('should convert a string to a Buffer', async () => {
 
-            const data = 'hello';
+            return new Promise((res, rej) => {
 
-            Assertions.assertConvertToBuffer(data, done);
+                const done = (err) => {
+
+                    return err
+                        ? rej(err)
+                        : res();
+                };
+
+                const data = 'hello';
+
+                Assertions.assertConvertToBuffer(data, done);
+            });
         });
 
-        it('should convert an object to a Buffer', (done) => {
+        it('should convert an object to a Buffer', async () => {
 
-            const data = {
-                a : 'root1',
-                b : 'root2',
-                c : {
-                    c1 : 'sub1',
-                    c2 : 'sub2'
-                }
-            };
+            return new Promise((res, rej) => {
 
-            Assertions.assertConvertToBuffer(data, done);
+                const done = (err) => {
+
+                    return err
+                        ? rej(err)
+                        : res();
+                };
+
+                const data = {
+                    a : 'root1',
+                    b : 'root2',
+                    c : {
+                        c1 : 'sub1',
+                        c2 : 'sub2'
+                    }
+                };
+
+                Assertions.assertConvertToBuffer(data, done);
+            });
         });
 
-        it('should convert an array to a Buffer', (done) => {
+        it('should convert an array to a Buffer', async () => {
 
-            const data = ['a', 'b', 1, 2];
+            return new Promise((res, rej) => {
 
-            Assertions.assertConvertToBuffer(data, done);
+                const done = (err) => {
+
+                    return err
+                        ? rej(err)
+                        : res();
+                };
+
+                const data = ['a', 'b', 1, 2];
+
+                Assertions.assertConvertToBuffer(data, done);
+            });
         });
 
-        it('should not alter a Buffer input', (done) => {
+        it('should not alter a Buffer input', async () => {
 
-            const data = Buffer.from('hello');
+            return new Promise((res, rej) => {
 
-            Assertions.assertConvertToBuffer(data, done);
+                const done = (err) => {
+
+                    return err
+                        ? rej(err)
+                        : res();
+                };
+
+                const data = Buffer.from('hello');
+
+                Assertions.assertConvertToBuffer(data, done);
+            });
         });
     });
 
     describe('isMajorCompatible', () => {
 
-        it('should return true when major matches', (done) => {
+        it('should return true when major matches', () => {
 
             const result = Helpers.isMajorCompatible('1.2.3', '1.x.x');
 
             expect(result).to.be.true();
-            done();
         });
 
-        it('should return false when major does not match', (done) => {
+        it('should return false when major does not match', () => {
 
             const result = Helpers.isMajorCompatible('2.1.3', '1.x.x');
 
             expect(result).to.be.false();
-            done();
         });
 
-        it('should return true when using package defaults', (done) => {
+        it('should return true when using package defaults', () => {
 
             const result = Helpers.isMajorCompatible(require('../../package.json').version);
 
             expect(result).to.be.true();
-            done();
         });
     });
 
@@ -237,76 +276,67 @@ describe('helpers', () => {
             routeKey : 'a.e'
         };
 
-        it('should return from payload.properties.headers.routeKey when everything is supplied', (done) => {
+        it('should return from payload.properties.headers.routeKey when everything is supplied', () => {
 
             const result = Helpers.reduceRouteKey(payload, options, message);
 
             expect(result).to.be.equal(payload.properties.headers.routeKey);
-            done();
         });
 
-        it('should return from options.routeKey when payload contains fields.routingKey', (done) => {
+        it('should return from options.routeKey when payload contains fields.routingKey', () => {
 
             const result = Helpers.reduceRouteKey(payloadFields, options, message);
 
             expect(result).to.be.equal(options.routeKey);
-            done();
         });
 
-        it('should return from options.routeKey when payload is empty', (done) => {
+        it('should return from options.routeKey when payload is empty', () => {
 
             const result = Helpers.reduceRouteKey({}, options, message);
 
             expect(result).to.be.equal(options.routeKey);
-            done();
         });
 
-        it('should return from options.routeKey when payload is null', (done) => {
+        it('should return from options.routeKey when payload is null', () => {
 
             const result = Helpers.reduceRouteKey(payloadFields, options, message);
 
             expect(result).to.be.equal(options.routeKey);
-            done();
         });
 
-        it('should return from message.event when options is empty', (done) => {
+        it('should return from message.event when options is empty', () => {
 
             const result = Helpers.reduceRouteKey(payloadFields, {}, message);
 
             expect(result).to.be.equal(message.event);
-            done();
         });
 
-        it('should return from message.event when options is null', (done) => {
+        it('should return from message.event when options is null', () => {
 
             const result = Helpers.reduceRouteKey(payloadFields, null, message);
 
             expect(result).to.be.equal(message.event);
-            done();
         });
 
-        it('should return from payload.fields.routingKey when options is empty and message is empty', (done) => {
+        it('should return from payload.fields.routingKey when options is empty and message is empty', () => {
 
             const result = Helpers.reduceRouteKey(payloadFields, {}, {});
 
             expect(result).to.be.equal(payloadFields.fields.routingKey);
-            done();
         });
 
-        it('should return from payload.fields.routingKey when options is null and message is null', (done) => {
+        it('should return from payload.fields.routingKey when options is null and message is null', () => {
 
             const result = Helpers.reduceRouteKey(payloadFields, null, null);
 
             expect(result).to.be.equal(payloadFields.fields.routingKey);
-            done();
         });
 
-        it('should return undefined when all input is falsy', (done) => {
+        it('should return undefined when all input is falsy', () => {
 
             const result = Helpers.reduceRouteKey(null, null, null);
 
             expect(result).to.be.undefined();
-            done();
         });
     });
 
@@ -314,119 +344,177 @@ describe('helpers', () => {
 
         const callback = () => {};
 
-        it('should return callback when given (callback)', (done) => {
+        it('should return callback when given (callback)', () => {
 
             Assertions.assertReduceCallback(callback);
-            done();
         });
 
-        it('should return callback when given ({}, callback)', (done) => {
+        it('should return callback when given ({}, callback)', () => {
 
             Assertions.assertReduceCallback({}, callback);
-            done();
         });
 
-        it('should return callback when given (undefined, callback)', (done) => {
+        it('should return callback when given (undefined, callback)', () => {
 
             Assertions.assertReduceCallback(undefined, callback);
-            done();
         });
 
-        it('should return callback when given (null, callback)', (done) => {
+        it('should return callback when given (null, callback)', () => {
 
             Assertions.assertReduceCallback(null, callback);
-            done();
         });
 
-        it('should return callback when given ({}, null, callback)', (done) => {
+        it('should return callback when given ({}, null, callback)', () => {
 
             Assertions.assertReduceCallback({}, null, callback);
-            done();
         });
 
-        it('should return undefined when given ({})', (done) => {
+        it('should return undefined when given ({})', () => {
 
             Assertions.assertUndefinedReduceCallback({});
-            done();
         });
 
-        it('should return undefined when given (undefined, undefined)', (done) => {
+        it('should return undefined when given (undefined, undefined)', () => {
 
             Assertions.assertUndefinedReduceCallback(undefined, undefined);
-            done();
         });
 
-        it('should return undefined when given ()', (done) => {
+        it('should return undefined when given ()', () => {
 
             Assertions.assertUndefinedReduceCallback();
-            done();
         });
     });
 
     describe('validateLoggerContract', () => {
 
-        it('should return true when validating EventLogger', (done) => {
+        it('should return true when validating EventLogger', async () => {
 
-            Assertions.assertValidateLoggerContract(new EventLogger(), true, done);
+            return new Promise((res, rej) => {
+
+                const done = (err) => {
+
+                    return err
+                        ? rej(err)
+                        : res();
+                };
+
+                Assertions.assertValidateLoggerContract(new EventLogger(), true, done);
+            });
         });
 
-        it('should return true when validating custom logger object', (done) => {
+        it('should return true when validating custom logger object', async () => {
 
-            Assertions.assertValidateLoggerContract(FakeLoggerFactory('debug', 'info', 'warn', 'error', 'fatal'), true, done);
+            return new Promise((res, rej) => {
+
+                const done = (err) => {
+
+                    return err
+                        ? rej(err)
+                        : res();
+                };
+
+                Assertions.assertValidateLoggerContract(FakeLoggerFactory('debug', 'info', 'warn', 'error', 'fatal'), true, done);
+            });
         });
 
-        it('should return false when validating custom logger missing debug', (done) => {
+        it('should return false when validating custom logger missing debug', async () => {
 
-            Assertions.assertValidateLoggerContract(FakeLoggerFactory('info', 'warn', 'error', 'fatal'), false, done);
+            return new Promise((res, rej) => {
+
+                const done = (err) => {
+
+                    return err
+                        ? rej(err)
+                        : res();
+                };
+
+                Assertions.assertValidateLoggerContract(FakeLoggerFactory('info', 'warn', 'error', 'fatal'), false, done);
+            });
         });
 
-        it('should return false when validating custom logger missing info', (done) => {
+        it('should return false when validating custom logger missing info', async () => {
 
-            Assertions.assertValidateLoggerContract(FakeLoggerFactory('debug', 'warn', 'error', 'fatal'), false, done);
+            return new Promise((res, rej) => {
+
+                const done = (err) => {
+
+                    return err
+                        ? rej(err)
+                        : res();
+                };
+
+                Assertions.assertValidateLoggerContract(FakeLoggerFactory('debug', 'warn', 'error', 'fatal'), false, done);
+            });
         });
 
-        it('should return false when validating custom logger missing warn', (done) => {
+        it('should return false when validating custom logger missing warn', async () => {
 
-            Assertions.assertValidateLoggerContract(FakeLoggerFactory('debug', 'info', 'error', 'fatal'), false, done);
+            return new Promise((res, rej) => {
+
+                const done = (err) => {
+
+                    return err
+                        ? rej(err)
+                        : res();
+                };
+
+                Assertions.assertValidateLoggerContract(FakeLoggerFactory('debug', 'info', 'error', 'fatal'), false, done);
+            });
         });
 
-        it('should return false when validating custom logger missing error', (done) => {
+        it('should return false when validating custom logger missing error', async () => {
 
-            Assertions.assertValidateLoggerContract(FakeLoggerFactory('debug', 'info', 'warn', 'fatal'), false, done);
+            return new Promise((res, rej) => {
+
+                const done = (err) => {
+
+                    return err
+                        ? rej(err)
+                        : res();
+                };
+
+                Assertions.assertValidateLoggerContract(FakeLoggerFactory('debug', 'info', 'warn', 'fatal'), false, done);
+            });
         });
 
-        it('should return false when validating custom logger missing fatal', (done) => {
+        it('should return false when validating custom logger missing fatal', async () => {
 
-            Assertions.assertValidateLoggerContract(FakeLoggerFactory('debug', 'info', 'warn', 'error'), false, done);
+            return new Promise((res, rej) => {
+
+                const done = (err) => {
+
+                    return err
+                        ? rej(err)
+                        : res();
+                };
+
+                Assertions.assertValidateLoggerContract(FakeLoggerFactory('debug', 'info', 'warn', 'error'), false, done);
+            });
         });
     });
 
     describe('validatePromiseContract', () => {
 
-        it('should return true for native Promise', (done) => {
+        it('should return true for native Promise', () => {
 
             expect(Helpers.validatePromiseContract(Promise)).to.be.true();
-            done();
         });
 
-        it('should return true for Bluebird', (done) => {
+        it('should return true for Bluebird', () => {
 
             expect(Helpers.validatePromiseContract(Bluebird)).to.be.true();
-            done();
         });
 
-        it('should return false for q', (done) => {
+        it('should return false for q', () => {
 
             expect(Helpers.validatePromiseContract(Q)).to.be.false();
-            done();
         });
 
-        it('should return false for non-promise constructor', (done) => {
+        it('should return false for non-promise constructor', () => {
 
             class BadPromise {}
 
             expect(Helpers.validatePromiseContract(BadPromise)).to.be.false();
-            done();
         });
     });
 
@@ -436,7 +524,7 @@ describe('helpers', () => {
 
         describe('ES6 Promise', () => {
 
-            it('should promisify methods using the native implementation', (done) => {
+            it('should promisify methods using the native implementation', () => {
 
                 //expect(instance.promise).to.be.equal(Promise);
 
@@ -444,19 +532,17 @@ describe('helpers', () => {
 
                 expect(task).to.be.instanceof(Promise);
                 expect(task.then).to.be.a.function();
-                done();
             });
         });
 
         describe('Bluebird Promise', () => {
 
-            it('should promisify methods using the Bluebird implementation', (done) => {
+            it('should promisify methods using the Bluebird implementation', () => {
 
                 const task = Helpers.toPromise(Bluebird, callback);
 
                 expect(task).to.be.instanceof(Bluebird);
                 expect(task.then).to.be.a.function();
-                done();
             });
         });
     });
@@ -467,16 +553,14 @@ describe('helpers', () => {
 
             const pattern = 'abc.xyz';
 
-            it('should match for abc.xyz', (done) => {
+            it('should match for abc.xyz', () => {
 
                 expect(Helpers.routeMatcher(pattern, 'abc.xyz')).to.be.true();
-                done();
             });
 
-            it('should not match for xyz.abc', (done) => {
+            it('should not match for xyz.abc', () => {
 
                 expect(Helpers.routeMatcher(pattern, 'xyz.abc')).to.be.false();
-                done();
             });
         });
 
@@ -484,22 +568,19 @@ describe('helpers', () => {
 
             const pattern = 'a.*';
 
-            it('should match for a.hello', (done) => {
+            it('should match for a.hello', () => {
 
                 expect(Helpers.routeMatcher(pattern, 'a.hello')).to.be.true();
-                done();
             });
 
-            it('should match for a.hello', (done) => {
+            it('should match for a.hello', () => {
 
                 expect(Helpers.routeMatcher(pattern, 'a.')).to.be.true();
-                done();
             });
 
-            it('should not match for a.hello.world', (done) => {
+            it('should not match for a.hello.world', () => {
 
                 expect(Helpers.routeMatcher(pattern, 'a.hello.world')).to.be.false();
-                done();
             });
         });
 
@@ -507,22 +588,19 @@ describe('helpers', () => {
 
             const pattern = '*.a';
 
-            it('should match for hello.a', (done) => {
+            it('should match for hello.a', () => {
 
                 expect(Helpers.routeMatcher(pattern, 'hello.a')).to.be.true();
-                done();
             });
 
-            it('should match for .a', (done) => {
+            it('should match for .a', () => {
 
                 expect(Helpers.routeMatcher(pattern, '.a')).to.be.true();
-                done();
             });
 
-            it('should not match for world.hello.a', (done) => {
+            it('should not match for world.hello.a', () => {
 
                 expect(Helpers.routeMatcher(pattern, 'world.hello.a')).to.be.false();
-                done();
             });
         });
 
@@ -530,28 +608,24 @@ describe('helpers', () => {
 
             const pattern = 'a.#';
 
-            it('should match for a.hello', (done) => {
+            it('should match for a.hello', () => {
 
                 expect(Helpers.routeMatcher(pattern, 'a.hello')).to.be.true();
-                done();
             });
 
-            it('should match for a.hello.world', (done) => {
+            it('should match for a.hello.world', () => {
 
                 expect(Helpers.routeMatcher(pattern, 'a.hello.world')).to.be.true();
-                done();
             });
 
-            it('should match for a.', (done) => {
+            it('should match for a.', () => {
 
                 expect(Helpers.routeMatcher(pattern, 'a.')).to.be.true();
-                done();
             });
 
-            it('should not match for b.a.hello.world', (done) => {
+            it('should not match for b.a.hello.world', () => {
 
                 expect(Helpers.routeMatcher(pattern, 'b.a.hello.world')).to.be.false();
-                done();
             });
         });
 
@@ -559,22 +633,19 @@ describe('helpers', () => {
 
             const pattern = 'a.*.b';
 
-            it('should match for a.c.b', (done) => {
+            it('should match for a.c.b', () => {
 
                 expect(Helpers.routeMatcher(pattern, 'a.c.b')).to.be.true();
-                done();
             });
 
-            it('should match for a..b', (done) => {
+            it('should match for a..b', () => {
 
                 expect(Helpers.routeMatcher(pattern, 'a..b')).to.be.true();
-                done();
             });
 
-            it('should match for a.b', (done) => {
+            it('should match for a.b', () => {
 
                 expect(Helpers.routeMatcher(pattern, 'a.b')).to.be.false();
-                done();
             });
         });
 
@@ -582,40 +653,34 @@ describe('helpers', () => {
 
             const pattern = 'a.#.b';
 
-            it('should match for a.hello.b', (done) => {
+            it('should match for a.hello.b', () => {
 
                 expect(Helpers.routeMatcher(pattern, 'a.hello.b')).to.be.true();
-                done();
             });
 
-            it('should match for a.hello.world.b', (done) => {
+            it('should match for a.hello.world.b', () => {
 
                 expect(Helpers.routeMatcher(pattern, 'a.hello.world.b')).to.be.true();
-                done();
             });
 
-            it('should not match for a.b', (done) => {
+            it('should not match for a.b', () => {
 
                 expect(Helpers.routeMatcher(pattern, 'a.b')).to.be.false();
-                done();
             });
 
-            it('should match for a..b', (done) => {
+            it('should match for a..b', () => {
 
                 expect(Helpers.routeMatcher(pattern, 'a..b')).to.be.true();
-                done();
             });
 
-            it('should not match for hello.world.b', (done) => {
+            it('should not match for hello.world.b', () => {
 
                 expect(Helpers.routeMatcher(pattern, 'hello.world.b')).to.be.false();
-                done();
             });
 
-            it('should match for a.hello.world', (done) => {
+            it('should match for a.hello.world', () => {
 
                 expect(Helpers.routeMatcher(pattern, 'a.hello.world')).to.be.false();
-                done();
             });
         });
 
@@ -623,28 +688,24 @@ describe('helpers', () => {
 
             const pattern = 'abc.#.xyz';
 
-            it('should match for abc.hello.xyz', (done) => {
+            it('should match for abc.hello.xyz', () => {
 
                 expect(Helpers.routeMatcher(pattern, 'abc.hello.xyz')).to.be.true();
-                done();
             });
 
-            it('should match for abc.hello.world.xyz', (done) => {
+            it('should match for abc.hello.world.xyz', () => {
 
                 expect(Helpers.routeMatcher(pattern, 'abc.hello.world.xyz')).to.be.true();
-                done();
             });
 
-            it('should match for abc..xyz', (done) => {
+            it('should match for abc..xyz', () => {
 
                 expect(Helpers.routeMatcher(pattern, 'abc..xyz')).to.be.true();
-                done();
             });
 
-            it('should not match for abc.xyz', (done) => {
+            it('should not match for abc.xyz', () => {
 
                 expect(Helpers.routeMatcher(pattern, 'abc.xyz')).to.be.false();
-                done();
             });
         });
 
@@ -652,28 +713,24 @@ describe('helpers', () => {
 
             const pattern = '.#.';
 
-            it('should match for .a.', (done) => {
+            it('should match for .a.', () => {
 
                 expect(Helpers.routeMatcher(pattern, '.a.')).to.be.true();
-                done();
             });
 
-            it('should match for .#.', (done) => {
+            it('should match for .#.', () => {
 
                 expect(Helpers.routeMatcher(pattern, '.#.')).to.be.true();
-                done();
             });
 
-            it('should match for ..', (done) => {
+            it('should match for ..', () => {
 
                 expect(Helpers.routeMatcher(pattern, '..')).to.be.true();
-                done();
             });
 
-            it('should match for ....', (done) => {
+            it('should match for ....', () => {
 
                 expect(Helpers.routeMatcher(pattern, '....')).to.be.true();
-                done();
             });
         });
 
@@ -681,29 +738,26 @@ describe('helpers', () => {
 
             const pattern = '.#.';
 
-            it('should match for .a.', (done) => {
+            it('should match for .a.', () => {
 
                 expect(Helpers.routeMatcher(pattern, '.a.')).to.be.true();
-                done();
             });
 
-            it('should match for .#.', (done) => {
+            it('should match for .#.', () => {
 
                 expect(Helpers.routeMatcher(pattern, '.#.')).to.be.true();
-                done();
             });
 
-            it('should match for .#.', (done) => {
+            it('should match for .#.', () => {
 
                 expect(Helpers.routeMatcher(pattern, '..')).to.be.true();
-                done();
             });
         });
     });
 
     describe('handlerMatcher', () => {
 
-        it('should not match any handler', (done) => {
+        it('should not match any handler', () => {
 
             const handlers = {
                 'abc.#.xyz' : () => {},
@@ -715,10 +769,9 @@ describe('helpers', () => {
 
             expect(result).to.be.an.array();
             expect(result).to.have.length(0);
-            done();
         });
 
-        it('should match a single handler', (done) => {
+        it('should match a single handler', () => {
 
             const handlers = {
                 'hello.world' : () => {},
@@ -729,10 +782,9 @@ describe('helpers', () => {
 
             expect(result).to.be.an.array();
             expect(result).to.have.length(1);
-            done();
         });
 
-        it('should match multiple handlers', (done) => {
+        it('should match multiple handlers', () => {
 
             const handlers = {
                 'abc.#.xyz' : () => {},
@@ -744,7 +796,6 @@ describe('helpers', () => {
 
             expect(result).to.be.an.array();
             expect(result).to.have.length(2);
-            done();
         });
     });
 });

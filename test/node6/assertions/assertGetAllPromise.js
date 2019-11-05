@@ -2,6 +2,7 @@
 
 const Promise = require('bluebird');
 const Code = require('code');
+
 const expect = Code.expect;
 
 const assertGetAllPromise = (instance, message, queueName, meta, limit) => {

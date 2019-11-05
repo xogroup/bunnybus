@@ -12,17 +12,17 @@ const describe = lab.describe;
 const it = lab.it;
 
 const BunnyBus = require('../../lib');
+
 let instance = undefined;
 
 describe('integration load test', () => {
 
     const publishTarget = 1000;
 
-    before((done) => {
+    before(() => {
 
         instance = new BunnyBus();
         instance.config = BunnyBus.DEFAULT_SERVER_CONFIGURATION;
-        done();
     });
 
     describe('with asynclib callback interface', () => {
@@ -32,81 +32,131 @@ describe('integration load test', () => {
         const message = { event : 'a.b', name : 'bunnybus' };
         const patterns = ['a.b'];
 
-        before((done) => {
+        before(async () => {
 
-            Async.waterfall([
-                instance._autoConnectChannel,
-                instance.createExchange.bind(instance, instance.config.globalExchange, 'topic', null),
-                instance.createQueue.bind(instance, queueName),
-                (result, cb) => {
+            return new Promise((res, rej) => {
 
-                    Async.map(
-                        patterns,
-                        (item, mapCB) => {
+                const done = (err) => {
 
-                            instance.channel.bindQueue(queueName, instance.config.globalExchange, item, null, mapCB);
-                        },
-                        cb);
-                }
-            ], done);
-        });
+                    return err
+                        ? rej(err)
+                        : res();
+                };
 
-        afterEach((done) => {
+                Async.waterfall([
+                    instance._autoConnectChannel,
+                    instance.createExchange.bind(instance, instance.config.globalExchange, 'topic', null),
+                    instance.createQueue.bind(instance, queueName),
+                    (result, cb) => {
 
-            Async.waterfall([
-                instance._autoConnectChannel,
-                instance.unsubscribe.bind(instance, queueName)
-            ], done);
-        });
+                        Async.map(
+                            patterns,
+                            (item, mapCB) => {
 
-        after((done) => {
-
-            Async.waterfall([
-                instance._autoConnectChannel,
-                instance.deleteExchange.bind(instance, instance.config.globalExchange, null),
-                instance.deleteQueue.bind(instance, queueName),
-                instance.deleteQueue.bind(instance, errorQueueName)
-            ], done);
-        });
-
-        it('should publish all messages within 2 seconds', (done) => {
-
-            let count = 0;
-
-            const resolver = (err) => {
-
-                if (err) {
-                    done(err);
-                }
-                else if (++count === publishTarget) {
-                    done();
-                }
-            };
-
-            for (let i = 0; i < publishTarget; ++i) {
-                instance.publish(message, null, resolver);
-            }
-        });
-
-        it('should consume all messages within 2 seconds', (done) => {
-
-            let count = 0;
-
-            instance.subscribe(
-                queueName,
-                {
-                    'a.b' : (msg, ack) => {
-
-                        ack(null, () => {
-
-                            if (++count === publishTarget) {
-                                done();
-                            }
-                        });
+                                instance.channel.bindQueue(queueName, instance.config.globalExchange, item, null, mapCB);
+                            },
+                            cb);
                     }
-                },
-                null,
-                () => {});
+                ], done);
+            });
+        });
+
+        afterEach(async () => {
+
+            return new Promise((res, rej) => {
+
+                const done = (err) => {
+
+                    return err
+                        ? rej(err)
+                        : res();
+                };
+
+                Async.waterfall([
+                    instance._autoConnectChannel,
+                    instance.unsubscribe.bind(instance, queueName)
+                ], done);
+            });
+        });
+
+        after(async () => {
+
+            return new Promise((res, rej) => {
+
+                const done = (err) => {
+
+                    return err
+                        ? rej(err)
+                        : res();
+                };
+
+                Async.waterfall([
+                    instance._autoConnectChannel,
+                    instance.deleteExchange.bind(instance, instance.config.globalExchange, null),
+                    instance.deleteQueue.bind(instance, queueName),
+                    instance.deleteQueue.bind(instance, errorQueueName)
+                ], done);
+            });
+        });
+
+        it('should publish all messages within 2 seconds', async () => {
+
+            return new Promise((res, rej) => {
+
+                const done = (err) => {
+
+                    return err
+                        ? rej(err)
+                        : res();
+                };
+
+                let count = 0;
+
+                const resolver = (err) => {
+
+                    if (err) {
+                        done(err);
+                    }
+                    else if (++count === publishTarget) {
+                        done();
+                    }
+                };
+
+                for (let i = 0; i < publishTarget; ++i) {
+                    instance.publish(message, null, resolver);
+                }
+            });
+        });
+
+        it('should consume all messages within 2 seconds', async () => {
+
+            return new Promise((res, rej) => {
+
+                const done = (err) => {
+
+                    return err
+                        ? rej(err)
+                        : res();
+                };
+
+                let count = 0;
+
+                instance.subscribe(
+                    queueName,
+                    {
+                        'a.b' : (msg, ack) => {
+
+                            ack(null, () => {
+
+                                if (++count === publishTarget) {
+                                    done();
+                                }
+                            });
+                        }
+                    },
+                    null,
+                    () => {});
+            });
         });
     });
 
@@ -158,24 +208,34 @@ describe('integration load test', () => {
             return Promise.all(promises);
         });
 
-        it('should consume all messages within 2 seconds', (done) => {
+        it('should consume all messages within 2 seconds', async () => {
 
-            let count = 0;
+            return new Promise((res, rej) => {
 
-            instance.subscribe(
-                queueName,
-                {
-                    'a.promise' : (msg, ack) => {
+                const done = (err) => {
 
-                        return ack()
-                            .then(() => {
+                    return err
+                        ? rej(err)
+                        : res();
+                };
 
-                                if (++count === publishTarget) {
-                                    done();
-                                }
-                            });
-                    }
-                });
+                let count = 0;
+
+                instance.subscribe(
+                    queueName,
+                    {
+                        'a.promise' : (msg, ack) => {
+
+                            return ack()
+                                .then(() => {
+
+                                    if (++count === publishTarget) {
+                                        done();
+                                    }
+                                });
+                        }
+                    });
+            });
         });
     });
 
@@ -233,24 +293,34 @@ describe('integration load test', () => {
             return Bluebird.all(promises);
         });
 
-        it('should consume all messages within 2 seconds', (done) => {
+        it('should consume all messages within 2 seconds', async () => {
 
-            let count = 0;
+            return new Promise((res, rej) => {
 
-            instance.subscribe(
-                queueName,
-                {
-                    'b.promise' : (msg, ack) => {
+                const done = (err) => {
 
-                        return ack()
-                            .then(() => {
+                    return err
+                        ? rej(err)
+                        : res();
+                };
 
-                                if (++count === publishTarget) {
-                                    done();
-                                }
-                            });
-                    }
-                });
+                let count = 0;
+
+                instance.subscribe(
+                    queueName,
+                    {
+                        'b.promise' : (msg, ack) => {
+
+                            return ack()
+                                .then(() => {
+
+                                    if (++count === publishTarget) {
+                                        done();
+                                    }
+                                });
+                        }
+                    });
+            });
         });
     });
 });

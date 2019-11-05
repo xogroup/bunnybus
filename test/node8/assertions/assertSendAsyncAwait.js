@@ -1,6 +1,7 @@
 'use strict';
 
 const Code = require('code');
+
 const expect = Code.expect;
 
 const assertSendAsyncAwait = async (instance, message, queueName, transactionId, source, routeKey, miscOptions) => {

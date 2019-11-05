@@ -18,7 +18,10 @@
     "build-test": ". docker/wait-on-resource.sh && if [ $NODE_VERSION -eq 6 ]; then lab test/node6; else lab test/node6 && lab test/node8; fi",
     "start-docker": "docker run -d --name=rabbitmq -p 5671:5671 -p 15672:15672 -p 5672:5672 rabbitmq:3-management",
     "stop-docker": "docker rm -f rabbitmq",
-    "doctoc": "doctoc API.md && doctoc Example.md && doctoc Diagram.md"
+    "doctoc": "doctoc API.md Example.md Diagram.md",
+    "lint": "eslint ./",
+    "lint-fix": "eslint --fix ./",
+    "lint-fix-dry-run": "eslint --fix-dry-run ./"
   },
   "author": "Lam Chan",
   "license": "BSD-3-Clause",
@@ -34,11 +37,13 @@
     "async": "^2.3.0"
   },
   "devDependencies": {
-    "bluebird": "^3.5.0",
-    "doctoc": "^1.2.0",
-    "eslint-config-hapi": "^10.0.0",
-    "eslint-plugin-hapi": "^4.0.0",
-    "lab": "^14.3.1",
+    "@hapi/code": "^7.0.0",
+    "@hapi/eslint-config-hapi": "^12.3.0",
+    "@hapi/eslint-plugin-hapi": "^4.3.4",
+    "@hapi/lab": "^21.0.0",
+    "bluebird": "^3.7.1",
+    "doctoc": "^1.4.0",
+    "eslint": "^6.6.0",
     "q": "^1.4.1"
   }
 }

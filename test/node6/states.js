@@ -11,31 +11,29 @@ const it = lab.it;
 const expect = Code.expect;
 
 const SubscriptionManager = require('../../lib/states/subscriptionManager');
+
 let instance = undefined;
 
 describe('state management', () => {
 
     describe('SubscriptionManager', () => {
 
-        before((done) => {
+        before(() => {
 
             instance = new SubscriptionManager();
-            done();
         });
 
-        beforeEach((done) => {
+        beforeEach(() => {
 
             instance._subscriptions.clear();
             instance._blockQueues.clear();
-
-            done();
         });
 
         describe('create', () => {
 
             const baseQueueName = 'subscription-createSubscription';
 
-            it('should create one if it does not exist', (done) => {
+            it('should create one if it does not exist', () => {
 
                 const queueName = `${baseQueueName}-1`;
                 const handlers = { event1 : () => {} };
@@ -49,10 +47,9 @@ describe('state management', () => {
                 expect(sut.handlers).to.exist();
                 expect(sut.handlers.event1).to.be.a.function();
                 expect(sut.options).to.exist();
-                done();
             });
 
-            it('should not create one if it does exist', (done) => {
+            it('should not create one if it does exist', () => {
 
                 const queueName = `${baseQueueName}-2`;
                 const handlers = { event1 : () => {} };
@@ -62,25 +59,34 @@ describe('state management', () => {
                 const response = instance.create(queueName, handlers, options);
 
                 expect(response).to.be.false();
-                done();
             });
 
-            it('should subscribe to `subscription.created` event', (done) => {
+            it('should subscribe to `subscription.created` event', async () => {
 
-                const queueName = `${baseQueueName}-3`;
-                const handlers = { event1 : () => {} };
-                const options = {};
+                return new Promise((res, rej) => {
 
-                instance.once(SubscriptionManager.CREATED_EVENT, (subcription) => {
+                    const done = (err) => {
 
-                    expect(subcription).to.exist();
-                    expect(subcription.handlers).to.exist();
-                    expect(subcription.handlers.event1).to.be.a.function();
-                    expect(subcription.options).to.exist();
-                    done();
+                        return err
+                            ? rej(err)
+                            : res();
+                    };
+
+                    const queueName = `${baseQueueName}-3`;
+                    const handlers = { event1 : () => {} };
+                    const options = {};
+
+                    instance.once(SubscriptionManager.CREATED_EVENT, (subcription) => {
+
+                        expect(subcription).to.exist();
+                        expect(subcription.handlers).to.exist();
+                        expect(subcription.handlers.event1).to.be.a.function();
+                        expect(subcription.options).to.exist();
+                        done();
+                    });
+
+                    instance.create(queueName, handlers, options);
                 });
-
-                instance.create(queueName, handlers, options);
             });
         });
 
@@ -88,7 +94,7 @@ describe('state management', () => {
 
             const baseQueueName = 'subscription-tagSubscription';
 
-            it('should return true when subscription exist', (done) => {
+            it('should return true when subscription exist', () => {
 
                 const queueName = `${baseQueueName}-1`;
                 const consumerTag = 'abcdefg012345';
@@ -101,11 +107,9 @@ describe('state management', () => {
 
                 expect(response).to.be.true();
                 expect(sut).to.be.true();
-
-                done();
             });
 
-            it('should return false when subscription does not exist', (done) => {
+            it('should return false when subscription does not exist', () => {
 
                 const queueName = `${baseQueueName}-2`;
                 const consumerTag = 'abcdefg012345';
@@ -113,29 +117,37 @@ describe('state management', () => {
                 const response = instance.tag(queueName, consumerTag);
 
                 expect(response).to.be.false();
-
-                done();
             });
 
-            it('should subscribe to `subscription.tagged` event', (done) => {
+            it('should subscribe to `subscription.tagged` event', async () => {
 
-                const queueName = `${baseQueueName}-3`;
-                const consumerTag = 'abcdefg012345';
-                const handlers = { event1 : () => {} };
-                const options = {};
+                return new Promise((res, rej) => {
 
-                instance.once(SubscriptionManager.TAGGED_EVENT, (subcription) => {
+                    const done = (err) => {
 
-                    expect(subcription).to.exist();
-                    expect(subcription.consumerTag).to.be.equal(consumerTag);
-                    expect(subcription.handlers).to.exist();
-                    expect(subcription.handlers.event1).to.be.a.function();
-                    expect(subcription.options).to.exist();
-                    done();
+                        return err
+                            ? rej(err)
+                            : res();
+                    };
+
+                    const queueName = `${baseQueueName}-3`;
+                    const consumerTag = 'abcdefg012345';
+                    const handlers = { event1 : () => {} };
+                    const options = {};
+
+                    instance.once(SubscriptionManager.TAGGED_EVENT, (subcription) => {
+
+                        expect(subcription).to.exist();
+                        expect(subcription.consumerTag).to.be.equal(consumerTag);
+                        expect(subcription.handlers).to.exist();
+                        expect(subcription.handlers.event1).to.be.a.function();
+                        expect(subcription.options).to.exist();
+                        done();
+                    });
+
+                    instance.create(queueName, handlers, options);
+                    instance.tag(queueName, consumerTag);
                 });
-
-                instance.create(queueName, handlers, options);
-                instance.tag(queueName, consumerTag);
             });
         });
 
@@ -143,7 +155,7 @@ describe('state management', () => {
 
             const baseQueueName = 'subscription-getSubscription';
 
-            it('should return a subscription when it exist', (done) => {
+            it('should return a subscription when it exist', () => {
 
                 const queueName = `${baseQueueName}-1`;
                 const consumerTag = 'abcdefg012345';
@@ -159,16 +171,14 @@ describe('state management', () => {
                 expect(sut.handlers).to.exist();
                 expect(sut.handlers.event1).to.be.a.function();
                 expect(sut.options).to.exist();
-                done();
             });
 
-            it('should return undefined when it does not exist', (done) => {
+            it('should return undefined when it does not exist', () => {
 
                 const queueName = `${baseQueueName}-2`;
                 const sut = instance.get(queueName);
 
                 expect(sut).to.be.undefined();
-                done();
             });
         });
 
@@ -176,7 +186,7 @@ describe('state management', () => {
 
             const baseQueueName = 'subscription-clearSubscription';
 
-            it('should return true when subscription is cleared', (done) => {
+            it('should return true when subscription is cleared', () => {
 
                 const queueName = `${baseQueueName}-1`;
                 const consumerTag = 'abcdefg012345';
@@ -190,10 +200,9 @@ describe('state management', () => {
 
                 expect(response).to.be.true();
                 expect(sut).to.be.false();
-                done();
             });
 
-            it('should return false when subscription exist but does not have a consumerTag', (done) => {
+            it('should return false when subscription exist but does not have a consumerTag', () => {
 
                 const queueName = `${baseQueueName}-2`;
                 const handlers = { event1 : () => {} };
@@ -203,35 +212,43 @@ describe('state management', () => {
                 const response = instance.clear(queueName);
 
                 expect(response).to.be.false();
-                done();
             });
 
-            it('should return false when subscription does not exist', (done) => {
+            it('should return false when subscription does not exist', () => {
 
                 const queueName = `${baseQueueName}-3`;
 
                 const response = instance.clear(queueName);
 
                 expect(response).to.be.false();
-                done();
             });
 
-            it('should subscribe to `subscription.cleared` event', (done) => {
+            it('should subscribe to `subscription.cleared` event', async () => {
 
-                const queueName = `${baseQueueName}-4`;
-                const consumerTag = 'abcdefg012345';
-                const handlers = { event1 : () => {} };
-                const options = {};
+                return new Promise((res, rej) => {
 
-                instance.once(SubscriptionManager.CLEARED_EVENT, (subcription) => {
+                    const done = (err) => {
 
-                    expect(subcription).to.exist();
-                    done();
+                        return err
+                            ? rej(err)
+                            : res();
+                    };
+
+                    const queueName = `${baseQueueName}-4`;
+                    const consumerTag = 'abcdefg012345';
+                    const handlers = { event1 : () => {} };
+                    const options = {};
+
+                    instance.once(SubscriptionManager.CLEARED_EVENT, (subcription) => {
+
+                        expect(subcription).to.exist();
+                        done();
+                    });
+
+                    instance.create(queueName, handlers, options);
+                    instance.tag(queueName, consumerTag);
+                    instance.clear(queueName);
                 });
-
-                instance.create(queueName, handlers, options);
-                instance.tag(queueName, consumerTag);
-                instance.clear(queueName);
             });
         });
 
@@ -239,34 +256,44 @@ describe('state management', () => {
 
             const baseQueueName = 'subscription-clearAllSubscription';
 
-            it('should return true when subscription is cleared', (done) => {
+            it('should return true when subscription is cleared', async () => {
 
-                const handlers = { event1 : () => {} };
-                const options = {};
-                const iterationLimit = 5;
-                let iterationCount = 0;
+                return new Promise((res, rej) => {
 
-                for (let i = 1; i <= iterationLimit; ++i) {
-                    const queueName = `${baseQueueName}-${i}`;
-                    const consumerTag = `abcdefg012345-${1}`;
-                    instance.create(queueName, handlers, options);
-                    instance.tag(queueName, consumerTag);
-                }
+                    const done = (err) => {
 
-                const eventHandler = (subscription) => {
+                        return err
+                            ? rej(err)
+                            : res();
+                    };
 
-                    ++iterationCount;
+                    const handlers = { event1 : () => {} };
+                    const options = {};
+                    const iterationLimit = 5;
+                    let iterationCount = 0;
 
-                    expect(subscription).to.exist();
-
-                    if (iterationCount === iterationLimit) {
-                        instance.removeListener(SubscriptionManager.CLEARED_EVENT, eventHandler);
-                        done();
+                    for (let i = 1; i <= iterationLimit; ++i) {
+                        const queueName = `${baseQueueName}-${i}`;
+                        const consumerTag = `abcdefg012345-${1}`;
+                        instance.create(queueName, handlers, options);
+                        instance.tag(queueName, consumerTag);
                     }
-                };
 
-                instance.on(SubscriptionManager.CLEARED_EVENT, eventHandler);
-                instance.clearAll();
+                    const eventHandler = (subscription) => {
+
+                        ++iterationCount;
+
+                        expect(subscription).to.exist();
+
+                        if (iterationCount === iterationLimit) {
+                            instance.removeListener(SubscriptionManager.CLEARED_EVENT, eventHandler);
+                            done();
+                        }
+                    };
+
+                    instance.on(SubscriptionManager.CLEARED_EVENT, eventHandler);
+                    instance.clearAll();
+                });
             });
         });
 
@@ -274,17 +301,16 @@ describe('state management', () => {
 
             const baseQueueName = 'subscription-contains';
 
-            it('should return false when subscription does not exist', (done) => {
+            it('should return false when subscription does not exist', () => {
 
                 const queueName = `${baseQueueName}-1`;
 
                 const response = instance.contains(queueName);
 
                 expect(response).to.be.false();
-                done();
             });
 
-            it('should return true when subscription does exist', (done) => {
+            it('should return true when subscription does exist', () => {
 
                 const queueName = `${baseQueueName}-2`;
                 const consumerTag = 'abcdefg012345';
@@ -296,10 +322,9 @@ describe('state management', () => {
                 const response = instance.contains(queueName);
 
                 expect(response).to.be.true();
-                done();
             });
 
-            it('should return true when subscription does exist with removed consumerTag when using flag override', (done) => {
+            it('should return true when subscription does exist with removed consumerTag when using flag override', () => {
 
                 const queueName = `${baseQueueName}-3`;
                 const handlers = { event1 : () => {} };
@@ -309,7 +334,6 @@ describe('state management', () => {
                 const response = instance.contains(queueName, false);
 
                 expect(response).to.be.true();
-                done();
             });
         });
 
@@ -317,17 +341,16 @@ describe('state management', () => {
 
             const baseQueueName = 'subscription-removeSubscription';
 
-            it('should return false when subscription does not exist', (done) => {
+            it('should return false when subscription does not exist', () => {
 
                 const queueName = `${baseQueueName}-1`;
 
                 const response = instance.remove(queueName);
 
                 expect(response).to.be.false();
-                done();
             });
 
-            it('should return true when subscription exist', (done) => {
+            it('should return true when subscription exist', () => {
 
                 const queueName = `${baseQueueName}-2`;
                 const consumerTag = 'abcdefg012345';
@@ -339,10 +362,9 @@ describe('state management', () => {
                 const response = instance.remove(queueName);
 
                 expect(response).to.be.true();
-                done();
             });
 
-            it('should return true when subscription exist with no consumerTag', (done) => {
+            it('should return true when subscription exist with no consumerTag', () => {
 
                 const queueName = `${baseQueueName}-2`;
                 const handlers = { event1 : () => {} };
@@ -352,23 +374,32 @@ describe('state management', () => {
                 const response = instance.remove(queueName);
 
                 expect(response).to.be.true();
-                done();
             });
 
-            it('should subscribe to `subscription.removed` event', (done) => {
+            it('should subscribe to `subscription.removed` event', async () => {
 
-                const queueName = `${baseQueueName}-4`;
-                const handlers = { event1 : () => {} };
-                const options = {};
+                return new Promise((res, rej) => {
 
-                instance.once(SubscriptionManager.REMOVED_EVENT, (subscription) => {
+                    const done = (err) => {
 
-                    expect(subscription).to.exist();
-                    done();
+                        return err
+                            ? rej(err)
+                            : res();
+                    };
+
+                    const queueName = `${baseQueueName}-4`;
+                    const handlers = { event1 : () => {} };
+                    const options = {};
+
+                    instance.once(SubscriptionManager.REMOVED_EVENT, (subscription) => {
+
+                        expect(subscription).to.exist();
+                        done();
+                    });
+
+                    instance.create(queueName, handlers, options);
+                    instance.remove(queueName);
                 });
-
-                instance.create(queueName, handlers, options);
-                instance.remove(queueName);
             });
         });
 
@@ -376,7 +407,7 @@ describe('state management', () => {
 
             const baseQueueName = 'subscription-listSubscription';
 
-            it('should return 3 records when 3 were added', (done) => {
+            it('should return 3 records when 3 were added', () => {
 
                 for (let i = 1; i <= 3; ++i) {
                     const queueName = `${baseQueueName}-${i}`;
@@ -389,23 +420,21 @@ describe('state management', () => {
                 const results = instance.list();
 
                 expect(results).to.have.length(3);
-                done();
             });
         });
 
         describe('block/unblock/isBlocked', () => {
 
-            it('should be true when blocking queue is unique', (done) => {
+            it('should be true when blocking queue is unique', () => {
 
                 const queueName = 'queue1';
 
                 const result = instance.block(queueName);
 
                 expect(result).to.be.true();
-                done();
             });
 
-            it('should be false when blocking queue is not unique', (done) => {
+            it('should be false when blocking queue is not unique', () => {
 
                 const queueName = 'queue2';
 
@@ -413,10 +442,9 @@ describe('state management', () => {
                 const result = instance.block(queueName);
 
                 expect(result).to.be.false();
-                done();
             });
 
-            it('should be true when unblocking queue exist', (done) => {
+            it('should be true when unblocking queue exist', () => {
 
                 const queueName = 'queue3';
 
@@ -424,47 +452,65 @@ describe('state management', () => {
                 const result = instance.unblock(queueName);
 
                 expect(result).to.be.true();
-                done();
             });
 
-            it('should be false when unblocking queue does not exist', (done) => {
+            it('should be false when unblocking queue does not exist', () => {
 
                 const queueName = 'queue4';
 
                 const result = instance.unblock(queueName);
 
                 expect(result).to.be.false();
-                done();
             });
 
-            it('should subscribe to `subscription.blocked` event', (done) => {
+            it('should subscribe to `subscription.blocked` event', async () => {
 
-                const queueName = 'queue5';
+                return new Promise((res, rej) => {
 
-                instance.once(SubscriptionManager.BLOCKED_EVENT, (queue) => {
+                    const done = (err) => {
 
-                    expect(queue).to.be.equal(queueName);
-                    done();
+                        return err
+                            ? rej(err)
+                            : res();
+                    };
+
+                    const queueName = 'queue5';
+
+                    instance.once(SubscriptionManager.BLOCKED_EVENT, (queue) => {
+
+                        expect(queue).to.be.equal(queueName);
+                        done();
+                    });
+
+                    instance.block(queueName);
                 });
-
-                instance.block(queueName);
             });
 
-            it('should subscribe to `subscription.unblocked` event', (done) => {
+            it('should subscribe to `subscription.unblocked` event', async () => {
 
-                const queueName = 'queue6';
+                return new Promise((res, rej) => {
 
-                instance.once(SubscriptionManager.UNBLOCKED_EVENT, (queue) => {
+                    const done = (err) => {
 
-                    expect(queue).to.be.equal(queueName);
-                    done();
+                        return err
+                            ? rej(err)
+                            : res();
+                    };
+
+                    const queueName = 'queue6';
+
+                    instance.once(SubscriptionManager.UNBLOCKED_EVENT, (queue) => {
+
+                        expect(queue).to.be.equal(queueName);
+                        done();
+                    });
+
+                    instance.block(queueName);
+                    instance.unblock(queueName);
                 });
-
-                instance.block(queueName);
-                instance.unblock(queueName);
             });
 
-            it('should be true when block queue exist', (done) => {
+            it('should be true when block queue exist', () => {
 
                 const queueName = 'queue7';
 
@@ -472,17 +518,15 @@ describe('state management', () => {
                 const result = instance.isBlocked(queueName);
 
                 expect(result).to.be.true();
-                done();
             });
 
-            it('should be false when block queue does not exist', (done) => {
+            it('should be false when block queue does not exist', () => {
 
                 const queueName = 'queue8';
 
                 const result = instance.isBlocked(queueName);
 
                 expect(result).to.be.false();
-                done();
             });
         });
     });

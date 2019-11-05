@@ -2,6 +2,7 @@
 
 const Async = require('async');
 const Code = require('code');
+
 const expect = Code.expect;
 
 const assertSend = (instance, message, queueName, transactionId, source, routeKey, miscOptions, callback) => {

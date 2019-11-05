@@ -2,6 +2,7 @@
 
 const Async = require('async');
 const Code = require('code');
+
 const expect = Code.expect;
 
 const assertGetAll = (instance, message, queueName, meta, limit, callback) => {

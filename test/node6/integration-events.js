@@ -3,6 +3,7 @@
 const Async = require('async');
 const Code = require('code');
 const Lab = require('lab');
+const Promisify = require('../promisify');
 
 const lab = exports.lab = Lab.script();
 const before = lab.before;
@@ -14,58 +15,98 @@ const it = lab.it;
 const expect = Code.expect;
 
 const BunnyBus = require('../../lib');
+
 let instance = undefined;
 
 describe('positive integration tests - events', () => {
 
-    before((done) => {
+    before(() => {
 
         instance = new BunnyBus();
         instance.config = BunnyBus.DEFAULT_SERVER_CONFIGURATION;
-        done();
     });
 
     describe('recovering', () =>  {
 
-        beforeEach((done) => {
+        beforeEach(async () => {
 
-            instance._autoConnectChannel(done);
+            return Promisify(instance._autoConnectChannel);
         });
 
-        it('should be evented when connection was closed and is recovering', (done) => {
+        it('should be evented when connection was closed and is recovering', async () => {
 
-            instance.once(BunnyBus.RECOVERING_EVENT, done);
+            return new Promise((res, rej) => {
 
-            instance.connection.emit('close');
+                const done = (err) => {
+
+                    return err
+                        ? rej(err)
+                        : res();
+                };
+
+                instance.once(BunnyBus.RECOVERING_EVENT, done);
+
+                instance.connection.emit('close');
+            });
         });
 
-        it('should be evented when channel was closed and is recovering', (done) => {
+        it('should be evented when channel was closed and is recovering', async () => {
 
-            instance.once(BunnyBus.RECOVERING_EVENT, done);
+            return new Promise((res, rej) => {
 
-            instance.channel.emit('close');
+                const done = (err) => {
+
+                    return err
+                        ? rej(err)
+                        : res();
+                };
+
+                instance.once(BunnyBus.RECOVERING_EVENT, done);
+
+                instance.channel.emit('close');
+            });
         });
     });
 
     describe('recovered', () => {
 
-        before((done) => {
+        before(async () => {
 
-            instance._autoConnectChannel(done);
+            return Promisify(instance._autoConnectChannel);
         });
 
-        it('should be evented when connection was closed and is recovering', (done) => {
+        it('should be evented when connection was closed and is recovering', async () => {
 
-            instance.once(BunnyBus.RECOVERED_EVENT, done);
+            return new Promise((res, rej) => {
 
-            instance.connection.emit('close');
+                const done = (err) => {
+
+                    return err
+                        ? rej(err)
+                        : res();
+                };
+
+                instance.once(BunnyBus.RECOVERED_EVENT, done);
+
+                instance.connection.emit('close');
+            });
         });
 
-        it('should be evented when channel was closed and is recovering', (done) => {
+        it('should be evented when channel was closed and is recovering', async () => {
 
-            instance.once(BunnyBus.RECOVERED_EVENT, done);
+            return new Promise((res, rej) => {
 
-            instance.channel.emit('close');
+                const done = (err) => {
+
+                    return err
+                        ? rej(err)
+                        : res();
+                };
+
+                instance.once(BunnyBus.RECOVERED_EVENT, done);
+
+                instance.channel.emit('close');
+            });
         });
     });
 
@@ -73,23 +114,43 @@ describe('positive integration tests - events', () => {
 
         const message = { event : 'published-event', name : 'bunnybus' };
 
-        after((done) => {
+        after(async () => {
 
-            Async.waterfall([
-                instance._autoConnectChannel,
-                instance.deleteExchange.bind(instance, instance.config.globalExchange)
-            ], done);
+            return new Promise((res, rej) => {
+
+                const done = (err) => {
+
+                    return err
+                        ? rej(err)
+                        : res();
+                };
+
+                Async.waterfall([
+                    instance._autoConnectChannel,
+                    instance.deleteExchange.bind(instance, instance.config.globalExchange)
+                ], done);
+            });
         });
 
-        it('should be evented when message is published', (done) => {
+        it('should be evented when message is published', async () => {
 
-            instance.once(BunnyBus.PUBLISHED_EVENT, (sentMessage) => {
+            return new Promise((res, rej) => {
 
-                expect(sentMessage).to.be.equal(message);
-                done();
+                const done = (err) => {
+
+                    return err
+                        ? rej(err)
+                        : res();
+                };
+
+                instance.once(BunnyBus.PUBLISHED_EVENT, (sentMessage) => {
+
+                    expect(sentMessage).to.be.equal(message);
+                    done();
+                });
+
+                instance.publish(message, () => {});
             });
-
-            instance.publish(message, () => {});
         });
     });
 
@@ -97,37 +158,67 @@ describe('positive integration tests - events', () => {
 
         const queueName = 'test-event-subscribed-queue-1';
 
-        after((done) => {
+        after(async () => {
 
-            Async.waterfall([
-                instance._autoConnectChannel,
-                instance.deleteExchange.bind(instance, instance.config.globalExchange),
-                instance.deleteQueue.bind(instance, queueName)
-            ], done);
-        });
+            return new Promise((res, rej) => {
 
-        afterEach((done) => {
+                const done = (err) => {
 
-            instance.channel.cancel(instance.subscriptions.get(queueName).consumerTag, (err) => {
+                    return err
+                        ? rej(err)
+                        : res();
+                };
 
-                instance.subscriptions._subscriptions.clear();
-                instance.subscriptions._blockQueues.clear();
-                done(err);
+                Async.waterfall([
+                    instance._autoConnectChannel,
+                    instance.deleteExchange.bind(instance, instance.config.globalExchange),
+                    instance.deleteQueue.bind(instance, queueName)
+                ], done);
             });
         });
 
-        it('should be evented when queue is subscribed', (done) => {
+        afterEach(async () => {
 
-            const handlers = {};
-            handlers['subscribed-event'] = (consumedMessage, ack, reject, requeue) => {};
+            return new Promise((res, rej) => {
 
-            instance.once(BunnyBus.SUBSCRIBED_EVENT, (queue) => {
+                const done = (err) => {
 
-                expect(queue).to.be.equal(queueName);
-                done();
+                    return err
+                        ? rej(err)
+                        : res();
+                };
+
+                instance.channel.cancel(instance.subscriptions.get(queueName).consumerTag, (err) => {
+
+                    instance.subscriptions._subscriptions.clear();
+                    instance.subscriptions._blockQueues.clear();
+                    done(err);
+                });
             });
+        });
 
-            instance.subscribe(queueName, handlers, () => {});
+        it('should be evented when queue is subscribed', async () => {
+
+            return new Promise((res, rej) => {
+
+                const done = (err) => {
+
+                    return err
+                        ? rej(err)
+                        : res();
+                };
+
+                const handlers = {};
+                handlers['subscribed-event'] = (consumedMessage, ack, reject, requeue) => {};
+
+                instance.once(BunnyBus.SUBSCRIBED_EVENT, (queue) => {
+
+                    expect(queue).to.be.equal(queueName);
+                    done();
+                });
+
+                instance.subscribe(queueName, handlers, () => {});
+            });
         });
     });
 
@@ -135,23 +226,43 @@ describe('positive integration tests - events', () => {
 
         const queueName = 'test-event-unsubscribed-queue-1';
 
-        beforeEach((done) => {
+        beforeEach(async () => {
 
-            const handlers = {};
-            handlers['subscribed-event'] = (consumedMessage, ack, reject, requeue) => {};
+            return new Promise((res, rej) => {
 
-            instance.subscribe(queueName, handlers, done);
+                const done = (err) => {
+
+                    return err
+                        ? rej(err)
+                        : res();
+                };
+
+                const handlers = {};
+                handlers['subscribed-event'] = (consumedMessage, ack, reject, requeue) => {};
+
+                instance.subscribe(queueName, handlers, done);
+            });
         });
 
-        it('should be evented when queue is unsubscribed', (done) => {
+        it('should be evented when queue is unsubscribed', async () => {
 
-            instance.once(BunnyBus.UNSUBSCRIBED_EVENT, (queue) => {
+            return new Promise((res, rej) => {
 
-                expect(queue).to.be.equal(queueName);
-                done();
+                const done = (err) => {
+
+                    return err
+                        ? rej(err)
+                        : res();
+                };
+
+                instance.once(BunnyBus.UNSUBSCRIBED_EVENT, (queue) => {
+
+                    expect(queue).to.be.equal(queueName);
+                    done();
+                });
+
+                instance.unsubscribe(queueName, () => {});
             });
-
-            instance.unsubscribe(queueName, () => {});
         });
     });
 });

@@ -2,11 +2,12 @@
 
 const Promise = require('bluebird');
 const Code = require('code');
+
 const expect = Code.expect;
 
 const assertGetAsyncAwait = async (instance, message, queueName, meta, limit) => {
 
-    const callbackLimit = limit + 1;
+    const callbackLimit = limit;
     let callbackCounter = 0;
 
     const options = {

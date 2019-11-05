@@ -9,85 +9,205 @@ const it = lab.it;
 const Assertions = require('./assertions');
 
 const BunnyBus = require('../../lib');
+
 let instance = undefined;
 
-describe('logging', { skip: true }, () => {
+describe('logging', () => {
 
     const inputMessage = {
         prop1 : 'message value 1',
         prop2 : 'message value 2'
     };
 
-    before((done) => {
+    before(async () => {
 
         instance = new BunnyBus();
         instance.config = BunnyBus.DEFAULT_SERVER_CONFIGURATION;
-        done();
     });
 
     describe('with default logger', () => {
 
-        it('should subscribe to `log.info` event when log.info() is called', (done) => {
+        it('should subscribe to `log.info` event when log.info() is called', async () => {
 
-            Assertions.assertLogger(instance, 'info', inputMessage, done);
+            return new Promise((res, rej) => {
+
+                const done = (err) => {
+
+                    return err
+                        ? rej(err)
+                        : res();
+                };
+
+                Assertions.assertLogger(instance, 'info', inputMessage, done);
+            });
         });
 
-        it('should subscribe to `log.error` event when log.error() is called', (done) => {
+        it('should subscribe to `log.error` event when log.error() is called', async () => {
 
-            Assertions.assertLogger(instance, 'error', inputMessage, done);
+            return new Promise((res, rej) => {
+
+                const done = (err) => {
+
+                    return err
+                        ? rej(err)
+                        : res();
+                };
+
+                Assertions.assertLogger(instance, 'error', inputMessage, done);
+            });
         });
 
-        it('should subscribe to `log.warn` event when log.warn() is called', (done) => {
+        it('should subscribe to `log.warn` event when log.warn() is called', async () => {
 
-            Assertions.assertLogger(instance, 'warn', inputMessage, done);
+            return new Promise((res, rej) => {
+
+                const done = (err) => {
+
+                    return err
+                        ? rej(err)
+                        : res();
+                };
+
+                Assertions.assertLogger(instance, 'warn', inputMessage, done);
+            });
         });
 
-        it('should subscribe to `log.fatal` event when log.fatal() is called', (done) => {
+        it('should subscribe to `log.fatal` event when log.fatal() is called', async () => {
 
-            Assertions.assertLogger(instance, 'fatal', inputMessage, done);
+            return new Promise((res, rej) => {
+
+                const done = (err) => {
+
+                    return err
+                        ? rej(err)
+                        : res();
+                };
+
+                Assertions.assertLogger(instance, 'fatal', inputMessage, done);
+            });
         });
 
-        it('should subscribe to `log.debug` event when log.debug() is called', (done) => {
+        it('should subscribe to `log.debug` event when log.debug() is called', async () => {
 
-            Assertions.assertLogger(instance, 'debug', inputMessage, done);
+            return new Promise((res, rej) => {
+
+                const done = (err) => {
+
+                    return err
+                        ? rej(err)
+                        : res();
+                };
+
+                Assertions.assertLogger(instance, 'debug', inputMessage, done);
+            });
         });
 
-        it('should subscribe to `log.trace` event when log.trace() is called', (done) => {
+        it('should subscribe to `log.trace` event when log.trace() is called', async () => {
 
-            Assertions.assertLogger(instance, 'trace', inputMessage, done);
+            return new Promise((res, rej) => {
+
+                const done = (err) => {
+
+                    return err
+                        ? rej(err)
+                        : res();
+                };
+
+                Assertions.assertLogger(instance, 'trace', inputMessage, done);
+            });
         });
     });
 
     describe('with custom logger', () => {
 
-        it('should call custom info handler', (done) => {
+        it('should call custom info handler', async () => {
 
-            Assertions.assertCustomLogger(instance, 'info', inputMessage, done);
+            return new Promise((res, rej) => {
+
+                const done = (err) => {
+
+                    return err
+                        ? rej(err)
+                        : res();
+                };
+
+                Assertions.assertCustomLogger(instance, 'info', inputMessage, done);
+            });
         });
 
-        it('should call custom error handler', (done) => {
+        it('should call custom error handler', async () => {
 
-            Assertions.assertCustomLogger(instance, 'error', inputMessage, done);
+            return new Promise((res, rej) => {
+
+                const done = (err) => {
+
+                    return err
+                        ? rej(err)
+                        : res();
+                };
+
+                Assertions.assertCustomLogger(instance, 'error', inputMessage, done);
+            });
         });
 
-        it('should call custom warn handler', (done) => {
+        it('should call custom warn handler', async () => {
 
-            Assertions.assertCustomLogger(instance, 'warn', inputMessage, done);
+            return new Promise((res, rej) => {
+
+                const done = (err) => {
+
+                    return err
+                        ? rej(err)
+                        : res();
+                };
+
+                Assertions.assertCustomLogger(instance, 'warn', inputMessage, done);
+            });
         });
 
-        it('should call custom fatal handler', (done) => {
+        it('should call custom fatal handler', async () => {
 
-            Assertions.assertCustomLogger(instance, 'fatal', inputMessage, done);
+            return new Promise((res, rej) => {
+
+                const done = (err) => {
+
+                    return err
+                        ? rej(err)
+                        : res();
+                };
+
+                Assertions.assertCustomLogger(instance, 'fatal', inputMessage, done);
+            });
         });
 
-        it('should call custom debug handler', (done) => {
+        it('should call custom debug handler', async () => {
 
-            Assertions.assertCustomLogger(instance, 'debug', inputMessage, done);
+            return new Promise((res, rej) => {
+
+                const done = (err) => {
+
+                    return err
+                        ? rej(err)
+                        : res();
+                };
+
+                Assertions.assertCustomLogger(instance, 'debug', inputMessage, done);
+            });
         });
 
-        it('should call custom trace handler', (done) => {
+        it('should call custom trace handler', async () => {
 
-            Assertions.assertCustomLogger(instance, 'trace', inputMessage, done);
+            return new Promise((res, rej) => {
+
+                const done = (err) => {
+
+                    return err
+                        ? rej(err)
+                        : res();
+                };
+
+                Assertions.assertCustomLogger(instance, 'trace', inputMessage, done);
+            });
         });
     });
 });

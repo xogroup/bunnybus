@@ -1,3 +1,23 @@
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+**Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
+
+- [bunnybus](#bunnybus)
+  - [Introduction](#introduction)
+  - [Installation](#installation)
+  - [Usage](#usage)
+    - [Async / Await](#async--await)
+    - [With Callbacks](#with-callbacks)
+  - [Documentation](#documentation)
+    - [API](#api)
+    - [Examples](#examples)
+    - [Diagrams](#diagrams)
+  - [Articles](#articles)
+  - [Contributing](#contributing)
+  - [Setting up for development](#setting-up-for-development)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 # bunnybus
 BunnyBus is a high level enterprise bus implementation making pub/sub and queue management easy. 
 
