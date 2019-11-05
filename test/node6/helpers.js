@@ -7,6 +7,7 @@ const Q = require('q');
 const Bluebird = require('bluebird');
 const Assertions = require('./assertions');
 const Helpers = require('../../lib/helpers');
+const { PromisifyWrap } = require('../promisify');
 const EventLogger = require('../../lib/loggers').EventLogger;
 
 const lab = exports.lab = Lab.script();
@@ -42,14 +43,7 @@ describe('helpers', () => {
 
         it('should create only unique tokens', async () => {
 
-            return new Promise((res, rej) => {
-
-                const done = (err) => {
-
-                    return err
-                        ? rej(err)
-                        : res();
-                };
+            return PromisifyWrap((done) => {
 
                 const iterations = 1000;
 
@@ -149,14 +143,7 @@ describe('helpers', () => {
 
         it('should convert a string to a Buffer', async () => {
 
-            return new Promise((res, rej) => {
-
-                const done = (err) => {
-
-                    return err
-                        ? rej(err)
-                        : res();
-                };
+            return PromisifyWrap((done) => {
 
                 const data = 'hello';
 
@@ -166,14 +153,7 @@ describe('helpers', () => {
 
         it('should convert an object to a Buffer', async () => {
 
-            return new Promise((res, rej) => {
-
-                const done = (err) => {
-
-                    return err
-                        ? rej(err)
-                        : res();
-                };
+            return PromisifyWrap((done) => {
 
                 const data = {
                     a : 'root1',
@@ -190,14 +170,7 @@ describe('helpers', () => {
 
         it('should convert an array to a Buffer', async () => {
 
-            return new Promise((res, rej) => {
-
-                const done = (err) => {
-
-                    return err
-                        ? rej(err)
-                        : res();
-                };
+            return PromisifyWrap((done) => {
 
                 const data = ['a', 'b', 1, 2];
 
@@ -207,14 +180,7 @@ describe('helpers', () => {
 
         it('should not alter a Buffer input', async () => {
 
-            return new Promise((res, rej) => {
-
-                const done = (err) => {
-
-                    return err
-                        ? rej(err)
-                        : res();
-                };
+            return PromisifyWrap((done) => {
 
                 const data = Buffer.from('hello');
 
@@ -389,14 +355,7 @@ describe('helpers', () => {
 
         it('should return true when validating EventLogger', async () => {
 
-            return new Promise((res, rej) => {
-
-                const done = (err) => {
-
-                    return err
-                        ? rej(err)
-                        : res();
-                };
+            return PromisifyWrap((done) => {
 
                 Assertions.assertValidateLoggerContract(new EventLogger(), true, done);
             });
@@ -404,14 +363,7 @@ describe('helpers', () => {
 
         it('should return true when validating custom logger object', async () => {
 
-            return new Promise((res, rej) => {
-
-                const done = (err) => {
-
-                    return err
-                        ? rej(err)
-                        : res();
-                };
+            return PromisifyWrap((done) => {
 
                 Assertions.assertValidateLoggerContract(FakeLoggerFactory('debug', 'info', 'warn', 'error', 'fatal'), true, done);
             });
@@ -419,14 +371,7 @@ describe('helpers', () => {
 
         it('should return false when validating custom logger missing debug', async () => {
 
-            return new Promise((res, rej) => {
-
-                const done = (err) => {
-
-                    return err
-                        ? rej(err)
-                        : res();
-                };
+            return PromisifyWrap((done) => {
 
                 Assertions.assertValidateLoggerContract(FakeLoggerFactory('info', 'warn', 'error', 'fatal'), false, done);
             });
@@ -434,14 +379,7 @@ describe('helpers', () => {
 
         it('should return false when validating custom logger missing info', async () => {
 
-            return new Promise((res, rej) => {
-
-                const done = (err) => {
-
-                    return err
-                        ? rej(err)
-                        : res();
-                };
+            return PromisifyWrap((done) => {
 
                 Assertions.assertValidateLoggerContract(FakeLoggerFactory('debug', 'warn', 'error', 'fatal'), false, done);
             });
@@ -449,14 +387,7 @@ describe('helpers', () => {
 
         it('should return false when validating custom logger missing warn', async () => {
 
-            return new Promise((res, rej) => {
-
-                const done = (err) => {
-
-                    return err
-                        ? rej(err)
-                        : res();
-                };
+            return PromisifyWrap((done) => {
 
                 Assertions.assertValidateLoggerContract(FakeLoggerFactory('debug', 'info', 'error', 'fatal'), false, done);
             });
@@ -464,14 +395,7 @@ describe('helpers', () => {
 
         it('should return false when validating custom logger missing error', async () => {
 
-            return new Promise((res, rej) => {
-
-                const done = (err) => {
-
-                    return err
-                        ? rej(err)
-                        : res();
-                };
+            return PromisifyWrap((done) => {
 
                 Assertions.assertValidateLoggerContract(FakeLoggerFactory('debug', 'info', 'warn', 'fatal'), false, done);
             });
@@ -479,14 +403,7 @@ describe('helpers', () => {
 
         it('should return false when validating custom logger missing fatal', async () => {
 
-            return new Promise((res, rej) => {
-
-                const done = (err) => {
-
-                    return err
-                        ? rej(err)
-                        : res();
-                };
+            return PromisifyWrap((done) => {
 
                 Assertions.assertValidateLoggerContract(FakeLoggerFactory('debug', 'info', 'warn', 'error'), false, done);
             });

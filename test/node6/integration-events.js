@@ -3,7 +3,7 @@
 const Async = require('async');
 const Code = require('code');
 const Lab = require('lab');
-const Promisify = require('../promisify');
+const { Promisify, PromisifyWrap } = require('../promisify');
 
 const lab = exports.lab = Lab.script();
 const before = lab.before;
@@ -35,14 +35,7 @@ describe('positive integration tests - events', () => {
 
         it('should be evented when connection was closed and is recovering', async () => {
 
-            return new Promise((res, rej) => {
-
-                const done = (err) => {
-
-                    return err
-                        ? rej(err)
-                        : res();
-                };
+            return PromisifyWrap((done) => {
 
                 instance.once(BunnyBus.RECOVERING_EVENT, done);
 
@@ -52,14 +45,7 @@ describe('positive integration tests - events', () => {
 
         it('should be evented when channel was closed and is recovering', async () => {
 
-            return new Promise((res, rej) => {
-
-                const done = (err) => {
-
-                    return err
-                        ? rej(err)
-                        : res();
-                };
+            return PromisifyWrap((done) => {
 
                 instance.once(BunnyBus.RECOVERING_EVENT, done);
 
@@ -77,14 +63,7 @@ describe('positive integration tests - events', () => {
 
         it('should be evented when connection was closed and is recovering', async () => {
 
-            return new Promise((res, rej) => {
-
-                const done = (err) => {
-
-                    return err
-                        ? rej(err)
-                        : res();
-                };
+            return PromisifyWrap((done) => {
 
                 instance.once(BunnyBus.RECOVERED_EVENT, done);
 
@@ -94,14 +73,7 @@ describe('positive integration tests - events', () => {
 
         it('should be evented when channel was closed and is recovering', async () => {
 
-            return new Promise((res, rej) => {
-
-                const done = (err) => {
-
-                    return err
-                        ? rej(err)
-                        : res();
-                };
+            return PromisifyWrap((done) => {
 
                 instance.once(BunnyBus.RECOVERED_EVENT, done);
 
@@ -116,14 +88,7 @@ describe('positive integration tests - events', () => {
 
         after(async () => {
 
-            return new Promise((res, rej) => {
-
-                const done = (err) => {
-
-                    return err
-                        ? rej(err)
-                        : res();
-                };
+            return PromisifyWrap((done) => {
 
                 Async.waterfall([
                     instance._autoConnectChannel,
@@ -134,14 +99,7 @@ describe('positive integration tests - events', () => {
 
         it('should be evented when message is published', async () => {
 
-            return new Promise((res, rej) => {
-
-                const done = (err) => {
-
-                    return err
-                        ? rej(err)
-                        : res();
-                };
+            return PromisifyWrap((done) => {
 
                 instance.once(BunnyBus.PUBLISHED_EVENT, (sentMessage) => {
 
@@ -160,14 +118,7 @@ describe('positive integration tests - events', () => {
 
         after(async () => {
 
-            return new Promise((res, rej) => {
-
-                const done = (err) => {
-
-                    return err
-                        ? rej(err)
-                        : res();
-                };
+            return PromisifyWrap((done) => {
 
                 Async.waterfall([
                     instance._autoConnectChannel,
@@ -179,14 +130,7 @@ describe('positive integration tests - events', () => {
 
         afterEach(async () => {
 
-            return new Promise((res, rej) => {
-
-                const done = (err) => {
-
-                    return err
-                        ? rej(err)
-                        : res();
-                };
+            return PromisifyWrap((done) => {
 
                 instance.channel.cancel(instance.subscriptions.get(queueName).consumerTag, (err) => {
 
@@ -199,14 +143,7 @@ describe('positive integration tests - events', () => {
 
         it('should be evented when queue is subscribed', async () => {
 
-            return new Promise((res, rej) => {
-
-                const done = (err) => {
-
-                    return err
-                        ? rej(err)
-                        : res();
-                };
+            return PromisifyWrap((done) => {
 
                 const handlers = {};
                 handlers['subscribed-event'] = (consumedMessage, ack, reject, requeue) => {};
@@ -228,14 +165,7 @@ describe('positive integration tests - events', () => {
 
         beforeEach(async () => {
 
-            return new Promise((res, rej) => {
-
-                const done = (err) => {
-
-                    return err
-                        ? rej(err)
-                        : res();
-                };
+            return PromisifyWrap((done) => {
 
                 const handlers = {};
                 handlers['subscribed-event'] = (consumedMessage, ack, reject, requeue) => {};
@@ -246,14 +176,7 @@ describe('positive integration tests - events', () => {
 
         it('should be evented when queue is unsubscribed', async () => {
 
-            return new Promise((res, rej) => {
-
-                const done = (err) => {
-
-                    return err
-                        ? rej(err)
-                        : res();
-                };
+            return PromisifyWrap((done) => {
 
                 instance.once(BunnyBus.UNSUBSCRIBED_EVENT, (queue) => {
 

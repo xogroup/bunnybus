@@ -4,7 +4,7 @@ const Code = require('code');
 const Lab = require('lab');
 const Exceptions = require('../../lib/exceptions');
 const Assertions = require('./assertions');
-const Promisify = require('../promisify');
+const { Promisify, PromisifyWrap } = require('../promisify');
 
 const lab = exports.lab = Lab.script();
 const before = lab.before;
@@ -141,14 +141,7 @@ describe('positive integration tests - async/await with Promise api', () => {
 
         it('should recreate connection when connection error occurs', async () => {
 
-            return new Promise((res, rej) => {
-
-                const done = (err) => {
-
-                    return err
-                        ? rej(err)
-                        : res();
-                };
+            return PromisifyWrap((done) => {
 
                 instance.connection.emit('error');
 
@@ -163,14 +156,7 @@ describe('positive integration tests - async/await with Promise api', () => {
 
         it('should recreate connection when channel error occurs', async () => {
 
-            return new Promise((res, rej) => {
-
-                const done = (err) => {
-
-                    return err
-                        ? rej(err)
-                        : res();
-                };
+            return PromisifyWrap((done) => {
 
                 instance.channel.emit('error');
 

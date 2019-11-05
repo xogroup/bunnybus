@@ -3,6 +3,7 @@
 const Async = require('async');
 const Code = require('code');
 const Lab = require('lab');
+const { PromisifyWrap } = require('../promisify');
 
 const lab = exports.lab = Lab.script();
 const before = lab.before;
@@ -31,14 +32,7 @@ describe('positive integration tests - event handlers', () => {
 
         beforeEach(async () => {
 
-            return new Promise((res, rej) => {
-
-                const done = (err) => {
-
-                    return err
-                        ? rej(err)
-                        : res();
-                };
+            return PromisifyWrap((done) => {
 
                 const handlers = {};
                 handlers['subscribed-event'] = (consumedMessage, ack, reject, requeue) => {};
@@ -54,14 +48,7 @@ describe('positive integration tests - event handlers', () => {
 
         after(async () => {
 
-            return new Promise((res, rej) => {
-
-                const done = (err) => {
-
-                    return err
-                        ? rej(err)
-                        : res();
-                };
+            return PromisifyWrap((done) => {
 
                 Async.waterfall([
                     instance._autoConnectChannel,
@@ -73,14 +60,7 @@ describe('positive integration tests - event handlers', () => {
 
         it('should cause `unsubscribed()` to be called', async () => {
 
-            return new Promise((res, rej) => {
-
-                const done = (err) => {
-
-                    return err
-                        ? rej(err)
-                        : res();
-                };
+            return PromisifyWrap((done) => {
 
                 instance.once(BunnyBus.UNSUBSCRIBED_EVENT, (queue) => {
 
@@ -107,14 +87,7 @@ describe('positive integration tests - event handlers', () => {
 
         afterEach(async () => {
 
-            return new Promise((res, rej) => {
-
-                const done = (err) => {
-
-                    return err
-                        ? rej(err)
-                        : res();
-                };
+            return PromisifyWrap((done) => {
 
                 instance.channel.cancel(instance.subscriptions.get(queueName).consumerTag, (err) => {
 
@@ -127,14 +100,7 @@ describe('positive integration tests - event handlers', () => {
 
         after(async () => {
 
-            return new Promise((res, rej) => {
-
-                const done = (err) => {
-
-                    return err
-                        ? rej(err)
-                        : res();
-                };
+            return PromisifyWrap((done) => {
 
                 Async.waterfall([
                     instance._autoConnectChannel,
@@ -146,14 +112,7 @@ describe('positive integration tests - event handlers', () => {
 
         it('should cause `subscribed()` to be called', async () => {
 
-            return new Promise((res, rej) => {
-
-                const done = (err) => {
-
-                    return err
-                        ? rej(err)
-                        : res();
-                };
+            return PromisifyWrap((done) => {
 
                 instance.once(BunnyBus.SUBSCRIBED_EVENT, (queue) => {
 

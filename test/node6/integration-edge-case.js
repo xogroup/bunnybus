@@ -3,7 +3,7 @@
 const Async = require('async');
 const Code = require('code');
 const Lab = require('lab');
-const Promisify = require('../promisify');
+const { Promisify, PromisifyWrap } = require('../promisify');
 
 const lab = exports.lab = Lab.script();
 const before = lab.before;
@@ -35,14 +35,7 @@ describe('positive integration tests - Callback api', () => {
 
         it('should pass when parallel calls to publish happens when connection starts off closed', async () => {
 
-            return new Promise((res, rej) => {
-
-                const done = (err) => {
-
-                    return err
-                        ? rej(err)
-                        : res();
-                };
+            return PromisifyWrap((done) => {
 
                 const message = { event : 'ee', name : 'bunnybus' };
 
@@ -61,14 +54,7 @@ describe('positive integration tests - Callback api', () => {
 
         it('should pass when send pushes a message to a subscribed queue', async () => {
 
-            return new Promise((res, rej) => {
-
-                const done = (err) => {
-
-                    return err
-                        ? rej(err)
-                        : res();
-                };
+            return PromisifyWrap((done) => {
 
                 const message = { event : 'ea', name : 'bunnybus' };
                 const queueName = 'edge-case-get-to-subscribe';
@@ -99,14 +85,7 @@ describe('positive integration tests - Callback api', () => {
 
         it('should pass when server host configuration value is not valid', async () => {
 
-            return new Promise((res, rej) => {
-
-                const done = (err) => {
-
-                    return err
-                        ? rej(err)
-                        : res();
-                };
+            return PromisifyWrap((done) => {
 
                 const message = { event : 'eb', name : 'bunnybus' };
                 instance.config = { server : 'fake' };

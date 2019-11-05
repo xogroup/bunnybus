@@ -20,4 +20,22 @@ const promisify = (func, ...parameters) => {
     });
 };
 
-module.exports = promisify;
+const promisifyWrap = (func) => {
+
+    return new Promise((res, rej) => {
+
+        const done = (err) => {
+
+            return err
+                ? rej(err)
+                : res();
+        };
+
+        func(done);
+    });
+};
+
+module.exports = {
+    Promisify: promisify,
+    PromisifyWrap: promisifyWrap
+};

@@ -2,7 +2,7 @@
 
 const Code = require('code');
 const Lab = require('lab');
-const Promisify = require('../promisify');
+const { Promisify, PromisifyWrap } = require('../promisify');
 
 const lab = (exports.lab = Lab.script());
 const before = lab.before;
@@ -32,14 +32,7 @@ describe('automatic recovery cases', () => {
 
         it('should correctly recover consumers', { timeout: 5000 }, async () => {
 
-            return new Promise((res, rej) => {
-
-                const done = (err) => {
-
-                    return err
-                        ? rej(err)
-                        : res();
-                };
+            return PromisifyWrap((done) => {
 
                 instance.once(BunnyBus.RECOVERED_EVENT, () => {
 

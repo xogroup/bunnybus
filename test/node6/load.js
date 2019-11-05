@@ -2,6 +2,7 @@
 
 const Async = require('async');
 const Lab = require('lab');
+const { PromisifyWrap } = require('../promisify');
 const Bluebird = require('bluebird');
 
 const lab = exports.lab = Lab.script();
@@ -34,14 +35,7 @@ describe('integration load test', () => {
 
         before(async () => {
 
-            return new Promise((res, rej) => {
-
-                const done = (err) => {
-
-                    return err
-                        ? rej(err)
-                        : res();
-                };
+            return PromisifyWrap((done) => {
 
                 Async.waterfall([
                     instance._autoConnectChannel,
@@ -63,14 +57,7 @@ describe('integration load test', () => {
 
         afterEach(async () => {
 
-            return new Promise((res, rej) => {
-
-                const done = (err) => {
-
-                    return err
-                        ? rej(err)
-                        : res();
-                };
+            return PromisifyWrap((done) => {
 
                 Async.waterfall([
                     instance._autoConnectChannel,
@@ -81,14 +68,7 @@ describe('integration load test', () => {
 
         after(async () => {
 
-            return new Promise((res, rej) => {
-
-                const done = (err) => {
-
-                    return err
-                        ? rej(err)
-                        : res();
-                };
+            return PromisifyWrap((done) => {
 
                 Async.waterfall([
                     instance._autoConnectChannel,
@@ -101,14 +81,7 @@ describe('integration load test', () => {
 
         it('should publish all messages within 2 seconds', async () => {
 
-            return new Promise((res, rej) => {
-
-                const done = (err) => {
-
-                    return err
-                        ? rej(err)
-                        : res();
-                };
+            return PromisifyWrap((done) => {
 
                 let count = 0;
 
@@ -130,14 +103,7 @@ describe('integration load test', () => {
 
         it('should consume all messages within 2 seconds', async () => {
 
-            return new Promise((res, rej) => {
-
-                const done = (err) => {
-
-                    return err
-                        ? rej(err)
-                        : res();
-                };
+            return PromisifyWrap((done) => {
 
                 let count = 0;
 
@@ -210,14 +176,7 @@ describe('integration load test', () => {
 
         it('should consume all messages within 2 seconds', async () => {
 
-            return new Promise((res, rej) => {
-
-                const done = (err) => {
-
-                    return err
-                        ? rej(err)
-                        : res();
-                };
+            return PromisifyWrap((done) => {
 
                 let count = 0;
 
@@ -295,14 +254,7 @@ describe('integration load test', () => {
 
         it('should consume all messages within 2 seconds', async () => {
 
-            return new Promise((res, rej) => {
-
-                const done = (err) => {
-
-                    return err
-                        ? rej(err)
-                        : res();
-                };
+            return PromisifyWrap((done) => {
 
                 let count = 0;
 

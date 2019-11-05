@@ -2,6 +2,7 @@
 
 const Code = require('code');
 const Lab = require('lab');
+const { PromisifyWrap } = require('../promisify');
 
 const lab = exports.lab = Lab.script();
 const describe = lab.describe;
@@ -63,14 +64,7 @@ describe('state management', () => {
 
             it('should subscribe to `subscription.created` event', async () => {
 
-                return new Promise((res, rej) => {
-
-                    const done = (err) => {
-
-                        return err
-                            ? rej(err)
-                            : res();
-                    };
+                return PromisifyWrap((done) => {
 
                     const queueName = `${baseQueueName}-3`;
                     const handlers = { event1 : () => {} };
@@ -121,14 +115,7 @@ describe('state management', () => {
 
             it('should subscribe to `subscription.tagged` event', async () => {
 
-                return new Promise((res, rej) => {
-
-                    const done = (err) => {
-
-                        return err
-                            ? rej(err)
-                            : res();
-                    };
+                return PromisifyWrap((done) => {
 
                     const queueName = `${baseQueueName}-3`;
                     const consumerTag = 'abcdefg012345';
@@ -225,14 +212,7 @@ describe('state management', () => {
 
             it('should subscribe to `subscription.cleared` event', async () => {
 
-                return new Promise((res, rej) => {
-
-                    const done = (err) => {
-
-                        return err
-                            ? rej(err)
-                            : res();
-                    };
+                return PromisifyWrap((done) => {
 
                     const queueName = `${baseQueueName}-4`;
                     const consumerTag = 'abcdefg012345';
@@ -258,14 +238,7 @@ describe('state management', () => {
 
             it('should return true when subscription is cleared', async () => {
 
-                return new Promise((res, rej) => {
-
-                    const done = (err) => {
-
-                        return err
-                            ? rej(err)
-                            : res();
-                    };
+                return PromisifyWrap((done) => {
 
                     const handlers = { event1 : () => {} };
                     const options = {};
@@ -378,14 +351,7 @@ describe('state management', () => {
 
             it('should subscribe to `subscription.removed` event', async () => {
 
-                return new Promise((res, rej) => {
-
-                    const done = (err) => {
-
-                        return err
-                            ? rej(err)
-                            : res();
-                    };
+                return PromisifyWrap((done) => {
 
                     const queueName = `${baseQueueName}-4`;
                     const handlers = { event1 : () => {} };
@@ -465,14 +431,7 @@ describe('state management', () => {
 
             it('should subscribe to `subscription.blocked` event', async () => {
 
-                return new Promise((res, rej) => {
-
-                    const done = (err) => {
-
-                        return err
-                            ? rej(err)
-                            : res();
-                    };
+                return PromisifyWrap((done) => {
 
                     const queueName = 'queue5';
 
@@ -488,14 +447,7 @@ describe('state management', () => {
 
             it('should subscribe to `subscription.unblocked` event', async () => {
 
-                return new Promise((res, rej) => {
-
-                    const done = (err) => {
-
-                        return err
-                            ? rej(err)
-                            : res();
-                    };
+                return PromisifyWrap((done) => {
 
                     const queueName = 'queue6';
 
