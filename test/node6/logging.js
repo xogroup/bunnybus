@@ -1,6 +1,6 @@
 'use strict';
 
-const Lab = require('lab');
+const Lab = require('@hapi/lab');
 const { PromisifyWrap } = require('../promisify');
 
 const lab = exports.lab = Lab.script();

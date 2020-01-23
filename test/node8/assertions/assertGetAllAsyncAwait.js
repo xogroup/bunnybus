@@ -1,7 +1,7 @@
 'use strict';
 
 const Promise = require('bluebird');
-const Code = require('code');
+const Code = require('@hapi/code');
 
 const expect = Code.expect;
 

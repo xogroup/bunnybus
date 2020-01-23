@@ -1,7 +1,7 @@
 'use strict';
 
-const Code = require('code');
-const Lab = require('lab');
+const Code = require('@hapi/code');
+const Lab = require('@hapi/lab');
 const Exceptions = require('../../lib/exceptions');
 const Assertions = require('./assertions');
 const { Promisify, PromisifyWrap } = require('../promisify');
