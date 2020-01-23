@@ -1,7 +1,7 @@
 'use strict';
 
 const Lab = require('@hapi/lab');
-const { PromisifyWrap } = require('../promisify');
+const { Promisify } = require('../promisify');
 
 const lab = exports.lab = Lab.script();
 const before = lab.before;
@@ -30,7 +30,7 @@ describe('logging', () => {
 
         it('should subscribe to `log.info` event when log.info() is called', async () => {
 
-            return PromisifyWrap((done) => {
+            return Promisify((done) => {
 
                 Assertions.assertLogger(instance, 'info', inputMessage, done);
             });
@@ -38,7 +38,7 @@ describe('logging', () => {
 
         it('should subscribe to `log.error` event when log.error() is called', async () => {
 
-            return PromisifyWrap((done) => {
+            return Promisify((done) => {
 
                 Assertions.assertLogger(instance, 'error', inputMessage, done);
             });
@@ -46,7 +46,7 @@ describe('logging', () => {
 
         it('should subscribe to `log.warn` event when log.warn() is called', async () => {
 
-            return PromisifyWrap((done) => {
+            return Promisify((done) => {
 
                 Assertions.assertLogger(instance, 'warn', inputMessage, done);
             });
@@ -54,7 +54,7 @@ describe('logging', () => {
 
         it('should subscribe to `log.fatal` event when log.fatal() is called', async () => {
 
-            return PromisifyWrap((done) => {
+            return Promisify((done) => {
 
                 Assertions.assertLogger(instance, 'fatal', inputMessage, done);
             });
@@ -62,7 +62,7 @@ describe('logging', () => {
 
         it('should subscribe to `log.debug` event when log.debug() is called', async () => {
 
-            return PromisifyWrap((done) => {
+            return Promisify((done) => {
 
                 Assertions.assertLogger(instance, 'debug', inputMessage, done);
             });
@@ -70,7 +70,7 @@ describe('logging', () => {
 
         it('should subscribe to `log.trace` event when log.trace() is called', async () => {
 
-            return PromisifyWrap((done) => {
+            return Promisify((done) => {
 
                 Assertions.assertLogger(instance, 'trace', inputMessage, done);
             });
@@ -81,7 +81,7 @@ describe('logging', () => {
 
         it('should call custom info handler', async () => {
 
-            return PromisifyWrap((done) => {
+            return Promisify((done) => {
 
                 Assertions.assertCustomLogger(instance, 'info', inputMessage, done);
             });
@@ -89,7 +89,7 @@ describe('logging', () => {
 
         it('should call custom error handler', async () => {
 
-            return PromisifyWrap((done) => {
+            return Promisify((done) => {
 
                 Assertions.assertCustomLogger(instance, 'error', inputMessage, done);
             });
@@ -97,7 +97,7 @@ describe('logging', () => {
 
         it('should call custom warn handler', async () => {
 
-            return PromisifyWrap((done) => {
+            return Promisify((done) => {
 
                 Assertions.assertCustomLogger(instance, 'warn', inputMessage, done);
             });
@@ -105,7 +105,7 @@ describe('logging', () => {
 
         it('should call custom fatal handler', async () => {
 
-            return PromisifyWrap((done) => {
+            return Promisify((done) => {
 
                 Assertions.assertCustomLogger(instance, 'fatal', inputMessage, done);
             });
@@ -113,7 +113,7 @@ describe('logging', () => {
 
         it('should call custom debug handler', async () => {
 
-            return PromisifyWrap((done) => {
+            return Promisify((done) => {
 
                 Assertions.assertCustomLogger(instance, 'debug', inputMessage, done);
             });
@@ -121,7 +121,7 @@ describe('logging', () => {
 
         it('should call custom trace handler', async () => {
 
-            return PromisifyWrap((done) => {
+            return Promisify((done) => {
 
                 Assertions.assertCustomLogger(instance, 'trace', inputMessage, done);
             });

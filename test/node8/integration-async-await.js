@@ -4,7 +4,7 @@ const Code = require('@hapi/code');
 const Lab = require('@hapi/lab');
 const Exceptions = require('../../lib/exceptions');
 const Assertions = require('./assertions');
-const { Promisify, PromisifyWrap } = require('../promisify');
+const { Promisify } = require('../promisify');
 
 const lab = exports.lab = Lab.script();
 const before = lab.before;
@@ -141,7 +141,7 @@ describe('positive integration tests - async/await with Promise api', () => {
 
         it('should recreate connection when connection error occurs', async () => {
 
-            return PromisifyWrap((done) => {
+            return Promisify((done) => {
 
                 instance.connection.emit('error');
 
@@ -156,7 +156,7 @@ describe('positive integration tests - async/await with Promise api', () => {
 
         it('should recreate connection when channel error occurs', async () => {
 
-            return PromisifyWrap((done) => {
+            return Promisify((done) => {
 
                 instance.channel.emit('error');
 

@@ -3,7 +3,7 @@
 const Async = require('async');
 const Code = require('@hapi/code');
 const Lab = require('@hapi/lab');
-const { Promisify, PromisifyWrap } = require('../promisify');
+const { Promisify } = require('../promisify');
 
 const lab = exports.lab = Lab.script();
 const before = lab.before;
@@ -35,7 +35,7 @@ describe('positive integration tests - Callback api', () => {
 
         it('should pass when parallel calls to publish happens when connection starts off closed', async () => {
 
-            return PromisifyWrap((done) => {
+            return Promisify((done) => {
 
                 const message = { event : 'ee', name : 'bunnybus' };
 
@@ -54,7 +54,7 @@ describe('positive integration tests - Callback api', () => {
 
         it('should pass when send pushes a message to a subscribed queue', async () => {
 
-            return PromisifyWrap((done) => {
+            return Promisify((done) => {
 
                 const message = { event : 'ea', name : 'bunnybus' };
                 const queueName = 'edge-case-get-to-subscribe';
@@ -85,7 +85,7 @@ describe('positive integration tests - Callback api', () => {
 
         it('should pass when server host configuration value is not valid', async () => {
 
-            return PromisifyWrap((done) => {
+            return Promisify((done) => {
 
                 const message = { event : 'eb', name : 'bunnybus' };
                 instance.config = { server : 'fake' };

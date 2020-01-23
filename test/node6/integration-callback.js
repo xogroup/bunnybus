@@ -5,7 +5,7 @@ const Code = require('@hapi/code');
 const Lab = require('@hapi/lab');
 const Exceptions = require('../../lib/exceptions');
 const Assertions = require('./assertions');
-const { Promisify, PromisifyWrap } = require('../promisify');
+const { Promisify } = require('../promisify');
 
 const lab = exports.lab = Lab.script();
 const before = lab.before;
@@ -45,7 +45,7 @@ describe('positive integration tests with no configuration - Callback api', () =
 
         it('should create connection and channel', async () => {
 
-            return PromisifyWrap((done) => {
+            return Promisify((done) => {
 
                 instance._autoConnectChannel((err) => {
 
@@ -100,7 +100,7 @@ describe('positive integration tests with configuration - Callback api', () => {
 
         it('should close an opened connection', async () => {
 
-            return PromisifyWrap((done) => {
+            return Promisify((done) => {
 
                 Async.waterfall([
                     instance._createConnection,
@@ -125,7 +125,7 @@ describe('positive integration tests with configuration - Callback api', () => {
 
         beforeEach(async () => {
 
-            return PromisifyWrap((done) => {
+            return Promisify((done) => {
 
                 Async.waterfall([
                     instance._closeChannel.bind(instance),
@@ -136,7 +136,7 @@ describe('positive integration tests with configuration - Callback api', () => {
 
         it('should create channel with default values', async () => {
 
-            return PromisifyWrap((done) => {
+            return Promisify((done) => {
 
                 instance._createChannel((err) => {
 
@@ -149,7 +149,7 @@ describe('positive integration tests with configuration - Callback api', () => {
 
         it('should close an opened channel', async () => {
 
-            return PromisifyWrap((done) => {
+            return Promisify((done) => {
 
                 Async.waterfall([
                     instance._createChannel,
@@ -165,7 +165,7 @@ describe('positive integration tests with configuration - Callback api', () => {
 
         it('should close both connection and channel when closing a connection', async () => {
 
-            return PromisifyWrap((done) => {
+            return Promisify((done) => {
 
                 Async.waterfall([
                     instance._createChannel,
@@ -190,7 +190,7 @@ describe('positive integration tests with configuration - Callback api', () => {
 
         it('should create connection and channel', async () => {
 
-            return PromisifyWrap((done) => {
+            return Promisify((done) => {
 
                 instance._autoConnectChannel((err) => {
 
@@ -204,7 +204,7 @@ describe('positive integration tests with configuration - Callback api', () => {
 
         it('should create connection and channel properly with no race condition', async () => {
 
-            return PromisifyWrap((done) => {
+            return Promisify((done) => {
 
                 Async.parallel([
                     instance._autoConnectChannel,
@@ -236,7 +236,7 @@ describe('positive integration tests with configuration - Callback api', () => {
 
         it('should recreate connection when connection error occurs', async () => {
 
-            return PromisifyWrap((done) => {
+            return Promisify((done) => {
 
                 instance.connection.emit('error');
 
@@ -251,7 +251,7 @@ describe('positive integration tests with configuration - Callback api', () => {
 
         it('should recreate connection when channel error occurs', async () => {
 
-            return PromisifyWrap((done) => {
+            return Promisify((done) => {
 
                 instance.channel.emit('error');
 
@@ -276,7 +276,7 @@ describe('positive integration tests with configuration - Callback api', () => {
 
         it('should create queue with name `test-queue-1`', async () => {
 
-            return PromisifyWrap((done) => {
+            return Promisify((done) => {
 
                 instance.createQueue(queueName, (err, result) => {
 
@@ -290,7 +290,7 @@ describe('positive integration tests with configuration - Callback api', () => {
 
         it('should check queue with name `test-queue-1`', async () => {
 
-            return PromisifyWrap((done) => {
+            return Promisify((done) => {
 
                 instance.checkQueue(queueName, (err, result) => {
 
@@ -304,7 +304,7 @@ describe('positive integration tests with configuration - Callback api', () => {
 
         it('should delete queue with name `test-queue-1`', async () => {
 
-            return PromisifyWrap((done) => {
+            return Promisify((done) => {
 
                 instance.deleteQueue(queueName, (err, result) => {
 
@@ -322,7 +322,7 @@ describe('positive integration tests with configuration - Callback api', () => {
 
         before(async () => {
 
-            return PromisifyWrap((done) => {
+            return Promisify((done) => {
 
                 Async.waterfall([
                     instance._autoConnectChannel,
@@ -341,7 +341,7 @@ describe('positive integration tests with configuration - Callback api', () => {
 
         it('should create exchange with name `test-exchange-1`', async () => {
 
-            return PromisifyWrap((done) => {
+            return Promisify((done) => {
 
                 instance.createExchange(exchangeName, 'topic', (err, result) => {
 
@@ -353,7 +353,7 @@ describe('positive integration tests with configuration - Callback api', () => {
 
         it('should check exchange with name `test-exchange-1`', async () => {
 
-            return PromisifyWrap((done) => {
+            return Promisify((done) => {
 
                 instance.checkExchange(exchangeName, (err, result) => {
 
@@ -365,7 +365,7 @@ describe('positive integration tests with configuration - Callback api', () => {
 
         it('should delete exchange with name `test-exchange-1`', async () => {
 
-            return PromisifyWrap((done) => {
+            return Promisify((done) => {
 
                 instance.deleteExchange(exchangeName, (err, result) => {
 
@@ -377,7 +377,7 @@ describe('positive integration tests with configuration - Callback api', () => {
 
         it('should recover from a non existent exchange', async () => {
 
-            return PromisifyWrap((done) => {
+            return Promisify((done) => {
 
                 instance.once(BunnyBus.RECOVERED_EVENT, done);
 
@@ -404,7 +404,7 @@ describe('positive integration tests with configuration - Callback api', () => {
 
         it('should send message', async () => {
 
-            return PromisifyWrap((done) => {
+            return Promisify((done) => {
 
                 Assertions.assertSend(instance, message, queueName, null, null, null, null, done);
             });
@@ -412,7 +412,7 @@ describe('positive integration tests with configuration - Callback api', () => {
 
         it('should send message when miscellaneous amqplib options are included', async () => {
 
-            return PromisifyWrap((done) => {
+            return Promisify((done) => {
 
                 const amqpOptions = {
                     expiration: '1000',
@@ -440,7 +440,7 @@ describe('positive integration tests with configuration - Callback api', () => {
 
         it('should proxy `source` when supplied', async () => {
 
-            return PromisifyWrap((done) => {
+            return Promisify((done) => {
 
                 Assertions.assertSend(instance, message, queueName, null, 'someModule', null, null, done);
             });
@@ -448,7 +448,7 @@ describe('positive integration tests with configuration - Callback api', () => {
 
         it('should proxy `transactionId` when supplied', async () => {
 
-            return PromisifyWrap((done) => {
+            return Promisify((done) => {
 
                 Assertions.assertSend(instance, message, queueName, 'someTransactionId', null, null, null, done);
             });
@@ -456,7 +456,7 @@ describe('positive integration tests with configuration - Callback api', () => {
 
         it('should proxy `routeKey` when supplied', async () => {
 
-            return PromisifyWrap((done) => {
+            return Promisify((done) => {
 
                 Assertions.assertSend(instance, message, queueName, null, null, 'event1', null, done);
             });
@@ -464,7 +464,7 @@ describe('positive integration tests with configuration - Callback api', () => {
 
         it('should proxy `routeKey` when supplied', async () => {
 
-            return PromisifyWrap((done) => {
+            return Promisify((done) => {
 
                 Assertions.assertSend(instance, messageWithEvent, queueName, null, null, null, null, done);
             });
@@ -488,7 +488,7 @@ describe('positive integration tests with configuration - Callback api', () => {
 
         it('should retrieve all message without meta flag', async () => {
 
-            return PromisifyWrap((done) => {
+            return Promisify((done) => {
 
                 Assertions.assertGetAll(instance, message, queueName, false, 10, done);
             });
@@ -496,7 +496,7 @@ describe('positive integration tests with configuration - Callback api', () => {
 
         it('should retrieve all message with meta flag', async () => {
 
-            return PromisifyWrap((done) => {
+            return Promisify((done) => {
 
                 Assertions.assertGetAll(instance, message, queueName, true, 10, done);
             });
@@ -511,7 +511,7 @@ describe('positive integration tests with configuration - Callback api', () => {
 
         before(async () => {
 
-            return PromisifyWrap((done) => {
+            return Promisify((done) => {
 
                 Async.waterfall([
                     instance._autoConnectChannel,
@@ -533,7 +533,7 @@ describe('positive integration tests with configuration - Callback api', () => {
 
         after(async () => {
 
-            return PromisifyWrap((done) => {
+            return Promisify((done) => {
 
                 Async.waterfall([
                     instance._autoConnectChannel,
@@ -545,7 +545,7 @@ describe('positive integration tests with configuration - Callback api', () => {
 
         it('should publish for route `a`', async () => {
 
-            return PromisifyWrap((done) => {
+            return Promisify((done) => {
 
                 Assertions.assertPublish(instance, message, queueName, 'a', null, null, true, null, done);
             });
@@ -553,7 +553,7 @@ describe('positive integration tests with configuration - Callback api', () => {
 
         it('should publish for route `a`  when miscellaneous amqplib options are included', async () => {
 
-            return PromisifyWrap((done) => {
+            return Promisify((done) => {
 
                 const amqpOptions = {
                     expiration: '1000',
@@ -580,7 +580,7 @@ describe('positive integration tests with configuration - Callback api', () => {
 
         it('should publish for route `a.b`', async () => {
 
-            return PromisifyWrap((done) => {
+            return Promisify((done) => {
 
                 Assertions.assertPublish(instance, message, queueName, 'a.b', null, null, true, null, done);
             });
@@ -588,7 +588,7 @@ describe('positive integration tests with configuration - Callback api', () => {
 
         it('should publish for route `b`', async () => {
 
-            return PromisifyWrap((done) => {
+            return Promisify((done) => {
 
                 Assertions.assertPublish(instance, message, queueName, 'b', null, null, true, null, done);
             });
@@ -596,7 +596,7 @@ describe('positive integration tests with configuration - Callback api', () => {
 
         it('should publish for route `b.b`', async () => {
 
-            return PromisifyWrap((done) => {
+            return Promisify((done) => {
 
                 Assertions.assertPublish(instance, message, queueName, 'b.b', null, null, true, null, done);
             });
@@ -604,7 +604,7 @@ describe('positive integration tests with configuration - Callback api', () => {
 
         it('should publish for route `z.a`', async () => {
 
-            return PromisifyWrap((done) => {
+            return Promisify((done) => {
 
                 Assertions.assertPublish(instance, message, queueName, 'z.a', null, null, true, null, done);
             });
@@ -612,7 +612,7 @@ describe('positive integration tests with configuration - Callback api', () => {
 
         it('should publish for route `z` but not route to queue', async () => {
 
-            return PromisifyWrap((done) => {
+            return Promisify((done) => {
 
                 Assertions.assertPublish(instance, message, queueName, 'z', null, null, false, null, done);
             });
@@ -620,7 +620,7 @@ describe('positive integration tests with configuration - Callback api', () => {
 
         it('should proxy `source` when supplied', async () => {
 
-            return PromisifyWrap((done) => {
+            return Promisify((done) => {
 
                 Assertions.assertPublish(instance, message, queueName, 'a', null, 'someModule', true, null, done);
             });
@@ -628,7 +628,7 @@ describe('positive integration tests with configuration - Callback api', () => {
 
         it('should proxy `transactionId` when supplied', async () => {
 
-            return PromisifyWrap((done) => {
+            return Promisify((done) => {
 
                 Assertions.assertPublish(instance, message, queueName, 'a', 'someTransactionId', null, true, null, done);
             });
@@ -636,7 +636,7 @@ describe('positive integration tests with configuration - Callback api', () => {
 
         it('should publish for route `a` when route key is provided in the message', async () => {
 
-            return PromisifyWrap((done) => {
+            return Promisify((done) => {
 
                 const messageWithRoute = Object.assign({}, message, { event : 'a' });
 
@@ -657,7 +657,7 @@ describe('positive integration tests with configuration - Callback api', () => {
 
         before(async () => {
 
-            return PromisifyWrap((done) => {
+            return Promisify((done) => {
 
                 Async.waterfall([
                     instance._autoConnectChannel,
@@ -675,7 +675,7 @@ describe('positive integration tests with configuration - Callback api', () => {
 
         after(async () => {
 
-            return PromisifyWrap((done) => {
+            return Promisify((done) => {
 
                 Async.waterfall([
                     instance._autoConnectChannel,
@@ -688,7 +688,7 @@ describe('positive integration tests with configuration - Callback api', () => {
 
         it('should consume message (Object) from queue and acknowledge off', async () => {
 
-            return PromisifyWrap((done) => {
+            return Promisify((done) => {
 
                 const handlers = {};
                 handlers[messageObject.event] = (consumedMessage, ack) => {
@@ -712,7 +712,7 @@ describe('positive integration tests with configuration - Callback api', () => {
 
         it('should consume message (Object) and meta from queue and acknowledge off', async () => {
 
-            return PromisifyWrap((done) => {
+            return Promisify((done) => {
 
                 const handlers = {};
                 handlers[messageObject.event] = (consumedMessage, meta, ack) => {
@@ -738,7 +738,7 @@ describe('positive integration tests with configuration - Callback api', () => {
 
         it('should consume message (String) from queue and acknowledge off', async () => {
 
-            return PromisifyWrap((done) => {
+            return Promisify((done) => {
 
                 const handlers = {};
                 handlers[publishOptions.routeKey] = (consumedMessage, ack) => {
@@ -762,7 +762,7 @@ describe('positive integration tests with configuration - Callback api', () => {
 
         it('should consume message (String) and meta from queue and acknowledge off', async () => {
 
-            return PromisifyWrap((done) => {
+            return Promisify((done) => {
 
                 const handlers = {};
                 handlers[publishOptions.routeKey] = (consumedMessage, meta, ack) => {
@@ -788,7 +788,7 @@ describe('positive integration tests with configuration - Callback api', () => {
 
         it('should consume message (Buffer) from queue and acknowledge off', async () => {
 
-            return PromisifyWrap((done) => {
+            return Promisify((done) => {
 
                 const handlers = {};
                 handlers[publishOptions.routeKey] = (consumedMessage, ack) => {
@@ -812,7 +812,7 @@ describe('positive integration tests with configuration - Callback api', () => {
 
         it('should consume message (Buffer) and meta from queue and acknowledge off', async () => {
 
-            return PromisifyWrap((done) => {
+            return Promisify((done) => {
 
                 const handlers = {};
                 handlers[publishOptions.routeKey] = (consumedMessage, meta, ack) => {
@@ -838,7 +838,7 @@ describe('positive integration tests with configuration - Callback api', () => {
 
         it('should consume message (Object) from queue and reject off', async () => {
 
-            return PromisifyWrap((done) => {
+            return Promisify((done) => {
 
                 const handlers = {};
                 handlers[messageObject.event] = (consumedMessage, ack, reject) => {
@@ -874,7 +874,7 @@ describe('positive integration tests with configuration - Callback api', () => {
 
         it('should consume message (Buffer) from queue and reject off', async () => {
 
-            return PromisifyWrap((done) => {
+            return Promisify((done) => {
 
                 const handlers = {};
                 handlers[publishOptions.routeKey] = (consumedMessage, ack, reject) => {
@@ -910,7 +910,7 @@ describe('positive integration tests with configuration - Callback api', () => {
 
         it('should consume message (Object) from queue and requeue off on maxRetryCount', { timeout : 0 }, async () => {
 
-            return PromisifyWrap((done) => {
+            return Promisify((done) => {
 
                 const handlers = {};
                 const maxRetryCount = 3;
@@ -944,7 +944,7 @@ describe('positive integration tests with configuration - Callback api', () => {
 
         it('should consume message (Buffer) from queue and requeue off on maxRetryCount', { timeout : 0 }, async () => {
 
-            return PromisifyWrap((done) => {
+            return Promisify((done) => {
 
                 const handlers = {};
                 const maxRetryCount = 3;
@@ -978,7 +978,7 @@ describe('positive integration tests with configuration - Callback api', () => {
 
         it('should reject message without bunnyBus header property', async () => {
 
-            return PromisifyWrap((done) => {
+            return Promisify((done) => {
 
                 const handlers = {};
                 const config = instance.config;
@@ -1018,7 +1018,7 @@ describe('positive integration tests with configuration - Callback api', () => {
 
         it('should reject message with mismatched version', async () => {
 
-            return PromisifyWrap((done) => {
+            return Promisify((done) => {
 
                 const handlers = {};
                 const config = instance.config;
@@ -1060,7 +1060,7 @@ describe('positive integration tests with configuration - Callback api', () => {
 
         it('should accept message without bunnyBus header when overridden', async () => {
 
-            return PromisifyWrap((done) => {
+            return Promisify((done) => {
 
                 const handlers = {};
                 const validatePublisher = false;
@@ -1095,7 +1095,7 @@ describe('positive integration tests with configuration - Callback api', () => {
 
         it('should accept message with bunnyBus header with mismatched version when overriden', async () => {
 
-            return PromisifyWrap((done) => {
+            return Promisify((done) => {
 
                 const handlers = {};
                 const validateVersion = false;
@@ -1140,7 +1140,7 @@ describe('positive integration tests with configuration - Callback api', () => {
 
         before(async () => {
 
-            return PromisifyWrap((done) => {
+            return Promisify((done) => {
 
                 Async.waterfall([
                     instance._autoConnectChannel,
@@ -1158,7 +1158,7 @@ describe('positive integration tests with configuration - Callback api', () => {
 
         after(async () => {
 
-            return PromisifyWrap((done) => {
+            return Promisify((done) => {
 
                 Async.waterfall([
                     instance._autoConnectChannel,
@@ -1171,7 +1171,7 @@ describe('positive integration tests with configuration - Callback api', () => {
 
         it('should consume message (Object) from queue and acknowledge off', async () => {
 
-            return PromisifyWrap((done) => {
+            return Promisify((done) => {
 
                 const handlers = {};
                 handlers[subscriptionKey] = (consumedMessage, ack) => {
@@ -1203,7 +1203,7 @@ describe('positive integration tests with configuration - Callback api', () => {
 
         before(async () => {
 
-            return PromisifyWrap((done) => {
+            return Promisify((done) => {
 
                 Async.waterfall([
                     instance._autoConnectChannel,
@@ -1221,7 +1221,7 @@ describe('positive integration tests with configuration - Callback api', () => {
 
         after(async () => {
 
-            return PromisifyWrap((done) => {
+            return Promisify((done) => {
 
                 Async.waterfall([
                     instance._autoConnectChannel,
@@ -1234,7 +1234,7 @@ describe('positive integration tests with configuration - Callback api', () => {
 
         it('should consume message (Object) from queue and acknowledge off', async () => {
 
-            return PromisifyWrap((done) => {
+            return Promisify((done) => {
 
                 const handlers = {};
                 handlers[subscriptionKey] = (consumedMessage, ack) => {
@@ -1265,7 +1265,7 @@ describe('positive integration tests with configuration - Callback api', () => {
 
         before(async () => {
 
-            return PromisifyWrap((done) => {
+            return Promisify((done) => {
 
                 Async.waterfall([
                     instance._autoConnectChannel,
@@ -1278,7 +1278,7 @@ describe('positive integration tests with configuration - Callback api', () => {
 
         afterEach(async () => {
 
-            return PromisifyWrap((done) => {
+            return Promisify((done) => {
 
                 Async.parallel([
                     instance.unsubscribe.bind(instance, queueName1),
@@ -1289,7 +1289,7 @@ describe('positive integration tests with configuration - Callback api', () => {
 
         after(async () => {
 
-            return PromisifyWrap((done) => {
+            return Promisify((done) => {
 
                 Async.waterfall([
                     instance._autoConnectChannel,
@@ -1302,7 +1302,7 @@ describe('positive integration tests with configuration - Callback api', () => {
 
         it('should consume message from two queues and acknowledge off', async () => {
 
-            return PromisifyWrap((done) => {
+            return Promisify((done) => {
 
                 const handlers = {};
                 let counter = 0;
@@ -1342,7 +1342,7 @@ describe('positive integration tests with configuration - Callback api', () => {
 
         before(async () => {
 
-            return PromisifyWrap((done) => {
+            return Promisify((done) => {
 
                 Async.waterfall([
                     instance._autoConnectChannel,
@@ -1364,7 +1364,7 @@ describe('positive integration tests with configuration - Callback api', () => {
 
         after(async () => {
 
-            return PromisifyWrap((done) => {
+            return Promisify((done) => {
 
                 Async.waterfall([
                     instance._autoConnectChannel,
@@ -1376,7 +1376,7 @@ describe('positive integration tests with configuration - Callback api', () => {
 
         it('should ack a message off the queue', async () => {
 
-            return PromisifyWrap((done) => {
+            return Promisify((done) => {
 
                 Async.waterfall([
                     instance.publish.bind(instance, message),
@@ -1410,7 +1410,7 @@ describe('positive integration tests with configuration - Callback api', () => {
 
         before(async () => {
 
-            return PromisifyWrap((done) => {
+            return Promisify((done) => {
 
                 Async.waterfall([
                     instance._autoConnectChannel,
@@ -1432,7 +1432,7 @@ describe('positive integration tests with configuration - Callback api', () => {
 
         after(async () => {
 
-            return PromisifyWrap((done) => {
+            return Promisify((done) => {
 
                 Async.waterfall([
                     instance._autoConnectChannel,
@@ -1444,7 +1444,7 @@ describe('positive integration tests with configuration - Callback api', () => {
 
         it('should requeue a message off the queue', async () => {
 
-            return PromisifyWrap((done) => {
+            return Promisify((done) => {
 
                 Async.waterfall([
                     instance.publish.bind(instance, message),
@@ -1466,7 +1466,7 @@ describe('positive integration tests with configuration - Callback api', () => {
 
         it('should requeue with well formed header properties', async () => {
 
-            return PromisifyWrap((done) => {
+            return Promisify((done) => {
 
                 const publishOptions = {
                     source : 'test'
@@ -1515,7 +1515,7 @@ describe('positive integration tests with configuration - Callback api', () => {
 
         before(async () => {
 
-            return PromisifyWrap((done) => {
+            return Promisify((done) => {
 
                 Async.waterfall([
                     instance._autoConnectChannel,
@@ -1537,7 +1537,7 @@ describe('positive integration tests with configuration - Callback api', () => {
 
         after(async () => {
 
-            return PromisifyWrap((done) => {
+            return Promisify((done) => {
 
                 Async.waterfall([
                     instance._autoConnectChannel,
@@ -1554,7 +1554,7 @@ describe('positive integration tests with configuration - Callback api', () => {
 
         it('should reject a message off the queue', async () => {
 
-            return PromisifyWrap((done) => {
+            return Promisify((done) => {
 
                 Async.waterfall([
                     instance.publish.bind(instance, message),
@@ -1576,7 +1576,7 @@ describe('positive integration tests with configuration - Callback api', () => {
 
         it('should reject with well formed header properties', async () => {
 
-            return PromisifyWrap((done) => {
+            return Promisify((done) => {
 
                 const publishOptions = {
                     source : 'test'
@@ -1632,7 +1632,7 @@ describe('negative integration tests', () => {
 
         it('should throw NoConnectionError when connection does not pre-exist', async () => {
 
-            return PromisifyWrap((done) => {
+            return Promisify((done) => {
 
                 instance._createChannel((err) => {
 
@@ -1654,7 +1654,7 @@ describe('negative integration tests', () => {
 
         it('should throw NoChannelError when calling createQueue and connection does not pre-exist', async () => {
 
-            return PromisifyWrap((done) => {
+            return Promisify((done) => {
 
                 instance.createQueue(queueName, (err) => {
 
@@ -1666,7 +1666,7 @@ describe('negative integration tests', () => {
 
         it('should throw NoChannelError when calling checkQueue and connection does not pre-exist', async () => {
 
-            return PromisifyWrap((done) => {
+            return Promisify((done) => {
 
                 instance.checkQueue(queueName, (err) => {
 
@@ -1678,7 +1678,7 @@ describe('negative integration tests', () => {
 
         it('should throw NoChannelError when calling deleteQueue and connection does not pre-exist', async () => {
 
-            return PromisifyWrap((done) => {
+            return Promisify((done) => {
 
                 instance.deleteQueue(queueName, (err) => {
 
@@ -1700,7 +1700,7 @@ describe('negative integration tests', () => {
 
         it('should throw NoChannelError when calling createExchange and connection does not pre-exist', async () => {
 
-            return PromisifyWrap((done) => {
+            return Promisify((done) => {
 
                 instance.createExchange(exchangeName, '', (err) => {
 
@@ -1712,7 +1712,7 @@ describe('negative integration tests', () => {
 
         it('should throw NoChannelError when calling checkExchange and connection does not pre-exist', async () => {
 
-            return PromisifyWrap((done) => {
+            return Promisify((done) => {
 
                 instance.checkExchange(exchangeName, (err) => {
 
@@ -1724,7 +1724,7 @@ describe('negative integration tests', () => {
 
         it('should throw NoChannelError when calling deleteExchange and connection does not pre-exist', async () => {
 
-            return PromisifyWrap((done) => {
+            return Promisify((done) => {
 
                 instance.deleteExchange(exchangeName, (err) => {
 
@@ -1746,7 +1746,7 @@ describe('negative integration tests', () => {
 
         it('should throw NoChannelError when calling get and connection does not pre-exist', async () => {
 
-            return PromisifyWrap((done) => {
+            return Promisify((done) => {
 
                 instance.get(queueName, (err) => {
 
@@ -1763,7 +1763,7 @@ describe('negative integration tests', () => {
 
         it('should throw NoRouteKeyError when calling publish and `options.routeKey` nor `message.event` exist', async () => {
 
-            return PromisifyWrap((done) => {
+            return Promisify((done) => {
 
                 instance.publish(message, (err) => {
 
@@ -1788,7 +1788,7 @@ describe('negative integration tests', () => {
 
         it('should throw SubscriptionExistError when calling subscribe on an active subscription exist', async () => {
 
-            return PromisifyWrap((done) => {
+            return Promisify((done) => {
 
                 instance.subscriptions.create(queueName, handlers);
                 instance.subscriptions.tag(queueName, consumerTag);
@@ -1803,7 +1803,7 @@ describe('negative integration tests', () => {
 
         it('should throw SubscriptionBlockedError when calling subscribe against a blocked queue', async () => {
 
-            return PromisifyWrap((done) => {
+            return Promisify((done) => {
 
                 instance.subscriptions.block(queueName);
 
@@ -1829,7 +1829,7 @@ describe('negative integration tests', () => {
 
         it('should throw NoChannelError when calling _ack and connection does not pre-exist', async () => {
 
-            return PromisifyWrap((done) => {
+            return Promisify((done) => {
 
                 instance._ack(payload, (err) => {
 
@@ -1853,7 +1853,7 @@ describe('negative integration tests', () => {
 
         it('should throw NoChannelError when calling _requeue and connection does not pre-exist', async () => {
 
-            return PromisifyWrap((done) => {
+            return Promisify((done) => {
 
                 instance._requeue(payload, '', (err) => {
 
@@ -1877,7 +1877,7 @@ describe('negative integration tests', () => {
 
         it('should throw NoChannelError when calling _reject and connection does not pre-exist', async () => {
 
-            return PromisifyWrap((done) => {
+            return Promisify((done) => {
 
                 instance._reject(payload, '', (err) => {
 
