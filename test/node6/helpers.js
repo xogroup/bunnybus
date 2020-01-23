@@ -481,6 +481,21 @@ describe('helpers', () => {
             });
         });
 
+        describe('when binding pattern is abc.xyz-rpq_mno', () => {
+
+            const pattern = 'abc.xyz-rpq_mno';
+
+            it('should match for abc.xyz-rpq_mno', () => {
+
+                expect(Helpers.routeMatcher(pattern, 'abc.xyz-rpq_mno')).to.be.true();
+            });
+
+            it('should not match for xyz.abc-rpq_mno', () => {
+
+                expect(Helpers.routeMatcher(pattern, 'xyz.abc-rpq_mno')).to.be.false();
+            });
+        });
+
         describe('when binding pattern is a.*', () => {
 
             const pattern = 'a.*';
@@ -560,9 +575,14 @@ describe('helpers', () => {
                 expect(Helpers.routeMatcher(pattern, 'a..b')).to.be.true();
             });
 
-            it('should match for a.b', () => {
+            it('should not match for a.b', () => {
 
                 expect(Helpers.routeMatcher(pattern, 'a.b')).to.be.false();
+            });
+
+            it('should not match for a.n.d.b', () => {
+
+                expect(Helpers.routeMatcher(pattern, 'a.n.d.b')).to.be.false();
             });
         });
 
@@ -595,9 +615,44 @@ describe('helpers', () => {
                 expect(Helpers.routeMatcher(pattern, 'hello.world.b')).to.be.false();
             });
 
-            it('should match for a.hello.world', () => {
+            it('should not match for a.hello.world', () => {
 
                 expect(Helpers.routeMatcher(pattern, 'a.hello.world')).to.be.false();
+            });
+        });
+
+        describe('when binding pattern is a.#.b-_c', () => {
+
+            const pattern = 'a.#.b-_c';
+
+            it('should match for a.hello.world.b-_c', () => {
+
+                expect(Helpers.routeMatcher(pattern, 'a.hello.world.b-_c')).to.be.true();
+            });
+
+            it('should match for a.h-e-l-l-o.w-o-r-l-d.b-_c', () => {
+
+                expect(Helpers.routeMatcher(pattern, 'a.h-e-l-l-o.w-o-r-l-d.b-_c')).to.be.true();
+            });
+
+            it('should match for a.h_e_l_l_o.w_o_r_l_d.b-_c', () => {
+
+                expect(Helpers.routeMatcher(pattern, 'a.h-e-l-l-o.w-o-r-l-d.b-_c')).to.be.true();
+            });
+
+            it('should match for a.h-e_l-l_o.w_o-r_l-d.b-_c', () => {
+
+                expect(Helpers.routeMatcher(pattern, 'a.h-e-l-l-o.w-o-r-l-d.b-_c')).to.be.true();
+            });
+
+            it('should not match for b.h-e_l-l_o.w_o-r_l-d.b-_c', () => {
+
+                expect(Helpers.routeMatcher(pattern, 'b.h-e_l-l_o.w_o-r_l-d.b-_c')).to.be.false();
+            });
+
+            it('should not match for a.h-e_l-l_o.w_o-r_l-d.b', () => {
+
+                expect(Helpers.routeMatcher(pattern, 'a.h-e_l-l_o.w_o-r_l-d.b')).to.be.false();
             });
         });
 
