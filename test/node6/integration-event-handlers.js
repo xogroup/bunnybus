@@ -1,8 +1,8 @@
 'use strict';
 
 const Async = require('async');
-const Code = require('code');
-const Lab = require('lab');
+const Code = require('@hapi/code');
+const Lab = require('@hapi/lab');
 const { PromisifyWrap } = require('../promisify');
 
 const lab = exports.lab = Lab.script();

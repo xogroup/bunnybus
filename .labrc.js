@@ -1,7 +1,7 @@
 'use strict';
 
 const LabConfig = {
-    assert : 'code',
+    assert : '@hapi/code',
     lint : true,
     verbose : true
 };
