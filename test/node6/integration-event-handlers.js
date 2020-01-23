@@ -3,7 +3,7 @@
 const Async = require('async');
 const Code = require('@hapi/code');
 const Lab = require('@hapi/lab');
-const { PromisifyWrap } = require('../promisify');
+const { Promisify } = require('../promisify');
 
 const lab = exports.lab = Lab.script();
 const before = lab.before;
@@ -32,7 +32,7 @@ describe('positive integration tests - event handlers', () => {
 
         beforeEach(async () => {
 
-            return PromisifyWrap((done) => {
+            return Promisify((done) => {
 
                 const handlers = {};
                 handlers['subscribed-event'] = (consumedMessage, ack, reject, requeue) => {};
@@ -48,7 +48,7 @@ describe('positive integration tests - event handlers', () => {
 
         after(async () => {
 
-            return PromisifyWrap((done) => {
+            return Promisify((done) => {
 
                 Async.waterfall([
                     instance._autoConnectChannel,
@@ -60,7 +60,7 @@ describe('positive integration tests - event handlers', () => {
 
         it('should cause `unsubscribed()` to be called', async () => {
 
-            return PromisifyWrap((done) => {
+            return Promisify((done) => {
 
                 instance.once(BunnyBus.UNSUBSCRIBED_EVENT, (queue) => {
 
@@ -87,7 +87,7 @@ describe('positive integration tests - event handlers', () => {
 
         afterEach(async () => {
 
-            return PromisifyWrap((done) => {
+            return Promisify((done) => {
 
                 instance.channel.cancel(instance.subscriptions.get(queueName).consumerTag, (err) => {
 
@@ -100,7 +100,7 @@ describe('positive integration tests - event handlers', () => {
 
         after(async () => {
 
-            return PromisifyWrap((done) => {
+            return Promisify((done) => {
 
                 Async.waterfall([
                     instance._autoConnectChannel,
@@ -112,7 +112,7 @@ describe('positive integration tests - event handlers', () => {
 
         it('should cause `subscribed()` to be called', async () => {
 
-            return PromisifyWrap((done) => {
+            return Promisify((done) => {
 
                 instance.once(BunnyBus.SUBSCRIBED_EVENT, (queue) => {
 
