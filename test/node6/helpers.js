@@ -13,6 +13,7 @@ const EventLogger = require('../../lib/loggers').EventLogger;
 const lab = exports.lab = Lab.script();
 const describe = lab.describe;
 const it = lab.it;
+const beforeEach = lab.beforeEach;
 const expect = Code.expect;
 
 const FakeLoggerFactory = (...levels) => {
@@ -814,6 +815,129 @@ describe('helpers', () => {
             const result = Helpers.isString(() => {});
 
             expect(result).to.be.false();
+        });
+    });
+
+    describe.only('retryAsync', () => {
+
+        let i = undefined;
+
+        beforeEach(() => {
+
+            i = 0;
+        });
+
+        it('should run once', async () => {
+
+            const result = await Helpers.retryAsync(
+                async () => {
+
+                    return ++i;
+                }
+            );
+
+            expect(result).to.equal(1);
+        });
+
+        it('should run twice', async () => {
+
+            const result = await Helpers.retryAsync(
+                async () => {
+
+                    if (++i < 2) {
+                        throw new Error();
+                    }
+
+                    return i;
+                }
+            );
+
+            expect(result).to.equal(2);
+        });
+
+        it('should take longer to run when interval is set with larger wait duration', async () => {
+
+            const startTime = new Date();
+            let endTimeX; let endTimeY;
+            let x; let y = 0;
+
+            await Promise.all([
+                Helpers.retryAsync(
+                    async () => {
+
+                        if (++x < 2) {
+                            throw new Error();
+                        }
+
+                        endTimeX = new Date();
+                    },
+                    100
+                ),
+                Helpers.retryAsync(
+                    async () => {
+
+                        if (++y < 2) {
+                            throw new Error();
+                        }
+
+                        endTimeY = new Date();
+                    },
+                    1000
+                )
+            ]);
+
+            const diffTimeX = endTimeX.getTime() - startTime.getTime();
+            const diffTimeY = endTimeY.getTime() - startTime.getTime();
+
+            expect(diffTimeX).to.be.below(diffTimeY);
+        });
+
+        it('should error when attempt limits are reached', async () => {
+
+            let result = null;
+
+            try {
+                await Helpers.retryAsync(
+                    async () => {
+
+                        ++i;
+                        throw new Error();
+                    },
+                    100,
+                    2
+                );
+            }
+            catch (err) {
+                result = err;
+            }
+
+            expect(i).to.equal(2);
+            expect(result).to.be.an.error(Error, 'Exceeded maximum attempts of retries');
+        });
+
+        it('should error when error filter trips', async () => {
+
+            let result = null;
+
+            try {
+                await Helpers.retryAsync(
+                    async () => {
+
+                        throw new Error();
+                    },
+                    100,
+                    2,
+                    () => {
+
+                        return false;
+                    }
+                );
+            }
+            catch (err) {
+                result = err;
+            }
+
+            expect(result).to.be.an.error(Error, 'Error Filter tripped');
         });
     });
 });
