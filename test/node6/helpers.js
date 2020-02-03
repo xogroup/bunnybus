@@ -975,6 +975,10 @@ describe('helpers', () => {
                 setTimeout(resolve.bind(this, param1), 50);
             });
         };
+        const mockErrorWorkload = async () => {
+
+            throw new Error('Bad workload');
+        };
 
         beforeEach(async () => {
 
@@ -1002,6 +1006,21 @@ describe('helpers', () => {
 
             expect(sut).to.exist();
             expect(sut).to.be.an.error('Timeout occurred');
+        });
+
+        it('should error when workload errors', async () => {
+
+            let sut = null;
+
+            try {
+                await Helpers.timeoutAsync(mockErrorWorkload, 20)();
+            }
+            catch (err) {
+                sut = err;
+            }
+
+            expect(sut).to.exist();
+            expect(sut).to.be.an.error('Bad workload');
         });
     });
 });
