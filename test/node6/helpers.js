@@ -964,4 +964,44 @@ describe('helpers', () => {
             expect(result).to.be.an.error(Error, 'Error Filter tripped');
         });
     });
+
+    describe('timeoutAsync', () => {
+
+        let inputProxy = undefined;
+        const mockWorkload = async (param1) => {
+
+            return await new Promise((resolve) => {
+
+                setTimeout(resolve.bind(this, param1), 50);
+            });
+        };
+
+        beforeEach(async () => {
+
+            inputProxy = undefined;
+        });
+
+        it('should not error when execution is within timeout limit', async () => {
+
+            const result = await Helpers.timeoutAsync(mockWorkload)('hello');
+
+            expect(result).to.exist();
+            expect(result).to.equal('hello');
+        });
+
+        it('should error when execution extend past timeout limit', async () => {
+
+            let sut = null;
+
+            try {
+                await Helpers.timeoutAsync(mockWorkload, 20)('hello');
+            }
+            catch (err) {
+                sut = err;
+            }
+
+            expect(sut).to.exist();
+            expect(sut).to.be.an.error('Timeout occurred');
+        });
+    });
 });
