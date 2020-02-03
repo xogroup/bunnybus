@@ -818,7 +818,7 @@ describe('helpers', () => {
         });
     });
 
-    describe.only('retryAsync', () => {
+    describe('retryAsync', () => {
 
         let i = undefined;
 
@@ -890,6 +890,30 @@ describe('helpers', () => {
             const diffTimeY = endTimeY.getTime() - startTime.getTime();
 
             expect(diffTimeX).to.be.below(diffTimeY);
+        });
+
+        it('should run with interval supplied as a function', async () => {
+
+            let dynamicIntervalResult = 0;
+
+            const result = await Helpers.retryAsync(
+                async () => {
+
+                    if (++i < 3) {
+                        throw new Error();
+                    }
+
+                    return i;
+                },
+                (retryCount) => {
+
+                    dynamicIntervalResult = 50 * Math.pow(2, retryCount);
+                    return dynamicIntervalResult;
+                }
+            );
+
+            expect(result).to.equal(3);
+            expect(dynamicIntervalResult).to.equal(200);
         });
 
         it('should error when attempt limits are reached', async () => {
