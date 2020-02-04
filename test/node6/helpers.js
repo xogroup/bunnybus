@@ -975,6 +975,7 @@ describe('helpers', () => {
                 setTimeout(resolve.bind(this, param1), 50);
             });
         };
+
         const mockErrorWorkload = async () => {
 
             throw new Error('Bad workload');

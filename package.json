@@ -33,7 +33,7 @@
     "url": "https://github.com/xogroup/bunnybus"
   },
   "dependencies": {
-    "amqplib": "^0.5.1",
+    "amqplib": "^0.5.5",
     "async": "^2.3.0"
   },
   "devDependencies": {
