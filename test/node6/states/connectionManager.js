@@ -2,7 +2,8 @@
 
 const Code = require('@hapi/code');
 const Lab = require('@hapi/lab');
-const BunnyBus = require('../../../lib');
+const Events = require('../../../lib/events');
+const BunnyBus = require('../../../lib/index');
 const { ConnectionManager } = require('../../../lib/states');
 
 const { describe, beforeEach, it } = exports.lab = Lab.script();
@@ -206,6 +207,29 @@ describe('state management', () => {
                 expect(result.name).to.equal(baseConnectionName);
                 expect(result.connection).to.not.exist();
                 expect(result.connection).to.be.undefined();
+            });
+        });
+
+        describe('Events', () => {
+
+            const baseConnectionName = 'connection-events';
+            let connectionContext = undefined;
+
+            beforeEach(async () => {
+
+                connectionContext = await instance.create(baseConnectionName, defaultConfiguration);
+            });
+
+            it.only('should emit AMQP_CONNECTION_CLOSE_EVENT when connection closes', async () => {
+
+                const promise = new Promise((resolve) => {
+
+                    connectionContext.on(Events.AMQP_CONNECTION_CLOSE_EVENT, resolve);
+                });
+
+                connectionContext.connection.emit('close');
+
+                await promise;
             });
         });
     });
