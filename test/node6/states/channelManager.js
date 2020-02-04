@@ -115,7 +115,7 @@ describe('state management', () => {
             it('should error when a confirming channel call fails', { timeout: 10000 }, async () => {
 
                 connectionContext.connection.createConfirmChannel = async () => {
-                    
+
                     throw new Error('Mock error');
                 };
 

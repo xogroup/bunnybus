@@ -220,14 +220,68 @@ describe('state management', () => {
                 connectionContext = await instance.create(baseConnectionName, defaultConfiguration);
             });
 
-            it.only('should emit AMQP_CONNECTION_CLOSE_EVENT when connection closes', async () => {
+            it('should emit AMQP_CONNECTION_CLOSE_EVENT when connection closes', async () => {
 
                 const promise = new Promise((resolve) => {
 
-                    connectionContext.on(Events.AMQP_CONNECTION_CLOSE_EVENT, resolve);
+                    connectionContext.once(Events.AMQP_CONNECTION_CLOSE_EVENT, resolve);
                 });
 
                 connectionContext.connection.emit('close');
+
+                await promise;
+            });
+
+            it('should emit AMQP_CONNECTION_ERROR_EVENT when connection errors', async () => {
+
+                let result = null;
+
+                const promise = new Promise((resolve) => {
+
+                    connectionContext.once(Events.AMQP_CONNECTION_ERROR_EVENT, (err) => {
+
+                        result = err;
+                        resolve();
+                    });
+                });
+
+                connectionContext.connection.emit('error', new Error('test'));
+
+                await promise;
+
+                expect(result).to.exist();
+                expect(result).to.be.an.error('test');
+            });
+
+            it('should emit AMQP_CONNECTION_BLOCKED_EVENT when connection is blocked', async () => {
+
+                let result = null;
+
+                const promise = new Promise((resolve) => {
+
+                    connectionContext.once(Events.AMQP_CONNECTION_BLOCKED_EVENT, (reason) => {
+
+                        result = reason;
+                        resolve();
+                    });
+                });
+
+                connectionContext.connection.emit('blocked', 'low memory');
+
+                await promise;
+
+                expect(result).to.exist();
+                expect(result).to.equal('low memory');
+            });
+
+            it('should emit AMQP_CONNECTION_UNBLOCKED_EVENT when connection is unblocked', async () => {
+
+                const promise = new Promise((resolve) => {
+
+                    connectionContext.once(Events.AMQP_CONNECTION_UNBLOCKED_EVENT, resolve);
+                });
+
+                connectionContext.connection.emit('unblocked');
 
                 await promise;
             });
