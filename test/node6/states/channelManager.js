@@ -2,6 +2,7 @@
 
 const Code = require('@hapi/code');
 const Lab = require('@hapi/lab');
+const Events = require('../../../lib/events');
 const BunnyBus = require('../../../lib');
 const { ChannelManager, ConnectionManager } = require('../../../lib/states');
 const Exceptions = require('../../../lib/exceptions');
@@ -218,6 +219,89 @@ describe('state management', () => {
                 expect(result.name).to.equal(baseChannelName);
                 expect(result.channel).to.not.exist();
                 expect(result.channel).to.be.undefined();
+            });
+        });
+
+        describe('Events', () => {
+
+            const baseChannelName = 'channel-events';
+            let channelContext = undefined;
+
+            beforeEach(async () => {
+
+                channelContext = await instance.create(baseChannelName, connectionContext, defaultConfiguration);
+            });
+
+            it('should emit AMQP_CHANNEL_CLOSE_EVENT when channel closes', async () => {
+
+                const promise = new Promise((resolve) => {
+
+                    channelContext.once(Events.AMQP_CHANNEL_CLOSE_EVENT, resolve);
+                });
+
+                channelContext.channel.emit('close');
+
+                await promise;
+            });
+
+            it('should emit AMQP_CHANNEL_ERROR_EVENT when channel errors', async () => {
+
+                let result = null;
+
+                const promise = new Promise((resolve) => {
+
+                    channelContext.once(Events.AMQP_CHANNEL_ERROR_EVENT, (err) => {
+
+                        result = err;
+                        resolve();
+                    });
+                });
+
+                channelContext.channel.emit('error', new Error('test'));
+
+                await promise;
+
+                expect(result).to.exist();
+                expect(result).to.be.an.error('test');
+            });
+
+            it('should emit AMQP_CHANNEL_RETURN_EVENT when channel errors', async () => {
+
+                const payloadObject = {
+                    content: Buffer.from('hello'),
+                    fields: {},
+                    properties: {}
+                };
+
+                let result = null;
+
+                const promise = new Promise((resolve) => {
+
+                    channelContext.once(Events.AMQP_CHANNEL_RETURN_EVENT, (payload) => {
+
+                        result = payload;
+                        resolve();
+                    });
+                });
+
+                channelContext.channel.emit('return', payloadObject);
+
+                await promise;
+
+                expect(result).to.exist();
+                expect(result).to.contain(payloadObject);
+            });
+
+            it('should emit AMQP_CHANNEL_DRAIN_EVENT when channel closes', async () => {
+
+                const promise = new Promise((resolve) => {
+
+                    channelContext.once(Events.AMQP_CHANNEL_DRAIN_EVENT, resolve);
+                });
+
+                channelContext.channel.emit('drain');
+
+                await promise;
             });
         });
     });
