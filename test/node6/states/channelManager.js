@@ -255,14 +255,23 @@ describe('state management', () => {
 
             it('should emit AMQP_CHANNEL_CLOSE_EVENT when channel closes', async () => {
 
+                let result = null;
+
                 const promise = new Promise((resolve) => {
 
-                    channelContext.once(Events.AMQP_CHANNEL_CLOSE_EVENT, resolve);
+                    channelContext.once(Events.AMQP_CHANNEL_CLOSE_EVENT, (context) => {
+
+                        result = context;
+                        resolve();
+                    });
                 });
 
                 channelContext.channel.emit('close');
 
                 await promise;
+
+                expect(result).to.exist();
+                expect(result).to.shallow.equal(channelContext);
             });
 
             it('should unset channel when channel closes', async () => {
@@ -284,13 +293,15 @@ describe('state management', () => {
 
             it('should emit AMQP_CHANNEL_ERROR_EVENT when channel errors', async () => {
 
-                let result = null;
+                let result1 = null;
+                let result2 = null;
 
                 const promise = new Promise((resolve) => {
 
-                    channelContext.once(Events.AMQP_CHANNEL_ERROR_EVENT, (err) => {
+                    channelContext.once(Events.AMQP_CHANNEL_ERROR_EVENT, (err, context) => {
 
-                        result = err;
+                        result1 = err;
+                        result2 = context;
                         resolve();
                     });
                 });
@@ -299,8 +310,10 @@ describe('state management', () => {
 
                 await promise;
 
-                expect(result).to.exist();
-                expect(result).to.be.an.error('test');
+                expect(result1).to.exist();
+                expect(result1).to.be.an.error('test');
+                expect(result2).to.exist();
+                expect(result2).to.shallow.equal(channelContext);
             });
 
             it('should emit AMQP_CHANNEL_RETURN_EVENT when channel errors', async () => {
@@ -311,13 +324,15 @@ describe('state management', () => {
                     properties: {}
                 };
 
-                let result = null;
+                let result1 = null;
+                let result2 = null;
 
                 const promise = new Promise((resolve) => {
 
-                    channelContext.once(Events.AMQP_CHANNEL_RETURN_EVENT, (payload) => {
+                    channelContext.once(Events.AMQP_CHANNEL_RETURN_EVENT, (context, payload) => {
 
-                        result = payload;
+                        result1 = context;
+                        result2 = payload;
                         resolve();
                     });
                 });
@@ -326,20 +341,31 @@ describe('state management', () => {
 
                 await promise;
 
-                expect(result).to.exist();
-                expect(result).to.contain(payloadObject);
+                expect(result1).to.exist();
+                expect(result1).to.shallow.equal(channelContext);
+                expect(result2).to.exist();
+                expect(result2).to.contain(payloadObject);
             });
 
-            it('should emit AMQP_CHANNEL_DRAIN_EVENT when channel closes', async () => {
+            it('should emit AMQP_CHANNEL_DRAIN_EVENT when channel drains', async () => {
+
+                let result = null;
 
                 const promise = new Promise((resolve) => {
 
-                    channelContext.once(Events.AMQP_CHANNEL_DRAIN_EVENT, resolve);
+                    channelContext.once(Events.AMQP_CHANNEL_DRAIN_EVENT, (context) => {
+
+                        result = context;
+                        resolve();
+                    });
                 });
 
                 channelContext.channel.emit('drain');
 
                 await promise;
+
+                expect(result).to.exist();
+                expect(result).to.shallow.equal(channelContext);
             });
         });
     });

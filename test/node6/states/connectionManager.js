@@ -243,14 +243,23 @@ describe('state management', () => {
 
             it('should emit AMQP_CONNECTION_CLOSE_EVENT when connection closes', async () => {
 
+                let result = null;
+
                 const promise = new Promise((resolve) => {
 
-                    connectionContext.once(Events.AMQP_CONNECTION_CLOSE_EVENT, resolve);
+                    connectionContext.once(Events.AMQP_CONNECTION_CLOSE_EVENT, (context) => {
+                        
+                        result = context;
+                        resolve();
+                    });
                 });
 
                 connectionContext.connection.emit('close');
 
                 await promise;
+
+                expect(result).to.exist();
+                expect(result).to.shallow.equal(connectionContext);
             });
 
             it('should unset connection when connection closes', async () => {
@@ -272,13 +281,15 @@ describe('state management', () => {
 
             it('should emit AMQP_CONNECTION_ERROR_EVENT when connection errors', async () => {
 
-                let result = null;
+                let result1 = null;
+                let result2 = null;
 
                 const promise = new Promise((resolve) => {
 
-                    connectionContext.once(Events.AMQP_CONNECTION_ERROR_EVENT, (err) => {
+                    connectionContext.once(Events.AMQP_CONNECTION_ERROR_EVENT, (err, context) => {
 
-                        result = err;
+                        result1 = err;
+                        result2 = context;
                         resolve();
                     });
                 });
@@ -287,19 +298,23 @@ describe('state management', () => {
 
                 await promise;
 
-                expect(result).to.exist();
-                expect(result).to.be.an.error('test');
+                expect(result1).to.exist();
+                expect(result1).to.be.an.error('test');
+                expect(result2).to.exist();
+                expect(result2).to.shallow.equal(connectionContext);
             });
 
             it('should emit AMQP_CONNECTION_BLOCKED_EVENT when connection is blocked', async () => {
 
-                let result = null;
+                let result1 = null;
+                let result2 = null;
 
                 const promise = new Promise((resolve) => {
 
-                    connectionContext.once(Events.AMQP_CONNECTION_BLOCKED_EVENT, (reason) => {
+                    connectionContext.once(Events.AMQP_CONNECTION_BLOCKED_EVENT, (context, reason) => {
 
-                        result = reason;
+                        result1 = context;
+                        result2 = reason;
                         resolve();
                     });
                 });
@@ -308,8 +323,10 @@ describe('state management', () => {
 
                 await promise;
 
-                expect(result).to.exist();
-                expect(result).to.equal('low memory');
+                expect(result1).to.exist();
+                expect(result1).to.shallow.equal(connectionContext);
+                expect(result2).to.exist();
+                expect(result2).to.equal('low memory');
             });
 
             it('should set blocked to true when connection is blocked', async () => {
@@ -335,14 +352,23 @@ describe('state management', () => {
 
             it('should emit AMQP_CONNECTION_UNBLOCKED_EVENT when connection is unblocked', async () => {
 
+                let result = null;
+
                 const promise = new Promise((resolve) => {
 
-                    connectionContext.once(Events.AMQP_CONNECTION_UNBLOCKED_EVENT, resolve);
+                    connectionContext.once(Events.AMQP_CONNECTION_UNBLOCKED_EVENT, (context) => {
+                        
+                        result = context;
+                        resolve();
+                    });
                 });
 
                 connectionContext.connection.emit('unblocked');
 
                 await promise;
+
+                expect(result).to.exist();
+                expect(result).to.shallow.equal(connectionContext);
             });
 
             it('should set blocked to false when connection is unblocked', async () => {
