@@ -180,6 +180,27 @@ describe('state management', () => {
             });
         });
 
+        describe('hasChannel', () => {
+
+            const baseChannelName = 'channel-hasChannelChannel';
+
+            it('should be true when channel exist', async () => {
+
+                await instance.create(baseChannelName, connectionContext, defaultConfiguration);
+
+                const result = instance.hasChannel(baseChannelName);
+
+                expect(result).to.be.true();
+            });
+
+            it('should be false when channel does not exist', async () => {
+
+                const result = instance.hasChannel(baseChannelName);
+
+                expect(result).to.be.false();
+            });
+        });
+
         describe('getChannel', () => {
 
             const baseChannelName = 'channel-getChannelChannel';

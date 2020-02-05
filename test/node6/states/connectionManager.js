@@ -9,7 +9,7 @@ const { ConnectionManager } = require('../../../lib/states');
 const { describe, beforeEach, it } = exports.lab = Lab.script();
 const expect = Code.expect;
 
-describe('state management', () => {
+describe.only('state management', () => {
 
     describe('Connection Manager', () => {
 
@@ -165,6 +165,27 @@ describe('state management', () => {
 
                 expect(result).to.not.exist();
                 expect(result).to.be.undefined();
+            });
+        });
+
+        describe('hasConnection', () => {
+
+            const baseConnectionName = 'connection-hasConnectionConnection';
+
+            it('should be true when connection exist', async () => {
+
+                await instance.create(baseConnectionName, defaultConfiguration);
+
+                const result = instance.hasConnection(baseConnectionName);
+
+                expect(result).to.be.true();
+            });
+
+            it('should be false when connection does not exist', async () => {
+
+                const result = instance.hasConnection(baseConnectionName);
+
+                expect(result).to.be.false();
             });
         });
 
