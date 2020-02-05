@@ -265,6 +265,23 @@ describe('state management', () => {
                 await promise;
             });
 
+            it('should unset channel when channel closes', async () => {
+
+                const promise = new Promise((resolve) => {
+
+                    channelContext.once(Events.AMQP_CHANNEL_CLOSE_EVENT, resolve);
+                });
+
+                channelContext.channel.emit('close');
+
+                await promise; 
+
+                const result = channelContext.channel;
+
+                expect(result).to.not.exist();
+                expect(result).to.be.undefined();
+            });
+
             it('should emit AMQP_CHANNEL_ERROR_EVENT when channel errors', async () => {
 
                 let result = null;
