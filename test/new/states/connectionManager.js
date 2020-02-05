@@ -229,6 +229,33 @@ describe('state management', () => {
                 expect(result.connection).to.not.exist();
                 expect(result.connection).to.be.undefined();
             });
+
+            it('should no-op when connection does not exist', async () => {
+
+                await instance.close(baseConnectionName);
+            });
+        });
+
+        describe('remove', () => {
+
+            const baseConnectionName = 'connetion-removeConnection';
+
+            it('should remove connection when it exist', async () => {
+
+                await instance.create(baseConnectionName, defaultConfiguration);
+
+                await instance.remove(baseConnectionName);
+
+                const result = instance._connections.get(baseConnectionName);
+
+                expect(result).to.not.exist();
+                expect(result).to.be.undefined();
+            });
+
+            it('should no-op when connection does not exist', async () => {
+
+                await instance.remove(baseConnectionName);
+            });
         });
 
         describe('Events', () => {
@@ -248,7 +275,7 @@ describe('state management', () => {
                 const promise = new Promise((resolve) => {
 
                     connectionContext.once(Events.AMQP_CONNECTION_CLOSE_EVENT, (context) => {
-                        
+
                         result = context;
                         resolve();
                     });
@@ -271,7 +298,7 @@ describe('state management', () => {
 
                 connectionContext.connection.emit('close');
 
-                await promise; 
+                await promise;
 
                 const result = connectionContext.connection;
 
@@ -357,7 +384,7 @@ describe('state management', () => {
                 const promise = new Promise((resolve) => {
 
                     connectionContext.once(Events.AMQP_CONNECTION_UNBLOCKED_EVENT, (context) => {
-                        
+
                         result = context;
                         resolve();
                     });
@@ -387,6 +414,69 @@ describe('state management', () => {
                 const result = connectionContext.blocked;
 
                 expect(result).to.be.false();
+            });
+
+            it('should emit CONNECTION_MANAGER_REMOVED from the context when connection is removed', async () => {
+
+                let result = null;
+
+                const promise = new Promise((resolve) => {
+
+                    connectionContext.once(Events.CONNECTION_MANAGER_REMOVED, (context) => {
+
+                        result = context;
+                        resolve();
+                    });
+                });
+
+                await instance.remove(baseConnectionName);
+
+                await promise;
+
+                expect(result).to.exist();
+                expect(result).to.shallow.equal(connectionContext);
+            });
+
+            it('should emit CONNECTION_MANAGER_REMOVED from the manager when connection is removed', async () => {
+
+                let result = null;
+
+                const promise = new Promise((resolve) => {
+
+                    instance.once(Events.CONNECTION_MANAGER_REMOVED, (context) => {
+
+                        result = context;
+                        resolve();
+                    });
+                });
+
+                await instance.remove(baseConnectionName);
+
+                await promise;
+
+                expect(result).to.exist();
+                expect(result).to.shallow.equal(connectionContext);
+            });
+
+            it('should emit AMQP_CONNECTION_CLOSE_EVENT when connection is removed', async () => {
+
+                let result = null;
+
+                const promise = new Promise((resolve) => {
+
+                    connectionContext.once(Events.AMQP_CONNECTION_CLOSE_EVENT, (context) => {
+
+                        result = context;
+                        resolve();
+                    });
+                });
+
+                await instance.remove(baseConnectionName);
+
+                await promise;
+
+                expect(result).to.exist();
+                expect(result).to.shallow.equal(connectionContext);
             });
         });
     });

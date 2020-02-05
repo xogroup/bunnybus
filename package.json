@@ -14,7 +14,7 @@
   ],
   "main": "lib/index.js",
   "scripts": {
-    "test": "lab test/node6",
+    "test": "lab test/new",
     "build-test": ". docker/wait-on-resource.sh && if [ $NODE_VERSION -eq 6 ]; then lab test/node6; else lab test/node6 && lab test/node8; fi",
     "start-docker": "docker run -d --name=rabbitmq -p 5671:5671 -p 15672:15672 -p 5672:5672 rabbitmq:3-management",
     "stop-docker": "docker rm -f rabbitmq",

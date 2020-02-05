@@ -274,6 +274,27 @@ describe('state management', () => {
                 expect(result).to.shallow.equal(channelContext);
             });
 
+            it('should emit AMQP_CHANNEL_CLOSE_EVENT when underlying connection closes', async () => {
+
+                let result = null;
+
+                const promise = new Promise((resolve) => {
+
+                    channelContext.once(Events.AMQP_CHANNEL_CLOSE_EVENT, (context) => {
+
+                        result = context;
+                        resolve();
+                    });
+                });
+
+                await channelContext.connectionContext.connection.close();
+
+                await promise;
+
+                expect(result).to.exist();
+                expect(result).to.shallow.equal(channelContext);
+            });
+
             it('should unset channel when channel closes', async () => {
 
                 const promise = new Promise((resolve) => {
@@ -283,7 +304,7 @@ describe('state management', () => {
 
                 channelContext.channel.emit('close');
 
-                await promise; 
+                await promise;
 
                 const result = channelContext.channel;
 
