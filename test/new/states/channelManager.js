@@ -15,13 +15,16 @@ describe('state management', () => {
     describe('Channel Manager', () => {
 
         let instance = undefined;
+        let connectionManager = undefined;
         let connectionContext = undefined;
         let defaultConfiguration = undefined;
+        let baseConnectionName = 'channel-baseConnection';
 
         beforeEach(async () => {
 
             defaultConfiguration = BunnyBus.DEFAULT_SERVER_CONFIGURATION;
-            connectionContext = await (new ConnectionManager()).create('channel-baseConnection', defaultConfiguration);
+            connectionManager = new ConnectionManager();
+            connectionContext = await connectionManager.create(baseConnectionName, defaultConfiguration);
             instance = new ChannelManager();
         });
 
@@ -241,6 +244,33 @@ describe('state management', () => {
                 expect(result.channel).to.not.exist();
                 expect(result.channel).to.be.undefined();
             });
+
+            it('should no-op when channel does not exist', async () => {
+
+                await instance.remove(baseChannelName);
+            });
+        });
+
+        describe('remove', () => {
+
+            const baseChannelName = 'channel-removeChannel';
+
+            it('should remove channel when it exist', async () => {
+
+                await instance.create(baseChannelName, connectionContext, defaultConfiguration);
+
+                await instance.remove(baseChannelName);
+
+                const result = instance._channels.get(baseChannelName);
+
+                expect(result).to.not.exist();
+                expect(result).to.be.undefined();
+            });
+
+            it('should no-op when channel does not exist', async () => {
+
+                await instance.remove(baseChannelName);
+            });
         });
 
         describe('Events', () => {
@@ -387,6 +417,97 @@ describe('state management', () => {
 
                 expect(result).to.exist();
                 expect(result).to.shallow.equal(channelContext);
+            });
+
+            it('should emit CHANNEL_MANAGER_REMOVED from the context when channel is removed', async () => {
+
+                let result = null;
+
+                const promise = new Promise((resolve) => {
+
+                    channelContext.once(Events.CHANNEL_MANAGER_REMOVED, (context) => {
+
+                        result = context;
+                        resolve();
+                    });
+                });
+
+                await instance.remove(baseChannelName);
+
+                await promise;
+
+                expect(result).to.exist();
+                expect(result).to.shallow.equal(channelContext);
+            });
+
+            it('should emit CHANNEL_MANAGER_REMOVED from the manager when channel is removed', async () => {
+
+                let result = null;
+
+                const promise = new Promise((resolve) => {
+
+                    instance.once(Events.CHANNEL_MANAGER_REMOVED, (context) => {
+
+                        result = context;
+                        resolve();
+                    });
+                });
+
+                await instance.remove(baseChannelName);
+
+                await promise;
+
+                expect(result).to.exist();
+                expect(result).to.shallow.equal(channelContext);
+            });
+
+            it('should emit AMQP_CHANNEL_CLOSE_EVENT when connection is removed', async () => {
+
+                let result = null;
+
+                const promise = new Promise((resolve) => {
+
+                    channelContext.once(Events.AMQP_CHANNEL_CLOSE_EVENT, (context) => {
+
+                        result = context;
+                        resolve();
+                    });
+                });
+
+                await instance.remove(baseChannelName);
+
+                await promise;
+
+                expect(result).to.exist();
+                expect(result).to.shallow.equal(channelContext);
+            });
+
+            it('should remove channel when underlying connection is removed', async () => {
+
+                let result1 = null;
+
+                expect(instance.get(baseChannelName)).to.exist();
+
+                const promise = new Promise((resolve) => {
+
+                    channelContext.once(Events.CHANNEL_MANAGER_REMOVED, (context) => {
+
+                        result1 = context;
+
+                        resolve();
+                    });
+                });
+
+                await connectionManager.remove(baseConnectionName);
+
+                await promise;
+
+                const result2 = instance.get(baseChannelName);
+
+                expect(result1).to.exist();
+                expect(result1).to.shallow.equal(channelContext);
+                expect(result2).to.not.exist();
+                expect(result2).to.be.undefined();
             });
         });
     });
