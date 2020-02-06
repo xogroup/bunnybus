@@ -18,7 +18,7 @@ describe('state management', () => {
         let connectionManager = undefined;
         let connectionContext = undefined;
         let defaultConfiguration = undefined;
-        let baseConnectionName = 'channel-baseConnection';
+        const baseConnectionName = 'channel-baseConnection';
 
         beforeEach(async () => {
 
