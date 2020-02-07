@@ -1,4 +1,5 @@
 'use strict';
+
 const Events = require('../../../lib/events');
 const Helpers = require('../../../lib/helpers');
 

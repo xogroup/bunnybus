@@ -2,16 +2,13 @@
 
 const Code = require('@hapi/code');
 const Lab = require('@hapi/lab');
-const Events = require('../../../lib/events');
-const Helpers = require('../../../lib/helpers');
 const Assertions = require('../assertions');
 const BunnyBus = require('../../../lib');
 
-const { describe, before, beforeEach, it } = exports.lab = Lab.script();
+const { describe, before, beforeEach, after, it } = exports.lab = Lab.script();
 const expect = Code.expect;
 
 let instance = undefined;
-let connectionManager = undefined;
 let connectionContext = undefined;
 let channelManager = undefined;
 let channelContext = undefined;
@@ -22,7 +19,6 @@ describe('BunnyBus', () => {
 
         instance = new BunnyBus();
         instance.config = BunnyBus.DEFAULT_SERVER_CONFIGURATION;
-        connectionManager = instance.connections;
         channelManager = instance.channels;
     });
 
@@ -41,6 +37,11 @@ describe('BunnyBus', () => {
                 await channelContext.channel.deleteExchange(baseExchangeName);
             });
 
+            after(async () => {
+
+                await channelContext.channel.deleteExchange(baseExchangeName);
+            });
+
             it(`should create an exchange with name ${baseExchangeName}`, async () => {
 
                 await Assertions.autoRecoverChannel(async () => {
@@ -51,9 +52,9 @@ describe('BunnyBus', () => {
 
                     try {
                         await channelContext.channel.checkExchange(baseExchangeName);
-                    } 
+                    }
                     catch (err) {
-                        reuslt = err;
+                        result = err;
                     }
 
                     expect(result).to.not.exist();
@@ -76,9 +77,9 @@ describe('BunnyBus', () => {
 
                     try {
                         await channelContext.channel.checkExchange(baseExchangeName);
-                    } 
+                    }
                     catch (err) {
-                        reuslt = err;
+                        result = err;
                     }
 
                     expect(result).to.not.exist();
@@ -95,13 +96,13 @@ describe('BunnyBus', () => {
                     let result = null;
 
                     await instance.createExchange(baseExchangeName, 'topic'),
-                    await instance.createExchange(baseExchangeName, 'topic')
+                    await instance.createExchange(baseExchangeName, 'topic');
 
                     try {
                         await channelContext.channel.checkExchange(baseExchangeName);
-                    } 
+                    }
                     catch (err) {
-                        reuslt = err;
+                        result = err;
                     }
 
                     expect(result).to.not.exist();
