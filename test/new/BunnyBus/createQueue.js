@@ -24,7 +24,7 @@ describe('BunnyBus', () => {
 
     describe('public methods', () => {
 
-        describe.only('createQueue', () => {
+        describe('createQueue', () => {
 
             const baseChannelName = 'bunnybus-createQueue';
             const baseQueueName = 'test-queue';
