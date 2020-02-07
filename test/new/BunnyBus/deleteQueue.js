@@ -24,34 +24,34 @@ describe('BunnyBus', () => {
 
     describe('public methods', () => {
 
-        describe('deleteExchange', () => {
+        describe('deleteQueue', () => {
 
-            const baseChannelName = 'bunnybus-deleteExchange';
-            const baseExchangeName = 'test-exchange';
+            const baseChannelName = 'bunnybus-deleteQueue';
+            const baseQueueName = 'test-queue';
 
             beforeEach(async () => {
 
                 channelContext = await instance._autoBuildChannelContext(baseChannelName);
                 connectionContext = channelContext.connectionContext;
 
-                await channelContext.channel.assertExchange(baseExchangeName, 'topic', BunnyBus.DEFAULT_EXCHANGE_CONFIGURATION);
+                await channelContext.channel.assertQueue(baseQueueName, BunnyBus.DEFAULT_QUEUE_CONFIGURATION);
             });
 
             after(async () => {
 
-                await channelContext.channel.deleteExchange(baseExchangeName);
+                await channelContext.channel.deleteQueue(baseQueueName);
             });
 
-            it(`should delete an exchange with name ${baseExchangeName}`, async () => {
+            it(`should delete an queue with name ${baseQueueName}`, async () => {
 
                 await Assertions.autoRecoverChannel(async () => {
 
                     let result1 = null;
 
-                    const result2 = await instance.deleteExchange(baseExchangeName);
+                    const result2 = await instance.deleteQueue(baseQueueName);
 
                     try {
-                        await channelContext.channel.checkExchange(baseExchangeName);
+                        await channelContext.channel.checkQueue(baseQueueName);
                     }
                     catch (err) {
                         result1 = err;
@@ -59,25 +59,26 @@ describe('BunnyBus', () => {
 
                     expect(result1).to.exist();
                     expect(result2).to.exist();
+                    expect(result2.messageCount).to.equal(0);
                 },
                 connectionContext,
                 channelContext,
                 channelManager);
             });
 
-            it('should not error when deleting exchange concurrently', async () => {
+            it('should not error when deleting queue concurrently', async () => {
 
                 await Assertions.autoRecoverChannel(async () => {
 
                     let result = null;
 
                     await Promise.all([
-                        instance.deleteExchange(baseExchangeName),
-                        instance.deleteExchange(baseExchangeName)
+                        instance.deleteQueue(baseQueueName),
+                        instance.deleteQueue(baseQueueName)
                     ]);
 
                     try {
-                        await channelContext.channel.checkExchange(baseExchangeName);
+                        await channelContext.channel.checkQueue(baseQueueName);
                     }
                     catch (err) {
                         result = err;
@@ -90,17 +91,17 @@ describe('BunnyBus', () => {
                 channelManager);
             });
 
-            it('should not error when deleting exchange sequentially', async () => {
+            it('should not error when deleting queue sequentially', async () => {
 
                 await Assertions.autoRecoverChannel(async () => {
 
                     let result = null;
 
-                    await instance.deleteExchange(baseExchangeName),
-                    await instance.deleteExchange(baseExchangeName);
+                    await instance.deleteQueue(baseQueueName),
+                    await instance.deleteQueue(baseQueueName);
 
                     try {
-                        await channelContext.channel.checkExchange(baseExchangeName);
+                        await channelContext.channel.checkQueue(baseQueueName);
                     }
                     catch (err) {
                         result = err;

@@ -9,21 +9,25 @@ const autoRecoverChannel = async (testFuncAsync, connectionContext, channelConte
 
         let handled = false;
 
-        connectionContext.once(Events.AMQP_CONNECTION_CLOSE_EVENT, () => {
+        connectionContext
+            .removeAllListeners(Events.AMQP_CONNECTION_CLOSE_EVENT)
+            .once(Events.AMQP_CONNECTION_CLOSE_EVENT, () => {
 
-            if (!handled) {
-                handled = true;
-                resolve();
-            }
-        });
+                if (!handled) {
+                    handled = true;
+                    resolve();
+                }
+            });
 
-        channelContext.once(Events.AMQP_CHANNEL_CLOSE_EVENT, () => {
+        channelContext
+            .removeAllListeners(Events.AMQP_CHANNEL_CLOSE_EVENT)
+            .once(Events.AMQP_CHANNEL_CLOSE_EVENT, () => {
 
-            if (!handled) {
-                handled = true;
-                resolve();
-            }
-        });
+                if (!handled) {
+                    handled = true;
+                    resolve();
+                }
+            });
     });
 
     await testFuncAsync();

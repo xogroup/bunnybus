@@ -46,18 +46,21 @@ describe('BunnyBus', () => {
 
                 await Assertions.autoRecoverChannel(async () => {
 
-                    let result = null;
+                    let result1 = null;
 
-                    await instance.createQueue(baseQueueName);
+                    const result2 = await instance.createQueue(baseQueueName);
 
                     try {
                         await channelContext.channel.checkQueue(baseQueueName);
                     }
                     catch (err) {
-                        result = err;
+                        result1 = err;
                     }
 
-                    expect(result).to.not.exist();
+                    expect(result1).to.not.exist();
+                    expect(result2).to.exist();
+                    expect(result2.queue).to.equal(baseQueueName);
+                    expect(result2.messageCount).to.equal(0);
                 },
                 connectionContext,
                 channelContext,
