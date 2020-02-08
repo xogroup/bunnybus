@@ -5,11 +5,13 @@ const Code = require('@hapi/code');
 
 const expect = Code.expect;
 
-const assertConvertToBuffer = (data, callback) => {
+const assertConvertToBuffer = async (data) => {
 
-    Helpers.convertToBuffer(data, (err, result) => {
+    let sut = null;
 
-        expect(err).to.not.exist();
+    try {
+        const result = await Helpers.convertToBufferAsync(data);
+
         expect(result.buffer).to.be.a.instanceof(Buffer);
 
         if (Buffer.isBuffer(data)) {
@@ -20,9 +22,12 @@ const assertConvertToBuffer = (data, callback) => {
             expect(JSON.parse(result.buffer.toString())).to.be.equal(data);
             expect(result.isBuffer).to.be.false();
         }
+    }
+    catch (err) {
+        sut = err;
+    }
 
-        callback();
-    });
+    expect(sut).to.not.exist();
 };
 
 module.exports = assertConvertToBuffer;
