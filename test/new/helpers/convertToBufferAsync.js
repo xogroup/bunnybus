@@ -10,7 +10,7 @@ const expect = Code.expect;
 
 describe('Helpers', () => {
 
-    describe.only('convertToBufferAsync', () => {
+    describe('convertToBufferAsync', () => {
 
         it('should convert a string to a Buffer', async () => {
 
