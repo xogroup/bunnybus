@@ -47,7 +47,7 @@ describe('BunnyBus', () => {
                 await Assertions.autoRecoverChannel(async () => {
 
                     const result1 = await instance.checkQueue(baseQueueName);
-                    const result2 = instance.channels.get(BunnyBus.DEFAULT_MANAGEMENT_CHANNEL_NAME);
+                    const result2 = instance.channels.get(BunnyBus.MANAGEMENT_CHANNEL_NAME());
 
                     expect(result1).be.false();
                     expect(result2.channel).to.exist();
