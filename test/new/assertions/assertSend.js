@@ -1,6 +1,5 @@
 'use strict';
 
-// const Async = require('async');
 const Code = require('@hapi/code');
 
 const expect = Code.expect;
