@@ -21,10 +21,11 @@ describe('BunnyBus', () => {
 
     describe('public methods', () => {
 
-        describe('get', () => {
+        describe('getAll', () => {
 
-            const baseChannelName = 'bunnybus-get';
-            const baseQueueName = 'test-get-queue';
+            const baseChannelName = 'bunnybus-getAll';
+            const baseQueueName = 'test-getAll-queue';
+            const message = { name : 'bunnybus' };
 
             beforeEach(async () => {
 
@@ -39,20 +40,14 @@ describe('BunnyBus', () => {
                 await channelContext.channel.deleteQueue(baseQueueName);
             });
 
-            it('should receive message', async () => {
+            it('should retrieve all message without meta flag', async () => {
 
-                const buffer = Buffer.from('hello world');
-                const options = {
-                    headers: {
-                        foo: 'bar'
-                    },
-                    fields: {
-                        fabri: 'kan'
-                    },
-                    expiration: (new Date()).getTime()
-                };
+                await Assertions.assertGetAll(instance, channelContext, message, baseQueueName, false, 10);
+            });
 
-                await Assertions.assertGet(instance, channelContext, buffer, baseQueueName, options);
+            it('should retrieve all message with meta flag', async () => {
+
+                await Assertions.assertGetAll(instance, channelContext, message, baseQueueName, true, 10);
             });
         });
     });
