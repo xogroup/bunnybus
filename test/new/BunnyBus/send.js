@@ -9,8 +9,6 @@ const { describe, before, beforeEach, after, it } = exports.lab = Lab.script();
 const expect = Code.expect;
 
 let instance = undefined;
-let connectionContext = undefined;
-let channelManager = undefined;
 let channelContext = undefined;
 
 describe('BunnyBus', () => {
@@ -19,12 +17,11 @@ describe('BunnyBus', () => {
 
         instance = new BunnyBus();
         instance.config = BunnyBus.DEFAULT_SERVER_CONFIGURATION;
-        channelManager = instance.channels;
     });
 
     describe('public methods', () => {
 
-        describe.only('send', () => {
+        describe('send', () => {
 
             const baseChannelName = 'bunnybus-send';
             const baseQueueName = 'test-send-queue';
@@ -34,7 +31,6 @@ describe('BunnyBus', () => {
             beforeEach(async () => {
 
                 channelContext = await instance._autoBuildChannelContext(baseChannelName);
-                connectionContext = channelContext.connectionContext;
 
                 await channelContext.channel.deleteQueue(baseQueueName);
             });
