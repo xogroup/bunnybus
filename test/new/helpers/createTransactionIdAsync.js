@@ -9,7 +9,7 @@ const expect = Code.expect;
 
 describe('Helpers', () => {
 
-    describe.only('createTransactionIdAsync', () => {
+    describe('createTransactionIdAsync', () => {
 
         it('should create an 40 character long alphanumeric token', async () => {
 
@@ -30,13 +30,13 @@ describe('Helpers', () => {
         });
 
         it('should create only unique tokens', async () => {
-            
+
             const iterations = 1000;
 
             const result = new Set();
 
             for (let i = 0; i < iterations; ++i) {
-                
+
                 result.add(await Helpers.createTransactionIdAsync());
             }
 
