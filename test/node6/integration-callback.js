@@ -222,6 +222,7 @@ describe('positive integration tests with configuration - Callback api', () => {
         });
     });
 
+    // definitely need to port this
     describe('_recoverConnectChannel', () => {
 
         beforeEach(async () => {
