@@ -1,0 +1,133 @@
+'use strict';
+
+const Code = require('@hapi/code');
+const Lab = require('@hapi/lab');
+const Assertions = require('../assertions');
+const BunnyBus = require('../../../lib');
+
+const { describe, before, beforeEach, after, it } = exports.lab = Lab.script();
+const expect = Code.expect;
+
+let instance = undefined;
+let channelContext = undefined;
+
+describe('BunnyBus', () => {
+
+    before(() => {
+
+        instance = new BunnyBus();
+        instance.config = BunnyBus.DEFAULT_SERVER_CONFIGURATION;
+    });
+
+    describe('public methods', () => {
+
+        describe('publish', () => {
+
+            const baseChannelName = 'bunnybus-publish';
+            const baseQueueName = 'test-publish-queue';
+            const message = { name : 'bunnybus' };
+            const patterns = ['a', 'a.b', 'b', 'b.b', 'z.*'];
+
+            beforeEach(async () => {
+
+                channelContext = await instance._autoBuildChannelContext(baseChannelName);
+
+
+                await channelContext.channel.assertQueue(baseQueueName);
+            });
+
+            before(async () => {
+
+                channelContext = await instance._autoBuildChannelContext(baseChannelName);
+
+                await Promise.all([
+                    channelContext.channel.assertQueue(baseQueueName, BunnyBus.DEFAULT_QUEUE_CONFIGURATION),
+                    channelContext.channel.assertExchange(instance.config.globalExchange, 'topic')
+                ]);
+
+                await channelContext.channel.purgeQueue(baseQueueName);
+
+                await Promise.all(patterns.map((pattern) => channelContext.channel.bindQueue(baseQueueName, instance.config.globalExchange, pattern)));
+            });
+
+            after(async () => {
+
+                await Promise.all([
+                    channelContext.channel.deleteExchange(baseQueueName),
+                    channelContext.channel.deleteQueue(baseQueueName)
+                ]);
+            });
+
+            it('should publish for route `a`', async () => {
+
+                await Assertions.assertPublish(instance, channelContext, message, baseQueueName, 'a', null, null, true, null);
+            });
+
+            it('should publish for route `a`  when miscellaneous amqplib options are included', async () => {
+
+                const amqpOptions = {
+                    expiration: '1000',
+                    userId: 'guest',
+                    CC: 'a',
+                    priority: 1,
+                    persistent: false,
+                    deliveryMode: false,
+                    mandatory:false,
+                    BCC: 'b',
+                    contentType: 'text/plain',
+                    contentEncoding: 'text/plain',
+                    correlationId: 'some_id',
+                    replyTo: 'other_queue',
+                    messageId: 'message_id',
+                    timestamp: 1555099550198,
+                    type: 'some_type',
+                    appId: 'test_app'
+                };
+
+                await Assertions.assertPublish(instance, channelContext, message, baseQueueName, 'a', null, null, true, amqpOptions);
+            });
+
+            it('should publish for route `a.b`', async () => {
+
+                await Assertions.assertPublish(instance, channelContext, message, baseQueueName, 'a.b', null, null, true, null);
+            });
+
+            it('should publish for route `b`', async () => {
+
+                await Assertions.assertPublish(instance, channelContext, message, baseQueueName, 'b', null, null, true, null);
+            });
+
+            it('should publish for route `b.b`', async () => {
+
+                await Assertions.assertPublish(instance, channelContext, message, baseQueueName, 'b.b', null, null, true, null);
+            });
+
+            it('should publish for route `z.a`', async () => {
+
+                await Assertions.assertPublish(instance, channelContext, message, baseQueueName, 'z.a', null, null, true, null);
+            });
+
+            it('should publish for route `z` but not route to queue', async () => {
+
+                await Assertions.assertPublish(instance, channelContext, message, baseQueueName, 'z', null, null, false, null);
+            });
+
+            it('should proxy `source` when supplied', async () => {
+
+                await Assertions.assertPublish(instance, channelContext, message, baseQueueName, 'a', null, 'someModule', true, null);
+            });
+
+            it('should proxy `transactionId` when supplied', async () => {
+
+                await Assertions.assertPublish(instance, channelContext, message, baseQueueName, 'a', 'someTransactionId', null, true, null);
+            });
+
+            it('should publish for route `a` when route key is provided in the message', async () => {
+
+                const messageWithRoute = Object.assign({}, message, { event : 'a' });
+
+                await Assertions.assertPublish(instance, channelContext, messageWithRoute, baseQueueName, null, null, null, true, null);
+            });
+        });
+    });
+});
