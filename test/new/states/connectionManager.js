@@ -2,7 +2,6 @@
 
 const Code = require('@hapi/code');
 const Lab = require('@hapi/lab');
-const Events = require('../../../lib/events');
 const BunnyBus = require('../../../lib/index');
 const { ConnectionManager } = require('../../../lib/states');
 
@@ -274,7 +273,7 @@ describe('state management', () => {
 
                 const promise = new Promise((resolve) => {
 
-                    connectionContext.once(Events.AMQP_CONNECTION_CLOSE_EVENT, (context) => {
+                    connectionContext.once(ConnectionManager.AMQP_CONNECTION_CLOSE_EVENT, (context) => {
 
                         result = context;
                         resolve();
@@ -293,7 +292,7 @@ describe('state management', () => {
 
                 const promise = new Promise((resolve) => {
 
-                    connectionContext.once(Events.AMQP_CONNECTION_CLOSE_EVENT, resolve);
+                    connectionContext.once(ConnectionManager.AMQP_CONNECTION_CLOSE_EVENT, resolve);
                 });
 
                 connectionContext.connection.emit('close');
@@ -313,7 +312,7 @@ describe('state management', () => {
 
                 const promise = new Promise((resolve) => {
 
-                    connectionContext.once(Events.AMQP_CONNECTION_ERROR_EVENT, (err, context) => {
+                    connectionContext.once(ConnectionManager.AMQP_CONNECTION_ERROR_EVENT, (err, context) => {
 
                         result1 = err;
                         result2 = context;
@@ -338,7 +337,7 @@ describe('state management', () => {
 
                 const promise = new Promise((resolve) => {
 
-                    connectionContext.once(Events.AMQP_CONNECTION_BLOCKED_EVENT, (context, reason) => {
+                    connectionContext.once(ConnectionManager.AMQP_CONNECTION_BLOCKED_EVENT, (context, reason) => {
 
                         result1 = context;
                         result2 = reason;
@@ -360,7 +359,7 @@ describe('state management', () => {
 
                 const promise = new Promise((resolve) => {
 
-                    connectionContext.once(Events.AMQP_CONNECTION_BLOCKED_EVENT, (reason) => {
+                    connectionContext.once(ConnectionManager.AMQP_CONNECTION_BLOCKED_EVENT, (reason) => {
 
                         resolve();
                     });
@@ -383,7 +382,7 @@ describe('state management', () => {
 
                 const promise = new Promise((resolve) => {
 
-                    connectionContext.once(Events.AMQP_CONNECTION_UNBLOCKED_EVENT, (context) => {
+                    connectionContext.once(ConnectionManager.AMQP_CONNECTION_UNBLOCKED_EVENT, (context) => {
 
                         result = context;
                         resolve();
@@ -402,7 +401,7 @@ describe('state management', () => {
 
                 const promise = new Promise((resolve) => {
 
-                    connectionContext.once(Events.AMQP_CONNECTION_UNBLOCKED_EVENT, resolve);
+                    connectionContext.once(ConnectionManager.AMQP_CONNECTION_UNBLOCKED_EVENT, resolve);
                 });
 
                 connectionContext.blocked = true;
@@ -416,13 +415,13 @@ describe('state management', () => {
                 expect(result).to.be.false();
             });
 
-            it('should emit CONNECTION_MANAGER_REMOVED from the context when connection is removed', async () => {
+            it('should emit CONNECTION_REMOVED from the context when connection is removed', async () => {
 
                 let result = null;
 
                 const promise = new Promise((resolve) => {
 
-                    connectionContext.once(Events.CONNECTION_MANAGER_REMOVED, (context) => {
+                    connectionContext.once(ConnectionManager.CONNECTION_REMOVED, (context) => {
 
                         result = context;
                         resolve();
@@ -437,13 +436,13 @@ describe('state management', () => {
                 expect(result).to.shallow.equal(connectionContext);
             });
 
-            it('should emit CONNECTION_MANAGER_REMOVED from the manager when connection is removed', async () => {
+            it('should emit CONNECTION_REMOVED from the manager when connection is removed', async () => {
 
                 let result = null;
 
                 const promise = new Promise((resolve) => {
 
-                    instance.once(Events.CONNECTION_MANAGER_REMOVED, (context) => {
+                    instance.once(ConnectionManager.CONNECTION_REMOVED, (context) => {
 
                         result = context;
                         resolve();
@@ -464,7 +463,7 @@ describe('state management', () => {
 
                 const promise = new Promise((resolve) => {
 
-                    connectionContext.once(Events.AMQP_CONNECTION_CLOSE_EVENT, (context) => {
+                    connectionContext.once(ConnectionManager.AMQP_CONNECTION_CLOSE_EVENT, (context) => {
 
                         result = context;
                         resolve();

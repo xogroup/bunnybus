@@ -3,7 +3,6 @@
 const Code = require('@hapi/code');
 const Lab = require('@hapi/lab');
 const BunnyBus = require('../../../../lib');
-const Events = require('../../../../lib/events');
 
 const { describe, before, beforeEach, after, afterEach, it } = exports.lab = Lab.script();
 const expect = Code.expect;
@@ -15,7 +14,7 @@ let channelContext = undefined;
 
 describe('BunnyBus', () => {
 
-    describe('Events', () => {
+    describe('events', () => {
 
         before(async () => {
 
@@ -50,7 +49,7 @@ describe('BunnyBus', () => {
 
                 await new Promise(async (resolve) => {
 
-                    instance.once(Events.UNSUBSCRIBED_EVENT, (queue) => {
+                    instance.once(BunnyBus.UNSUBSCRIBED_EVENT, (queue) => {
 
                         expect(queue).to.be.equal(baseQueueName);
 
@@ -76,7 +75,7 @@ describe('BunnyBus', () => {
 
                 await new Promise(async (resolve) => {
 
-                    instance.once(Events.SUBSCRIBED_EVENT, (queue) => {
+                    instance.once(BunnyBus.SUBSCRIBED_EVENT, (queue) => {
 
                         expect(queue).to.be.equal(baseQueueName);
 

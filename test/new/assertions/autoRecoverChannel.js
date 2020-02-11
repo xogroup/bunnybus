@@ -1,6 +1,6 @@
 'use strict';
 
-const Events = require('../../../lib/events');
+const { ChannelManager, ConnectionManager } = require('../../../lib/states');
 const Helpers = require('../../../lib/helpers');
 
 const autoRecoverChannel = async (testFuncAsync, connectionContext, channelContext, channelManager) => {
@@ -10,8 +10,8 @@ const autoRecoverChannel = async (testFuncAsync, connectionContext, channelConte
         let handled = false;
 
         connectionContext
-            .removeAllListeners(Events.AMQP_CONNECTION_CLOSE_EVENT)
-            .once(Events.AMQP_CONNECTION_CLOSE_EVENT, () => {
+            .removeAllListeners(ConnectionManager.AMQP_CONNECTION_CLOSE_EVENT)
+            .once(ConnectionManager.AMQP_CONNECTION_CLOSE_EVENT, () => {
 
                 if (!handled) {
                     handled = true;
@@ -20,8 +20,8 @@ const autoRecoverChannel = async (testFuncAsync, connectionContext, channelConte
             });
 
         channelContext
-            .removeAllListeners(Events.AMQP_CHANNEL_CLOSE_EVENT)
-            .once(Events.AMQP_CHANNEL_CLOSE_EVENT, () => {
+            .removeAllListeners(ChannelManager.AMQP_CHANNEL_CLOSE_EVENT)
+            .once(ChannelManager.AMQP_CHANNEL_CLOSE_EVENT, () => {
 
                 if (!handled) {
                     handled = true;

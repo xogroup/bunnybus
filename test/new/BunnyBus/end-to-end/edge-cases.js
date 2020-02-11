@@ -3,7 +3,7 @@
 const Code = require('@hapi/code');
 const Lab = require('@hapi/lab');
 const BunnyBus = require('../../../../lib');
-const Events = require('../../../../lib/events');
+const { ChannelManager } = require('../../../../lib/states');
 
 const { describe, before, beforeEach, after, afterEach, it } = exports.lab = Lab.script();
 const expect = Code.expect;
@@ -38,8 +38,8 @@ describe('BunnyBus', () => {
                 await new Promise((resolve) => {
 
                     channelContext
-                        .removeAllListeners(Events.AMQP_CHANNEL_CLOSE_EVENT)
-                        .once(Events.AMQP_CHANNEL_CLOSE_EVENT, resolve);
+                        .removeAllListeners(ChannelManager.AMQP_CHANNEL_CLOSE_EVENT)
+                        .once(ChannelManager.AMQP_CHANNEL_CLOSE_EVENT, resolve);
                 });
             });
 
@@ -94,7 +94,7 @@ describe('BunnyBus', () => {
 
                     await new Promise((resolve) => {
 
-                        channelManager.once(Events.CHANNEL_MANAGER_REMOVED, resolve);
+                        channelManager.once(ChannelManager.CHANNEL_REMOVED, resolve);
                     });
                 }
 

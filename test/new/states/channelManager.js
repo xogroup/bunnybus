@@ -2,7 +2,6 @@
 
 const Code = require('@hapi/code');
 const Lab = require('@hapi/lab');
-const Events = require('../../../lib/events');
 const BunnyBus = require('../../../lib');
 const { ChannelManager, ConnectionManager } = require('../../../lib/states');
 const Exceptions = require('../../../lib/exceptions');
@@ -289,7 +288,7 @@ describe('state management', () => {
 
                 const promise = new Promise((resolve) => {
 
-                    channelContext.once(Events.AMQP_CHANNEL_CLOSE_EVENT, (context) => {
+                    channelContext.once(ChannelManager.AMQP_CHANNEL_CLOSE_EVENT, (context) => {
 
                         result = context;
                         resolve();
@@ -310,7 +309,7 @@ describe('state management', () => {
 
                 const promise = new Promise((resolve) => {
 
-                    channelContext.once(Events.AMQP_CHANNEL_CLOSE_EVENT, (context) => {
+                    channelContext.once(ChannelManager.AMQP_CHANNEL_CLOSE_EVENT, (context) => {
 
                         result = context;
                         resolve();
@@ -329,7 +328,7 @@ describe('state management', () => {
 
                 const promise = new Promise((resolve) => {
 
-                    channelContext.once(Events.AMQP_CHANNEL_CLOSE_EVENT, resolve);
+                    channelContext.once(ChannelManager.AMQP_CHANNEL_CLOSE_EVENT, resolve);
                 });
 
                 channelContext.channel.emit('close');
@@ -349,7 +348,7 @@ describe('state management', () => {
 
                 const promise = new Promise((resolve) => {
 
-                    channelContext.once(Events.AMQP_CHANNEL_ERROR_EVENT, (err, context) => {
+                    channelContext.once(ChannelManager.AMQP_CHANNEL_ERROR_EVENT, (err, context) => {
 
                         result1 = err;
                         result2 = context;
@@ -380,7 +379,7 @@ describe('state management', () => {
 
                 const promise = new Promise((resolve) => {
 
-                    channelContext.once(Events.AMQP_CHANNEL_RETURN_EVENT, (context, payload) => {
+                    channelContext.once(ChannelManager.AMQP_CHANNEL_RETURN_EVENT, (context, payload) => {
 
                         result1 = context;
                         result2 = payload;
@@ -404,7 +403,7 @@ describe('state management', () => {
 
                 const promise = new Promise((resolve) => {
 
-                    channelContext.once(Events.AMQP_CHANNEL_DRAIN_EVENT, (context) => {
+                    channelContext.once(ChannelManager.AMQP_CHANNEL_DRAIN_EVENT, (context) => {
 
                         result = context;
                         resolve();
@@ -419,13 +418,13 @@ describe('state management', () => {
                 expect(result).to.shallow.equal(channelContext);
             });
 
-            it('should emit CHANNEL_MANAGER_REMOVED from the context when channel is removed', async () => {
+            it('should emit CHANNEL_REMOVED from the context when channel is removed', async () => {
 
                 let result = null;
 
                 const promise = new Promise((resolve) => {
 
-                    channelContext.once(Events.CHANNEL_MANAGER_REMOVED, (context) => {
+                    channelContext.once(ChannelManager.CHANNEL_REMOVED, (context) => {
 
                         result = context;
                         resolve();
@@ -440,13 +439,13 @@ describe('state management', () => {
                 expect(result).to.shallow.equal(channelContext);
             });
 
-            it('should emit CHANNEL_MANAGER_REMOVED from the manager when channel is removed', async () => {
+            it('should emit CHANNEL_REMOVED from the manager when channel is removed', async () => {
 
                 let result = null;
 
                 const promise = new Promise((resolve) => {
 
-                    instance.once(Events.CHANNEL_MANAGER_REMOVED, (context) => {
+                    instance.once(ChannelManager.CHANNEL_REMOVED, (context) => {
 
                         result = context;
                         resolve();
@@ -467,7 +466,7 @@ describe('state management', () => {
 
                 const promise = new Promise((resolve) => {
 
-                    channelContext.once(Events.AMQP_CHANNEL_CLOSE_EVENT, (context) => {
+                    channelContext.once(ChannelManager.AMQP_CHANNEL_CLOSE_EVENT, (context) => {
 
                         result = context;
                         resolve();
@@ -490,7 +489,7 @@ describe('state management', () => {
 
                 const promise = new Promise((resolve) => {
 
-                    channelContext.once(Events.CHANNEL_MANAGER_REMOVED, (context) => {
+                    channelContext.once(ChannelManager.CHANNEL_REMOVED, (context) => {
 
                         result1 = context;
 

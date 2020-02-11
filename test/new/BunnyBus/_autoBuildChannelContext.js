@@ -2,7 +2,7 @@
 
 const Code = require('@hapi/code');
 const Lab = require('@hapi/lab');
-const Events = require('../../../lib/events');
+const { ChannelManager } = require('../../../lib/states');
 const Helpers = require('../../../lib/helpers');
 const BunnyBus = require('../../../lib');
 
@@ -39,7 +39,7 @@ describe('BunnyBus', () => {
 
                         const promise = new Promise((resolve) => {
 
-                            channelManager.on(Events.CHANNEL_MANAGER_REMOVED, resolve);
+                            channelManager.on(ChannelManager.CHANNEL_REMOVED, resolve);
                         });
 
                         await connectionManager.remove(BunnyBus.DEFAULT_CONNECTION_NAME);
@@ -94,7 +94,7 @@ describe('BunnyBus', () => {
 
                         const promise = new Promise((resolve) => {
 
-                            channelManager.on(Events.CHANNEL_MANAGER_REMOVED, resolve);
+                            channelManager.on(ChannelManager.CHANNEL_REMOVED, resolve);
                         });
 
                         await connectionManager.remove(BunnyBus.DEFAULT_CONNECTION_NAME);
@@ -145,7 +145,7 @@ describe('BunnyBus', () => {
 
                         const promise = new Promise((resolve) => {
 
-                            channelManager.on(Events.CHANNEL_MANAGER_REMOVED, resolve);
+                            channelManager.on(ChannelManager.CHANNEL_REMOVED, resolve);
                         });
 
                         await connectionManager.remove(BunnyBus.DEFAULT_CONNECTION_NAME);
@@ -169,7 +169,7 @@ describe('BunnyBus', () => {
 
                     const promise = new Promise((resolve) => {
 
-                        channelContext.once(Events.AMQP_CHANNEL_CLOSE_EVENT, resolve);
+                        channelContext.once(ChannelManager.AMQP_CHANNEL_CLOSE_EVENT, resolve);
                     });
 
                     await connectionManager.close(BunnyBus.DEFAULT_CONNECTION_NAME);
