@@ -51,7 +51,7 @@ describe('BunnyBus', () => {
                 ]);
             });
 
-            it.only('should ack a message off the queue', async () => {
+            it('should ack a message off the queue', async () => {
 
                 await Assertions.autoRecoverChannel(async () => {
 
