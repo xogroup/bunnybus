@@ -18,6 +18,10 @@ const assertSend = async (instance, channelContext, message, queueName, transact
 
     await instance.send(message, queueName, options);
 
+    if (!channelContext.channel) {
+        await instance._autoBuildChannelContext(channelContext.name);
+    }
+
     const result = await channelContext.channel.get(queueName);
 
     const sentMessage = JSON.parse(result.content.toString());
