@@ -9,6 +9,8 @@ const { describe, before, beforeEach, after, it } = exports.lab = Lab.script();
 const expect = Code.expect;
 
 let instance = undefined;
+let connectionManager = undefined;
+let channelManager = undefined;
 let channelContext = undefined;
 
 describe('BunnyBus', () => {
@@ -17,6 +19,8 @@ describe('BunnyBus', () => {
 
         instance = new BunnyBus();
         instance.config = BunnyBus.DEFAULT_SERVER_CONFIGURATION;
+        connectionManager = instance.connections;
+        channelManager = instance.channels;
     });
 
     describe('public methods', () => {
@@ -25,6 +29,16 @@ describe('BunnyBus', () => {
 
             const baseChannelName = 'bunnybus-get';
             const baseQueueName = 'test-get-queue';
+            const buffer = Buffer.from('hello world');
+            const options = {
+                headers: {
+                    foo: 'bar'
+                },
+                fields: {
+                    fabri: 'kan'
+                },
+                expiration: (new Date()).getTime()
+            };
 
             beforeEach(async () => {
 
@@ -41,18 +55,17 @@ describe('BunnyBus', () => {
 
             it('should receive message', async () => {
 
-                const buffer = Buffer.from('hello world');
-                const options = {
-                    headers: {
-                        foo: 'bar'
-                    },
-                    fields: {
-                        fabri: 'kan'
-                    },
-                    expiration: (new Date()).getTime()
-                };
+                await Assertions.assertGet(instance, channelContext, null, null, buffer, baseQueueName, options);
+            });
 
-                await Assertions.assertGet(instance, channelContext, buffer, baseQueueName, options);
+            it('should not error when connection does not pre-exist', async () => {
+
+                await Assertions.assertGet(instance, channelContext, connectionManager, null, buffer, baseQueueName, options);
+            });
+
+            it('should not error when channel does not pre-exist', async () => {
+
+                await Assertions.assertGet(instance, channelContext, null, channelManager, buffer, baseQueueName, options);
             });
         });
     });

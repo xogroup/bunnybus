@@ -1,11 +1,11 @@
 'use strict';
 
-// const Async = require('async');
 const Code = require('@hapi/code');
+const BunnyBus = require('../../../lib');
 
 const expect = Code.expect;
 
-const assertGetAll = async (instance, channelContext, message, queueName, meta, limit) => {
+const assertGetAll = async (instance, channelContext, connectionManager, channelManager, message, queueName, meta, limit) => {
 
     const buffer = Buffer.from(JSON.stringify(message));
 
@@ -38,6 +38,16 @@ const assertGetAll = async (instance, channelContext, message, queueName, meta, 
 
     for (let i = 0; i < limit; ++i) {
         await channelContext.channel.sendToQueue(queueName, buffer);
+    }
+
+    await channelContext.channel.waitForConfirms();
+
+    if (connectionManager) {
+        await connectionManager.close(BunnyBus.DEFAULT_CONNECTION_NAME);
+    }
+
+    if (channelManager) {
+        await channelManager.close(BunnyBus.QUEUE_CHANNEL_NAME(queueName));
     }
 
     await instance.getAll(queueName, handler, options);
