@@ -9,7 +9,7 @@ const expect = Code.expect;
 
 describe('BunnyBus', () => {
 
-    describe.only('configuration', () => {
+    describe('configuration', () => {
 
         it('should generate an instance when valid configurations are passed to the constructor', () => {
 
