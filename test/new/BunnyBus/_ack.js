@@ -9,6 +9,7 @@ const { describe, before, beforeEach, after, afterEach, it } = exports.lab = Lab
 const expect = Code.expect;
 
 let instance = undefined;
+let connectionManager = undefined;
 let connectionContext = undefined;
 let channelContext = undefined;
 let channelManager = undefined;
@@ -19,6 +20,7 @@ describe('BunnyBus', () => {
 
         instance = new BunnyBus();
         instance.config = BunnyBus.DEFAULT_SERVER_CONFIGURATION;
+        connectionManager = instance.connections;
         channelManager = instance.channels;
     });
 
@@ -63,6 +65,38 @@ describe('BunnyBus', () => {
 
                     expect(result.queue).to.be.equal(baseQueueName);
                     expect(result.messageCount).to.be.equal(0);
+                },
+                connectionContext,
+                channelContext,
+                channelManager);
+            });
+
+            it('should not error when connection does not pre-exist', async () => {
+
+                await Assertions.autoRecoverChannel(async () => {
+
+                    await instance.publish(message);
+                    const payload = await instance.get(baseQueueName);
+
+                    await connectionManager.close(BunnyBus.DEFAULT_CONNECTION_NAME);
+
+                    await instance._ack(payload, BunnyBus.QUEUE_CHANNEL_NAME(baseQueueName));
+                },
+                connectionContext,
+                channelContext,
+                channelManager);
+            });
+
+            it('should not error when channel does not pre-exist', async () => {
+
+                await Assertions.autoRecoverChannel(async () => {
+
+                    await instance.publish(message);
+                    const payload = await instance.get(baseQueueName);
+
+                    await channelManager.close(BunnyBus.QUEUE_CHANNEL_NAME(baseQueueName));
+
+                    await instance._ack(payload, BunnyBus.QUEUE_CHANNEL_NAME(baseQueueName));
                 },
                 connectionContext,
                 channelContext,
