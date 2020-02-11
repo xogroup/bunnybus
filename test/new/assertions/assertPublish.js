@@ -17,6 +17,11 @@ const assertPublish = async (instance, channelContext, message, queueName, route
     }
 
     await instance.publish(message, options);
+
+    if (!channelContext.channel) {
+        await instance._autoBuildChannelContext(channelContext.name);
+    }
+
     const payload = await channelContext.channel.get(queueName);
 
     if (shouldRoute) {

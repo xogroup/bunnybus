@@ -9,6 +9,8 @@ const { describe, before, beforeEach, after, it } = exports.lab = Lab.script();
 const expect = Code.expect;
 
 let instance = undefined;
+let connectionManager = undefined;
+let channelManager = undefined;
 let channelContext = undefined;
 
 describe('BunnyBus', () => {
@@ -17,6 +19,8 @@ describe('BunnyBus', () => {
 
         instance = new BunnyBus();
         instance.config = BunnyBus.DEFAULT_SERVER_CONFIGURATION;
+        connectionManager = instance.connections;
+        channelManager = instance.channels;
     });
 
     describe('public methods', () => {
@@ -127,6 +131,20 @@ describe('BunnyBus', () => {
                 const messageWithRoute = Object.assign({}, message, { event : 'a' });
 
                 await Assertions.assertPublish(instance, channelContext, messageWithRoute, baseQueueName, null, null, null, true, null);
+            });
+
+            it('should not error when connection does not pre-exist', async () => {
+
+                await connectionManager.close(BunnyBus.DEFAULT_CONNECTION_NAME);
+
+                await Assertions.assertPublish(instance, channelContext, message, baseQueueName, 'a', null, null, true, null);
+            });
+
+            it('should not error when channel does not pre-exist', async () => {
+
+                await channelManager.close(BunnyBus.QUEUE_CHANNEL_NAME(baseQueueName));
+
+                await Assertions.assertPublish(instance, channelContext, message, baseQueueName, 'a', null, null, true, null);
             });
         });
     });
