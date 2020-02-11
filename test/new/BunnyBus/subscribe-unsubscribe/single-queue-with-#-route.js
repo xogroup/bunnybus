@@ -56,16 +56,16 @@ describe('BunnyBus', () => {
             it('should consume message (Object) from queue and acknowledge off', async () => {
 
                 return new Promise(async (resolve) => {
-    
+
                     const handlers = {};
                     handlers[subscriptionKey] = async (consumedMessage, ack) => {
-    
+
                         expect(consumedMessage).to.be.equal(routableObject);
 
                         await ack();
                         resolve();
                     };
-    
+
                     await instance.subscribe(baseQueueName, handlers);
                     await instance.publish(routableObject);
                 });

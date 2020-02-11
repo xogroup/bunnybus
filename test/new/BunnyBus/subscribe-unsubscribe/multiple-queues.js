@@ -58,12 +58,12 @@ describe('BunnyBus', () => {
             it('should consume message from two queues and acknowledge off', async () => {
 
                 return new Promise(async (resolve) => {
-    
+
                     const handlers = {};
                     let counter = 0;
-    
+
                     handlers[message.event] = async (consumedMessage, ack) => {
-    
+
                         expect(consumedMessage.name).to.be.equal(message.name);
                         await ack();
 
@@ -71,13 +71,13 @@ describe('BunnyBus', () => {
                             resolve();
                         }
                     };
-    
+
                     await Promise.all([
                         instance.subscribe(baseQueueName1, handlers),
                         instance.subscribe(baseQueueName2, handlers)
-                    ])
+                    ]);
 
-                    await instance.publish(message)
+                    await instance.publish(message);
                 });
             });
         });
