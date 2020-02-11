@@ -2,7 +2,6 @@
 
 const Code = require('@hapi/code');
 const Lab = require('@hapi/lab');
-// const Assertions = require('../assertions');
 const BunnyBus = require('../../../../lib');
 
 const { describe, before, beforeEach, after, afterEach, it } = exports.lab = Lab.script();
