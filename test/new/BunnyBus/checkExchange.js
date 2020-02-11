@@ -9,6 +9,7 @@ const { describe, before, beforeEach, after, it } = exports.lab = Lab.script();
 const expect = Code.expect;
 
 let instance = undefined;
+let connectionManager = undefined;
 let connectionContext = undefined;
 let channelManager = undefined;
 let channelContext = undefined;
@@ -19,6 +20,7 @@ describe('BunnyBus', () => {
 
         instance = new BunnyBus();
         instance.config = BunnyBus.DEFAULT_SERVER_CONFIGURATION;
+        connectionManager = instance.connections;
         channelManager = instance.channels;
     });
 
@@ -60,6 +62,38 @@ describe('BunnyBus', () => {
             it('should be true when exchange does exist', async () => {
 
                 await channelContext.channel.assertExchange(baseExchangeName, 'topic', BunnyBus.DEFAULT_EXCHANGE_CONFIGURATION);
+
+                await Assertions.autoRecoverChannel(async () => {
+
+                    const result = await instance.checkExchange(baseExchangeName);
+
+                    expect(result).be.true();
+                },
+                connectionContext,
+                channelContext,
+                channelManager);
+            });
+
+            it('should not error when connection does not pre-exist', async () => {
+
+                await channelContext.channel.assertExchange(baseExchangeName, 'topic', BunnyBus.DEFAULT_EXCHANGE_CONFIGURATION);
+                await connectionManager.close(BunnyBus.DEFAULT_CONNECTION_NAME);
+
+                await Assertions.autoRecoverChannel(async () => {
+
+                    const result = await instance.checkExchange(baseExchangeName);
+
+                    expect(result).be.true();
+                },
+                connectionContext,
+                channelContext,
+                channelManager);
+            });
+
+            it('should not error when channel does not pre-exist', async () => {
+
+                await channelContext.channel.assertExchange(baseExchangeName, 'topic', BunnyBus.DEFAULT_EXCHANGE_CONFIGURATION);
+                await channelManager.close(BunnyBus.MANAGEMENT_CHANNEL_NAME());
 
                 await Assertions.autoRecoverChannel(async () => {
 

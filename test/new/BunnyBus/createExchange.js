@@ -9,6 +9,7 @@ const { describe, before, beforeEach, after, it } = exports.lab = Lab.script();
 const expect = Code.expect;
 
 let instance = undefined;
+let connectionManager = undefined;
 let connectionContext = undefined;
 let channelManager = undefined;
 let channelContext = undefined;
@@ -19,6 +20,7 @@ describe('BunnyBus', () => {
 
         instance = new BunnyBus();
         instance.config = BunnyBus.DEFAULT_SERVER_CONFIGURATION;
+        connectionManager = instance.connections;
         channelManager = instance.channels;
     });
 
@@ -98,6 +100,57 @@ describe('BunnyBus', () => {
                     let result = null;
 
                     await instance.createExchange(baseExchangeName, 'topic'),
+                    await instance.createExchange(baseExchangeName, 'topic');
+
+                    try {
+                        await channelContext.channel.checkExchange(baseExchangeName);
+                    }
+                    catch (err) {
+                        result = err;
+                    }
+
+                    expect(result).to.not.exist();
+                },
+                connectionContext,
+                channelContext,
+                channelManager);
+            });
+
+            it('should not error when connection does not pre-exist', async () => {
+
+                await connectionManager.close(BunnyBus.DEFAULT_CONNECTION_NAME);
+
+                await Assertions.autoRecoverChannel(async () => {
+
+                    let result = null;
+
+                    await instance.createExchange(baseExchangeName, 'topic');
+
+                    try {
+                        // removing the connection cancels all channels attached to it.
+                        // so we have to reinstate the channel used for this test as well
+                        await instance._autoBuildChannelContext(baseChannelName);
+                        await channelContext.channel.checkExchange(baseExchangeName);
+                    }
+                    catch (err) {
+                        result = err;
+                    }
+
+                    expect(result).to.not.exist();
+                },
+                connectionContext,
+                channelContext,
+                channelManager);
+            });
+
+            it('should not error when channel does not pre-exist', async () => {
+
+                await channelManager.close(BunnyBus.MANAGEMENT_CHANNEL_NAME());
+
+                await Assertions.autoRecoverChannel(async () => {
+
+                    let result = null;
+
                     await instance.createExchange(baseExchangeName, 'topic');
 
                     try {
