@@ -1334,6 +1334,78 @@ describe('positive integration tests with configuration - Callback api', () => {
         });
     });
 
+    describe('subscribe with no queue bind option', () => {
+
+        const queueName = 'test-subscribe-queue-with-no-bind';
+        const errorQueueName = `${queueName}_error`;
+        const publishOptions = { routeKey : 'a.b' };
+        const subscribeOptionsWithMeta = { meta : true };
+        const messageObject = { event : 'a.b', name : 'bunnybus' };
+        const messageString = 'bunnybus';
+        const messageBuffer = Buffer.from(messageString);
+
+        before(async () => {
+
+            return Promisify((done) => {
+
+                Async.waterfall([
+                    instance._autoConnectChannel,
+                    instance.deleteExchange.bind(instance, instance.config.globalExchange),
+                    instance.deleteQueue.bind(instance, queueName),
+                    instance.deleteQueue.bind(instance, errorQueueName)
+                ], done);
+            });
+        });
+
+        afterEach(async () => {
+
+            return Promisify(instance.unsubscribe, queueName);
+        });
+
+        after(async () => {
+
+            return Promisify((done) => {
+
+                Async.waterfall([
+                    instance._autoConnectChannel,
+                    instance.deleteExchange.bind(instance, instance.config.globalExchange),
+                    instance.deleteQueue.bind(instance, queueName),
+                    instance.deleteQueue.bind(instance, errorQueueName)
+                ], done);
+            });
+        });
+
+        it('should consume message (Object) from queue and acknowledge off', async () => {
+
+            return Promisify((done) => {
+
+                const handlers = {};
+                handlers[messageObject.event] = (consumedMessage, ack) => {
+
+                    expect(consumedMessage).to.be.equal(messageObject);
+
+                    ack(null, done.bind(null, new Error('should not have gotten here')));
+                };
+
+                Async.waterfall([
+                    instance.subscribe.bind(instance, queueName, handlers, { disableQueueBind: true }),
+                    instance.publish.bind(instance, messageObject),
+                    instance.get.bind(instance, queueName)
+                ],
+                (err, result) => {
+
+                    if (err) {
+                        done(err);
+                    }
+
+                    expect(result).to.be.false();
+
+                    done();
+                });
+            });
+        });
+    });
+
     describe('_ack', () => {
 
         const queueName = 'test-acknowledge-queue-1';

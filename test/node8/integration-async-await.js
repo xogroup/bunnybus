@@ -1113,7 +1113,6 @@ describe('negative integration tests', () => {
 
             try {
                 await instance._createChannel();
-                console.log('Foo');
                 return throwError();
             }
             catch (err) {

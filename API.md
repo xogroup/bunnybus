@@ -149,7 +149,9 @@ Setter and Getter for singleton configuration. Accepts the following optional pr
  * `prefetch` - value of the maximum number of unacknowledged messages allowable in a channel.  Defaults to `5`. *[number]* **Optional**
  * `maxRetryCount` - maximum amount of attempts a message can be requeued.  This is the default used when one is not provided within the `options` for any `BunnyBus` methods that supports one transactionally. Defaults to `10`. *[number]* **Optional**
  * `validatePublisher` - flag to dictate if the publishing source for messages being consumed must be `bunnyBus`.  This is a safe guard to prevent unexpected message sources from entering the subscribing realm. A value of `bunnyBus` is stamped as a header property on the message during `publish()`.  The `subscribe()` method will use the same value for authentication.  Consumers detecting mismatched publishers will auto reject the message into an error queue.  Defaults to `false`. *[boolean]* **Optional**
- * `validateVersion` - flag to dictate if major semver should be matched as part of the message subscription valiation.  This is a safe guard to prevent mismatched `bunnyBus` drivers from pub/sub to each other.  Consumers detecting mismatched major values will auto reject the message into an error queue.  In order for this layer of validation to occur, `validatePublisher` must be allowed because the version value is set against the `bunnyBus` header.   Defaults to `false`. *[boolean]* **Optional**
+ * `validateVersion` - flag to dictate if major semver should be matched as part of the message subscription validation.  This is a safe guard to prevent mismatched 
+ `bunnyBus` drivers from pub/sub to each other.  Consumers detecting mismatched major values will auto reject the message into an error queue.  In order for this layer of validation to occur, `validatePublisher` must be allowed because the version value is set against the `bunnyBus` header.   Defaults to `false`. *[boolean]* **Optional**
+ * `disableQueueBind` = flag to dictate if automatic queue binding should be turned on/off as part of the consume setup process.  Defaults to `false`.  *[boolean]* **Optional**
 
 Note that updates in the options directed at changing connection string will not take affect immediately.  [`_closeConnection()`](#_closeConnectioncallback) needs to be called manually to invoke a new connection with new settings.
 
@@ -464,6 +466,7 @@ Subscribe to messages from a given queue.
     - `maxRetryCount` - maximum amount of attempts a message can be requeued.  Defaults to one provided in the [config](#config). *[number]* **Optional**
     - `validatePublisher` - flag for validating messages having `bunnyBus` header.  More info can be found in [config](#config). Defaults to one provided in the [config](#config). *[boolean]* **Optional**
     - `validateVersion` - flag for validating messages generated from the same major version.  More info can be found in [config](#config). Defaults to one provided in the [config](#config). *[boolean]* **Optional**
+    - `disableQueueBind` - flag for disabling automatic queue binding.  More info can be found in [config](#config).  Defaults to one provided in the [config](#config).  *[boolean]* **Optional**
     - `meta` - allows for meta data regarding the payload to be returned.  Headers like the `createdAt` ISO string timestamp and the `transactionId` are included in the `meta.headers` object.  Turning this on will adjust the handler to be a `Function` as `(message, meta, [ack, [reject, [requeue]]]) => {}`. *[boolean]* **Optional**
   - `callback` - node style callback `(err, result) => {}`. *[Function]* **Optional**
 
