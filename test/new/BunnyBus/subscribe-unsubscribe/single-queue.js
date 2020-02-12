@@ -456,6 +456,22 @@ describe('BunnyBus', () => {
                     await channelContext.channel.publish(config.globalExchange, publishOptions.routeKey, Buffer.from(JSON.stringify(messageObject)), headers);
                 });
             });
+
+            it('should not create exchange to queue binding when disableQueueBind == true', async () => {
+
+                const handlers = {};
+
+                handlers[messageObject.event] = async (consumedMessage, ack) => {
+
+                    await ack();
+                };
+
+                await instance.subscribe(baseQueueName, handlers, { disableQueueBind: true });
+                await instance.publish(messageObject);
+                const result = await instance.get(baseQueueName);
+
+                expect(result).to.be.false();
+            });
         });
     });
 });
