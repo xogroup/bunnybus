@@ -33,7 +33,7 @@ describe('state management', () => {
 
             it('should create a channel with default values', async () => {
 
-                await instance.create(baseChannelName, connectionContext, defaultConfiguration);
+                await instance.create(baseChannelName, null, connectionContext, defaultConfiguration);
 
                 const result = instance._channels.get(baseChannelName);
 
@@ -48,8 +48,8 @@ describe('state management', () => {
             it('should return same channel when request are called concurrently', async () => {
 
                 const [result1, result2] = await Promise.all([
-                    instance.create(baseChannelName, connectionContext, defaultConfiguration),
-                    instance.create(baseChannelName, connectionContext, defaultConfiguration)
+                    instance.create(baseChannelName, null, connectionContext, defaultConfiguration),
+                    instance.create(baseChannelName, null, connectionContext, defaultConfiguration)
                 ]);
 
                 expect(result1).to.exist();
@@ -59,8 +59,8 @@ describe('state management', () => {
 
             it('should return same connection when request are called sequentially', async () => {
 
-                const result1 = await instance.create(baseChannelName, connectionContext, defaultConfiguration);
-                const result2 = await instance.create(baseChannelName, connectionContext, defaultConfiguration);
+                const result1 = await instance.create(baseChannelName, null, connectionContext, defaultConfiguration);
+                const result2 = await instance.create(baseChannelName, null, connectionContext, defaultConfiguration);
 
                 expect(result1).to.exist();
                 expect(result2).to.exist();
@@ -90,7 +90,7 @@ describe('state management', () => {
                 let sut = null;
 
                 try {
-                    await instance.create(baseChannelName, connectionContext);
+                    await instance.create(baseChannelName, null, connectionContext);
                 }
                 catch (err) {
                     sut = err;
@@ -105,7 +105,7 @@ describe('state management', () => {
                 let sut = null;
 
                 try {
-                    await instance.create(baseChannelName, connectionContext);
+                    await instance.create(baseChannelName, null, connectionContext);
                 }
                 catch (err) {
                     sut = err;
@@ -125,7 +125,7 @@ describe('state management', () => {
                 let sut = null;
 
                 try {
-                    await instance.create(baseChannelName, connectionContext, { prefetch: 1, connectionRetryCount: 1, timeout: 100 });
+                    await instance.create(baseChannelName, null, connectionContext, { prefetch: 1, connectionRetryCount: 1, timeout: 100 });
                 }
                 catch (err) {
                     sut = err;
@@ -142,7 +142,7 @@ describe('state management', () => {
 
             it('should return true when channel context exist', async () => {
 
-                await instance.create(baseChannelName, connectionContext, defaultConfiguration);
+                await instance.create(baseChannelName, null, connectionContext, defaultConfiguration);
 
                 const result = instance.contains(baseChannelName);
 
@@ -163,7 +163,7 @@ describe('state management', () => {
 
             it('should return a connection context when it exist', async () => {
 
-                const channelContext = await instance.create(baseChannelName, connectionContext, defaultConfiguration);
+                const channelContext = await instance.create(baseChannelName, null, connectionContext, defaultConfiguration);
 
                 const result = instance.get(baseChannelName);
 
@@ -188,7 +188,7 @@ describe('state management', () => {
 
             it('should be true when channel exist', async () => {
 
-                await instance.create(baseChannelName, connectionContext, defaultConfiguration);
+                await instance.create(baseChannelName, null, connectionContext, defaultConfiguration);
 
                 const result = instance.hasChannel(baseChannelName);
 
@@ -209,7 +209,7 @@ describe('state management', () => {
 
             it('should return a channel when it exist', async () => {
 
-                const channelContext = await instance.create(baseChannelName, connectionContext, defaultConfiguration);
+                const channelContext = await instance.create(baseChannelName, null, connectionContext, defaultConfiguration);
 
                 const result = instance.getChannel(baseChannelName);
 
@@ -232,7 +232,7 @@ describe('state management', () => {
 
             it('should close channel when it exist', async () => {
 
-                await instance.create(baseChannelName, connectionContext, defaultConfiguration);
+                await instance.create(baseChannelName, null, connectionContext, defaultConfiguration);
 
                 await instance.close(baseChannelName);
 
@@ -256,7 +256,7 @@ describe('state management', () => {
 
             it('should remove channel when it exist', async () => {
 
-                await instance.create(baseChannelName, connectionContext, defaultConfiguration);
+                await instance.create(baseChannelName, null, connectionContext, defaultConfiguration);
 
                 await instance.remove(baseChannelName);
 
@@ -279,7 +279,7 @@ describe('state management', () => {
 
             beforeEach(async () => {
 
-                channelContext = await instance.create(baseChannelName, connectionContext, defaultConfiguration);
+                channelContext = await instance.create(baseChannelName, null, connectionContext, defaultConfiguration);
             });
 
             it('should emit AMQP_CHANNEL_CLOSE_EVENT when channel closes', async () => {

@@ -3,7 +3,7 @@
 const { ChannelManager, ConnectionManager } = require('../../../lib/states');
 const Helpers = require('../../../lib/helpers');
 
-const autoRecoverChannel = async (testFuncAsync, connectionContext, channelContext, channelManager) => {
+const autoRecoverChannel = async (testFuncAsync, connectionContext, channelContext, channelManager, queue = null) => {
 
     const promise = new Promise((resolve) => {
 
@@ -41,7 +41,7 @@ const autoRecoverChannel = async (testFuncAsync, connectionContext, channelConte
         }
     }
     finally {
-        await channelManager.create(channelContext.name, channelContext.connectionContext, channelContext.channelOptions);
+        await channelManager.create(channelContext.name, queue, channelContext.connectionContext, channelContext.channelOptions);
     }
 };
 

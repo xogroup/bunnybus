@@ -91,5 +91,77 @@ describe('BunnyBus', () => {
                 ]);
             });
         });
+
+        describe('recovery', () => {
+
+            const baseChannelName = 'bunnybus-events-recovery';
+            const baseQueueName = 'test-events-recovery-queue';
+
+            beforeEach(async () => {
+
+                channelContext = await instance._autoBuildChannelContext(baseChannelName);
+            });
+
+            it('should emit RECOVERING_CONNECTION_EVENT when closed connection is recovering', async () => {
+
+                await new Promise((resolve) => {
+
+                    instance.once(BunnyBus.RECOVERING_CONNECTION_EVENT, resolve);
+
+                    connectionManager.close(BunnyBus.DEFAULT_CONNECTION_NAME);
+                });
+            });
+
+            it('should emit RECOVERING_CHANNEL_EVENT when closed connection is recovering', async () => {
+
+                await new Promise((resolve) => {
+
+                    instance.once(BunnyBus.RECOVERING_CHANNEL_EVENT, resolve);
+
+                    connectionManager.close(BunnyBus.DEFAULT_CONNECTION_NAME);
+                });
+            });
+
+            it('should emit RECOVERING_CHANNEL_EVENT when closed connection is recovering', async () => {
+
+                await new Promise((resolve) => {
+
+                    instance.once(BunnyBus.RECOVERING_CHANNEL_EVENT, resolve);
+
+                    channelManager.close(baseChannelName);
+                });
+            });
+
+            it('should emit RECOVERED_CONNECTION_EVENT when closed connection is recovered', async () => {
+
+                await new Promise((resolve) => {
+
+                    instance.once(BunnyBus.RECOVERED_CONNECTION_EVENT, resolve);
+
+                    connectionManager.close(BunnyBus.DEFAULT_CONNECTION_NAME);
+                });
+            });
+
+
+            it('should emit RECOVERED_CHANNEL_EVENT when closed connection is recovered', async () => {
+
+                await new Promise((resolve) => {
+
+                    instance.once(BunnyBus.RECOVERED_CHANNEL_EVENT, resolve);
+
+                    connectionManager.close(BunnyBus.DEFAULT_CONNECTION_NAME);
+                });
+            });
+
+            it('should emit RECOVERED_CHANNEL_EVENT when closed connection is recovering', async () => {
+
+                await new Promise((resolve) => {
+
+                    instance.once(BunnyBus.RECOVERED_CHANNEL_EVENT, resolve);
+
+                    channelManager.close(baseChannelName);
+                });
+            });
+        });
     });
 });

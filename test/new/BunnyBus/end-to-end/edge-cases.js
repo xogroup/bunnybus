@@ -10,7 +10,7 @@ const expect = Code.expect;
 
 let instance = undefined;
 let connectionManager = undefined;
-let connectionContext = undefined;
+const connectionContext = undefined;
 let channelManager = undefined;
 let channelContext = undefined;
 
@@ -31,15 +31,12 @@ describe('BunnyBus', () => {
                 channelManager = instance.channels;
 
                 channelContext = await instance._autoBuildChannelContext(baseChannelName);
-                connectionContext = channelContext.connectionContext;
 
-                connectionManager.close(BunnyBus.DEFAULT_CONNECTION_NAME);
+                await new Promise(async (resolve) => {
 
-                await new Promise((resolve) => {
+                    channelManager.once(ChannelManager.CHANNEL_REMOVED, resolve);
 
-                    channelContext
-                        .removeAllListeners(ChannelManager.AMQP_CHANNEL_CLOSE_EVENT)
-                        .once(ChannelManager.AMQP_CHANNEL_CLOSE_EVENT, resolve);
+                    await connectionManager.remove(BunnyBus.DEFAULT_CONNECTION_NAME);
                 });
             });
 
@@ -89,13 +86,6 @@ describe('BunnyBus', () => {
                 }
                 catch (err) {
                     result = err;
-
-                    connectionManager.remove(BunnyBus.DEFAULT_CONNECTION_NAME);
-
-                    await new Promise((resolve) => {
-
-                        channelManager.once(ChannelManager.CHANNEL_REMOVED, resolve);
-                    });
                 }
 
                 expect(result).to.exist();

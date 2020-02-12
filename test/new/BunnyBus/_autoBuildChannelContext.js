@@ -159,7 +159,7 @@ describe('BunnyBus', () => {
                     expect(channelManager.get(baseChannelName)).to.be.undefined();
 
                     connectionContext = await connectionManager.create(BunnyBus.DEFAULT_CONNECTION_NAME, BunnyBus.DEFAULT_SERVER_CONFIGURATION);
-                    channelContext = await channelManager.create(baseChannelName, connectionContext, BunnyBus.DEFAULT_SERVER_CONFIGURATION);
+                    channelContext = await channelManager.create(baseChannelName, null, connectionContext, BunnyBus.DEFAULT_SERVER_CONFIGURATION);
 
                     expect(connectionManager.get(BunnyBus.DEFAULT_CONNECTION_NAME)).to.exist();
                     expect(channelManager.get(baseChannelName)).to.exist();
