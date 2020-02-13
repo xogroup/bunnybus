@@ -41,9 +41,15 @@ describe('BunnyBus', () => {
 
                 await new Promise(async (resolve) => {
 
-                    instance.once(BunnyBus.PUBLISHED_EVENT, (sentMessage) => {
+                    instance.once(BunnyBus.PUBLISHED_EVENT, (sentOptions, sentMessage) => {
 
+                        expect(sentOptions.headers.transactionId).to.exist();
+                        expect(sentOptions.headers.isBuffer).to.exist();
+                        expect(sentOptions.headers.routeKey).to.exist();
+                        expect(sentOptions.headers.createdAt).to.exist();
+                        expect(sentOptions.headers.bunnyBus).to.exist();
                         expect(sentMessage).to.include(message);
+
                         resolve();
                     });
 
