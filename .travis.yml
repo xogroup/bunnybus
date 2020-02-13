@@ -7,8 +7,6 @@ services:
 - docker
 matrix:
   include:
-    - node_js: '8'
-      env: NODE_VERSION=8
     - node_js: '10'
       env: NODE_VERSION=10
     - node_js: '12'
