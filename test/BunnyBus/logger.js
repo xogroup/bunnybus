@@ -4,6 +4,7 @@ const Code = require('@hapi/code');
 const Lab = require('@hapi/lab');
 const BunnyBus = require('../../lib');
 const { EventLogger } = require('../../lib/loggers');
+const Exceptions = require('../../lib/exceptions');
 const Assertions = require('../assertions');
 
 const { describe, before, beforeEach, after, afterEach, it } = exports.lab = Lab.script();
@@ -96,6 +97,24 @@ describe('BunnyBus', () => {
                 it('should call custom trace handler', async () => {
 
                     await Assertions.assertCustomLogger(instance, 'trace', inputMessage);
+                });
+            });
+
+            describe('with incompatible logger', () => {
+
+                it('should throw error when a logger with incompatible interface is set', async () => {
+
+                    let result = null;
+
+                    try {
+                        instance.logger = { info: () => {} };
+                    }
+                    catch (err) {
+                        result = err;
+                    }
+
+                    expect(result).to.exist();
+                    expect(result).to.be.an.error(Exceptions.IncompatibleLoggerError, 'logger is incompatible');
                 });
             });
         });
