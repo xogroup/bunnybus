@@ -27,8 +27,8 @@ describe('BunnyBus', () => {
 
         describe('negative tests', () => {
 
-            const baseChannelName = 'bunnybus-subscribe';
-            const baseQueueName = 'test-subscribe-queue';
+            const baseChannelName = 'bunnybus-negative-tests';
+            const baseQueueName = 'test-negative-tests-queue';
             const baseErrorQueueName = `${baseQueueName}_error`;
             const consumerTag = 'abcde12345';
             const handlers = { event1 : () => {} };

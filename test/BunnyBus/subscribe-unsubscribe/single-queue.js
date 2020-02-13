@@ -474,6 +474,43 @@ describe('BunnyBus', () => {
 
                 expect(result).to.be.false();
             });
+
+            it('should auto reject message off queue when there is a topic/route mismatch when rejectUnroutedMessages === true', async () => {
+
+                const unregisteredTopic = 'd.f';
+                const testObject = { event : unregisteredTopic, name : 'bunnybus' };
+                const rejectionReason = `message consumed with no matching routeKey (${unregisteredTopic}) handler`;
+
+                const handlers = {};
+                handlers[messageObject.event] = async (consumedMessage, ack) => await ack();
+
+                const promise = new Promise(async (resolve) => {
+
+                    const eventHandler = (sentOptions, sentMessage) => {
+
+                        if (sentOptions.headers.routeKey === unregisteredTopic) {
+                            expect(sentOptions.headers.transactionId).to.exist();
+                            expect(sentOptions.headers.isBuffer).to.be.false();
+                            expect(sentOptions.headers.routeKey).to.equal(unregisteredTopic);
+                            expect(sentOptions.headers.createdAt).to.exist();
+                            expect(sentOptions.headers.erroredAt).to.exist();
+                            expect(sentOptions.headers.bunnyBus).to.equal(require('../../../package.json').version);
+                            expect(sentOptions.headers.reason).to.equal(rejectionReason);
+                            expect(sentMessage).to.include(testObject);
+
+                            instance.removeListener(BunnyBus.MESSAGE_REJECTED_EVENT, eventHandler);
+                            resolve();
+                        }
+                    };
+
+                    instance.on(BunnyBus.MESSAGE_REJECTED_EVENT, eventHandler);
+                });
+
+                await instance.subscribe(baseQueueName, handlers, { rejectUnroutedMessages: true }),
+                await channelContext.channel.bindQueue(baseQueueName, instance.config.globalExchange, unregisteredTopic);
+                await instance.publish(testObject);
+                await promise;
+            });
         });
     });
 });

@@ -58,10 +58,11 @@ describe('BunnyBus', () => {
             it('should emit MESSAGE_REJECTED_EVENT when message is rejected', async () => {
 
                 const routeKey = 'subscribed-message-requeued-event';
+                const rejectionReason = 'testing reason';
                 const message = { event: routeKey, foo: 'bar' };
                 const transactionId = 'foo-567-xyz';
                 const handlers = {};
-                handlers[routeKey] = async (consumedMessage, ack, reject, requeue) =>  await reject();
+                handlers[routeKey] = async (consumedMessage, ack, reject, requeue) =>  await reject( { reason: rejectionReason });
 
                 const promise = new Promise((resolve) => {
 
@@ -74,6 +75,7 @@ describe('BunnyBus', () => {
                             expect(sentOptions.headers.createdAt).to.exist();
                             expect(sentOptions.headers.erroredAt).to.exist();
                             expect(sentOptions.headers.bunnyBus).to.equal(require('../../../package.json').version);
+                            expect(sentOptions.headers.reason).to.equal(rejectionReason);
                             expect(sentMessage).to.include(message);
 
                             instance.removeListener(BunnyBus.MESSAGE_REJECTED_EVENT, eventHandler);
