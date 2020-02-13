@@ -5,13 +5,11 @@ const Code = require('@hapi/code');
 
 const expect = Code.expect;
 
-const assertValidateLoggerContract = (logger, expectation, callback) => {
+const assertValidateLoggerContract = async (logger, expectation) => {
 
     const result = Helpers.validateLoggerContract(logger);
 
     expect(result).to.be.equal(expectation);
-
-    callback();
 };
 
 module.exports = assertValidateLoggerContract;
