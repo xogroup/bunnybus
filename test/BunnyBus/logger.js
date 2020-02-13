@@ -29,7 +29,7 @@ describe('BunnyBus', () => {
                 instance.config = BunnyBus.DEFAULT_SERVER_CONFIGURATION;
             });
 
-            describe('with default logger', () => {
+            describe('with default logger (Event Logger)', () => {
 
                 it('should subscribe to `log.info` event when log.info() is called', async () => {
 
@@ -56,13 +56,28 @@ describe('BunnyBus', () => {
                     await Assertions.assertLogger(instance, 'debug', inputMessage);
                 });
 
-                it('should subscribe to `log.trace` event when log.trace() is called', async () => {
+                it('should subscribe to `log.info` event when log.inf() is called with multiple arguments', async () => {
 
-                    await Assertions.assertLogger(instance, 'trace', inputMessage);
+                    const arg1 = 'foo';
+                    const arg2 = { hello: 'world' };
+
+                    const promise = new Promise((resolve) => {
+
+                        instance.once(BunnyBus.LOG_INFO_EVENT, (sentArg1, sentArg2) => {
+
+                            expect(sentArg1).to.equal(arg1);
+                            expect(sentArg2).to.include(arg2);
+
+                            resolve();
+                        });
+                    });
+
+                    instance.logger.info(arg1, arg2);
+                    await promise;
                 });
             });
 
-            describe('with custom logger', () => {
+            describe('with custom logger (Fake Logger)', () => {
 
                 after(async () => {
 
