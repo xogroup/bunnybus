@@ -24,10 +24,10 @@ describe('BunnyBus', () => {
             channelManager = instance.channels;
         });
 
-        describe('message dispatched', () => {
+        describe('messaged acked', () => {
 
-            const baseChannelName = 'bunnybus-events-message-dispatched';
-            const baseQueueName = 'test-events-message-dispatched-queue';
+            const baseChannelName = 'bunnybus-events-message-acked';
+            const baseQueueName = 'test-events-message-acked-queue';
 
             before(async () => {
 
@@ -55,11 +55,11 @@ describe('BunnyBus', () => {
                 instance.subscriptions._blockQueues.clear();
             });
 
-            it('should emit MESSAGE_DISPATCHED_EVENT when consume handlers is about to fire', async () => {
+            it('should emit MESSAGE_ACKED_EVENT when message is acknowledged', async () => {
 
-                const routeKey = 'subscribed-message-dispatched-event';
+                const routeKey = 'subscribed-message-acked-event';
                 const message = { event: routeKey, foo: 'bar' };
-                const transactionId = 'foo-123-xyz';
+                const transactionId = 'foo-567-xyz';
                 const handlers = {};
                 handlers[routeKey] = async (consumedMessage, ack, reject, requeue) =>  await ack();
 
@@ -72,15 +72,16 @@ describe('BunnyBus', () => {
                             expect(sentOptions.headers.isBuffer).to.be.false();
                             expect(sentOptions.headers.routeKey).to.equal(routeKey);
                             expect(sentOptions.headers.createdAt).to.exist();
+                            expect(sentOptions.headers.ackedAt).to.exist();
                             expect(sentOptions.headers.bunnyBus).to.equal(require('../../../package.json').version);
                             expect(sentMessage).to.include(message);
 
-                            instance.removeListener(BunnyBus.MESSAGE_DISPATCHED_EVENT, eventHandler);
+                            instance.removeListener(BunnyBus.MESSAGE_ACKED_EVENT, eventHandler);
                             resolve();
                         }
                     };
 
-                    instance.on(BunnyBus.MESSAGE_DISPATCHED_EVENT, eventHandler);
+                    instance.on(BunnyBus.MESSAGE_ACKED_EVENT, eventHandler);
                 });
 
                 await instance.subscribe(baseQueueName, handlers);
