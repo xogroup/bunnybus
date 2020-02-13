@@ -37,7 +37,11 @@ describe('BunnyBus', () => {
 
                 await new Promise((resolve) => {
 
-                    instance.once(BunnyBus.RECOVERING_CONNECTION_EVENT, resolve);
+                    instance.once(BunnyBus.RECOVERING_CONNECTION_EVENT, (connectionName) => {
+
+                        expect(connectionName).to.equal(BunnyBus.DEFAULT_CONNECTION_NAME);
+                        resolve();
+                    });
 
                     connectionManager.close(BunnyBus.DEFAULT_CONNECTION_NAME);
                 });
@@ -47,7 +51,11 @@ describe('BunnyBus', () => {
 
                 await new Promise((resolve) => {
 
-                    instance.once(BunnyBus.RECOVERING_CHANNEL_EVENT, resolve);
+                    instance.once(BunnyBus.RECOVERING_CHANNEL_EVENT, (channelName) => {
+
+                        expect(channelName).to.equal(baseChannelName);
+                        resolve();
+                    });
 
                     connectionManager.close(BunnyBus.DEFAULT_CONNECTION_NAME);
                 });
@@ -57,7 +65,11 @@ describe('BunnyBus', () => {
 
                 await new Promise((resolve) => {
 
-                    instance.once(BunnyBus.RECOVERING_CHANNEL_EVENT, resolve);
+                    instance.once(BunnyBus.RECOVERING_CHANNEL_EVENT, (channelName) => {
+
+                        expect(channelName).to.equal(baseChannelName);
+                        resolve();
+                    });
 
                     channelManager.close(baseChannelName);
                 });
@@ -67,7 +79,11 @@ describe('BunnyBus', () => {
 
                 await new Promise((resolve) => {
 
-                    instance.once(BunnyBus.RECOVERED_CONNECTION_EVENT, resolve);
+                    instance.once(BunnyBus.RECOVERED_CONNECTION_EVENT, (connectionName) => {
+
+                        expect(connectionName).to.equal(BunnyBus.DEFAULT_CONNECTION_NAME);
+                        resolve();
+                    });
 
                     connectionManager.close(BunnyBus.DEFAULT_CONNECTION_NAME);
                 });
@@ -78,7 +94,11 @@ describe('BunnyBus', () => {
 
                 await new Promise((resolve) => {
 
-                    instance.once(BunnyBus.RECOVERED_CHANNEL_EVENT, resolve);
+                    instance.once(BunnyBus.RECOVERED_CHANNEL_EVENT, (channelName) => {
+
+                        expect(channelName).to.equal(baseChannelName);
+                        resolve();
+                    });
 
                     connectionManager.close(BunnyBus.DEFAULT_CONNECTION_NAME);
                 });
@@ -88,7 +108,11 @@ describe('BunnyBus', () => {
 
                 await new Promise((resolve) => {
 
-                    instance.once(BunnyBus.RECOVERED_CHANNEL_EVENT, resolve);
+                    instance.once(BunnyBus.RECOVERED_CHANNEL_EVENT, (channelName) => {
+
+                        expect(channelName).to.equal(baseChannelName);
+                        resolve();
+                    });
 
                     channelManager.close(baseChannelName);
                 });

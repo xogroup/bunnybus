@@ -182,6 +182,24 @@ describe('state management', () => {
             });
         });
 
+        describe('list', () => {
+
+            const baseChannelName = 'channel-listChannel';
+
+            it('should return 3 records when 3 were added', async () => {
+
+                for (let i = 1; i <= 3; ++i) {
+                    const channelName = `${baseChannelName}-${i}`;
+
+                    await instance.create(channelName, null, connectionContext, defaultConfiguration);
+                }
+
+                const results = instance.list();
+
+                expect(results).to.have.length(3);
+            });
+        });
+
         describe('hasChannel', () => {
 
             const baseChannelName = 'channel-hasChannelChannel';

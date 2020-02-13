@@ -21,7 +21,7 @@ describe('BunnyBus', () => {
         describe('edge cases', () => {
 
             const baseChannelName = 'bunnybus-e2e-edge-cases';
-            const baseQueueName = 'test-e2e-queue';
+            const baseQueueName = 'test-e2e-edge-cases-queue';
 
             beforeEach(async () => {
 
@@ -35,7 +35,6 @@ describe('BunnyBus', () => {
                 await new Promise(async (resolve) => {
 
                     channelManager.once(ChannelManager.CHANNEL_REMOVED, resolve);
-
                     await connectionManager.remove(BunnyBus.DEFAULT_CONNECTION_NAME);
                 });
             });
@@ -78,8 +77,8 @@ describe('BunnyBus', () => {
 
                 let result = null;
 
-                const message = { event : 'eb', name : 'bunnybus' };
-                instance.config = { hostname : 'fake' };
+                const message = { event: 'eb', name: 'bunnybus' };
+                instance.config = { hostname: 'fake', timeout: 300,  connectionRetryCount: 1 };
 
                 try {
                     await instance.publish(message);

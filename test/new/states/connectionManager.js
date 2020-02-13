@@ -167,6 +167,24 @@ describe('state management', () => {
             });
         });
 
+        describe('list', () => {
+
+            const baseConnectionName = 'connection-listConnection';
+
+            it('should return 3 records when 3 were added', async () => {
+
+                for (let i = 1; i <= 3; ++i) {
+                    const connectionName = `${baseConnectionName}-${i}`;
+
+                    await instance.create(connectionName, defaultConfiguration);
+                }
+
+                const results = instance.list();
+
+                expect(results).to.have.length(3);
+            });
+        });
+
         describe('hasConnection', () => {
 
             const baseConnectionName = 'connection-hasConnectionConnection';
