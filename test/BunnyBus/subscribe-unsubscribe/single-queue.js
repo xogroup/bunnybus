@@ -220,7 +220,7 @@ describe('BunnyBus', () => {
                 });
             });
 
-            it('should consume message (Object) from queue and requeue off on maxRetryCount', { timeout : 0 }, async () => {
+            it('should consume message (Object) from queue and requeue off on maxRetryCount', async () => {
 
                 return new Promise(async (resolve) => {
 
@@ -248,7 +248,9 @@ describe('BunnyBus', () => {
                 });
             });
 
-            it('should consume message (Buffer) from queue and requeue off on maxRetryCount', { timeout : 0 }, async () => {
+            // it('should auto reject message from queue when requeue surpasses maxRetryCount limits', )
+
+            it('should consume message (Buffer) from queue and requeue off on maxRetryCount', async () => {
 
                 return new Promise(async (resolve) => {
 

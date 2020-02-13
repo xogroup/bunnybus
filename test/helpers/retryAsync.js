@@ -9,14 +9,14 @@ const expect = Code.expect;
 
 let i = undefined;
 
-beforeEach(() => {
-
-    i = 0;
-});
-
 describe('Helpers', () => {
 
     describe('retryAsync', () => {
+
+        beforeEach(() => {
+
+            i = 0;
+        });
 
         it('should run once', async () => {
 
