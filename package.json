@@ -41,10 +41,8 @@
     "@hapi/eslint-config-hapi": "^12.3.0",
     "@hapi/eslint-plugin-hapi": "^4.3.4",
     "@hapi/lab": "^21.0.0",
-    "bluebird": "^3.7.1",
     "doctoc": "^1.4.0",
     "eslint": "^6.6.0",
-    "q": "^1.4.1",
     "uuid": "^3.4.0"
   }
 }
