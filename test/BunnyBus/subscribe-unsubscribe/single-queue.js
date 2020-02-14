@@ -248,7 +248,29 @@ describe('BunnyBus', () => {
                 });
             });
 
-            // it('should auto reject message from queue when requeue surpasses maxRetryCount limits', )
+            it('should auto reject message from queue when requeue surpasses maxRetryCount limits', async () => {
+
+                const handlers = {};
+                const maxRetryCount = 1;
+                const transactionId = 'retry-abc-134';
+
+                handlers[messageObject.event] = async (consumedMessage, ack, reject, requeue) => await requeue();
+
+                const promise =  new Promise((resolve) => {
+
+                    instance.once(BunnyBus.MESSAGE_REJECTED_EVENT, (sentOptions, sentPayload) => {
+
+                        expect(sentOptions.headers.retryCount).to.equal(maxRetryCount);
+                        expect(sentOptions.headers.transactionId).to.equal(transactionId);
+
+                        resolve();
+                    });
+                });
+
+                await instance.subscribe(baseQueueName, handlers, { maxRetryCount });
+                await instance.publish(messageObject, { transactionId });
+                await promise;
+            });
 
             it('should consume message (Buffer) from queue and requeue off on maxRetryCount', async () => {
 
