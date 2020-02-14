@@ -26,33 +26,15 @@ const bunnyBus = new BunnyBus();
 
 //create a subscription
 await bunnyBus.subscribe('queue1', { 
-    'create-event' : (message, ack) => {
+    'create-event' : async (message, ack) => {
         console.log(message.comment);
-        ack();
-    }});
-
+        await ack();
+    }}
+);
 
 //publish to the above subscription
 await bunnyBus.publish({ event : 'create-event', comment : 'hello world!' });
 
-);
-```
-
-### With Callbacks
-```javascript
-const BunnyBus = require('bunnybus');
-const bunnyBus = new BunnyBus();
-
-//create a subscription
-bunnyBus.subscribe('queue1', { 
-    'create-event' : (message, ack) => {
-        console.log(message.comment);
-        ack();
-    }}, () => {
-
-    //publish to the above subscription
-    bunnyBus.publish({ event : 'create-event', comment : 'hello world!' });
-    }
 );
 ```
 
