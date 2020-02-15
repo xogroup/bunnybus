@@ -1,4 +1,4 @@
-# 4.0.0 API Reference
+# 4.x API Reference
 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
@@ -170,7 +170,7 @@
     - [`ChannelManager.AMQP_CHANNEL_DRAIN_EVENT`](#channelmanageramqp_channel_drain_event)
       - [key value](#key-value-9)
       - [handler parmaeters](#handler-parmaeters-9)
-    - [`ConnectionManager.CHANNEL_REMOVED`](#connectionmanagerchannel_removed)
+    - [`ChannelManager.CHANNEL_REMOVED`](#channelmanagerchannel_removed)
       - [key value](#key-value-10)
       - [handler parmaeters](#handler-parmaeters-10)
 - [`ChannelManager`](#channelmanager)
@@ -191,7 +191,7 @@
     - [`async close(name)`](#async-closename-1)
       - [parameter(s)](#parameters-26)
   - [Events](#events-4)
-    - [`ChannelManager.CHANNEL_REMOVED`](#channelmanagerchannel_removed)
+    - [`ChannelManager.CHANNEL_REMOVED`](#channelmanagerchannel_removed-1)
       - [key value](#key-value-11)
       - [handler parmaeters](#handler-parmaeters-11)
 - [`SubscriptionManager`](#subscriptionmanager)
@@ -272,7 +272,7 @@ Setter and Getter for singleton configuration. Accepts the following optional pr
  * `disableQueueBind` - flag to dictate if automatic queue binding should be turned on/off as part of the consume setup process.  Defaults to `false`.  *[boolean]* **Optional**
  * `rejectUnroutedMessages` - flag to direct messages that were unroutable to provided handlers to either be automatically rejected or acknowledged off the queue.  The default is silent acknowledgements.  Defaults to `false`.  *[boolean]* **Optional**
 
-Note that updates in the options directed at changing connection string will not take affect immediately.  [`_closeConnection()`](#_closeConnectioncallback) needs to be called manually to invoke a new connection with new settings.
+Note that updates in the options directed at changing connection string will not take affect immediately.  [`ConnectionManager.close()`](#async-closename) needs to be called manually to invoke a new connection with new settings.
 
   ```javascript
   const BunnyBus = require('bunnybus');
@@ -482,7 +482,7 @@ Publish a message onto the bus.
     - `routeKey` - value for the route key to route the message with.  The value must be supplied here or in `message.event`.  The value can be `.` separated for namespacing. *[string]* **Optional**
     - `transactionId` - value attached to the header of the message for tracing.  When one is not supplied, a random 40 character token is generated. *[string]* **Optional**
     - `source` - value attached to the header of the message to help with track the origin of messages in your application.  For applications that leverage this plugin in multiple modules, each module can supply its own module name so a message can be tracked to the creator. *[string]* **Optional**
-    - `globalExchange` - value to override the exchange specified in `config`. *[string]* **Optional**
+    - `globalExchange` - value to override the exchange specified in [`config`](#config). *[string]* **Optional**
     - In addition to the above options, all of `amqplib`'s [configuration options](http://www.squaremobius.net/amqp.node/channel_api.html#channel_publish) (except for `headers` and `immediate`) from its `sendToQueue` and `publish` methods can also be passed as top-level properties in the `publish` options.
 
 ```javascript
@@ -504,7 +504,7 @@ Subscribe to messages from a given queue.
 ##### parameter(s)
 
   - `queue` - the name of the queue to subscribe messages to. A queue with the provided name will be created if one does not exist. *[string]* **Required**
-  - `handlers` - a `key` / `handler` hash where the key reflects the name of the `message.event` or `routeKey`.  And the handler reflects a `AsyncFunction` as `(message, [meta, [ack, [reject, [requeue]]]]) => {}`. *[Object]* **Required**
+  - `handlers` - a `key` / `handler` hash where the key reflects the name of the `message.event` or `routeKey`.  And the handler reflects a `AsyncFunction` as `async (message, [meta, [ack, [reject, [requeue]]]]) => {}`. *[Object]* **Required**
   - `options` - optional settings. *[Object]* **Optional**
     - `queue` - settings for the queue. [Settings](http://www.squaremobius.net/amqp.node/channel_api.html#channel_assertQueue) are proxied through to amqplib `assertQueue`. *[Object]* **Optional**
     - `globalExchange` - value of the exchange to transact through for message publishing.  Defaults to one provided in the [config](#config). *[string]* **Optional**
@@ -513,7 +513,7 @@ Subscribe to messages from a given queue.
     - `validateVersion` - flag for validating messages generated from the same major version.  More info can be found in [config](#config). Defaults to one provided in the [config](#config). *[boolean]* **Optional**
     - `disableQueueBind` - flag for disabling automatic queue binding.  More info can be found in [config](#config).  Defaults to one provided in the [config](#config).  *[boolean]* **Optional**
     - `rejectUnroutedMessages` - flag for enabling rejection for unroutable messages.  More info can be found in [config](#config).  Defaults to one provided in the [config](#config).  *[boolean]* 
-    - `meta` - allows for meta data regarding the payload to be returned.  Headers like the `createdAt` ISO string timestamp and the `transactionId` are included in the `meta.headers` object.  Turning this on will adjust the handler to be a `Function` as `(message, meta, [ack, [reject, [requeue]]]) => {}`. *[boolean]* **Optional**
+    - `meta` - allows for meta data regarding the payload to be returned.  Headers like the `createdAt` ISO string timestamp and the `transactionId` are included in the `meta.headers` object.  Turning this on will adjust the handler to be an `AsyncFunction` as `async (message, meta, [ack, [reject, [requeue]]]) => {}`. *[boolean]* **Optional**
 
 ##### handlers
 
@@ -529,7 +529,7 @@ A `handler` is an asynchronous function which contains the following arity.  Ord
   - `async ack([option)` is an async function for acknowledging the message off the bus.
     - `option` - a placeholder for future optional parameters for `ack`.  High chance of deprecation.
   - `async reject([option)` is an async function for rejecting the message off the bus to a predefined error queue.  The error queue is named by default `<your queue name>_error`.  It will also short circuit to `error_bus` when defaults can't be found.
-    - `option` - An object with a property of `reason` to be supplied. *[object]* **Optional**
+    - `option` - An object with a property of `reason` to be supplied. *[Object]* **Optional**
   - `async requeue()` is an async function for requeuing the message back to the back of the queue.  This is feature circumvents Rabbit's `nack` RPC.  `nack` natively requeues but pushes the message to the front of the queue.
 
 ```javascript
@@ -573,7 +573,7 @@ Send a message directly to a specified queue.
 
 ##### note(s)
 
-When `message.event` or `options.routeKey` values are not provided for `routeKey` addressing.  The message will be lost when [`subcribe()`](#subscribequeue-handlers-options-callback) handles the queue because messages without a `routeKey` are discarded.
+When `message.event` or `options.routeKey` values are not provided for `routeKey` addressing.  The message will be lost when [`subcribe()`](#async-subscribequeue-handlers-options) handles the queue because messages without a `routeKey` are discarded.
 
 ##### parameter(s)
 
@@ -620,10 +620,10 @@ Pop all messages directly off of a queue until there are no more.  Handler is ca
 ##### parameter(s)
 
   - `queue` - the name of the queue. *[string]* **Required**
-  - `handler` - a handler reflects an `AsyncFunction` as `(message, [meta, [ack]]) => {}`. *[AsyncFunction]* **Required**
+  - `handler` - a handler reflects an `AsyncFunction` as `async (message, [meta, [ack]]) => {}`. *[AsyncFunction]* **Required**
   - `options` - optional settings. *[Object]* **Optional**
     - `get` - [Settings](http://www.squaremobius.net/amqp.node/channel_api.html#channel_get) are proxied through to amqplib `get`. *[Object]* **Optional**
-    - `meta` - allows for meta data regarding the payload to be returned.  Headers like the `createdAt` ISO string timestamp and the `transactionId` are included in the `meta.headers` object.  Turning this on will adjust the handler to be a `Function` as `(message, meta, [ack]) => {}`.  *[boolean]* **Optional**
+    - `meta` - allows for meta data regarding the payload to be returned.  Headers like the `createdAt` ISO string timestamp and the `transactionId` are included in the `meta.headers` object.  Turning this on will adjust the handler to be an `AsyncFunction` as `async (message, meta, [ack]) => {}`.  *[boolean]* **Optional**
 
 ```javascript
 const BunnyBus = require('bunnybus');
@@ -689,7 +689,7 @@ The acknowledge method for removing a message off the queue.  Mainly used in han
 
 ##### `parameter(s)`
 
-* `payload` - raw payload from an AMQP result message response. *[object]* **Required**
+* `payload` - raw payload from an AMQP result message response. *[Object]* **Required**
 * `channelName` - the originating channel the payload came from. *[string]* **Required**
 * `options` - not currently used.
 
@@ -703,14 +703,14 @@ await bunnyBus.ack(payload, 'channelForQueue1');
 
 #### `async _requeue(payload, channelName, queue, [options])`
 
-Requeues message to any queue while it acknowledges the payload off of the original.  This method does not push the message back to the original queue in the front position.  It will put the message to any desired queue in the back position.  Mainly used in handlers through `bind()` parameter injection for methods like [`getAll()`](#async-getallqueue-handler-options) and [`subscribe`](#async-subscribequeue-handlers-options).
+Requeues message to any queue while it acknowledges the payload off of the original.  This method does not push the message back to the original queue in the front position.  It will put the message to any desired queue in the back position.  Mainly used in handlers through `bind()` parameter injection for methods like [`getAll()`](#async-getallqueue-handler-options) and [`subscribe()`](#async-subscribequeue-handlers-options).
 
 ##### `parameter(s)`
 
-* `payload` - raw payload from an AMQP result message response. *[object]* **Required**
+* `payload` - raw payload from an AMQP result message response. *[Object]* **Required**
 * `channelName` - the originating channel the payload came from. *[string]* **Required**
 * `queue` - the destination queue to push to.  *[string]* **Required**
-* `options` - can supply AMQP specific values which is just proxied to [`sentToQueue`](https://www.squaremobius.net/amqp.node/channel_api.html#channel_sendToQueue) *[object]* **Required**
+* `options` - can supply AMQP specific values which is just proxied to [`sentToQueue`](https://www.squaremobius.net/amqp.node/channel_api.html#channel_sendToQueue) *[Object]* **Required**
 
 ```javascript
 const BunnyBus = require('bunnybus');
@@ -722,14 +722,14 @@ await bunnyBus.requeue(payload, 'channelForQueue1', 'queue1');
 
 #### `async _reject(payload, channelName, [errorQueue, [options]])`
 
-Rejects a message by acknowledging off the originating queue and sending to an error queue of choice.  Mainly used in handlers through `bind()` parameter injection for methods like [`getAll()`](#async-getallqueue-handler-options) and [`subscribe`](#async-subscribequeue-handlers-options).
+Rejects a message by acknowledging off the originating queue and sending to an error queue of choice.  Mainly used in handlers through `bind()` parameter injection for methods like [`getAll()`](#async-getallqueue-handler-options) and [`subscribe()`](#async-subscribequeue-handlers-options).
 
 ##### `parameter(s)`
 
-* `payload` - raw payload from an AMQP result message response. *[object]* **Required**
+* `payload` - raw payload from an AMQP result message response. *[Object]* **Required**
 * `channelName` - the originating channel the payload came from. *[string]* **Required**
 * `errorQueue` - the destination error queue to push to. Defaults to a queue defined in [`config`](#config) *[string]* **Optional**
-* `options` - can supply AMQP specific values which is just proxied to [`sentToQueue`](https://www.squaremobius.net/amqp.node/channel_api.html#channel_sendToQueue) for the destination error queue.  A property of `reason` can be supplied which will be caught and added to the message header.  The property of `reason` is used uniformally within all rejection paths in the BunnyBus code base. *[object]* **Required**
+* `options` - can supply AMQP specific values which is just proxied to [`sentToQueue`](https://www.squaremobius.net/amqp.node/channel_api.html#channel_sendToQueue) for the destination error queue.  A property of `reason` can be supplied which will be caught and added to the message header.  The property of `reason` is used uniformally within all rejection paths in the BunnyBus code base. *[Object]* **Required**
 
 ```javascript
 const BunnyBus = require('bunnybus');
@@ -835,7 +835,7 @@ bunnyBus.on('BunnyBus.LOG_FATAL_EVENT', console.log);
 * `bunnybus.published` - emitted when [`publish()`](#async-publishmessage-options) is successfully called.
 
 #### handler parameter(s)
-* `publishOptions` - option sent along with the message header/fields *[object]*
+* `publishOptions` - option sent along with the message header/fields *[Object]*
 * `message` - original payload published. *[string|Object|Buffer]*
 
 ```javascript
@@ -1090,8 +1090,8 @@ Setter and Getter for the `amqplib` connection object.
 
 ##### handler parmaeters
 
-* `err` - a error object of type `Error` *[object]*
-* `connectionContext` - connection context that is the [`Connecton`](#connection) class *[object]*
+* `err` - a error object of type `Error` *[Object]*
+* `connectionContext` - connection context that is the [`Connecton`](#connection) class *[Object]*
 
 ```javascript
 const BunnyBus = require('bunnybus');
@@ -1113,7 +1113,7 @@ bunnyBus.connections.get('connectionName').on(ConnectionManager.AMQP_CONNECTION_
 
 ##### handler parmaeters
 
-* `connectionContext` - connection context that is the [`Connecton`](#connection) class *[object]*
+* `connectionContext` - connection context that is the [`Connecton`](#connection) class *[Object]*
 
 ```javascript
 const BunnyBus = require('bunnybus');
@@ -1134,7 +1134,7 @@ bunnyBus.connections.get('connectionName').on(ConnectionManager.AMQP_CONNECTION_
 
 ##### handler parmaeters
 
-* `connectionContext` - connection context that is the [`Connecton`](#connection) class *[object]*
+* `connectionContext` - connection context that is the [`Connecton`](#connection) class *[Object]*
 
 ```javascript
 const BunnyBus = require('bunnybus');
@@ -1155,7 +1155,7 @@ bunnyBus.connections.get('connectionName').on(ConnectionManager.AMQP_CONNECTION_
 
 ##### handler parmaeters
 
-* `connectionContext` - connection context that is the [`Connecton`](#connection) class *[object]*
+* `connectionContext` - connection context that is the [`Connecton`](#connection) class *[Object]*
 
 ```javascript
 const BunnyBus = require('bunnybus');
@@ -1176,7 +1176,7 @@ bunnyBus.connections.get('connectionName').on(ConnectionManager.AMQP_CONNECTION_
 
 ##### handler parmaeters
 
-* `connectionContext` - connection context that is the [`Connecton`](#connection) class *[object]*
+* `connectionContext` - connection context that is the [`Connecton`](#connection) class *[Object]*
 
 ```javascript
 const BunnyBus = require('bunnybus');
@@ -1202,8 +1202,8 @@ Creates an `amqplib` connection.
 ##### parameter(s)
 
 * `name` - name of the connection. *[string]* **Required**
-* `connectionOptions` - options used to create the `amqplib` connection.  See [`config`](#config) for allowed options.  Only relevant subset is used.  *[object]* **Required**
-* `socketOptions` - options used to configure the underlying socket/tls behavior.  Refer to [`net`](https://nodejs.org/api/net.html) / [`tls'](https://nodejs.org/api/tls.html) modules for configuration values.  *[object]* **Optional**
+* `connectionOptions` - options used to create the `amqplib` connection.  See [`config`](#config) for allowed options.  Only relevant subset is used.  *[Object]* **Required**
+* `socketOptions` - options used to configure the underlying socket/tls behavior.  Refer to [`net`](https://nodejs.org/api/net.html) / [`tls'](https://nodejs.org/api/tls.html) modules for configuration values.  *[Object]* **Optional**
 
 ```javascript
 const BunnyBus = require('bunnybus');
@@ -1326,7 +1326,7 @@ await bunnybus.connections.close('defaultConnection');
 
 ##### handler parmaeters
 
-* `connectionContext` - connection context that is the [`Connecton`](#connection) class *[object]*
+* `connectionContext` - connection context that is the [`Connecton`](#connection) class *[Object]*
 
 ```javascript
 const BunnyBus = require('bunnybus');
@@ -1373,10 +1373,10 @@ Setter and Getter for the `amqplib` channel object.
 
 * `amqp.channel.error` - emitted when the `amqplib` channel errors.
 
-##### handler parmaeters
+##### handler parameters
 
-* `err` - a error object of type `Error` *[object]*
-* `channelContext` - channel context that is the [`Channel`](#channel) class *[object]*
+* `err` - a error object of type `Error` *[Object]*
+* `channelContext` - channel context that is the [`Channel`](#channel) class *[Object]*
 
 ```javascript
 const BunnyBus = require('bunnybus');
@@ -1398,7 +1398,7 @@ bunnyBus.channels.get('channelName').on(ChannelManager.AMQP_CHANNEL_ERROR_EVENT,
 
 ##### handler parmaeters
 
-* `channelContext` - channel context that is the [`Channel`](#channel) class *[object]*
+* `channelContext` - channel context that is the [`Channel`](#channel) class *[Object]*
 
 ```javascript
 const BunnyBus = require('bunnybus');
@@ -1419,7 +1419,7 @@ bunnyBus.channels.get('channelName').on(ChannelManager.AMQP_CHANNEL_CLOSE_EVENT,
 
 ##### handler parmaeters
 
-* `payload` - The message that was sent with no matching route recipient. *[object]*
+* `payload` - The message that was sent with no matching route recipient. *[Object]*
 
 ```javascript
 const BunnyBus = require('bunnybus');
@@ -1440,7 +1440,7 @@ bunnyBus.channels.get('channelName').on(ChannelManager.AMQP_CHANNEL_RETURN_EVENT
 
 ##### handler parmaeters
 
-* `channelContext` - channel context that is the [`Channel`](#channel) class *[object]* 
+* `channelContext` - channel context that is the [`Channel`](#channel) class *[Object]* 
 
 ```javascript
 const BunnyBus = require('bunnybus');
@@ -1453,21 +1453,21 @@ bunnyBus.channels.get('channelName').on(ChannelManager.AMQP_CHANNEL_DRAIN_EVENT,
 });
 ```
 
-#### `ConnectionManager.CHANNEL_REMOVED`
+#### `ChannelManager.CHANNEL_REMOVED`
 
 ##### key value
 
-* `channelManager.removed` - emitted when the channel context is removed by [`close()`](#async-closename).
+* `channelManager.removed` - emitted when the channel context is removed by [`close()`](#async-closename-1).
 
 ##### handler parmaeters
 
-* `channelContext` - channel context that is the [`Channel`](#channel) class *[object]* 
+* `channelContext` - channel context that is the [`Channel`](#channel) class *[Object]* 
 
 ```javascript
 const BunnyBus = require('bunnybus');
 const bunnyBus = new BunnyBus();
 
-bunnyBus.connections.get('connectionName').on(ConnectionManager.CHANNEL_REMOVED, (context) => {
+bunnyBus.connections.get('connectionName').on(ChannelManager.CHANNEL_REMOVED, (context) => {
 
     console.log(context);
     // output : { name, queue, connectionContext, channelOptions, lock, channel }
@@ -1488,8 +1488,8 @@ Creates an `amqplib` channel.
 
 * `name` - name of the channel. *[string]* **Required**
 * `queue` - name of the queue the channel is supporting.  Used primarily as a label to use for filtering and identification.  Defaults to `null`. *[string]* **Optional**
-* `connectionContext` - the connection context to use for instantiation of a channel from.  *[object]* **Required**
-* `channelOptions` - options used to create the `amqplib` connection.  See [`config`](#config) for allowed options.  Only relevant subset is used like `prefetch`  *[object]* **Required**
+* `connectionContext` - the connection context to use for instantiation of a channel from.  *[Object]* **Required**
+* `channelOptions` - options used to create the `amqplib` connection.  See [`config`](#config) for allowed options.  Only relevant subset is used like `prefetch`  *[Object]* **Required**
 
 ```javascript
 const BunnyBus = require('bunnybus');
@@ -1608,11 +1608,11 @@ await bunnybus.connections.close('channelForQueue1');
 
 ##### key value
 
-* `channelManager.removed` - emitted when the channel context is removed by [`remove()`](#async-removename).
+* `channelManager.removed` - emitted when the channel context is removed by [`remove()`](#async-removename-1).
 
 ##### handler parmaeters
 
-* `channelContext` - channel context that is the [`Channel`](#channel) class *[object]* 
+* `channelContext` - channel context that is the [`Channel`](#channel) class *[Object]* 
 
 ```javascript
 const BunnyBus = require('bunnybus');
@@ -1783,7 +1783,7 @@ bunnybus.subscriptions.unblock('queue1');
 
 ##### handler parmaeters
 
-* `subscription` - subscription context that was created *[object]*
+* `subscription` - subscription context that was created *[Object]*
 
 ```javascript
 const BunnyBus = require('bunnybus');
@@ -1804,7 +1804,7 @@ bunnyBus.subscriptions.on(SubscriptionMananger.CREATED_EVENT, (context) => {
 
 ##### handler parmaeters
 
-* `subscription` - subscription context that was tagged *[object]*
+* `subscription` - subscription context that was tagged *[Object]*
 
 ```javascript
 const BunnyBus = require('bunnybus');
@@ -1825,7 +1825,7 @@ bunnyBus.subscriptions.on(SubscriptionMananger.TAGGED_EVENT, (context) => {
 
 ##### handler parmaeters
 
-* `subscription` - subscription context that had its consumer tag removed *[object]*
+* `subscription` - subscription context that had its consumer tag removed *[Object]*
 
 ```javascript
 const BunnyBus = require('bunnybus');
@@ -1846,7 +1846,7 @@ bunnyBus.subscriptions.on(SubscriptionMananger.CLEARED_EVENT, (context) => {
 
 ##### handler parmaeters
 
-* `subscription` - subscription context that was removed *[object]*
+* `subscription` - subscription context that was removed *[Object]*
 
 ```javascript
 const BunnyBus = require('bunnybus');
