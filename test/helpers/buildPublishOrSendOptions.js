@@ -2,7 +2,7 @@
 
 const Code = require('@hapi/code');
 const Lab = require('@hapi/lab');
-const UUIDv4 = require('uuid/v4');
+const Crypto = require('crypto');
 const Helpers = require('../../lib/helpers');
 
 const { describe, before, beforeEach, after, it } = exports.lab = Lab.script();
@@ -34,7 +34,7 @@ describe('Helpers', () => {
             };
 
             const headers = {
-                transactionId: UUIDv4(),
+                transactionId: Crypto.randomBytes(20).toString('hex'),
                 isBuffer: true,
                 source: 'foo',
                 routeKey: 'bar',
