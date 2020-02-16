@@ -73,7 +73,7 @@ describe('BunnyBus', () => {
                             expect(sentOptions.headers.routeKey).to.equal(routeKey);
                             expect(sentOptions.headers.createdAt).to.exist();
                             expect(sentOptions.headers.bunnyBus).to.equal(require('../../../package.json').version);
-                            expect(sentMessage).to.include(message);
+                            expect(sentMessage).to.contains(message);
 
                             instance.removeListener(BunnyBus.MESSAGE_DISPATCHED_EVENT, eventHandler);
                             resolve();

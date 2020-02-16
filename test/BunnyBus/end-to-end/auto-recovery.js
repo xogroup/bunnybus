@@ -56,7 +56,7 @@ describe('BunnyBus', () => {
 
                     handlers['test-event'] = async (sentMessage, ack) => {
 
-                        expect(sentMessage).to.include(message);
+                        expect(sentMessage).to.contains(message);
 
                         await ack();
 

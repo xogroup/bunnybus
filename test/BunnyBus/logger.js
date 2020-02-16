@@ -66,7 +66,7 @@ describe('BunnyBus', () => {
                         instance.once(BunnyBus.LOG_INFO_EVENT, (sentArg1, sentArg2) => {
 
                             expect(sentArg1).to.equal(arg1);
-                            expect(sentArg2).to.include(arg2);
+                            expect(sentArg2).to.contains(arg2);
 
                             resolve();
                         });

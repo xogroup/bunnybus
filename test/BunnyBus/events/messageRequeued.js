@@ -75,7 +75,7 @@ describe('BunnyBus', () => {
                             expect(sentOptions.headers.requeuedAt).to.exist();
                             expect(sentOptions.headers.retryCount).to.exist();
                             expect(sentOptions.headers.bunnyBus).to.equal(require('../../../package.json').version);
-                            expect(sentMessage).to.include(message);
+                            expect(sentMessage).to.contains(message);
 
                             instance.removeListener(BunnyBus.MESSAGE_REQUEUED_EVENT, eventHandler);
                             resolve();

@@ -23,7 +23,7 @@ describe('BunnyBus', () => {
 
             const instance = new BunnyBus(config);
 
-            expect(instance.config).to.include(config);
+            expect(instance.config).to.contains(config);
         });
 
         it('should generate a connections string when default values are passed through the constructor', () => {

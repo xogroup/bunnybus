@@ -48,7 +48,7 @@ describe('BunnyBus', () => {
                         expect(sentOptions.headers.routeKey).to.exist();
                         expect(sentOptions.headers.createdAt).to.exist();
                         expect(sentOptions.headers.bunnyBus).to.exist();
-                        expect(sentMessage).to.include(message);
+                        expect(sentMessage).to.contains(message);
 
                         resolve();
                     });

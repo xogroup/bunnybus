@@ -518,7 +518,7 @@ describe('BunnyBus', () => {
                             expect(sentOptions.headers.erroredAt).to.exist();
                             expect(sentOptions.headers.bunnyBus).to.equal(require('../../../package.json').version);
                             expect(sentOptions.headers.reason).to.equal(rejectionReason);
-                            expect(sentMessage).to.include(testObject);
+                            expect(sentMessage).to.contains(testObject);
 
                             instance.removeListener(BunnyBus.MESSAGE_REJECTED_EVENT, eventHandler);
                             resolve();
