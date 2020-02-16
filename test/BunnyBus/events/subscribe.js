@@ -37,8 +37,8 @@ describe('BunnyBus', () => {
             after(async () => {
 
                 await Promise.all([
-                    await channelContext.channel.deleteExchange(instance.config.globalExchange),
-                    await channelContext.channel.deleteQueue(baseQueueName)
+                    channelContext.channel.deleteExchange(instance.config.globalExchange),
+                    channelContext.channel.deleteQueue(baseQueueName)
                 ]);
             });
 

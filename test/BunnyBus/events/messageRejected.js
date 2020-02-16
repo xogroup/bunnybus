@@ -28,22 +28,25 @@ describe('BunnyBus', () => {
 
             const baseChannelName = 'bunnybus-events-message-rejected';
             const baseQueueName = 'test-events-message-rejected-queue';
+            const baseErrorQueueName = `${baseQueueName}_error`;
 
             before(async () => {
 
                 channelContext = await instance._autoBuildChannelContext(baseChannelName);
 
                 await Promise.all([
-                    await channelContext.channel.deleteExchange(instance.config.globalExchange),
-                    await channelContext.channel.deleteQueue(baseQueueName)
+                    channelContext.channel.deleteExchange(instance.config.globalExchange),
+                    channelContext.channel.deleteQueue(baseQueueName),
+                    channelContext.channel.deleteQueue(baseErrorQueueName)
                 ]);
             });
 
             after(async () => {
 
                 await Promise.all([
-                    await channelContext.channel.deleteExchange(instance.config.globalExchange),
-                    await channelContext.channel.deleteQueue(baseQueueName)
+                    channelContext.channel.deleteExchange(instance.config.globalExchange),
+                    channelContext.channel.deleteQueue(baseQueueName),
+                    channelContext.channel.deleteQueue(baseErrorQueueName)
                 ]);
             });
 
