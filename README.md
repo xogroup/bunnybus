@@ -14,7 +14,13 @@ BunnyBus abstracts away low level queue driver details such as creating a connec
 
 ## Installation
 ```
-npm i bunnybus
+➜  test npm login --registry=https://npm.pkg.github.com
+Username: <your github username>
+Password: <your github api token>
+Email: (this IS public) <your email>
+Logged in as <your github username> on https://npm.pkg.github.com/.
+
+➜  npm i @tenna-llc/bunnybus
 ```
 
 ## Usage
@@ -42,15 +48,15 @@ await bunnyBus.publish({ event : 'create-event', comment : 'hello world!' });
 
 ### API
 
-See the [API Reference](http://github.com/xogroup/bunnybus/blob/master/API.md).
+See the [API Reference](http://github.com/tenna-llc/bunnybus/blob/master/API.md).
 
 ### Examples
 
-Check out the [Examples](http://github.com/xogroup/bunnybus/blob/master/Example.md).
+Check out the [Examples](http://github.com/tenna-llc/bunnybus/blob/master/Example.md).
 
 ### Diagrams
 
-[Visual Guide](http://github.com/xogroup/bunnybus/blob/master/Diagram.md) to integrating with `BunnyBus`.
+[Visual Guide](http://github.com/tenna-llc/bunnybus/blob/master/Diagram.md) to integrating with `BunnyBus`.
 
 ## Articles
 
