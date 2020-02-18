@@ -1,5 +1,5 @@
 {
-  "name": "bunnybus",
+  "name": "@tenna-llc/bunnybus",
   "version": "3.2.0",
   "description": "RabbitMQ driver for pub/sub with error queue / retry management",
   "keywords": [
