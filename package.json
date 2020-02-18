@@ -1,5 +1,5 @@
 {
-  "name": "bunnybus",
+  "name": "@tenna-llc/bunnybus",
   "version": "3.2.0",
   "description": "RabbitMQ driver for pub/sub with error queue / retry management",
   "keywords": [
@@ -15,8 +15,8 @@
   "main": "lib/index.js",
   "scripts": {
     "test": "lab",
-    "build-test": ". docker/wait-on-resource.sh && lab",
     "start-docker": "docker run -d --name=rabbitmq -p 5671:5671 -p 15672:15672 -p 5672:5672 rabbitmq:3-management",
+    "waitfor-docker": "docker/wait-on-resource.sh",
     "stop-docker": "docker rm -f rabbitmq",
     "doctoc": "doctoc API.md Example.md Diagram.md",
     "lint": "eslint ./",
@@ -30,7 +30,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/xogroup/bunnybus"
+    "url": "https://github.com/tenna-llc/bunnybus"
   },
   "dependencies": {
     "amqplib": "^0.5.5"
