@@ -1,6 +1,6 @@
 {
-  "name": "bunnybus",
-  "version": "3.2.0",
+  "name": "@tenna-llc/bunnybus",
+  "version": "4.0.0",
   "description": "RabbitMQ driver for pub/sub with error queue / retry management",
   "keywords": [
     "bunnybus",
@@ -14,9 +14,9 @@
   ],
   "main": "lib/index.js",
   "scripts": {
-    "test": "lab test/node6",
-    "build-test": ". docker/wait-on-resource.sh && if [ $NODE_VERSION -eq 6 ]; then lab test/node6; else lab test/node6 && lab test/node8; fi",
+    "test": "lab",
     "start-docker": "docker run -d --name=rabbitmq -p 5671:5671 -p 15672:15672 -p 5672:5672 rabbitmq:3-management",
+    "waitfor-docker": ". docker/wait-on-resource.sh",
     "stop-docker": "docker rm -f rabbitmq",
     "doctoc": "doctoc API.md Example.md Diagram.md",
     "lint": "eslint ./",
@@ -26,24 +26,21 @@
   "author": "Lam Chan",
   "license": "BSD-3-Clause",
   "engines": {
-    "node": "8.x.x || 10.x.x || 12.x.x"
+    "node": "10.x.x || 12.x.x"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/xogroup/bunnybus"
+    "url": "https://github.com/tenna-llc/bunnybus"
   },
   "dependencies": {
-    "amqplib": "^0.5.1",
-    "async": "^2.3.0"
+    "amqplib": "^0.5.5"
   },
   "devDependencies": {
     "@hapi/code": "^7.0.0",
     "@hapi/eslint-config-hapi": "^12.3.0",
     "@hapi/eslint-plugin-hapi": "^4.3.4",
     "@hapi/lab": "^21.0.0",
-    "bluebird": "^3.7.1",
     "doctoc": "^1.4.0",
-    "eslint": "^6.6.0",
-    "q": "^1.4.1"
+    "eslint": "^6.6.0"
   }
 }

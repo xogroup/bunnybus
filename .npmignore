@@ -1,0 +1,6 @@
+test/
+docker/
+
+# hidden files folders
+.*
+.*/

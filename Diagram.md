@@ -30,7 +30,7 @@ The above diagram shows the relationship between BunnyBus Core with the supporti
 #### Modules
 
 * BunnyBus Core - Extends the `EventEmitter` to help with eventing internal processed commands or errors needed to propagate up to the client.  The sole responsibilty is to provide an easier to use contract with RabbitMQ.
-* EventLogger - This is exposed through the `logger` setter/getter property.  Different implementation of `logger` can be provided.  The built in `EventLogger` marries the `EventEmitter` from BunnyBus Core to it.  As an example, when internally `log.info` is called, BunnyBus will emit the `log.info` event through.  When the logger is replaced, the event emitting behavior also goes along with it.
+* EventLogger - This is exposed through the `logger` setter/getter property.  Different implementation of `logger` can be provided.  The built in `EventLogger` marries the `EventEmitter` from BunnyBus Core to it.  As an example, when internally `log.info` is called, BunnyBus will emit the `log.info` event.  When the logger is replaced, the event emitting behavior is removed.
 * SubscriptionManager - Extends the `EventEmitter`.  The Subscription Manager's sole responsibility is to relay bridge real state with desired state and vice versa.  When BunnyBus recieves a `subscribe()` command, the Subscription Manager is used to register those subscriptions.  When the client wants to `block()` subscriptions, that is done through this component and relayed to BunnyBus via events to realize the desired state.
 
 
