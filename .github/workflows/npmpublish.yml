@@ -21,8 +21,7 @@ jobs:
           node-version: ${{ matrix.node }}
           registry-url: https://npm.pkg.github.com/
           scope: '@tenna-llc'
-      - run: npm run start-docker-rmq
-      - run: npm run start-docker-localstack
+      - run: npm run start-docker
       - run: npm run waitfor-docker
       - run: npm i
         env:
