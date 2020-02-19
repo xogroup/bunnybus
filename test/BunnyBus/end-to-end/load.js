@@ -66,6 +66,9 @@ describe('BunnyBus', () => {
 
                 const promises = [];
 
+                // Do this to primse the connection
+                await instance.publish(message);
+
                 for (let i = 0; i < publishTarget; ++i) {
                     promises.push(instance.publish(message));
                 }

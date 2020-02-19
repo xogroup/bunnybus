@@ -117,7 +117,7 @@ describe('state management', () => {
                 }
 
                 expect(sut).to.exist();
-                expect(sut).to.be.an.error('Exceeded maximum attempts of retries');
+                expect(sut).to.be.an.error('Exceeded maximum attempts of retries of 1');
             });
         });
 
