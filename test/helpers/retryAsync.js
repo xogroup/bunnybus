@@ -127,7 +127,7 @@ describe('Helpers', () => {
             }
 
             expect(i).to.equal(2);
-            expect(result).to.be.an.error(Error, 'Exceeded maximum attempts of retries');
+            expect(result).to.be.an.error(Error, 'Exceeded maximum attempts of retries of 2');
         });
 
         it('should error when error filter trips', async () => {

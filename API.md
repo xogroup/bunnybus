@@ -105,6 +105,9 @@
   - [`BunnyBus.RECOVERED_CHANNEL_EVENT`](#bunnybusrecovered_channel_event)
     - [event key](#event-key-15)
     - [handler parameter(s)](#handler-parameters-15)
+  - [`BunnyBus.RECOVERY_FAILED_EVENT`](#bunnybusrecovery_failed_event)
+    - [event key](#event-key-16)
+    - [handler parameter(s)](#handler-parameters-16)
 - [`Connection`](#connection)
   - [Getters and Setters](#getters-and-setters-1)
     - [`name`](#name)
@@ -160,19 +163,19 @@
   - [Events](#events-3)
     - [`ChannelManager.AMQP_CHANNEL_ERROR_EVENT`](#channelmanageramqp_channel_error_event)
       - [key value](#key-value-6)
-      - [handler parmaeters](#handler-parmaeters-6)
+      - [handler parameters](#handler-parameters)
     - [`ChannelManager.AMQP_CHANNEL_CLOSE_EVENT`](#channelmanageramqp_channel_close_event)
       - [key value](#key-value-7)
-      - [handler parmaeters](#handler-parmaeters-7)
+      - [handler parmaeters](#handler-parmaeters-6)
     - [`ChannelManager.AMQP_CHANNEL_RETURN_EVENT`](#channelmanageramqp_channel_return_event)
       - [key value](#key-value-8)
-      - [handler parmaeters](#handler-parmaeters-8)
+      - [handler parmaeters](#handler-parmaeters-7)
     - [`ChannelManager.AMQP_CHANNEL_DRAIN_EVENT`](#channelmanageramqp_channel_drain_event)
       - [key value](#key-value-9)
-      - [handler parmaeters](#handler-parmaeters-9)
+      - [handler parmaeters](#handler-parmaeters-8)
     - [`ChannelManager.CHANNEL_REMOVED`](#channelmanagerchannel_removed)
       - [key value](#key-value-10)
-      - [handler parmaeters](#handler-parmaeters-10)
+      - [handler parmaeters](#handler-parmaeters-9)
 - [`ChannelManager`](#channelmanager)
   - [Methods](#methods-2)
     - [`async create(name, [queue = null], connectionContext, channelOptions)`](#async-createname-queue--null-connectioncontext-channeloptions)
@@ -193,7 +196,7 @@
   - [Events](#events-4)
     - [`ChannelManager.CHANNEL_REMOVED`](#channelmanagerchannel_removed-1)
       - [key value](#key-value-11)
-      - [handler parmaeters](#handler-parmaeters-11)
+      - [handler parmaeters](#handler-parmaeters-10)
 - [`SubscriptionManager`](#subscriptionmanager)
   - [Methods](#methods-3)
     - [`contains(queue, [withConsumerTag])`](#containsqueue-withconsumertag)
@@ -209,22 +212,22 @@
   - [Events](#events-5)
     - [`SubscriptionManager.CREATED_EVENT`](#subscriptionmanagercreated_event)
       - [key value](#key-value-12)
-      - [handler parmaeters](#handler-parmaeters-12)
+      - [handler parmaeters](#handler-parmaeters-11)
     - [`SubscriptionManager.TAGGED_EVENT`](#subscriptionmanagertagged_event)
       - [key value](#key-value-13)
-      - [handler parmaeters](#handler-parmaeters-13)
+      - [handler parmaeters](#handler-parmaeters-12)
     - [`SubscriptionManager.CLEARED_EVENT`](#subscriptionmanagercleared_event)
       - [key value](#key-value-14)
-      - [handler parmaeters](#handler-parmaeters-14)
+      - [handler parmaeters](#handler-parmaeters-13)
     - [`SubscriptionManager.REMOVED_EVENT`](#subscriptionmanagerremoved_event)
       - [key value](#key-value-15)
-      - [handler parmaeters](#handler-parmaeters-15)
+      - [handler parmaeters](#handler-parmaeters-14)
     - [`SubscriptionManager.BLOCKED_EVENT`](#subscriptionmanagerblocked_event)
       - [key value](#key-value-16)
-      - [handler parmaeters](#handler-parmaeters-16)
+      - [handler parmaeters](#handler-parmaeters-15)
     - [`SubscriptionManager.UNBLOCKED_EVENT`](#subscriptionmanagerunblocked_event)
       - [key value](#key-value-17)
-      - [handler parmaeters](#handler-parmaeters-17)
+      - [handler parmaeters](#handler-parmaeters-16)
 - [Error Types](#error-types)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
@@ -1045,6 +1048,26 @@ const BunnyBus = require('bunnybus');
 const bunnyBus = new BunnyBus();
 
 bunnyBus.on('BunnyBus.RECOVERED_CHANNEL_EVENT', (channelName) => {
+
+    // do work to handle the case when a connection or channel is having a failure
+});
+```
+
+### `BunnyBus.RECOVERY_FAILED_EVENT`
+
+#### event key
+
+* `bunnybus.recovery-failed` - emitted when recovery efforts leads to a failed state.
+
+#### handler parameter(s)
+
+* `err` - a error object of type `Error` *[Object]*
+
+```javascript
+const BunnyBus = require('bunnybus');
+const bunnyBus = new BunnyBus();
+
+bunnyBus.on('BunnyBus.RECOVERY_FAILED_EVENT', (err) => {
 
     // do work to handle the case when a connection or channel is having a failure
 });
