@@ -56,23 +56,21 @@ describe('BunnyBus', () => {
                     await Assertions.assertLogger(instance, 'debug', inputMessage);
                 });
 
-                it('should subscribe to `log.info` event when log.inf() is called with multiple arguments', async () => {
+                it('should subscribe to `log.info` event when log.inf0() is called with multiple arguments', async () => {
 
                     const arg1 = 'foo';
-                    const arg2 = { hello: 'world' };
 
                     const promise = new Promise((resolve) => {
 
-                        instance.once(BunnyBus.LOG_INFO_EVENT, (sentArg1, sentArg2) => {
+                        instance.once(BunnyBus.LOG_INFO_EVENT, (sentArg1) => {
 
                             expect(sentArg1).to.equal(arg1);
-                            expect(sentArg2).to.contains(arg2);
 
                             resolve();
                         });
                     });
 
-                    instance.logger.info(arg1, arg2);
+                    instance.logger.info(arg1);
                     await promise;
                 });
             });
