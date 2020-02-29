@@ -8,7 +8,8 @@
     "rules": {
         "consistent-this" : [ 0, "self", "$" ],
         "require-await": "off",
-        "no-unused-vars": "off"
+        "no-unused-vars": "off",
+        "quote-props": [ "error", "consistent-as-needed", { "unnecessary" : true, "numbers" : true }]
     },
     "parserOptions": {
         "ecmaVersion": 8
