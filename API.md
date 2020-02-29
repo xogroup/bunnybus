@@ -337,16 +337,17 @@ const bunnyBus = new BunnyBus();
 
 const logHandler = (message) => {
 
-    //log something to some where
+    //forward the message to some where such as
+    //process.stdout or console.log or syslog.
 };
 
 //custom logger
 bunnyBus.logger = {
-    info  = logHandler,
-    debug = logHandler,
-    warn  = logHandler,
-    error = logHandler,
-    fatal = logHandler
+    info  : logHandler,
+    debug : logHandler,
+    warn  : logHandler,
+    error : logHandler,
+    fatal : logHandler
 };
 ```
 
