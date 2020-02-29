@@ -2,26 +2,26 @@
 
 const Code = require('@hapi/code');
 const Lab = require('@hapi/lab');
-const { SerialDispatcher } = require('../../lib/schedulers');
+const { ConcurrentDispatcher } = require('../../lib/schedulers');
 
 const { describe, beforeEach, it } = exports.lab = Lab.script();
 const expect = Code.expect;
 
 describe('schedulers', () => {
 
-    describe('Serial Dispatcher', () => {
+    describe('Concurrent Dispatcher', () => {
 
         let instance = undefined;
-        const queueName = 'test-serial-dispatch-queue';
+        const queueName = 'test-concurrent-dispatch-queue';
 
         beforeEach(async () => {
 
-            instance = new SerialDispatcher();
+            instance = new ConcurrentDispatcher();
         });
 
         describe('push', () => {
 
-            it('should add a new function to the queue and execute', async () => {
+            it('should add a new function and execute', async () => {
 
                 let delegate = null;
 
@@ -32,13 +32,7 @@ describe('schedulers', () => {
 
                 instance.push(queueName, delegate);
 
-                const sut = instance._queues.get(queueName);
-
                 await promise;
-
-                expect(sut)
-                    .to.exist()
-                    .and.to.be.an.object();
             });
 
             it('should add 3 functions to the queue and execute', async () => {
@@ -62,10 +56,11 @@ describe('schedulers', () => {
                 expect(counter).to.equal(3);
             });
 
-            it('should add 50 functions and execute them in the order they were added', { timeout: 20000 }, async () => {
+            it('should add 50 functions and execute them in any order', async () => {
 
                 const target = 50;
                 let counter = 0;
+                let outOfOrderCaptured = false;
                 const randomNumber = (min = 20, max = 250) => Math.floor(Math.random() * (max - min + 1) + min);
 
                 await new Promise((resolve, reject) => {
@@ -79,10 +74,10 @@ describe('schedulers', () => {
                         await new Promise((handlerResolve) => setTimeout(handlerResolve, waitTimeInMs));
 
                         if (counter !== orderNumber) {
-                            reject(new Error('Messages are out of order'));
+                            outOfOrderCaptured = true;
                         }
 
-                        if (counter === (target - 1) && counter === orderNumber) {
+                        if (counter === (target - 1)) {
                             resolve();
                         }
 
@@ -99,42 +94,7 @@ describe('schedulers', () => {
                 });
 
                 expect(counter).to.equal(target);
-                expect(instance._queues.size).to.equal(0);
-            });
-
-            it('should not concurrently call handlers in the dispatch queue', async () => {
-
-                let lock = false;
-                let counter = 0;
-
-                await new Promise((resolve, reject) => {
-
-                    const delegate = async () => {
-
-                        if (lock) {
-                            reject('Messages are not processed serially')
-                        }
-                        
-                        lock = true;
-
-                        await new Promise((timeoutResolve) => {
-                            setTimeout(() => {
-                                lock = false;
-    
-                                if (++counter === 2) {
-                                    resolve();
-                                }
-
-                                timeoutResolve();
-                            }, 500);
-                        })
-                    };
-
-                    instance.push(queueName, delegate);
-                    instance.push(queueName, delegate);
-                });
-
-                expect(counter).to.equal(2);
+                expect(outOfOrderCaptured).to.be.true();
             });
         });
     });
