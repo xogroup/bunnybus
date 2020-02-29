@@ -112,22 +112,24 @@ describe('schedulers', () => {
                     const delegate = async () => {
 
                         if (lock) {
-                            reject('Messages are not processed serially')
+                            reject('Messages are not processed serially');
                         }
-                        
+
                         lock = true;
 
                         await new Promise((timeoutResolve) => {
+
                             setTimeout(() => {
+
                                 lock = false;
-    
+
                                 if (++counter === 2) {
                                     resolve();
                                 }
 
                                 timeoutResolve();
                             }, 500);
-                        })
+                        });
                     };
 
                     instance.push(queueName, delegate);
