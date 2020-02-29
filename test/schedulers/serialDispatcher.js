@@ -2,21 +2,21 @@
 
 const Code = require('@hapi/code');
 const Lab = require('@hapi/lab');
-const { Dispatcher } = require('../../lib/states');
+const { SerialDispatcher } = require('../../lib/schedulers');
 
 const { describe, beforeEach, it } = exports.lab = Lab.script();
 const expect = Code.expect;
 
 describe('state management', () => {
 
-    describe('Dispatcher', () => {
+    describe('Serial Dispatcher', () => {
 
         let instance = undefined;
-        const queueName = 'test-queue';
+        const queueName = 'test-serial-dispatch-queue';
 
         beforeEach(async () => {
 
-            instance = new Dispatcher();
+            instance = new SerialDispatcher();
         });
 
         describe('push', () => {
