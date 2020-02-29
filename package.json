@@ -33,7 +33,8 @@
     "url": "https://github.com/tenna-llc/bunnybus"
   },
   "dependencies": {
-    "amqplib": "^0.5.5"
+    "amqplib": "^0.5.5",
+    "set-interval-async": "^1.0.30"
   },
   "devDependencies": {
     "@hapi/code": "^7.0.0",

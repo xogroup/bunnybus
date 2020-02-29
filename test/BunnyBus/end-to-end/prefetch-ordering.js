@@ -16,19 +16,19 @@ describe('BunnyBus', () => {
 
     describe('end to end behaviors', () => {
 
-        describe('load test', () => {
+        describe('prefetch-ordering', () => {
 
-            const baseChannelName = 'bunnybus-e2e-load-test';
-            const baseQueueName = 'test-e2e-load-test-queue';
+            const baseChannelName = 'bunnybus-e2e-prefetch-ordering-test';
+            const baseQueueName = 'test-e2e-prefetch-ordering-test-queue';
             const baseErrorQueueName = `${baseQueueName}_error`;
-            const message = { event : 'a.promise', name : 'bunnybus' };
-            const pattern = 'a.promise';
-            const publishTarget = 1000;
+            const message = { event : 'e2e.prefetch-ordering', name : 'bunnybus' };
+            const pattern = 'e2e.prefetch-ordering';
+            const publishTarget = 200;
 
             before(async () => {
 
                 instance = new BunnyBus();
-                instance.config = BunnyBus.DEFAULT_SERVER_CONFIGURATION;
+                instance.config = Object.assign({}, BunnyBus.DEFAULT_SERVER_CONFIGURATION, { prefetch: 1 });
                 connectionManager = instance.connections;
                 channelManager = instance.channels;
 
@@ -62,33 +62,30 @@ describe('BunnyBus', () => {
                 ]);
             });
 
-            it('should publish all messages within 3 seconds', { timeout: 3000 }, async () => {
+            it('should publish and consume all messages in sequence when handler exhibit different timing lengths', { timeout: 20000 }, async () => {
 
-                const promises = [];
-
-                // Do this to primse the connection
-                await instance.publish(message);
-
-                for (let i = 0; i < publishTarget; ++i) {
-                    promises.push(instance.publish(message));
-                }
-
-                await Promise.all(promises);
-            });
-
-            it('should consume all mesages within 20 seconds', { timeout: 20000 }, async () => {
-
-                let count = 0;
-
+                let counter = 0;
+                const randomNumber = (min = 20, max = 80) => Math.floor(Math.random() * (max - min + 1) + min);
                 const handlers = {};
 
-                const promise = new Promise(async (resolve) => {
+                for (let i = 0; i < publishTarget; ++i) {
+                    await instance.publish(Object.assign({}, message, { number: i }));
+                }
 
-                    handlers['a.promise'] = async (msg, ack) => {
+                const promise = new Promise(async (resolve, reject) => {
+
+                    handlers[pattern] = async (msg, ack) => {
+
+                        const waitTimeInMs  = randomNumber();
+                        await new Promise((handlerResolve) => setTimeout(handlerResolve, waitTimeInMs));
 
                         await ack();
 
-                        if (++count === publishTarget) {
+                        if (counter++ !== msg.number) {
+                            reject(new Error('Messages are out of order'));
+                        }
+
+                        if (counter === publishTarget - 1) {
                             resolve();
                         }
                     };
