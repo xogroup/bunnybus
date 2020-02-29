@@ -227,8 +227,8 @@ const app = require('express')();
 const BunnyBus = require('bunnybus');
 const bunnyBus = new BunnyBus();
 
-bunnyBus.on(BunnyBus.LOG_INFO_EVENT, (...message) => [
+bunnyBus.on(BunnyBus.LOG_INFO_EVENT, (message) => [
 
-    console.log(...message);
+    console.log(message);
 ]);
 ```
