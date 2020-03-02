@@ -23,7 +23,7 @@ describe('BunnyBus', () => {
             const baseErrorQueueName = `${baseQueueName}_error`;
             const message = { event : 'a.promise', name : 'bunnybus' };
             const pattern = 'a.promise';
-            const publishTarget = 1000;
+            const publishTarget = 300;
 
             before(async () => {
 
@@ -76,7 +76,7 @@ describe('BunnyBus', () => {
                 await Promise.all(promises);
             });
 
-            it('should consume all mesages within 20 seconds', { timeout: 20000 }, async () => {
+            it('should consume all messages within 5 seconds', { timeout: 5000 }, async () => {
 
                 let count = 0;
 
@@ -107,7 +107,7 @@ describe('BunnyBus', () => {
             const baseErrorQueueName = `${baseQueueName}_error`;
             const message = { event : 'a.promise', name : 'bunnybus' };
             const pattern = 'a.promise';
-            const publishTarget = 1000;
+            const publishTarget = 300;
 
             before(async () => {
 
