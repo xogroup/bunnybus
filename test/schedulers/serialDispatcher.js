@@ -98,11 +98,13 @@ describe('schedulers', () => {
                     }
                 });
 
+                await new Promise((resolve) => setImmediate(resolve));
+
                 expect(counter).to.equal(target);
                 expect(instance._queues.size).to.equal(0);
             });
 
-            it('should not concurrently call handlers in the dispatch queue', async () => {
+            it('should not concurrently call handlers in the dispatch queue when messages are sequentially enqueued', async () => {
 
                 let lock = false;
                 let counter = 0;
@@ -133,6 +135,44 @@ describe('schedulers', () => {
                     };
 
                     instance.push(queueName, delegate);
+                    instance.push(queueName, delegate);
+                });
+
+                expect(counter).to.equal(2);
+            });
+
+            it('should not concurrently call handlers in the dispatch queue when messages are concurrently enqueued', async () => {
+
+                let lock = false;
+                let counter = 0;
+
+                await new Promise((resolve, reject) => {
+
+                    const delegate = async () => {
+
+                        instance.push(queueName, delegate);
+
+                        if (lock) {
+                            reject('Messages are not processed serially');
+                        }
+
+                        lock = true;
+
+                        await new Promise((timeoutResolve) => {
+
+                            setTimeout(() => {
+
+                                lock = false;
+
+                                if (++counter === 2) {
+                                    resolve();
+                                }
+
+                                timeoutResolve();
+                            }, 500);
+                        });
+                    };
+
                     instance.push(queueName, delegate);
                 });
 
