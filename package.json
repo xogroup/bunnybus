@@ -1,43 +1,43 @@
 {
-  "name": "bunnybus",
-  "version": "4.0.0",
-  "description": "RabbitMQ driver for pub/sub with error queue / retry management",
-  "keywords": [
-    "bunnybus",
-    "rabbitmq",
-    "broker",
-    "bus",
-    "queue",
-    "pubsub",
-    "publish",
-    "subscribe"
-  ],
-  "main": "index.js",
-  "scripts": {
-    "test": "lab test",
-    "lint": "lab -dL",
-    "build-test": ". docker/wait-on-resource.sh && lab test",
-    "start-docker": "docker run -d --name=rabbitmq -p 5671:5671 -p 15672:15672 -p 5672:5672 rabbitmq:3-management",
-    "stop-docker": "docker rm -f rabbitmq",
-    "doctoc": "doctoc API.md && doctoc Example.md && doctoc Diagram.md"
-  },
-  "author": "Lam Chan",
-  "license": "BSD-3-Clause",
-  "engines": {
-    "node": "8.x || 10.x || 12.x"
-  },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/xogroup/bunnybus"
-  },
-  "dependencies": {
-    "amqplib": "0.5.x"
-  },
-  "devDependencies": {
-    "@hapi/code": "5.x.x",
-    "@hapi/lab": "18.x.x",
-    "doctoc": "1.x.x",
-    "eslint-config-hapi": "12.x.x",
-    "eslint-plugin-hapi": "4.x.x"
-  }
+    "name": "bunnybus",
+    "version": "4.0.0",
+    "description": "RabbitMQ driver for pub/sub with error queue / retry management",
+    "keywords": [
+        "bunnybus",
+        "rabbitmq",
+        "broker",
+        "bus",
+        "queue",
+        "pubsub",
+        "publish",
+        "subscribe"
+    ],
+    "main": "index.js",
+    "scripts": {
+        "test": "lab test",
+        "lint": "lab -dL",
+        "build-test": ". docker/wait-on-resource.sh && npx @hapi/lab test",
+        "start-docker": "docker run -d --name=rabbitmq -p 5671:5671 -p 15672:15672 -p 5672:5672 rabbitmq:3-management",
+        "stop-docker": "docker rm -f rabbitmq",
+        "doctoc": "doctoc API.md && doctoc Example.md && doctoc Diagram.md"
+    },
+    "author": "Lam Chan",
+    "license": "BSD-3-Clause",
+    "engines": {
+        "node": "8.x || 10.x || 12.x"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/xogroup/bunnybus"
+    },
+    "dependencies": {
+        "amqplib": "0.5.x"
+    },
+    "devDependencies": {
+        "@hapi/code": "5.x.x",
+        "@hapi/lab": "18.x.x",
+        "doctoc": "1.x.x",
+        "eslint-config-hapi": "12.x.x",
+        "eslint-plugin-hapi": "4.x.x"
+    }
 }
