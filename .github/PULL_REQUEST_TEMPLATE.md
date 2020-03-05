@@ -21,7 +21,7 @@
 ## Checklist:
 <!--- Go over all the following points, and put an `x` in all the boxes that apply. -->
 <!--- If you're unsure about any of these, don't hesitate to ask. We're here to help! -->
-- [ ] I have read the [**CONTRIBUTING**](https://github.com/xogroup/bunnybus/blob/master/.github/CONTRIBUTING.md) document.
+- [ ] I have read the [**CONTRIBUTING**](https://github.com/tenna-llc/bunnybus/blob/master/.github/CONTRIBUTING.md) document.
 - [ ] My code follows the [Hapi.js style guide](https://github.com/hapijs/contrib/blob/master/Style.md).
 - [ ] I have updated the documentation as needed.
 - [ ] I have added tests to cover my changes.

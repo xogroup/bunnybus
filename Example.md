@@ -1,7 +1,5 @@
 # Examples
 
-Examples are based on usage of Promises.
-
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
@@ -28,28 +26,30 @@ const logger = require('pino');
 bunnyBus.logger = logger;
 
 const handlersForQueue1 = {
-    'message_created' : (message, ack, reject, requeue) => {
+    'message_created' : async (message, ack, reject, requeue) => {
         
         //write to elasticsearch
-        ack();
+        await ack();
     }
 };
 
 const handlersForQueue2 = {
-     'message_deleted' : (message, ack, reject, requeue) => {
+    'message_deleted' : async (message, ack, reject, requeue) => {
         
         //delete from elastic search
-        ack();
+        await ack();
     }   
 }
 
-return Promise
-    .resolve()
-    .then(() => subscribe('queue1', handlersForQueue1))
-    .then(() => subscribe('queue2', handlersForQueue2))
-    .catch((err) =>  {
-        logger.error('failed to subscribe', err);
-    });
+try {
+    await Promise.all([
+        subscribe('queue1', handlersForQueue1),
+        subscribe('queue2', handlersForQueue2)
+    ]);
+}
+catch (err) {
+    logger.error('railed to subscribe', err);
+}
 ```
 
 With the above handlers registered, let's publish some events to the bus.
@@ -62,24 +62,22 @@ const logger = require('pino');
 
 bunnyBus.logger = logger;
 
-return Promise
-    .resolve()
-    .then(()) => {
-        return bunnyBus.publish({
+try {
+    await Promise.all([
+        bunnyBus.publish({
             id : 23,
             event : 'message-created',
             body : 'hello world'
-        });
-    })
-    .then(()) => {
-        return bunnyBus.publish({
+        }),
+        bunnyBus.publish({
             id : 23,
             event : 'message-deleted'
-        });
-    })
-    .catch((err) => {
-        logger.error('failed to publish', err);
-    })
+        })
+    ]);
+}
+catch (err) {
+    logger.error('failed to publish', err);
+}
 ```
 
 ## Publish and subscribe using RabbitMQ topic exchange wildcards
@@ -95,24 +93,24 @@ const logger = require('pino');
 bunnyBus.logger = logger;
 
 const handlers = {
-    'email.*' : (message, ack, reject, requeue) => {
+    'email.*' : async (message, ack, reject, requeue) => {
 
         //do work
-        ack();
+        await ack();
     },
-    'voicemail.#' : (message, ack, reject, requeue) => {
+    'voicemail.#' : async (message, ack, reject, requeue) => {
 
         //do work
-        ack();
+        await ack();
     }
 };
 
-return Promise
-    .resolve()
-    .then(() => subscribe('communictionQueue', handlers))
-    .catch((err) =>  {
-        logger.error('failed to subscribe', err);
-    });
+try {
+    await subscribe('communictionQueue', handlers);
+}
+catch (err) {
+    logger.error('failed to subscribe', err);
+}
 ```
 
 With the above handlers registered, let's publish some events to the bus.
@@ -125,41 +123,38 @@ const logger = require('pino');
 
 bunnyBus.logger = logger;
 
-return Promise
-    .resolve()
-    .then(()) => {
-        // this will make it to the queue and subscribed handler
-        return bunnyBus.publish({
-            id : 1001,
-            event : 'email.created',
-            body : 'hello world'
-        });
-    })
-    .then(()) => {
-        // this will not make it to the queue because the wildcard
-        // assigned by the subscribing handler will not catch this route
-        return bunnyBus.publish({
-            id : 1002,
-            event : 'email.created.highpriority',
-            body : 'hello world on fire'
-        });
-    })
-    .then(()) => {
-        // this will make it to the queue and subscribed handler
-        return bunnyBus.publish({
-            id : 9001,
-            event : 'voicemail.crated.lowpriority'
-            body : 'translation was world hello'
-        });
-    })
-    .catch((err) => {
-        logger.error('failed to publish', err);
-    })
+try {
+    // this will make it to the queue and subscribed handler
+    await bunnyBus.publish({
+        id : 1001,
+        event : 'email.created',
+        body : 'hello world'
+    });
+
+    // this will not make it to the queue because the wildcard
+    // assigned by the subscribing handler will not catch this route
+    await bunnyBus.publish({
+        id : 1002,
+        event : 'email.created.highpriority',
+        body : 'hello world on fire'
+    });
+
+    // this will not make it to the queue because the wildcard
+    // assigned by the subscribing handler will not catch this route
+    await bunnyBus.publish({
+        id : 9001,
+        event : 'voicemail.crated.lowpriority'
+        body : 'translation was world hello'
+    });
+}
+catch (err) {
+    logger.error('failed to publish', err);
+}
 ```
 
 ## Integrating with the `SubscriptionManager`
 
-The use of `SubscriptionManager` is completely optional.  When debugging needs to occur in a runtime environment or during a deployment, it can be help to temporarily stop events from being consumed.  The `SubscriptionManager` provides an entrypoint to stop events from being consumed without stopping the overall process.  Along the same lines, the consumption of events can be restarted with the `SubscriptionManager`.  For example, you could create an HTTP endpoint to pause a queue so that events aren't processed. In the handler for this hypothetical endpoint, you would invoke `SubscriptionManager` to block the target queue that the `BunnyBus` instance is subscribed to.
+The use of `SubscriptionManager` is completely optional.  When debugging needs to occur in a runtime environment or during a deployment, it can be helpful to temporarily stop events from being consumed.  The `SubscriptionManager` provides an entrypoint to stop events from being consumed without stopping the overall process.  Along the same lines, the consumption of events can be restarted with the `SubscriptionManager`.  For example, you could create an HTTP endpoint to pause a queue so that events aren't processed. In the handler for this hypothetical endpoint, you would invoke `SubscriptionManager` to block the target queue that the `BunnyBus` instance is subscribed to.
 
 ### Fire and Forget
 
@@ -201,7 +196,9 @@ app.get('/stopSubscription/:queue', function(req, res) => {
         if (queue === req.params.queue) {
             res.send('success');
         }
-    })
+    });
+
+    bunnyBus.subscriptions.block(req.params.queue);
 });
 ```
 
@@ -215,7 +212,9 @@ app.get('/restartSubscription/:queue', function(req, res) => {
         if (queue === req.params.queue) {
             res.send('success');
         }
-    })
+    });
+
+    bunnyBus.subscriptions.unblock(req.params.queue);
 });
 ```
 

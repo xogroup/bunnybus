@@ -5,10 +5,7 @@ Currently supports the following queueing frameworks.
 
 - [RabbitMQ](https://www.rabbitmq.com/)
 
-[![npm version](https://badge.fury.io/js/bunnybus.svg)](https://badge.fury.io/js/bunnybus)
-[![Build Status](https://travis-ci.org/xogroup/bunnybus.svg?branch=development)](https://travis-ci.org/xogroup/bunnybus)
-[![Known Vulnerabilities](https://snyk.io/test/github/xogroup/bunnybus/badge.svg)](https://snyk.io/test/github/xogroup/bunnybus)
-[![NSP Status](https://nodesecurity.io/orgs/xo-group/projects/599e335d-8668-4f77-89ea-ebac0d607378/badge)](https://nodesecurity.io/orgs/xo-group/projects/599e335d-8668-4f77-89ea-ebac0d607378)
+[![Build Status](https://travis-ci.com/tenna-llc/bunnybus.svg?branch=master)](https://travis-ci.com/tenna-llc/bunnybus)
 
 Lead Maintainer: [Lam Chan](https://github.com/lamchakchan)
 
@@ -17,7 +14,13 @@ BunnyBus abstracts away low level queue driver details such as creating a connec
 
 ## Installation
 ```
-npm i bunnybus
+➜  test npm login --registry=https://npm.pkg.github.com
+Username: <your github username>
+Password: <your github api token>
+Email: (this IS public) <your email>
+Logged in as <your github username> on https://npm.pkg.github.com/.
+
+➜  npm i @tenna-llc/bunnybus
 ```
 
 ## Usage
@@ -29,33 +32,15 @@ const bunnyBus = new BunnyBus();
 
 //create a subscription
 await bunnyBus.subscribe('queue1', { 
-    'create-event' : (message, ack) => {
+    'create-event' : async (message, ack) => {
         console.log(message.comment);
-        ack();
-    }});
-
+        await ack();
+    }}
+);
 
 //publish to the above subscription
-bunnyBus.publish({ event : 'create-event', comment : 'hello world!' });
+await bunnyBus.publish({ event : 'create-event', comment : 'hello world!' });
 
-);
-```
-
-### With Callbacks
-```javascript
-const BunnyBus = require('bunnybus');
-const bunnyBus = new BunnyBus();
-
-//create a subscription
-bunnyBus.subscribe('queue1', { 
-    'create-event' : (message, ack) => {
-        console.log(message.comment);
-        ack();
-    }}, () => {
-
-    //publish to the above subscription
-    bunnyBus.publish({ event : 'create-event', comment : 'hello world!' });
-    }
 );
 ```
 
@@ -63,15 +48,15 @@ bunnyBus.subscribe('queue1', {
 
 ### API
 
-See the [API Reference](http://github.com/xogroup/bunnybus/blob/master/API.md).
+See the [API Reference](http://github.com/tenna-llc/bunnybus/blob/master/API.md).
 
 ### Examples
 
-Check out the [Examples](http://github.com/xogroup/bunnybus/blob/master/Example.md).
+Check out the [Examples](http://github.com/tenna-llc/bunnybus/blob/master/Example.md).
 
 ### Diagrams
 
-[Visual Guide](http://github.com/xogroup/bunnybus/blob/master/Diagram.md) to integrating with `BunnyBus`.
+[Visual Guide](http://github.com/tenna-llc/bunnybus/blob/master/Diagram.md) to integrating with `BunnyBus`.
 
 ## Articles
 
