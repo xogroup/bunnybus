@@ -270,5 +270,30 @@ describe('Helpers', () => {
                 expect(Helpers.routeMatcher(pattern, '..')).to.be.true();
             });
         });
+
+        describe('when binding pattern is #', () => {
+
+            const pattern = '#';
+
+            it('should match for a.a', () => {
+
+                expect(Helpers.routeMatcher(pattern, 'a.a')).to.be.true();
+            });
+
+            it('should match for a.1-2.3.z_y.b', () => {
+
+                expect(Helpers.routeMatcher(pattern, 'a.1-2.3.z_y.b')).to.be.true();
+            });
+
+            it('should match for ..', () => {
+
+                expect(Helpers.routeMatcher(pattern, '..')).to.be.true();
+            });
+
+            it('should match for ....', () => {
+
+                expect(Helpers.routeMatcher(pattern, '....')).to.be.true();
+            });
+        });
     });
 });
