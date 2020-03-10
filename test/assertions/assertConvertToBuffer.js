@@ -7,10 +7,8 @@ const expect = Code.expect;
 
 const assertConvertToBuffer = async (data) => {
 
-    let sut = null;
-
     try {
-        const result = await Helpers.convertToBufferAsync(data);
+        const result = await Helpers.convertToBuffer(data);
 
         expect(result.buffer).to.be.a.instanceof(Buffer);
 
@@ -24,10 +22,8 @@ const assertConvertToBuffer = async (data) => {
         }
     }
     catch (err) {
-        sut = err;
+        expect(err).to.not.exist();
     }
-
-    expect(sut).to.not.exist();
 };
 
 module.exports = assertConvertToBuffer;
