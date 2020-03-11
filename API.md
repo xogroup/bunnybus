@@ -447,7 +447,7 @@ async bunnyBus.deleteQueue('queue1');
 
 #### `async checkQueue(name)`
 
-Checks if a queue exists.  The channel closes when the queue does not exist.
+Checks if a queue exists.  Returns a queue info object `{ queue, messageCount, consumerCount }` when it exist.
 
 ##### parameter(s)
 

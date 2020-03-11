@@ -44,14 +44,14 @@ describe('BunnyBus', () => {
                 await channelContext.channel.deleteQueue(baseQueueName);
             });
 
-            it('should be false when queue does not exist', async () => {
+            it('should be undefined when queue does not exist', async () => {
 
                 await Assertions.autoRecoverChannel(async () => {
 
                     const result1 = await instance.checkQueue(baseQueueName);
                     const result2 = instance.channels.get(BunnyBus.MANAGEMENT_CHANNEL_NAME());
 
-                    expect(result1).be.false();
+                    expect(result1).to.be.undefined();
                     expect(result2.channel).to.exist();
                 },
                 connectionContext,
@@ -59,7 +59,7 @@ describe('BunnyBus', () => {
                 channelManager);
             });
 
-            it('should be true when queue does exist', async () => {
+            it('should return queue info when queue does exist', async () => {
 
                 await channelContext.channel.assertQueue(baseQueueName, BunnyBus.DEFAULT_QUEUE_CONFIGURATION);
 
@@ -67,7 +67,14 @@ describe('BunnyBus', () => {
 
                     const result = await instance.checkQueue(baseQueueName);
 
-                    expect(result).be.true();
+                    expect(result)
+                        .to.exist()
+                        .and.to.be.an.object()
+                        .and.to.contain({
+                            queue: baseQueueName,
+                            messageCount: 0,
+                            consumerCount: 0
+                        });
                 },
                 connectionContext,
                 channelContext,
@@ -81,9 +88,7 @@ describe('BunnyBus', () => {
 
                 await Assertions.autoRecoverChannel(async () => {
 
-                    const result = await instance.checkQueue(baseQueueName);
-
-                    expect(result).be.true();
+                    await expect(instance.checkQueue(baseQueueName)).to.not.reject();
                 },
                 connectionContext,
                 channelContext,
@@ -97,9 +102,7 @@ describe('BunnyBus', () => {
 
                 await Assertions.autoRecoverChannel(async () => {
 
-                    const result = await instance.checkQueue(baseQueueName);
-
-                    expect(result).be.true();
+                    await expect(instance.checkQueue(baseQueueName)).to.not.reject();
                 },
                 connectionContext,
                 channelContext,

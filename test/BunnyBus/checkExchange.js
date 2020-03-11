@@ -44,14 +44,14 @@ describe('BunnyBus', () => {
                 await channelContext.channel.deleteExchange(baseExchangeName);
             });
 
-            it('should be false when exchange does not exist', async () => {
+            it('should be undefined when exchange does not exist', async () => {
 
                 await Assertions.autoRecoverChannel(async () => {
 
                     const result1 = await instance.checkExchange(baseExchangeName);
                     const result2 = instance.channels.get(BunnyBus.MANAGEMENT_CHANNEL_NAME());
 
-                    expect(result1).be.false();
+                    expect(result1).to.be.undefined();
                     expect(result2.channel).to.exist();
                 },
                 connectionContext,
@@ -59,7 +59,7 @@ describe('BunnyBus', () => {
                 channelManager);
             });
 
-            it('should be true when exchange does exist', async () => {
+            it('should return exchange info when exchange does exist', async () => {
 
                 await channelContext.channel.assertExchange(baseExchangeName, 'topic', BunnyBus.DEFAULT_EXCHANGE_CONFIGURATION);
 
@@ -67,7 +67,9 @@ describe('BunnyBus', () => {
 
                     const result = await instance.checkExchange(baseExchangeName);
 
-                    expect(result).be.true();
+                    expect(result)
+                        .to.exist()
+                        .and.to.be.an.object();
                 },
                 connectionContext,
                 channelContext,
@@ -81,9 +83,7 @@ describe('BunnyBus', () => {
 
                 await Assertions.autoRecoverChannel(async () => {
 
-                    const result = await instance.checkExchange(baseExchangeName);
-
-                    expect(result).be.true();
+                    await expect(instance.checkExchange(baseExchangeName)).to.not.reject();
                 },
                 connectionContext,
                 channelContext,
@@ -97,9 +97,7 @@ describe('BunnyBus', () => {
 
                 await Assertions.autoRecoverChannel(async () => {
 
-                    const result = await instance.checkExchange(baseExchangeName);
-
-                    expect(result).be.true();
+                    await expect(instance.checkExchange(baseExchangeName)).to.not.reject();
                 },
                 connectionContext,
                 channelContext,
