@@ -21,7 +21,8 @@
     "doctoc": "doctoc API.md Example.md Diagram.md",
     "lint": "eslint ./",
     "lint-fix": "eslint --fix ./",
-    "lint-fix-dry-run": "eslint --fix-dry-run ./"
+    "lint-fix-dry-run": "eslint --fix-dry-run ./",
+    "benchmark-publish": "node benchmark/publish.js"
   },
   "author": "Lam Chan",
   "license": "BSD-3-Clause",
