@@ -9,14 +9,14 @@ const expect = Code.expect;
 
 describe('Helpers', () => {
 
-    describe('createTransactionIdAsync', () => {
+    describe('createTransactionId', () => {
 
         it('should create an 40 character long alphanumeric token', async () => {
 
             let sut = null;
 
             try {
-                const result = await Helpers.createTransactionIdAsync();
+                const result = Helpers.createTransactionId();
 
                 expect(result).to.be.a.string();
                 expect(result).to.have.length(40);
@@ -37,7 +37,7 @@ describe('Helpers', () => {
 
             for (let i = 0; i < iterations; ++i) {
 
-                result.add(await Helpers.createTransactionIdAsync());
+                result.add(Helpers.createTransactionId());
             }
 
             expect(result.size).to.equal(iterations);

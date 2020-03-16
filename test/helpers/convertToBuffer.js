@@ -9,7 +9,7 @@ const expect = Code.expect;
 
 describe('Helpers', () => {
 
-    describe('convertToBufferAsync', () => {
+    describe('convertToBuffer', () => {
 
         it('should convert a string to a Buffer', async () => {
 
@@ -29,21 +29,21 @@ describe('Helpers', () => {
                 }
             };
 
-            await Assertions.assertConvertToBuffer(data);
+            Assertions.assertConvertToBuffer(data);
         });
 
         it('should convert an array to a Buffer', async () => {
 
             const data = ['a', 'b', 1, 2];
 
-            await Assertions.assertConvertToBuffer(data);
+            Assertions.assertConvertToBuffer(data);
         });
 
         it('should not alter a Buffer input', async () => {
 
             const data = Buffer.from('hello');
 
-            await Assertions.assertConvertToBuffer(data);
+            Assertions.assertConvertToBuffer(data);
         });
     });
 });
