@@ -5,12 +5,12 @@ const Code = require('@hapi/code');
 
 const expect = Code.expect;
 
-const assertConvertToBuffer = async (data) => {
+const assertConvertToBuffer = (data) => {
 
     let sut = null;
 
     try {
-        const result = await Helpers.convertToBufferAsync(data);
+        const result = Helpers.convertToBuffer(data);
 
         expect(result.buffer).to.be.a.instanceof(Buffer);
 
