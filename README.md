@@ -12,6 +12,8 @@ Lead Maintainer: [Lam Chan](https://github.com/lamchakchan)
 ## Introduction
 BunnyBus abstracts away low level queue driver details such as creating a connection, creating a channel, creating bindings, creating subscribing queues and etc.  BunnyBus provides safe defaults for many setups which can also be configured.  The core of BunnyBus implements native node callbacks providing maximum performance.  BunnyBus provides two flavors of API for callbacks and Promise alike.  The BunnyBus CLI can be found [here](https://github.com/xogroup/bunnybus-cli) implementing this core driver.
 
+**If you require strict FIFO behavior** keep in mind that while your handlers will be called in order, if you yield to the event loop you may resolve out of order. BunnyBus contains an optional setting to enforce strict FIFO behavior, but this comes at significant performance penalty and shouldn't be used by most consumers. You can enable this behavior in your bunnybus config by setting `server.dispatchType` to `'serial'`.
+
 ## Installation
 ```
 ➜  test npm login --registry=https://npm.pkg.github.com
