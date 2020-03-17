@@ -48,15 +48,15 @@ await bunnyBus.publish({ event : 'create-event', comment : 'hello world!' });
 
 ### API
 
-See the [API Reference](http://github.com/tenna-llc/bunnybus/blob/master/API.md).
+See the [API Reference](http://github.com/xogroup/bunnybus/blob/master/API.md).
 
 ### Examples
 
-Check out the [Examples](http://github.com/tenna-llc/bunnybus/blob/master/Example.md).
+Check out the [Examples](http://github.com/xogroup/bunnybus/blob/master/Example.md).
 
 ### Diagrams
 
-[Visual Guide](http://github.com/tenna-llc/bunnybus/blob/master/Diagram.md) to integrating with `BunnyBus`.
+[Visual Guide](http://github.com/xogroup/bunnybus/blob/master/Diagram.md) to integrating with `BunnyBus`.
 
 ## Articles
 

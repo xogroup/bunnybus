@@ -16,7 +16,7 @@ describe('Helpers', () => {
             let sut = null;
 
             try {
-                const result = await Helpers.createTransactionId();
+                const result = Helpers.createTransactionId();
 
                 expect(result).to.be.a.string();
                 expect(result).to.have.length(40);
@@ -37,7 +37,7 @@ describe('Helpers', () => {
 
             for (let i = 0; i < iterations; ++i) {
 
-                result.add(await Helpers.createTransactionId());
+                result.add(Helpers.createTransactionId());
             }
 
             expect(result.size).to.equal(iterations);
