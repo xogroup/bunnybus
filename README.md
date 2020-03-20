@@ -5,7 +5,7 @@ Currently supports the following queueing frameworks.
 
 - [RabbitMQ](https://www.rabbitmq.com/)
 
-[![Build Status](https://travis-ci.com/tenna-llc/bunnybus.svg?branch=master)](https://travis-ci.com/tenna-llc/bunnybus)
+![Test](https://github.com/tenna-llc/bunnybus/workflows/Test/badge.svg​​​​​​​)
 
 Lead Maintainer: [Lam Chan](https://github.com/lamchakchan)
 
