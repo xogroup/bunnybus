@@ -1,9 +1,12 @@
-name: Publish Node Package
+name: Test
 
 on:
+  pull_request:
+    branches:
+      - '*'
   push:
-    tags:
-      - 'v*'
+    branches:
+      - 'master'
 
 jobs:
   test:
@@ -26,22 +29,3 @@ jobs:
         env:
           NODE_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}
       - run: npm test
-
-  publish-gpr:
-    name: Publish to NPM
-    needs: test
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v1
-        with:
-          node-version: 12
-          registry-url: https://npm.pkg.github.com/
-          scope: '@tenna-llc'
-      - run: npm i
-        env:
-          NODE_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}
-      - run: npm publish
-        env:
-          NODE_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}
-
