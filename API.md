@@ -236,7 +236,7 @@
 
 ## BunnyBus
 
-`BunnyBus` is a class that instantiates into a singleton.  It hosts all features for communicating with RabbitMQ to provide an easy to use enterprise bus facade.
+`BunnyBus` is a class that hosts all features for communicating with RabbitMQ to provide an easy to use enterprise bus facade.
 
 **Note About Versioning**
 
@@ -259,7 +259,7 @@ const bunnyBus = new BunnyBus({ hostname : 'red-bee.cloudamqp.com' });
 
 #### `config`
 
-Setter and Getter for singleton configuration. Accepts the following optional properties:
+Setter and Getter for configuration. Accepts the following optional properties:
 
  * `protocol` - value for creating a secure connection.  Used in the connection string.  Defaults to `amqp`. *[string]* **Optional**
  * `username` - value of the username.  Used in the connection string.  Defaults to `guest`. *[string]* **Optional**
@@ -369,7 +369,7 @@ console.log(bunnyBus.connectionString);
 
 #### `Singleton([config])`
 
-Retrieves a singleton instance of BunnyBus. Accepts a configuration parameter. See [`config`](#config) for allowed options.
+Sets up new, or retrieves an existing singleton instance of BunnyBus. Accepts a configuration parameter. See [`config`](#config) for allowed options.
 
 ```javascript
 const BunnyBus = require('bunnybus');
