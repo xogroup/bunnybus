@@ -6,7 +6,7 @@
 
 - [BunnyBus](#bunnybus)
   - [Constructor](#constructor)
-    - [`new BunnyBus(config)`](#new-bunnybusconfig)
+    - [`new BunnyBus([config])`](#new-bunnybusconfig)
   - [Getters and Setters](#getters-and-setters)
     - [`config`](#config)
     - [`connections`](#connections)
@@ -14,6 +14,8 @@
     - [`subscriptions`](#subscriptions)
     - [`logger`](#logger)
     - [`connectionString`](#connectionstring)
+  - [Static Methods](#static-methods)
+    - [`Singleton([config])`](#singletonconfig)
   - [Methods](#methods)
     - [`async createExchange(name, type, [options])`](#async-createexchangename-type-options)
       - [parameter(s)](#parameters)
@@ -234,7 +236,7 @@
 
 ## BunnyBus
 
-`BunnyBus` is a class that instantiates into a singleton.  It hosts all features for communicating with RabbitMQ to provide an easy to use enterprise bus facade.
+`BunnyBus` is a class that hosts all features for communicating with RabbitMQ to provide an easy to use enterprise bus facade.
 
 **Note About Versioning**
 
@@ -242,9 +244,9 @@ A note regarding versioning:  `BunnyBus` attaches the version value found in its
 
 ### Constructor
 
-#### `new BunnyBus(config)`
+#### `new BunnyBus([config])`
 
-Creates a new singleton instance of `bunnybus`. Accepts a configuration parameter. See [`config`](#config) for allowed options.
+Creates a new instance of `bunnybus`. Accepts a configuration parameter. See [`config`](#config) for allowed options.
 
 ```javascript
 const BunnyBus = require('bunnybus');
@@ -257,7 +259,7 @@ const bunnyBus = new BunnyBus({ hostname : 'red-bee.cloudamqp.com' });
 
 #### `config`
 
-Setter and Getter for singleton configuration. Accepts the following optional properties:
+Setter and Getter for configuration. Accepts the following optional properties:
 
  * `protocol` - value for creating a secure connection.  Used in the connection string.  Defaults to `amqp`. *[string]* **Optional**
  * `username` - value of the username.  Used in the connection string.  Defaults to `guest`. *[string]* **Optional**
@@ -361,6 +363,19 @@ const bunnyBus = new BunnyBus();
 
 console.log(bunnyBus.connectionString);
 //output : amqp://guest:guest@127.0.0.1:5672/%2f?heartbeat=2000
+```
+
+### Static Methods
+
+#### `Singleton([config])`
+
+Sets up new, or retrieves an existing singleton instance of BunnyBus. Accepts a configuration parameter. See [`config`](#config) for allowed options.
+
+```javascript
+const BunnyBus = require('bunnybus');
+const bunnyBus = BunnyBus.Singleton({ hostname : 'red-bee.cloudamqp.com' });
+
+//do work;
 ```
 
 ### Methods
