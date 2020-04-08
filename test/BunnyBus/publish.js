@@ -18,7 +18,6 @@ describe('BunnyBus', () => {
     before(() => {
 
         instance = new BunnyBus();
-        instance.config = BunnyBus.DEFAULT_SERVER_CONFIGURATION;
         connectionManager = instance.connections;
         channelManager = instance.channels;
     });
@@ -34,9 +33,8 @@ describe('BunnyBus', () => {
 
             beforeEach(async () => {
 
+                instance.config = BunnyBus.DEFAULT_SERVER_CONFIGURATION;
                 channelContext = await instance._autoBuildChannelContext(baseChannelName);
-
-
                 await channelContext.channel.assertQueue(baseQueueName);
             });
 
@@ -63,6 +61,13 @@ describe('BunnyBus', () => {
             });
 
             it('should publish for route `a`', async () => {
+
+                await Assertions.assertPublish(instance, channelContext, message, baseQueueName, 'a', null, null, true, null);
+            });
+
+            it('should publish for route `a` when disableExchangeCreate === true', async () => {
+
+                instance.config = { disableExchangeCreate: true };
 
                 await Assertions.assertPublish(instance, channelContext, message, baseQueueName, 'a', null, null, true, null);
             });
