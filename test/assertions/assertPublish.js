@@ -10,7 +10,7 @@ const assertPublish = async (instance, channelContext, message, queueName, route
         routeKey,
         transactionId,
         source,
-        header: headerOptions
+        headers: headerOptions
     };
 
     if (typeof miscOptions === 'object' && miscOptions !== null){
