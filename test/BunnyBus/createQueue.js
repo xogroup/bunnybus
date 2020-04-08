@@ -185,8 +185,8 @@ describe('BunnyBus', () => {
                         result1 = err;
                     }
 
-                    expect(result2).to.be.undefined();
                     expect(result1).to.exist();
+                    expect(result2).to.be.undefined();
                 },
                 connectionContext,
                 channelContext,

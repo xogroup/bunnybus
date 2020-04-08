@@ -166,6 +166,31 @@ describe('BunnyBus', () => {
                 channelContext,
                 channelManager);
             });
+
+            it('should not create an exchange when disableExchangeCreate === true', async () => {
+
+                instance.config = { disableExchangeCreate: true };
+
+                await Assertions.autoRecoverChannel(async () => {
+
+                    let result1 = null;
+
+                    const result2 = await instance.createExchange(baseExchangeName, 'topic');
+
+                    try {
+                        await channelContext.channel.checkExchange(baseExchangeName);
+                    }
+                    catch (err) {
+                        result1 = err;
+                    }
+
+                    expect(result1).to.exist();
+                    expect(result2).to.be.undefined();
+                },
+                connectionContext,
+                channelContext,
+                channelManager);
+            });
         });
     });
 });
