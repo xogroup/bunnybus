@@ -167,6 +167,31 @@ describe('BunnyBus', () => {
                 channelContext,
                 channelManager);
             });
+
+            it('should not create a queue when disableQueueCreate === true', async () => {
+
+                instance.config = { disableQueueCreate: true };
+
+                await Assertions.autoRecoverChannel(async () => {
+
+                    let result1 = null;
+
+                    const result2 = await instance.createQueue(baseQueueName);
+
+                    try {
+                        await channelContext.channel.checkQueue(baseQueueName);
+                    }
+                    catch (err) {
+                        result1 = err;
+                    }
+
+                    expect(result2).to.be.undefined();
+                    expect(result1).to.exist();
+                },
+                connectionContext,
+                channelContext,
+                channelManager);
+            });
         });
     });
 });
