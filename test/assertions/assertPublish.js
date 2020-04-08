@@ -4,12 +4,13 @@ const Code = require('@hapi/code');
 
 const expect = Code.expect;
 
-const assertPublish = async (instance, channelContext, message, queueName, routeKey, transactionId, source, shouldRoute, miscOptions) => {
+const assertPublish = async (instance, channelContext, message, queueName, routeKey, transactionId, source, shouldRoute, miscOptions, headerOptions) => {
 
     const options = {
         routeKey,
         transactionId,
-        source
+        source,
+        headers: headerOptions
     };
 
     if (typeof miscOptions === 'object' && miscOptions !== null){
@@ -47,6 +48,24 @@ const assertPublish = async (instance, channelContext, message, queueName, route
 
         if (transactionId) {
             expect(payload.properties.headers.transactionId).to.be.equal(transactionId);
+        }
+
+        if (miscOptions) {
+            const copyMiscOptions = Object.assign({}, miscOptions);
+            delete copyMiscOptions.CC;
+            delete copyMiscOptions.BCC;
+            delete copyMiscOptions.persistent;
+            delete copyMiscOptions.mandatory;
+
+            expect(payload.properties).to.include(copyMiscOptions);
+
+            if (miscOptions.CC) {
+                expect(payload.properties.headers.CC).to.include(miscOptions.CC);
+            }
+        }
+
+        if (headerOptions) {
+            expect(payload.properties.headers).to.include(headerOptions);
         }
 
         channelContext.channel.ack(payload);

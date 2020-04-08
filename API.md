@@ -275,6 +275,8 @@ Setter and Getter for configuration. Accepts the following optional properties:
  * `validatePublisher` - flag to dictate if the publishing source for messages being consumed must be `bunnyBus`.  This is a safe guard to prevent unexpected message sources from entering the subscribing realm. A value of `bunnyBus` is stamped as a header property on the message during `publish()`.  The `subscribe()` method will use the same value for authentication.  Consumers detecting mismatched publishers will auto reject the message into an error queue.  Defaults to `false`. *[boolean]* **Optional**
  * `validateVersion` - flag to dictate if major semver should be matched as part of the message subscription valiation.  This is a safe guard to prevent mismatched `bunnyBus` drivers from pub/sub to each other.  Consumers detecting mismatched major values will auto reject the message into an error queue.  In order for this layer of validation to occur, `validatePublisher` must be allowed because the version value is set against the `bunnyBus` header.   Defaults to `false`. *[boolean]* **Optional**
  * `disableQueueBind` - flag to dictate if automatic queue binding should be turned on/off as part of the consume setup process.  Defaults to `false`.  *[boolean]* **Optional**
+ * `disableQueueCreate` - flag to dictate if automatic queue creation should be turned on/off.  Defaults to `false`.  *[boolean]* **Optional**
+* `disableExchangeCreate` - flag to dictate if automatic exchange creation should be turned on/off.  Defaults to `false`.  *[boolean]* **Optional**
  * `dispatchType` - enumerated value to select dispatch mechanism used.  `serial` will flow messages to your message handler(s) in single file.  `concurrent` will flow messages simultaneously to your message handler(s).  Defaults to `serial`.  *[string]* **Optional**
  * `rejectUnroutedMessages` - flag to direct messages that were unroutable to provided handlers to either be automatically rejected or acknowledged off the queue.  The default is silent acknowledgements.  Defaults to `false`.  *[boolean]* **Optional**
 
@@ -503,6 +505,7 @@ Publish a message onto the bus.
     - `transactionId` - value attached to the header of the message for tracing.  When one is not supplied, a random 40 character token is generated. *[string]* **Optional**
     - `source` - value attached to the header of the message to help with track the origin of messages in your application.  For applications that leverage this plugin in multiple modules, each module can supply its own module name so a message can be tracked to the creator. *[string]* **Optional**
     - `globalExchange` - value to override the exchange specified in [`config`](#config). *[string]* **Optional**
+    - `headers` - object used to overlay into the message request header (`payload.properties.headers`).  *[Object]* **Optional**
     - In addition to the above options, all of `amqplib`'s [configuration options](http://www.squaremobius.net/amqp.node/channel_api.html#channel_publish) (except for `headers` and `immediate`) from its `sendToQueue` and `publish` methods can also be passed as top-level properties in the `publish` options.
 
 ```javascript
