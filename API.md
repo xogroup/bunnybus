@@ -38,15 +38,17 @@
       - [handlers](#handlers)
       - [`key`](#key)
       - [`handler`](#handler)
-    - [`async unsubscribe(queue)`](#async-unsubscribequeue)
+    - [`async resubscribe(queue)`](#async-resubscribequeue)
       - [parameter(s)](#parameters-9)
+    - [`async unsubscribe(queue)`](#async-unsubscribequeue)
+      - [parameter(s)](#parameters-10)
     - [`await send(message, queue, [options])`](#await-sendmessage-queue-options)
       - [note(s)](#notes)
-      - [parameter(s)](#parameters-10)
-    - [`async get(queue, [options])`](#async-getqueue-options)
       - [parameter(s)](#parameters-11)
-    - [`async getAll(queue, handler, [options])`](#async-getallqueue-handler-options)
+    - [`async get(queue, [options])`](#async-getqueue-options)
       - [parameter(s)](#parameters-12)
+    - [`async getAll(queue, handler, [options])`](#async-getallqueue-handler-options)
+      - [parameter(s)](#parameters-13)
   - [Internal-use Methods](#internal-use-methods)
     - [`async _autoBuildChannelContext(channelName, [queue = null])`](#async-_autobuildchannelcontextchannelname-queue--null)
       - [`parameter(s)`](#parameters)
@@ -137,20 +139,20 @@
 - [`ConnectionManager`](#connectionmanager)
   - [Methods](#methods-1)
     - [`async create(name, connectionOptions, [socketOptions])`](#async-createname-connectionoptions-socketoptions)
-      - [parameter(s)](#parameters-13)
-    - [`contains(name)`](#containsname)
       - [parameter(s)](#parameters-14)
-    - [`get(name)`](#getname)
+    - [`contains(name)`](#containsname)
       - [parameter(s)](#parameters-15)
+    - [`get(name)`](#getname)
+      - [parameter(s)](#parameters-16)
     - [`list()`](#list)
     - [`hasConnection(name)`](#hasconnectionname)
-      - [parameter(s)](#parameters-16)
-    - [`getConnection(name)`](#getconnectionname)
       - [parameter(s)](#parameters-17)
-    - [`async remove(name)`](#async-removename)
+    - [`getConnection(name)`](#getconnectionname)
       - [parameter(s)](#parameters-18)
-    - [`async close(name)`](#async-closename)
+    - [`async remove(name)`](#async-removename)
       - [parameter(s)](#parameters-19)
+    - [`async close(name)`](#async-closename)
+      - [parameter(s)](#parameters-20)
   - [Events](#events-2)
     - [`ConnectionManager.CONNECTION_REMOVED`](#connectionmanagerconnection_removed-1)
       - [key value](#key-value-5)
@@ -181,20 +183,20 @@
 - [`ChannelManager`](#channelmanager)
   - [Methods](#methods-2)
     - [`async create(name, [queue = null], connectionContext, channelOptions)`](#async-createname-queue--null-connectioncontext-channeloptions)
-      - [parameter(s)](#parameters-20)
-    - [`contains(name)`](#containsname-1)
       - [parameter(s)](#parameters-21)
-    - [`get(name)`](#getname-1)
+    - [`contains(name)`](#containsname-1)
       - [parameter(s)](#parameters-22)
+    - [`get(name)`](#getname-1)
+      - [parameter(s)](#parameters-23)
     - [`list()`](#list-1)
     - [`hasChannel(name)`](#haschannelname)
-      - [parameter(s)](#parameters-23)
-    - [`getChannel(name)`](#getchannelname)
       - [parameter(s)](#parameters-24)
-    - [`async remove(name)`](#async-removename-1)
+    - [`getChannel(name)`](#getchannelname)
       - [parameter(s)](#parameters-25)
-    - [`async close(name)`](#async-closename-1)
+    - [`async remove(name)`](#async-removename-1)
       - [parameter(s)](#parameters-26)
+    - [`async close(name)`](#async-closename-1)
+      - [parameter(s)](#parameters-27)
   - [Events](#events-4)
     - [`ChannelManager.CHANNEL_REMOVED`](#channelmanagerchannel_removed-1)
       - [key value](#key-value-11)
@@ -573,6 +575,21 @@ const handlers = {
 }
 
 await bunnyBus.subscribe('queue', handlers);
+```
+
+#### `async resubscribe(queue)`
+
+Resubscribes non-active handlers to a queue.  This should be used with [`unsubscribe()`](#async-unsubscribequeue).
+
+##### parameter(s)
+
+  - `queue` - the name of the queue. *[string]* **Required**
+
+```javascript
+const BunnyBus = require('bunnybus');
+const bunnyBus = new BunnyBus();
+
+await bunnyBus.resubscribe('queue1');
 ```
 
 #### `async unsubscribe(queue)`
