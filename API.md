@@ -14,6 +14,7 @@
     - [`subscriptions`](#subscriptions)
     - [`logger`](#logger)
     - [`connectionString`](#connectionstring)
+    - [`healthy`](#healthy)
   - [Static Methods](#static-methods)
     - [`Singleton([config])`](#singletonconfig)
   - [Methods](#methods)
