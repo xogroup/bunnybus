@@ -4,6 +4,7 @@ const Code = require('@hapi/code');
 const Lab = require('@hapi/lab');
 const BunnyBus = require('../../lib');
 const { ChannelManager, ConnectionManager } = require('../../lib/states');
+const Helpers = require('../../lib/helpers');
 const Exceptions = require('../../lib/exceptions');
 
 const { describe, beforeEach, it } = exports.lab = Lab.script();
@@ -197,6 +198,48 @@ describe('state management', () => {
                 const results = instance.list();
 
                 expect(results).to.have.length(3);
+            });
+        });
+
+        describe('healthy', () => {
+
+            const baseChannelName = 'channel-healthy';
+
+            it('should be true when channel is in context', async () => {
+
+                await instance.create(baseChannelName, null, connectionContext, defaultConfiguration);
+
+                const result = instance.healthy;
+
+                expect(result).to.be.true();
+            });
+
+            it('should be true when channel is missing from context but still within the timeout and retry duration limits', async () => {
+
+                await instance.create(baseChannelName, null, connectionContext, defaultConfiguration);
+                await instance.close(baseChannelName);
+
+                const result = instance.healthy;
+
+                expect(result).to.be.true();
+
+            });
+
+            it('should be false when channel is missing from context but outside the timeout and retry duration limits', async () => {
+
+                try {
+                    await Helpers.timeoutAsync(instance.create.bind(instance), 10)(baseChannelName, null, connectionContext, { ...defaultConfiguration, ...{ timeout: 10, connectionRetryCount: 1 } });
+                }
+                catch (err) { }
+
+                const context = await instance.get(baseChannelName);
+
+                context.channel = undefined;
+                context.lock = Date.now() - 11;
+
+                const result = instance.healthy;
+
+                expect(result).to.be.false();
             });
         });
 

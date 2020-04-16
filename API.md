@@ -14,6 +14,7 @@
     - [`subscriptions`](#subscriptions)
     - [`logger`](#logger)
     - [`connectionString`](#connectionstring)
+    - [`healthy`](#healthy)
   - [Static Methods](#static-methods)
     - [`Singleton([config])`](#singletonconfig)
   - [Methods](#methods)
@@ -367,6 +368,18 @@ const bunnyBus = new BunnyBus();
 
 console.log(bunnyBus.connectionString);
 //output : amqp://guest:guest@127.0.0.1:5672/%2f?heartbeat=2000
+```
+
+#### `healthy`
+
+Getter for the health state of the instance
+
+```javascript
+const BunnyBus = require('bunnybus');
+const bunnyBus = new BunnyBus();
+
+console.log(bunnyBus.healthy);
+//output : true or false
 ```
 
 ### Static Methods
