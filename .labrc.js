@@ -1,9 +1,10 @@
 'use strict';
 
-const LabConfig = {
+module.exports = {
     assert : '@hapi/code',
-    lint : true,
-    verbose : true
+    coverage: true,
+    'coverage-all': true,
+    threshold: 90,
+    lint: true,
+    verbose: true
 };
-
-module.exports = LabConfig;

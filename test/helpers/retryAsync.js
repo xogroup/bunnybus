@@ -4,77 +4,59 @@ const Code = require('@hapi/code');
 const Lab = require('@hapi/lab');
 const Helpers = require('../../lib/helpers');
 
-const { describe, before, beforeEach, after, it } = exports.lab = Lab.script();
+const { describe, before, beforeEach, after, it } = (exports.lab = Lab.script());
 const expect = Code.expect;
 
 let i = undefined;
 
 describe('Helpers', () => {
-
     describe('retryAsync', () => {
-
         beforeEach(() => {
-
             i = 0;
         });
 
         it('should run once', async () => {
-
-            const result = await Helpers.retryAsync(
-                async () => {
-
-                    return ++i;
-                }
-            );
+            const result = await Helpers.retryAsync(async () => {
+                return ++i;
+            });
 
             expect(result).to.equal(1);
         });
 
         it('should run twice', async () => {
-
-            const result = await Helpers.retryAsync(
-                async () => {
-
-                    if (++i < 2) {
-                        throw new Error();
-                    }
-
-                    return i;
+            const result = await Helpers.retryAsync(async () => {
+                if (++i < 2) {
+                    throw new Error();
                 }
-            );
+
+                return i;
+            });
 
             expect(result).to.equal(2);
         });
 
         it('should take longer to run when interval is set with larger wait duration', async () => {
-
             const startTime = new Date();
-            let endTimeX; let endTimeY;
-            let x; let y = 0;
+            let endTimeX;
+            let endTimeY;
+            let x;
+            let y = 0;
 
             await Promise.all([
-                Helpers.retryAsync(
-                    async () => {
+                Helpers.retryAsync(async () => {
+                    if (++x < 2) {
+                        throw new Error();
+                    }
 
-                        if (++x < 2) {
-                            throw new Error();
-                        }
+                    endTimeX = new Date();
+                }, 100),
+                Helpers.retryAsync(async () => {
+                    if (++y < 2) {
+                        throw new Error();
+                    }
 
-                        endTimeX = new Date();
-                    },
-                    100
-                ),
-                Helpers.retryAsync(
-                    async () => {
-
-                        if (++y < 2) {
-                            throw new Error();
-                        }
-
-                        endTimeY = new Date();
-                    },
-                    1000
-                )
+                    endTimeY = new Date();
+                }, 1000)
             ]);
 
             const diffTimeX = endTimeX.getTime() - startTime.getTime();
@@ -84,12 +66,10 @@ describe('Helpers', () => {
         });
 
         it('should run with interval supplied as a function', async () => {
-
             let dynamicIntervalResult = 0;
 
             const result = await Helpers.retryAsync(
                 async () => {
-
                     if (++i < 3) {
                         throw new Error();
                     }
@@ -97,7 +77,6 @@ describe('Helpers', () => {
                     return i;
                 },
                 (retryCount) => {
-
                     dynamicIntervalResult = 50 * Math.pow(2, retryCount);
                     return dynamicIntervalResult;
                 }
@@ -108,21 +87,18 @@ describe('Helpers', () => {
         });
 
         it('should error when attempt limits are reached', async () => {
-
             let result = null;
 
             try {
                 await Helpers.retryAsync(
                     async () => {
-
                         ++i;
                         throw new Error();
                     },
                     100,
                     2
                 );
-            }
-            catch (err) {
+            } catch (err) {
                 result = err;
             }
 
@@ -131,24 +107,20 @@ describe('Helpers', () => {
         });
 
         it('should error when error filter trips', async () => {
-
             let result = null;
 
             try {
                 await Helpers.retryAsync(
                     async () => {
-
                         throw new Error();
                     },
                     100,
                     2,
                     () => {
-
                         return false;
                     }
                 );
-            }
-            catch (err) {
+            } catch (err) {
                 result = err;
             }
 

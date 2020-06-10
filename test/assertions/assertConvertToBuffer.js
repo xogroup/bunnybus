@@ -6,7 +6,6 @@ const Code = require('@hapi/code');
 const expect = Code.expect;
 
 const assertConvertToBuffer = (data) => {
-
     let sut = null;
 
     try {
@@ -17,13 +16,11 @@ const assertConvertToBuffer = (data) => {
         if (Buffer.isBuffer(data)) {
             expect(Buffer.compare(result.buffer, data)).to.be.equal(0);
             expect(result.isBuffer).to.be.true();
-        }
-        else {
+        } else {
             expect(JSON.parse(result.buffer.toString())).to.be.equal(data);
             expect(result.isBuffer).to.be.false();
         }
-    }
-    catch (err) {
+    } catch (err) {
         sut = err;
     }
 

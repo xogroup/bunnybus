@@ -4,19 +4,16 @@ const Code = require('@hapi/code');
 const Lab = require('@hapi/lab');
 const Helpers = require('../../lib/helpers');
 
-const { describe, before, beforeEach, after, it } = exports.lab = Lab.script();
+const { describe, before, beforeEach, after, it } = (exports.lab = Lab.script());
 const expect = Code.expect;
 
 describe('Helpers', () => {
-
     describe('handleMatcher', () => {
-
         it('should not match any handler', () => {
-
             const handlers = {
-                'abc.#.xyz' : () => {},
+                'abc.#.xyz': () => {},
                 'abc.*.hello.world': () => {},
-                'abc.xyz' : () => {}
+                'abc.xyz': () => {}
             };
 
             const result = Helpers.handlerMatcher(handlers, 'world.hello');
@@ -26,10 +23,9 @@ describe('Helpers', () => {
         });
 
         it('should match a single handler', () => {
-
             const handlers = {
-                'hello.world' : () => {},
-                'world.hello' : () => {}
+                'hello.world': () => {},
+                'world.hello': () => {}
             };
 
             const result = Helpers.handlerMatcher(handlers, 'world.hello');
@@ -39,11 +35,10 @@ describe('Helpers', () => {
         });
 
         it('should match multiple handlers', () => {
-
             const handlers = {
-                'abc.#.xyz' : () => {},
-                'abc.*.xyz' : () => {},
-                'abc.xyz' : () => {}
+                'abc.#.xyz': () => {},
+                'abc.*.xyz': () => {},
+                'abc.xyz': () => {}
             };
 
             const result = Helpers.handlerMatcher(handlers, 'abc.hello.xyz');

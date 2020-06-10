@@ -33,16 +33,19 @@
     "url": "https://github.com/tenna-llc/bunnybus"
   },
   "dependencies": {
-    "amqplib": "^0.5.5",
-    "set-interval-async": "^1.0.30"
+    "amqplib": "^0.5.x",
+    "set-interval-async": "^1.x"
   },
   "devDependencies": {
-    "@hapi/code": "^7.0.0",
-    "@hapi/eslint-config-hapi": "^12.3.0",
-    "@hapi/eslint-plugin-hapi": "^4.3.4",
-    "@hapi/lab": "^21.0.0",
-    "doctoc": "^1.4.0",
-    "eslint": "^6.6.0",
+    "@hapi/code": "^8.x",
+    "@hapi/eslint-config-hapi": "^13.x",
+    "@hapi/eslint-plugin-hapi": "^4.x",
+    "@hapi/lab": "^22.x",
+    "doctoc": "*",
+    "eslint": "^6.x",
+    "eslint-config-prettier": "^6.x",
+    "eslint-plugin-prettier": "^3.x",
+    "prettier": "^2.x",
     "sinon": "^9.x"
   }
 }

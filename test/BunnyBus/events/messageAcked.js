@@ -4,7 +4,7 @@ const Code = require('@hapi/code');
 const Lab = require('@hapi/lab');
 const BunnyBus = require('../../../lib');
 
-const { describe, before, beforeEach, after, afterEach, it } = exports.lab = Lab.script();
+const { describe, before, beforeEach, after, afterEach, it } = (exports.lab = Lab.script());
 const expect = Code.expect;
 
 let instance = undefined;
@@ -13,11 +13,8 @@ let channelManager = undefined;
 let channelContext = undefined;
 
 describe('BunnyBus', () => {
-
     describe('events', () => {
-
         before(async () => {
-
             instance = new BunnyBus();
             instance.config = BunnyBus.DEFAULT_SERVER_CONFIGURATION;
             connectionManager = instance.connections;
@@ -25,12 +22,10 @@ describe('BunnyBus', () => {
         });
 
         describe('messaged acked', () => {
-
             const baseChannelName = 'bunnybus-events-message-acked';
             const baseQueueName = 'test-events-message-acked-queue';
 
             before(async () => {
-
                 channelContext = await instance._autoBuildChannelContext(baseChannelName);
 
                 await Promise.all([
@@ -40,7 +35,6 @@ describe('BunnyBus', () => {
             });
 
             after(async () => {
-
                 await Promise.all([
                     channelContext.channel.deleteExchange(instance.config.globalExchange),
                     channelContext.channel.deleteQueue(baseQueueName)
@@ -48,7 +42,6 @@ describe('BunnyBus', () => {
             });
 
             afterEach(async () => {
-
                 await channelContext.channel.cancel(instance.subscriptions.get(baseQueueName).consumerTag);
 
                 instance.subscriptions._subscriptions.clear();
@@ -56,17 +49,14 @@ describe('BunnyBus', () => {
             });
 
             it('should emit MESSAGE_ACKED_EVENT when message is acknowledged', async () => {
-
                 const routeKey = 'subscribed-message-acked-event';
                 const message = { event: routeKey, foo: 'bar' };
                 const transactionId = 'foo-567-xyz';
                 const handlers = {};
-                handlers[routeKey] = async (consumedMessage, ack, reject, requeue) =>  await ack();
+                handlers[routeKey] = async (consumedMessage, ack, reject, requeue) => await ack();
 
                 const promise = new Promise((resolve) => {
-
                     const eventHandler = (sentOptions, sentMessage) => {
-
                         if (sentOptions.headers.routeKey === routeKey) {
                             expect(sentOptions.headers.transactionId).to.be.equal(transactionId);
                             expect(sentOptions.headers.isBuffer).to.be.false();
