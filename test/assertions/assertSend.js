@@ -4,15 +4,23 @@ const Code = require('@hapi/code');
 
 const expect = Code.expect;
 
-const assertSend = async (instance, channelContext, message, queueName, transactionId, source, routeKey, miscOptions) => {
-
+const assertSend = async (
+    instance,
+    channelContext,
+    message,
+    queueName,
+    transactionId,
+    source,
+    routeKey,
+    miscOptions
+) => {
     const options = {
         transactionId,
         source,
         routeKey
     };
 
-    if (typeof miscOptions === 'object' && miscOptions !== null){
+    if (typeof miscOptions === 'object' && miscOptions !== null) {
         Object.assign(options, miscOptions);
     }
 

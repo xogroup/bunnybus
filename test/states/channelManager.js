@@ -7,13 +7,11 @@ const { ChannelManager, ConnectionManager } = require('../../lib/states');
 const Helpers = require('../../lib/helpers');
 const Exceptions = require('../../lib/exceptions');
 
-const { describe, beforeEach, it } = exports.lab = Lab.script();
+const { describe, beforeEach, it } = (exports.lab = Lab.script());
 const expect = Code.expect;
 
 describe('state management', () => {
-
     describe('Channel Manager', () => {
-
         let instance = undefined;
         let connectionManager = undefined;
         let connectionContext = undefined;
@@ -21,7 +19,6 @@ describe('state management', () => {
         const baseConnectionName = 'channel-baseConnection';
 
         beforeEach(async () => {
-
             defaultConfiguration = BunnyBus.DEFAULT_SERVER_CONFIGURATION;
             connectionManager = new ConnectionManager();
             connectionContext = await connectionManager.create(baseConnectionName, defaultConfiguration);
@@ -29,11 +26,9 @@ describe('state management', () => {
         });
 
         describe('create', () => {
-
             const baseChannelName = 'channel-createChannel';
 
             it('should create a channel with default values', async () => {
-
                 await instance.create(baseChannelName, null, connectionContext, defaultConfiguration);
 
                 const result = instance._channels.get(baseChannelName);
@@ -47,7 +42,6 @@ describe('state management', () => {
             });
 
             it('should return same channel when request are called concurrently', async () => {
-
                 const [result1, result2] = await Promise.all([
                     instance.create(baseChannelName, null, connectionContext, defaultConfiguration),
                     instance.create(baseChannelName, null, connectionContext, defaultConfiguration)
@@ -59,7 +53,6 @@ describe('state management', () => {
             });
 
             it('should return same connection when request are called sequentially', async () => {
-
                 const result1 = await instance.create(baseChannelName, null, connectionContext, defaultConfiguration);
                 const result2 = await instance.create(baseChannelName, null, connectionContext, defaultConfiguration);
 
@@ -70,13 +63,11 @@ describe('state management', () => {
             });
 
             it('should error when no connectionContext is supplied', async () => {
-
                 let sut = null;
 
                 try {
                     await instance.create(baseChannelName);
-                }
-                catch (err) {
+                } catch (err) {
                     sut = err;
                 }
 
@@ -85,15 +76,13 @@ describe('state management', () => {
             });
 
             it('should error when connectionContext supplied does not have a connection', async () => {
-
                 connectionContext.connection = undefined;
 
                 let sut = null;
 
                 try {
                     await instance.create(baseChannelName, null, connectionContext);
-                }
-                catch (err) {
+                } catch (err) {
                     sut = err;
                 }
 
@@ -102,13 +91,11 @@ describe('state management', () => {
             });
 
             it('should error when no channel options is supplied', async () => {
-
                 let sut = null;
 
                 try {
                     await instance.create(baseChannelName, null, connectionContext);
-                }
-                catch (err) {
+                } catch (err) {
                     sut = err;
                 }
 
@@ -117,18 +104,19 @@ describe('state management', () => {
             });
 
             it('should error when a confirming channel call fails', { timeout: 10000 }, async () => {
-
                 connectionContext.connection.createConfirmChannel = async () => {
-
                     throw new Error('Mock error');
                 };
 
                 let sut = null;
 
                 try {
-                    await instance.create(baseChannelName, null, connectionContext, { prefetch: 1, connectionRetryCount: 1, timeout: 100 });
-                }
-                catch (err) {
+                    await instance.create(baseChannelName, null, connectionContext, {
+                        prefetch: 1,
+                        connectionRetryCount: 1,
+                        timeout: 100
+                    });
+                } catch (err) {
                     sut = err;
                 }
 
@@ -138,11 +126,9 @@ describe('state management', () => {
         });
 
         describe('contains', () => {
-
             const baseChannelName = 'channel-containsChannel';
 
             it('should return true when channel context exist', async () => {
-
                 await instance.create(baseChannelName, null, connectionContext, defaultConfiguration);
 
                 const result = instance.contains(baseChannelName);
@@ -151,7 +137,6 @@ describe('state management', () => {
             });
 
             it('should return false when connection context does not exist', async () => {
-
                 const result = instance.contains(baseChannelName);
 
                 expect(result).to.be.false();
@@ -159,12 +144,15 @@ describe('state management', () => {
         });
 
         describe('get', () => {
-
             const baseChannelName = 'channel-getChannel';
 
             it('should return a connection context when it exist', async () => {
-
-                const channelContext = await instance.create(baseChannelName, null, connectionContext, defaultConfiguration);
+                const channelContext = await instance.create(
+                    baseChannelName,
+                    null,
+                    connectionContext,
+                    defaultConfiguration
+                );
 
                 const result = instance.get(baseChannelName);
 
@@ -175,7 +163,6 @@ describe('state management', () => {
             });
 
             it('should be undefined when the connection context does not exist', async () => {
-
                 const result = instance.get(baseChannelName);
 
                 expect(result).to.not.exist();
@@ -184,11 +171,9 @@ describe('state management', () => {
         });
 
         describe('list', () => {
-
             const baseChannelName = 'channel-listChannel';
 
             it('should return 3 records when 3 were added', async () => {
-
                 for (let i = 1; i <= 3; ++i) {
                     const channelName = `${baseChannelName}-${i}`;
 
@@ -202,11 +187,9 @@ describe('state management', () => {
         });
 
         describe('healthy', () => {
-
             const baseChannelName = 'channel-healthy';
 
             it('should be true when channel is in context', async () => {
-
                 await instance.create(baseChannelName, null, connectionContext, defaultConfiguration);
 
                 const result = instance.healthy;
@@ -215,22 +198,26 @@ describe('state management', () => {
             });
 
             it('should be true when channel is missing from context but still within the timeout and retry duration limits', async () => {
-
                 await instance.create(baseChannelName, null, connectionContext, defaultConfiguration);
                 await instance.close(baseChannelName);
 
                 const result = instance.healthy;
 
                 expect(result).to.be.true();
-
             });
 
             it('should be false when channel is missing from context but outside the timeout and retry duration limits', async () => {
-
                 try {
-                    await Helpers.timeoutAsync(instance.create.bind(instance), 10)(baseChannelName, null, connectionContext, { ...defaultConfiguration, ...{ timeout: 10, connectionRetryCount: 1 } });
-                }
-                catch (err) { }
+                    await Helpers.timeoutAsync(instance.create.bind(instance), 10)(
+                        baseChannelName,
+                        null,
+                        connectionContext,
+                        {
+                            ...defaultConfiguration,
+                            ...{ timeout: 10, connectionRetryCount: 1 }
+                        }
+                    );
+                } catch (err) {}
 
                 const context = await instance.get(baseChannelName);
 
@@ -244,11 +231,9 @@ describe('state management', () => {
         });
 
         describe('hasChannel', () => {
-
             const baseChannelName = 'channel-hasChannelChannel';
 
             it('should be true when channel exist', async () => {
-
                 await instance.create(baseChannelName, null, connectionContext, defaultConfiguration);
 
                 const result = instance.hasChannel(baseChannelName);
@@ -257,7 +242,6 @@ describe('state management', () => {
             });
 
             it('should be false when channel does not exist', async () => {
-
                 const result = instance.hasChannel(baseChannelName);
 
                 expect(result).to.be.false();
@@ -265,12 +249,15 @@ describe('state management', () => {
         });
 
         describe('getChannel', () => {
-
             const baseChannelName = 'channel-getChannelChannel';
 
             it('should return a channel when it exist', async () => {
-
-                const channelContext = await instance.create(baseChannelName, null, connectionContext, defaultConfiguration);
+                const channelContext = await instance.create(
+                    baseChannelName,
+                    null,
+                    connectionContext,
+                    defaultConfiguration
+                );
 
                 const result = instance.getChannel(baseChannelName);
 
@@ -279,7 +266,6 @@ describe('state management', () => {
             });
 
             it('should be undefined when the channel does not exist', async () => {
-
                 const result = instance.get(baseChannelName);
 
                 expect(result).to.not.exist();
@@ -288,11 +274,9 @@ describe('state management', () => {
         });
 
         describe('close', () => {
-
             const baseChannelName = 'channel-closeChannel';
 
             it('should close channel when it exist', async () => {
-
                 await instance.create(baseChannelName, null, connectionContext, defaultConfiguration);
 
                 await instance.close(baseChannelName);
@@ -306,17 +290,14 @@ describe('state management', () => {
             });
 
             it('should no-op when channel does not exist', async () => {
-
                 await instance.remove(baseChannelName);
             });
         });
 
         describe('remove', () => {
-
             const baseChannelName = 'channel-removeChannel';
 
             it('should remove channel when it exist', async () => {
-
                 await instance.create(baseChannelName, null, connectionContext, defaultConfiguration);
 
                 await instance.remove(baseChannelName);
@@ -328,29 +309,23 @@ describe('state management', () => {
             });
 
             it('should no-op when channel does not exist', async () => {
-
                 await instance.remove(baseChannelName);
             });
         });
 
         describe('Events', () => {
-
             const baseChannelName = 'channel-events';
             let channelContext = undefined;
 
             beforeEach(async () => {
-
                 channelContext = await instance.create(baseChannelName, null, connectionContext, defaultConfiguration);
             });
 
             it('should emit AMQP_CHANNEL_CLOSE_EVENT when channel closes', async () => {
-
                 let result = null;
 
                 const promise = new Promise((resolve) => {
-
                     channelContext.once(ChannelManager.AMQP_CHANNEL_CLOSE_EVENT, (context) => {
-
                         result = context;
                         resolve();
                     });
@@ -365,13 +340,10 @@ describe('state management', () => {
             });
 
             it('should emit AMQP_CHANNEL_CLOSE_EVENT when underlying connection closes', async () => {
-
                 let result = null;
 
                 const promise = new Promise((resolve) => {
-
                     channelContext.once(ChannelManager.AMQP_CHANNEL_CLOSE_EVENT, (context) => {
-
                         result = context;
                         resolve();
                     });
@@ -386,9 +358,7 @@ describe('state management', () => {
             });
 
             it('should unset channel when channel closes', async () => {
-
                 const promise = new Promise((resolve) => {
-
                     channelContext.once(ChannelManager.AMQP_CHANNEL_CLOSE_EVENT, resolve);
                 });
 
@@ -403,14 +373,11 @@ describe('state management', () => {
             });
 
             it('should emit AMQP_CHANNEL_ERROR_EVENT when channel errors', async () => {
-
                 let result1 = null;
                 let result2 = null;
 
                 const promise = new Promise((resolve) => {
-
                     channelContext.once(ChannelManager.AMQP_CHANNEL_ERROR_EVENT, (err, context) => {
-
                         result1 = err;
                         result2 = context;
                         resolve();
@@ -428,7 +395,6 @@ describe('state management', () => {
             });
 
             it('should emit AMQP_CHANNEL_RETURN_EVENT when channel errors', async () => {
-
                 const payloadObject = {
                     content: Buffer.from('hello'),
                     fields: {},
@@ -439,9 +405,7 @@ describe('state management', () => {
                 let result2 = null;
 
                 const promise = new Promise((resolve) => {
-
                     channelContext.once(ChannelManager.AMQP_CHANNEL_RETURN_EVENT, (context, payload) => {
-
                         result1 = context;
                         result2 = payload;
                         resolve();
@@ -459,13 +423,10 @@ describe('state management', () => {
             });
 
             it('should emit AMQP_CHANNEL_DRAIN_EVENT when channel drains', async () => {
-
                 let result = null;
 
                 const promise = new Promise((resolve) => {
-
                     channelContext.once(ChannelManager.AMQP_CHANNEL_DRAIN_EVENT, (context) => {
-
                         result = context;
                         resolve();
                     });
@@ -480,13 +441,10 @@ describe('state management', () => {
             });
 
             it('should emit CHANNEL_REMOVED from the context when channel is removed', async () => {
-
                 let result = null;
 
                 const promise = new Promise((resolve) => {
-
                     channelContext.once(ChannelManager.CHANNEL_REMOVED, (context) => {
-
                         result = context;
                         resolve();
                     });
@@ -501,13 +459,10 @@ describe('state management', () => {
             });
 
             it('should emit CHANNEL_REMOVED from the manager when channel is removed', async () => {
-
                 let result = null;
 
                 const promise = new Promise((resolve) => {
-
                     instance.once(ChannelManager.CHANNEL_REMOVED, (context) => {
-
                         result = context;
                         resolve();
                     });
@@ -522,13 +477,10 @@ describe('state management', () => {
             });
 
             it('should emit AMQP_CHANNEL_CLOSE_EVENT when connection is removed', async () => {
-
                 let result = null;
 
                 const promise = new Promise((resolve) => {
-
                     channelContext.once(ChannelManager.AMQP_CHANNEL_CLOSE_EVENT, (context) => {
-
                         result = context;
                         resolve();
                     });
@@ -543,15 +495,12 @@ describe('state management', () => {
             });
 
             it('should remove channel when underlying connection is removed', async () => {
-
                 let result1 = null;
 
                 expect(instance.get(baseChannelName)).to.exist();
 
                 const promise = new Promise((resolve) => {
-
                     channelContext.once(ChannelManager.CHANNEL_REMOVED, (context) => {
-
                         result1 = context;
 
                         resolve();

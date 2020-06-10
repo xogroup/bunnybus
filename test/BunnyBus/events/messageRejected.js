@@ -4,7 +4,7 @@ const Code = require('@hapi/code');
 const Lab = require('@hapi/lab');
 const BunnyBus = require('../../../lib');
 
-const { describe, before, beforeEach, after, afterEach, it } = exports.lab = Lab.script();
+const { describe, before, beforeEach, after, afterEach, it } = (exports.lab = Lab.script());
 const expect = Code.expect;
 
 let instance = undefined;
@@ -13,11 +13,8 @@ let channelManager = undefined;
 let channelContext = undefined;
 
 describe('BunnyBus', () => {
-
     describe('events', () => {
-
         before(async () => {
-
             instance = new BunnyBus();
             instance.config = BunnyBus.DEFAULT_SERVER_CONFIGURATION;
             connectionManager = instance.connections;
@@ -25,13 +22,11 @@ describe('BunnyBus', () => {
         });
 
         describe('messaged rejected', () => {
-
             const baseChannelName = 'bunnybus-events-message-rejected';
             const baseQueueName = 'test-events-message-rejected-queue';
             const baseErrorQueueName = `${baseQueueName}_error`;
 
             before(async () => {
-
                 channelContext = await instance._autoBuildChannelContext(baseChannelName);
 
                 await Promise.all([
@@ -42,7 +37,6 @@ describe('BunnyBus', () => {
             });
 
             after(async () => {
-
                 await Promise.all([
                     channelContext.channel.deleteExchange(instance.config.globalExchange),
                     channelContext.channel.deleteQueue(baseQueueName),
@@ -51,7 +45,6 @@ describe('BunnyBus', () => {
             });
 
             afterEach(async () => {
-
                 await channelContext.channel.cancel(instance.subscriptions.get(baseQueueName).consumerTag);
 
                 instance.subscriptions._subscriptions.clear();
@@ -59,18 +52,16 @@ describe('BunnyBus', () => {
             });
 
             it('should emit MESSAGE_REJECTED_EVENT when message is rejected', async () => {
-
                 const routeKey = 'subscribed-message-requeued-event';
                 const rejectionReason = 'testing reason';
                 const message = { event: routeKey, foo: 'bar' };
                 const transactionId = 'foo-567-xyz';
                 const handlers = {};
-                handlers[routeKey] = async (consumedMessage, ack, reject, requeue) =>  await reject( { reason: rejectionReason });
+                handlers[routeKey] = async (consumedMessage, ack, reject, requeue) =>
+                    await reject({ reason: rejectionReason });
 
                 const promise = new Promise((resolve) => {
-
                     const eventHandler = (sentOptions, sentMessage) => {
-
                         if (sentOptions.headers.routeKey === routeKey) {
                             expect(sentOptions.headers.transactionId).to.be.equal(transactionId);
                             expect(sentOptions.headers.isBuffer).to.be.false();

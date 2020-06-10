@@ -4,7 +4,7 @@ const Code = require('@hapi/code');
 const Lab = require('@hapi/lab');
 const BunnyBus = require('../../../');
 
-const { describe, before, beforeEach, after, afterEach, it } = exports.lab = Lab.script();
+const { describe, before, beforeEach, after, afterEach, it } = (exports.lab = Lab.script());
 const expect = Code.expect;
 
 let instance = undefined;
@@ -13,11 +13,8 @@ let channelManager = undefined;
 let channelContext = undefined;
 
 describe('BunnyBus', () => {
-
     describe('events', () => {
-
         before(async () => {
-
             instance = new BunnyBus();
             instance.config = BunnyBus.DEFAULT_SERVER_CONFIGURATION;
             connectionManager = instance.connections;
@@ -25,17 +22,14 @@ describe('BunnyBus', () => {
         });
 
         describe('unsubscribe', () => {
-
             const baseChannelName = 'bunnybus-events-unsubscribe';
             const baseQueueName = 'test-events-unsubscribe-queue';
 
             before(async () => {
-
                 channelContext = await instance._autoBuildChannelContext(baseChannelName);
             });
 
             beforeEach(async () => {
-
                 const handlers = {};
                 handlers['subscribed-event'] = (consumedMessage, ack, reject, requeue) => {};
 
@@ -43,7 +37,6 @@ describe('BunnyBus', () => {
             });
 
             after(async () => {
-
                 await Promise.all([
                     channelContext.channel.deleteExchange(instance.config.globalExchange),
                     channelContext.channel.deleteQueue(baseQueueName)
@@ -51,11 +44,8 @@ describe('BunnyBus', () => {
             });
 
             it('should emit UNSUBSCRIBED_EVENT when consume handlers are setup', async () => {
-
                 await new Promise(async (resolve) => {
-
                     instance.once(BunnyBus.UNSUBSCRIBED_EVENT, (queue) => {
-
                         expect(queue).to.equal(baseQueueName);
 
                         resolve();

@@ -6,7 +6,6 @@ const Code = require('@hapi/code');
 const expect = Code.expect;
 
 const assertUndefinedReduceCallback = (...args) => {
-
     const result = Helpers.reduceCallback(...args);
 
     expect(result).to.be.undefined();

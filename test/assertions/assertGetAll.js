@@ -5,8 +5,16 @@ const BunnyBus = require('../../lib');
 
 const expect = Code.expect;
 
-const assertGetAll = async (instance, channelContext, connectionManager, channelManager, message, queueName, meta, limit) => {
-
+const assertGetAll = async (
+    instance,
+    channelContext,
+    connectionManager,
+    channelManager,
+    message,
+    queueName,
+    meta,
+    limit
+) => {
     const buffer = Buffer.from(JSON.stringify(message));
 
     let handleCounter = 0;
@@ -16,7 +24,6 @@ const assertGetAll = async (instance, channelContext, connectionManager, channel
     };
 
     const handlerWithoutMeta = async (sentMessage, ack) => {
-
         ++handleCounter;
 
         expect(sentMessage).to.be.equal(message);
@@ -25,7 +32,6 @@ const assertGetAll = async (instance, channelContext, connectionManager, channel
     };
 
     const handlerWithMeta = async (sentMessage, sentMeta, ack) => {
-
         ++handleCounter;
 
         expect(sentMessage).to.be.equal(message);

@@ -5,15 +5,12 @@ const Lab = require('@hapi/lab');
 const Crypto = require('crypto');
 const Helpers = require('../../lib/helpers');
 
-const { describe, before, beforeEach, after, it } = exports.lab = Lab.script();
+const { describe, before, beforeEach, after, it } = (exports.lab = Lab.script());
 const expect = Code.expect;
 
 describe('Helpers', () => {
-
     describe('buildPublishOrSendOptions', () => {
-
         it('should return a reflective object of the input values', () => {
-
             const amqpOptions = {
                 expiration: '1000',
                 userId: 'guest',
@@ -21,7 +18,7 @@ describe('Helpers', () => {
                 priority: 1,
                 persistent: false,
                 deliveryMode: false,
-                mandatory:false,
+                mandatory: false,
                 BCC: 'b',
                 contentType: 'text/plain',
                 contentEncoding: 'text/plain',
@@ -38,7 +35,7 @@ describe('Helpers', () => {
                 isBuffer: true,
                 source: 'foo',
                 routeKey: 'bar',
-                createdAt: (new Date()).toISOString(),
+                createdAt: new Date().toISOString(),
                 bunnyBus: require('../../package.json').version
             };
 
@@ -48,7 +45,6 @@ describe('Helpers', () => {
         });
 
         it('should not add any options not in the whitelist', () => {
-
             const options = {
                 foo: 'bar'
             };
@@ -63,7 +59,6 @@ describe('Helpers', () => {
         });
 
         it('should not add any options when provided options is a string', () => {
-
             const headers = {
                 hello: 'world'
             };
@@ -74,7 +69,6 @@ describe('Helpers', () => {
         });
 
         it('should not add any options when provided options is null', () => {
-
             const headers = {
                 hello: 'world'
             };
@@ -85,7 +79,6 @@ describe('Helpers', () => {
         });
 
         it('should not add any options when provided options is undefined', () => {
-
             const headers = {
                 hello: 'world'
             };
