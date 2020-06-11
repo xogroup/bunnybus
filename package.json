@@ -34,7 +34,8 @@
   },
   "dependencies": {
     "amqplib": "^0.5.x",
-    "set-interval-async": "^1.x"
+    "set-interval-async": "^1.x",
+    "superagent": "^5.x"
   },
   "devDependencies": {
     "@hapi/code": "^8.x",
