@@ -15,11 +15,23 @@ let channelManager = undefined;
 let channelContext = undefined;
 
 describe('Clients', () => {
-    before(() => {
+    const baseChannelName = 'managment-client';
+    const baseQueueName = 'test-management-client-get-queue';
+
+    before(async () => {
         bunnyBus = new BunnyBus();
         bunnyBus.config = BunnyBus.DEFAULT_SERVER_CONFIGURATION;
         connectionManager = bunnyBus.connections;
         channelManager = bunnyBus.channels;
+
+        channelContext = await bunnyBus._autoBuildChannelContext(baseChannelName);
+        await channelContext.channel.assertQueue(baseQueueName, BunnyBus.DEFAULT_QUEUE_CONFIGURATION);
+        await channelContext.channel.purgeQueue(baseQueueName);
+        await channelContext.channel.sendToQueue(baseQueueName, Buffer.from('{ "hello":"world" }', 'utf8'));
+    });
+
+    after(async () => {
+        await channelContext.channel.deleteQueue(baseQueueName);
     });
 
     beforeEach(() => {
@@ -117,24 +129,10 @@ describe('Clients', () => {
         });
 
         describe('getQueue', () => {
-            const baseChannelName = 'managment-client';
-            const baseQueueName = 'test-management-client-get-queue';
-
-            before(async () => {
-                channelContext = await bunnyBus._autoBuildChannelContext(baseChannelName);
-                await channelContext.channel.assertQueue(baseQueueName, BunnyBus.DEFAULT_QUEUE_CONFIGURATION);
-                await channelContext.channel.purgeQueue(baseQueueName);
-                await channelContext.channel.sendToQueue(baseQueueName, Buffer.from('{ "hello":"world" }', 'utf8'));
-            });
-
-            after(async () => {
-                await channelContext.channel.deleteQueue(baseQueueName);
-            });
-
-            it('should return payload when active', async () => {
+            it('should return payload when active', { timeout: 6000 }, async () => {
                 await managementClient.initialize();
 
-                await new Promise((resolve) => setTimeout(resolve, 500));
+                await new Promise((resolve) => setTimeout(resolve, 5000));
                 expect(await managementClient.getQueue(baseQueueName))
                     .to.exist()
                     .and.to.contain({ queue: baseQueueName, messageCount: 1, consumerCount: 0 });

@@ -23,7 +23,7 @@ const payloadFields = {
 
 const payload = {
     properties: payloadHeaders.properties,
-    fieldds: payloadFields.fields
+    fields: payloadFields.fields
 };
 
 const message = {
