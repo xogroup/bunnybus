@@ -11,6 +11,7 @@ const expect = Code.expect;
 let instance = undefined;
 let connectionManager = undefined;
 let channelManager = undefined;
+let channelContext = undefined;
 
 describe('BunnyBus', () => {
     describe('events', () => {
@@ -28,7 +29,12 @@ describe('BunnyBus', () => {
             beforeEach(async () => {
                 instance.config = BunnyBus.DEFAULT_SERVER_CONFIGURATION;
 
-                await instance._autoBuildChannelContext(baseChannelName);
+                channelContext = await instance._autoBuildChannelContext(baseChannelName);
+            });
+
+            after(async () => {
+                channelContext = await instance._autoBuildChannelContext(baseChannelName);
+                await channelContext.channel.deleteQueue(baseQueueName);
             });
 
             it('should emit RECOVERING_CONNECTION_EVENT when closed connection is recovering', async () => {

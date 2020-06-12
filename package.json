@@ -26,7 +26,7 @@
   "author": "Lam Chan",
   "license": "BSD-3-Clause",
   "engines": {
-    "node": "10.x.x || 12.x.x"
+    "node": "12.x.x || 14.x.x"
   },
   "repository": {
     "type": "git",
@@ -34,7 +34,8 @@
   },
   "dependencies": {
     "amqplib": "^0.5.x",
-    "set-interval-async": "^1.x"
+    "set-interval-async": "^1.x",
+    "superagent": "^5.x"
   },
   "devDependencies": {
     "@hapi/code": "^8.x",
