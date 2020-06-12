@@ -203,7 +203,7 @@
     - [`ChannelManager.CHANNEL_REMOVED`](#channelmanagerchannel_removed-1)
       - [key value](#key-value-11)
       - [handler parmaeters](#handler-parmaeters-10)
-- [`HttpConnectionManager`](#httpconnectionmanager)
+- [`HttpClientManager`](#httpclientmanager)
   - [Methods](#methods-3)
     - [`async create(name, connectionOptions, [socketOptions])`](#async-createname-connectionoptions-socketoptions-1)
       - [parameter(s)](#parameters-28)
@@ -1721,7 +1721,7 @@ bunnyBus.channels.on(ChannelManager.AMQP_CHANNEL_DRAIN_EVENT, (context) => {
 });
 ```
 
-## `HttpConnectionManager`
+## `HttpClientManager`
 
 This class manages the collection of all http clients created within BunnyBus.
 
