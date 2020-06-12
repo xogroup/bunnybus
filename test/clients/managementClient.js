@@ -135,7 +135,6 @@ describe('Clients', () => {
             it('should return payload when active', async () => {
                 await managementClient.initialize();
 
-                // await new Promise((resolve) => setTimeout(resolve, 5000));
                 expect(await managementClient.getQueue(baseQueueName))
                     .to.exist()
                     .and.to.contain({ queue: baseQueueName, messageCount: 1, consumerCount: 0 });
@@ -145,6 +144,14 @@ describe('Clients', () => {
                 expect(await managementClient.getQueue(baseQueueName))
                     .to.not.exist()
                     .and.to.be.undefined();
+            });
+
+            it('should return payload when vhost is not encoded', async () => {
+                await managementClient.initialize();
+
+                managementClient._connectionOptions.vhost = '/';
+
+                expect(await managementClient.getQueue(baseQueueName)).to.exist();
             });
         });
     });
