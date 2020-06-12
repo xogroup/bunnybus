@@ -28,6 +28,9 @@ describe('Clients', () => {
         await channelContext.channel.assertQueue(baseQueueName, BunnyBus.DEFAULT_QUEUE_CONFIGURATION);
         await channelContext.channel.purgeQueue(baseQueueName);
         await channelContext.channel.sendToQueue(baseQueueName, Buffer.from('{ "hello":"world" }', 'utf8'));
+
+        // It takes a bit for the management api interface to resolve a new queue.
+        await new Promise((resolve) => setTimeout(resolve, 10000));
     });
 
     after(async () => {
@@ -129,10 +132,10 @@ describe('Clients', () => {
         });
 
         describe('getQueue', () => {
-            it('should return payload when active', { timeout: 6000 }, async () => {
+            it('should return payload when active', async () => {
                 await managementClient.initialize();
 
-                await new Promise((resolve) => setTimeout(resolve, 5000));
+                // await new Promise((resolve) => setTimeout(resolve, 5000));
                 expect(await managementClient.getQueue(baseQueueName))
                     .to.exist()
                     .and.to.contain({ queue: baseQueueName, messageCount: 1, consumerCount: 0 });
