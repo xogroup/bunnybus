@@ -26,7 +26,7 @@ describe('BunnyBus', () => {
         it('should generate a connections string when default values are passed through the constructor', () => {
             const instance = new BunnyBus(BunnyBus.DEFAULT_SERVER_CONFIGURATION);
 
-            expect(instance.connectionString).to.be.equal('amqp://guest:guest@127.0.0.1:5672/%2f?heartbeat=2000');
+            expect(instance.connectionString).to.be.equal('amqp://guest:guest@127.0.0.1:5672/%2f?heartbeat=20');
         });
 
         it('should generate a connections string when custom values are passed through the constructor', () => {
@@ -41,7 +41,7 @@ describe('BunnyBus', () => {
             const instance = new BunnyBus(config);
 
             expect(instance.connectionString).to.be.equal(
-                'amqps://testUser:testPassword@test.rabbitmq.com:5672/testVirtualHost?heartbeat=2000'
+                'amqps://testUser:testPassword@test.rabbitmq.com:5672/testVirtualHost?heartbeat=20'
             );
         });
 
@@ -49,7 +49,7 @@ describe('BunnyBus', () => {
             const instance = new BunnyBus();
             instance.config = BunnyBus.DEFAULT_SERVER_CONFIGURATION;
 
-            expect(instance.connectionString).to.be.equal('amqp://guest:guest@127.0.0.1:5672/%2f?heartbeat=2000');
+            expect(instance.connectionString).to.be.equal('amqp://guest:guest@127.0.0.1:5672/%2f?heartbeat=20');
         });
 
         it('should generate a connection string with custom values', () => {
@@ -65,7 +65,7 @@ describe('BunnyBus', () => {
             instance.config = config;
 
             expect(instance.connectionString).to.be.equal(
-                'amqps://testUser:testPassword@test.rabbitmq.com:5672/testVirtualHost?heartbeat=2000'
+                'amqps://testUser:testPassword@test.rabbitmq.com:5672/testVirtualHost?heartbeat=20'
             );
         });
     });
