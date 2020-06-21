@@ -4,6 +4,7 @@ const Code = require('@hapi/code');
 const Lab = require('@hapi/lab');
 const BunnyBus = require('../../../lib');
 const { ChannelManager } = require('../../../lib/states');
+const helpers = require('../../../lib/helpers');
 
 const { describe, before, beforeEach, after, afterEach, it } = (exports.lab = Lab.script());
 const expect = Code.expect;
@@ -30,6 +31,10 @@ describe('BunnyBus', () => {
                 channelContext = await instance._autoBuildChannelContext(baseChannelName);
             });
 
+            afterEach(async () => {
+                await instance.unsubscribe(baseQueueName);
+            });
+
             after(async () => {
                 await channelContext.channel.deleteQueue(baseQueueName);
                 await channelContext.channel.deleteQueue(basePoisonQueueName);
@@ -54,6 +59,37 @@ describe('BunnyBus', () => {
                         resolve();
                     });
                 });
+            });
+
+            it('should not error when message caught by subscribe is not a deserializable JSON buffer when "rejectPoisonMessages" is false', async () => {
+                const badJSONBuffer = Buffer.from('{ "hello": "world ', 'utf-8');
+
+                // This will never be called
+                await instance.subscribe(
+                    baseQueueName,
+                    {
+                        ec: async (consumedMessage, ack) => {
+                            await ack();
+                        }
+                    },
+                    { rejectPoisonMessages: false }
+                );
+
+                // send the poison message
+                channelContext.channel.sendToQueue(baseQueueName, badJSONBuffer, { headers: { routeKey: 'ec' } });
+
+                await expect(
+                    helpers.timeoutAsync(
+                        async () =>
+                            await new Promise((resolve) => {
+                                instance.once(BunnyBus.MESSAGE_REJECTED_EVENT, async () => {
+                                    expect(await instance.get(basePoisonQueueName)).to.exist();
+                                    resolve();
+                                });
+                            }),
+                        1500
+                    )()
+                ).to.reject(Error, 'Timeout occurred');
             });
         });
     });

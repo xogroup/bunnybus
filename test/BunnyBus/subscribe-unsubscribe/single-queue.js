@@ -90,8 +90,8 @@ describe('BunnyBus', () => {
                         resolve();
                     };
 
-                    await instance.subscribe(baseQueueName, handlers),
-                        await instance.publish(messageString, publishOptions);
+                    await instance.subscribe(baseQueueName, handlers);
+                    await instance.publish(messageString, publishOptions);
                 });
             });
 
