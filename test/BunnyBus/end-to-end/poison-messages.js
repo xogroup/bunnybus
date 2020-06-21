@@ -4,7 +4,7 @@ const Code = require('@hapi/code');
 const Lab = require('@hapi/lab');
 const BunnyBus = require('../../../lib');
 const { ChannelManager } = require('../../../lib/states');
-const helpers = require('../../../lib/helpers');
+const Helpers = require('../../../lib/helpers');
 
 const { describe, before, beforeEach, after, afterEach, it } = (exports.lab = Lab.script());
 const expect = Code.expect;
@@ -79,7 +79,7 @@ describe('BunnyBus', () => {
                 channelContext.channel.sendToQueue(baseQueueName, badJSONBuffer, { headers: { routeKey: 'ec' } });
 
                 await expect(
-                    helpers.timeoutAsync(
+                    Helpers.timeoutAsync(
                         async () =>
                             await new Promise((resolve) => {
                                 instance.once(BunnyBus.MESSAGE_REJECTED_EVENT, async () => {
