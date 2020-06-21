@@ -34,6 +34,16 @@ describe('BunnyBus', () => {
                 });
             });
 
+            after(async () => {
+                if (!channelContext.channel) {
+                    // We need this to clean up bad configuration induced by edge case testing
+                    instance.config = BunnyBus.DEFAULT_SERVER_CONFIGURATION;
+                    channelContext = await instance._autoBuildChannelContext(baseChannelName);
+                }
+
+                await channelContext.channel.deleteQueue(baseQueueName);
+            });
+
             it('should pass when parallel calls to publish happens when connection starts off closed', async () => {
                 const message = { event: 'ee', name: 'bunnybus' };
 
@@ -61,8 +71,6 @@ describe('BunnyBus', () => {
             });
 
             it('should error when server host configuration value is not valid', async () => {
-                let result = null;
-
                 const message = { event: 'eb', name: 'bunnybus' };
                 instance.config = {
                     hostname: 'fake',
@@ -70,13 +78,7 @@ describe('BunnyBus', () => {
                     connectionRetryCount: 1
                 };
 
-                try {
-                    await instance.publish(message);
-                } catch (err) {
-                    result = err;
-                }
-
-                expect(result).to.exist();
+                await expect(instance.publish(message)).to.reject();
             });
         });
     });

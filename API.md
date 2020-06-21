@@ -292,6 +292,7 @@ Setter and Getter for configuration. Accepts the following optional properties:
 * `disableExchangeCreate` - flag to dictate if automatic exchange creation should be turned on/off.  Defaults to `false`.  *[boolean]* **Optional**
  * `dispatchType` - enumerated value to select dispatch mechanism used.  `serial` will flow messages to your message handler(s) in single file.  `concurrent` will flow messages simultaneously to your message handler(s).  Defaults to `serial`.  *[string]* **Optional**
  * `rejectUnroutedMessages` - flag to direct messages that were unroutable to provided handlers to either be automatically rejected or acknowledged off the queue.  The default is silent acknowledgements.  Defaults to `false`.  *[boolean]* **Optional**
+ * `rejectPoisonMessages` - flag to direct poison messages to be automatically rejected to a poison queue or acknowledged off the queue.  The default is to forward the message to a poison queue.  Defaults to `true`.  *[boolean]*
 
 Note that updates in the options directed at changing connection string will not take affect immediately.  [`ConnectionManager.close()`](#async-closename) needs to be called manually to invoke a new connection with new settings.
 
@@ -574,6 +575,7 @@ Subscribe to messages from a given queue.
     - `validateVersion` - flag for validating messages generated from the same major version.  More info can be found in [config](#config). Defaults to one provided in the [config](#config). *[boolean]* **Optional**
     - `disableQueueBind` - flag for disabling automatic queue binding.  More info can be found in [config](#config).  Defaults to one provided in the [config](#config).  *[boolean]* **Optional**
     - `rejectUnroutedMessages` - flag for enabling rejection for unroutable messages.  More info can be found in [config](#config).  Defaults to one provided in the [config](#config).  *[boolean]* 
+    - `rejectPoisonMessages` - flag for enabling rejection for poison messages.  More info can be found in [config](#config).  Defaults to one provided in the [config](#config).  *[boolean]* 
     - `meta` - allows for meta data regarding the payload to be returned.  Headers like the `createdAt` ISO string timestamp and the `transactionId` are included in the `meta.headers` object.  Turning this on will adjust the handler to be an `AsyncFunction` as `async (message, meta, [ack, [reject, [requeue]]]) => {}`. *[boolean]* **Optional**
 
 ##### handlers
