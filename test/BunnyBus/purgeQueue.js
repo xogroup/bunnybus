@@ -43,18 +43,8 @@ describe('BunnyBus', () => {
             it(`should purge a queue with name ${baseQueueName}`, async () => {
                 await Assertions.autoRecoverChannel(
                     async () => {
-                        let result1 = null;
-
-                        const result2 = await instance.purgeQueue(baseQueueName);
-
-                        try {
-                            await channelContext.channel.checkQueue(baseQueueName);
-                        } catch (err) {
-                            result1 = err;
-                        }
-
-                        expect(result1).to.not.exist();
-                        expect(result2).to.be.true();
+                        expect(await instance.purgeQueue(baseQueueName)).to.be.true();
+                        await expect(channelContext.channel.checkQueue(baseQueueName)).to.not.reject();
                     },
                     connectionContext,
                     channelContext,
@@ -67,18 +57,7 @@ describe('BunnyBus', () => {
 
                 await Assertions.autoRecoverChannel(
                     async () => {
-                        let result1 = null;
-                        let result2 = null;
-
-                        try {
-                            result2 = await instance.purgeQueue(baseQueueName);
-                        } catch (err) {
-                            result1 = err;
-                        }
-
-                        expect(result1).to.not.exist();
-                        expect(result2).to.be.false();
-                        // expect(result2.messageCount).to.equal(1);
+                        expect(await instance.purgeQueue(baseQueueName)).to.be.false();
                     },
                     connectionContext,
                     channelContext,

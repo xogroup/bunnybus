@@ -292,6 +292,7 @@ Setter and Getter for configuration. Accepts the following optional properties:
 * `disableExchangeCreate` - flag to dictate if automatic exchange creation should be turned on/off.  Defaults to `false`.  *[boolean]* **Optional**
  * `dispatchType` - enumerated value to select dispatch mechanism used.  `serial` will flow messages to your message handler(s) in single file.  `concurrent` will flow messages simultaneously to your message handler(s).  Defaults to `serial`.  *[string]* **Optional**
  * `rejectUnroutedMessages` - flag to direct messages that were unroutable to provided handlers to either be automatically rejected or acknowledged off the queue.  The default is silent acknowledgements.  Defaults to `false`.  *[boolean]* **Optional**
+ * `rejectPoisonMessages` - flag to direct poison messages to be automatically rejected to a poison queue or acknowledged off the queue.  The default is to forward the message to a poison queue.  Defaults to `true`.  *[boolean]*
 
 Note that updates in the options directed at changing connection string will not take affect immediately.  [`ConnectionManager.close()`](#async-closename) needs to be called manually to invoke a new connection with new settings.
 
@@ -574,6 +575,7 @@ Subscribe to messages from a given queue.
     - `validateVersion` - flag for validating messages generated from the same major version.  More info can be found in [config](#config). Defaults to one provided in the [config](#config). *[boolean]* **Optional**
     - `disableQueueBind` - flag for disabling automatic queue binding.  More info can be found in [config](#config).  Defaults to one provided in the [config](#config).  *[boolean]* **Optional**
     - `rejectUnroutedMessages` - flag for enabling rejection for unroutable messages.  More info can be found in [config](#config).  Defaults to one provided in the [config](#config).  *[boolean]* 
+    - `rejectPoisonMessages` - flag for enabling rejection for poison messages.  A poison queue is named by default to `<your queue name>_poison`.  More info can be found in [config](#config).  Defaults to one provided in the [config](#config).  *[boolean]* 
     - `meta` - allows for meta data regarding the payload to be returned.  Headers like the `createdAt` ISO string timestamp and the `transactionId` are included in the `meta.headers` object.  Turning this on will adjust the handler to be an `AsyncFunction` as `async (message, meta, [ack, [reject, [requeue]]]) => {}`. *[boolean]* **Optional**
 
 ##### handlers
@@ -589,7 +591,7 @@ A `handler` is an asynchronous function which contains the following arity.  Ord
   - `meta` is only available when `options.meta` is set to `true`.  This object will contain all payload related meta information like `payload.properties.headers`. Headers like the `createdAt` ISO string timestamp and the `transactionId` are included in the `meta.headers` object.
   - `async ack([option)` is an async function for acknowledging the message off the bus.
     - `option` - a placeholder for future optional parameters for `ack`.  High chance of deprecation.
-  - `async reject([option)` is an async function for rejecting the message off the bus to a predefined error queue.  The error queue is named by default `<your queue name>_error`.  It will also short circuit to `error_bus` when defaults can't be found.
+  - `async reject([option)` is an async function for rejecting the message off the bus to a predefined error queue.  The error queue is named by default to `<your queue name>_error`.  It will also short circuit to `error_bus` when defaults can't be found.
     - `option` - An object with a property of `reason` to be supplied. *[Object]* **Optional**
   - `async requeue()` is an async function for requeuing the message back to the back of the queue.  This is feature circumvents Rabbit's `nack` RPC.  `nack` natively requeues but pushes the message to the front of the queue.
 
