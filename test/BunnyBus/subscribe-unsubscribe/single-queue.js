@@ -517,6 +517,37 @@ describe('BunnyBus', () => {
                 await instance.publish(testObject);
                 await promise;
             });
+
+            it('should only acknowledge message from one of the matching handlers', async () => {
+                let resolveCounter = 0;
+
+                await new Promise(async (resolve) => {
+                    const handlers = {};
+
+                    const resolver = () => {
+                        if (++resolveCounter === 1) {
+                            resolve();
+                        }
+                    };
+
+                    handlers[publishOptions.routeKey] = async (consumedMessage, ack) => {
+                        ack();
+                        resolver();
+                    };
+
+                    handlers['a.#'] = async (consumedMessage, ack) => {
+                        ack();
+                        resolver();
+                    };
+
+                    await instance.subscribe(baseQueueName, handlers);
+                    await instance.publish(messageString, publishOptions);
+                });
+
+                await new Promise((resolve) => setTimeout(resolve, 500));
+
+                expect(resolveCounter).to.equal(1);
+            });
         });
     });
 });
