@@ -44,7 +44,7 @@ describe('Helpers', () => {
             const result = Helpers.handlerMatcher(handlers, 'abc.hello.xyz');
 
             expect(result).to.be.an.array();
-            expect(result).to.have.length(2);
+            expect(result).to.have.length(1);
         });
     });
 });
