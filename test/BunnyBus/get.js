@@ -45,6 +45,7 @@ describe('BunnyBus', () => {
 
             after(async () => {
                 await channelContext.channel.deleteQueue(baseQueueName);
+                await instance.stop();
             });
 
             it('should receive message', async () => {

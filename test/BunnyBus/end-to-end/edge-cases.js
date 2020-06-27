@@ -42,6 +42,7 @@ describe('BunnyBus', () => {
                 }
 
                 await channelContext.channel.deleteQueue(baseQueueName);
+                await instance.stop();
             });
 
             it('should pass when parallel calls to publish happens when connection starts off closed', async () => {

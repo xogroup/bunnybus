@@ -30,6 +30,8 @@ describe('BunnyBus', () => {
                 channelContext = await instance._autoBuildChannelContext(baseChannelName);
 
                 await channelContext.channel.deleteExchange(instance.config.globalExchange);
+
+                await instance.stop();
             });
 
             it('should emit PUBLISHED_EVENT when message is published', async () => {

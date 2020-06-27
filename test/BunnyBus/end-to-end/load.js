@@ -54,6 +54,8 @@ describe('BunnyBus', () => {
                     channelContext.channel.deleteQueue(baseQueueName),
                     channelContext.channel.deleteQueue(baseErrorQueueName)
                 ]);
+
+                await instance.stop();
             });
 
             it('should publish all messages within 3 seconds', { timeout: 3000 }, async () => {

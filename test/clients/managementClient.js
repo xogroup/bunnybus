@@ -35,6 +35,8 @@ describe('Clients', () => {
 
     after(async () => {
         await channelContext.channel.deleteQueue(baseQueueName);
+
+        await bunnyBus.stop();
     });
 
     beforeEach(() => {

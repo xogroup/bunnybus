@@ -37,6 +37,8 @@ describe('BunnyBus', () => {
                 channelContext.channel.deleteExchange(instance.config.globalExchange),
                 channelContext.channel.deleteQueue(baseQueueName)
             ]);
+
+            await instance.stop();
         });
 
         describe('automatic recovery cases', () => {

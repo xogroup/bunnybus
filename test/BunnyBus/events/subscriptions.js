@@ -34,6 +34,10 @@ describe('BunnyBus', () => {
                 instance.subscriptions._blockQueues.clear();
             });
 
+            after(async () => {
+                await instance.stop();
+            });
+
             it('should emit UNSUBSCRIBED_EVENT when queue is blocked', async () => {
                 await instance.subscribe(baseQueueName, {
                     'subscribed-event': async (consumedMessage, ack, reject, requeue) => {}

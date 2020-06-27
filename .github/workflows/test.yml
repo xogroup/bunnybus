@@ -29,3 +29,4 @@ jobs:
         env:
           NODE_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}
       - run: npm test
+      - run: npm run jest

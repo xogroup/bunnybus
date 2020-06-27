@@ -37,6 +37,8 @@ describe('BunnyBus', () => {
             after(async () => {
                 instance._autoBuildChannelContext(baseChannelName);
                 await channelContext.channel.deleteQueue(baseQueueName);
+
+                await instance.stop();
             });
 
             it('should send message', async () => {

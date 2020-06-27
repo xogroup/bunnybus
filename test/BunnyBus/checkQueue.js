@@ -44,6 +44,7 @@ describe('BunnyBus', () => {
 
                 after(async () => {
                     await channelContext.channel.deleteQueue(baseQueueName);
+                    await instance.stop();
                 });
 
                 it('should be undefined when queue does not exist', async () => {

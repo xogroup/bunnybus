@@ -5,8 +5,9 @@ const Lab = require('@hapi/lab');
 const { ChannelManager } = require('../../lib/states');
 const Helpers = require('../../lib/helpers');
 const BunnyBus = require('../../lib');
+const { assertConvertToBuffer } = require('../assertions');
 
-const { describe, before, beforeEach, it } = (exports.lab = Lab.script());
+const { describe, after, before, beforeEach, it } = (exports.lab = Lab.script());
 const expect = Code.expect;
 
 let instance = undefined;
@@ -21,6 +22,10 @@ describe('BunnyBus', () => {
         instance.config = BunnyBus.DEFAULT_SERVER_CONFIGURATION;
         connectionManager = instance.connections;
         channelManager = instance.channels;
+    });
+
+    after(async () => {
+        await instance.stop();
     });
 
     describe('private methods', () => {

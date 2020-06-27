@@ -37,6 +37,7 @@ describe('BunnyBus', () => {
             after(async () => {
                 await instance._autoBuildChannelContext(baseChannelName);
                 await channelContext.channel.deleteQueue(baseQueueName);
+                await instance.stop();
             });
 
             it('should retrieve all message without meta flag', async () => {

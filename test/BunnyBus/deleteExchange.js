@@ -40,6 +40,7 @@ describe('BunnyBus', () => {
 
             after(async () => {
                 await channelContext.channel.deleteExchange(baseExchangeName);
+                await instance.stop();
             });
 
             it(`should delete an exchange with name ${baseExchangeName}`, async () => {

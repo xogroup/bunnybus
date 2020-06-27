@@ -38,6 +38,7 @@ describe('BunnyBus', () => {
             after(async () => {
                 await channelContext.channel.deleteQueue(baseQueueName);
                 await channelContext.channel.deleteQueue(basePoisonQueueName);
+                await instance.stop();
             });
 
             it('should error when message caught by subscribe is not a deserializable JSON buffer', async () => {

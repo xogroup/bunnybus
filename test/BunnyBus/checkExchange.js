@@ -36,6 +36,7 @@ describe('BunnyBus', () => {
 
             after(async () => {
                 await channelContext.channel.deleteExchange(baseExchangeName);
+                await instance.stop();
             });
 
             it('should be undefined when exchange does not exist', async () => {

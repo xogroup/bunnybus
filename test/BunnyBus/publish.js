@@ -55,6 +55,8 @@ describe('BunnyBus', () => {
                     channelContext.channel.deleteExchange(baseQueueName),
                     channelContext.channel.deleteQueue(baseQueueName)
                 ]);
+
+                await instance.stop();
             });
 
             it('should publish for route `a`', async () => {

@@ -35,6 +35,8 @@ describe('BunnyBus', () => {
             after(async () => {
                 channelContext = await instance._autoBuildChannelContext(baseChannelName);
                 await channelContext.channel.deleteQueue(baseQueueName);
+
+                await instance.stop();
             });
 
             it('should emit RECOVERING_CONNECTION_EVENT when closed connection is recovering', async () => {

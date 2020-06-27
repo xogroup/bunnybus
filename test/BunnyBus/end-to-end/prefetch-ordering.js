@@ -54,6 +54,8 @@ describe('BunnyBus', () => {
                     channelContext.channel.deleteQueue(baseQueueName),
                     channelContext.channel.deleteQueue(baseErrorQueueName)
                 ]);
+
+                await instance.stop();
             });
 
             it(

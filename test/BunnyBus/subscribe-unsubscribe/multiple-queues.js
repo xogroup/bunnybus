@@ -43,6 +43,8 @@ describe('BunnyBus', () => {
                     channelContext.channel.deleteQueue(baseQueueName1),
                     channelContext.channel.deleteQueue(baseQueueName2)
                 ]);
+
+                await instance.stop();
             });
 
             it('should consume message from two queues and acknowledge off', async () => {
