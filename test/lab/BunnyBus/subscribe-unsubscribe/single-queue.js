@@ -21,6 +21,7 @@ describe('BunnyBus', () => {
             const baseChannelName = 'bunnybus-subscribe';
             const baseQueueName = 'test-subscribe-queue';
             const baseErrorQueueName = `${baseQueueName}_error`;
+            const customErrroQueueName = `${baseQueueName}_custom_error`;
             const publishOptions = { routeKey: 'a.b' };
             const subscribeOptionsWithMeta = { meta: true };
             const messageObject = { event: 'a.b', name: 'bunnybus' };
@@ -33,7 +34,8 @@ describe('BunnyBus', () => {
                 await Promise.all([
                     channelContext.channel.deleteExchange(instance.config.globalExchange),
                     channelContext.channel.deleteQueue(baseQueueName),
-                    channelContext.channel.deleteQueue(baseErrorQueueName)
+                    channelContext.channel.deleteQueue(baseErrorQueueName),
+                    channelContext.channel.deleteQueue(customErrroQueueName)
                 ]);
             });
 
@@ -45,7 +47,8 @@ describe('BunnyBus', () => {
                 await Promise.all([
                     channelContext.channel.deleteExchange(instance.config.globalExchange),
                     channelContext.channel.deleteQueue(baseQueueName),
-                    channelContext.channel.deleteQueue(baseErrorQueueName)
+                    channelContext.channel.deleteQueue(baseErrorQueueName),
+                    channelContext.channel.deleteQueue(customErrroQueueName)
                 ]);
 
                 await instance.stop();
@@ -187,6 +190,25 @@ describe('BunnyBus', () => {
 
                     await instance.subscribe(baseQueueName, handlers);
                     await instance.publish(messageBuffer, publishOptions);
+                });
+            });
+
+            it('should consume message (Object) from queue and reject off to a custom specified error queue', async () => {
+                return new Promise(async (resolve) => {
+                    const handlers = {};
+                    handlers[messageObject.event] = async (consumedMessage, ack, reject) => {
+                        expect(consumedMessage).to.be.equal(messageObject);
+
+                        await reject({ errorQueue: customErrroQueueName });
+                        const payload = await instance.get(customErrroQueueName);
+
+                        expect(payload).to.exist();
+
+                        resolve();
+                    };
+
+                    await instance.subscribe(baseQueueName, handlers);
+                    await instance.publish(messageObject);
                 });
             });
 
