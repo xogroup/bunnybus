@@ -16,23 +16,23 @@ describe('Helpers', () => {
         });
 
         it('should run once', async () => {
-            const result = await Helpers.retryAsync(async () => {
-                return ++i;
-            });
-
-            expect(result).to.equal(1);
+            expect(
+                await Helpers.retryAsync(async () => {
+                    return ++i;
+                })
+            ).to.equal(1);
         });
 
-        it('should run twice', async () => {
-            const result = await Helpers.retryAsync(async () => {
-                if (++i < 2) {
-                    throw new Error();
-                }
+        it('should run twice with no errors', async () => {
+            expect(
+                await Helpers.retryAsync(async () => {
+                    if (++i < 2) {
+                        throw new Error();
+                    }
 
-                return i;
-            });
-
-            expect(result).to.equal(2);
+                    return i;
+                })
+            ).to.equal(2);
         });
 
         it('should take longer to run when interval is set with larger wait duration', async () => {
@@ -117,7 +117,7 @@ describe('Helpers', () => {
                     100,
                     2,
                     () => {
-                        return false;
+                        return true;
                     }
                 );
             } catch (err) {
