@@ -51,6 +51,7 @@
       - [parameter(s)](#parameters-12)
     - [`async getAll(queue, handler, [options])`](#async-getallqueue-handler-options)
       - [parameter(s)](#parameters-13)
+    - [`async stop()`](#async-stop)
   - [Internal-use Methods](#internal-use-methods)
     - [`async _autoBuildChannelContext(channelName, [queue = null])`](#async-_autobuildchannelcontextchannelname-queue--null)
       - [`parameter(s)`](#parameters)
@@ -712,6 +713,17 @@ const handler = async (message, ack) => {
 }
 
 await bunnyBus.getAll('queue1', handler);
+```
+
+#### `async stop()`
+
+A destructive action that kills all connection related resources within a `BunnyBus` instance.  Do not use in runtime code unless you know what you are doing.  This method is mainly built to support test frameworks that don't support killing of background async tasks.
+
+```javascript
+const BunnyBus = require('bunnybus');
+const bunnyBus = new BunnyBus();
+
+await bunnyBus.stop();
 ```
 
 ### Internal-use Methods
