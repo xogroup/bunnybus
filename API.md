@@ -428,9 +428,9 @@ Creates an exchange.
 
 ##### parameter(s)
 
-  - `name` - name of the exchange to be created. *[string]* **Required**
-  - `type` - type of exchange to create. Possible values are (`direct`, `fanout`, `header`, `topic`) *[string]* **Required**
-  - `options` - optional settings.  [Settings](http://www.squaremobius.net/amqp.node/channel_api.html#channel_assertExchange) are proxied through to amqplib `assertExchange`. *[Object]* **Optional**
+  * `name` - name of the exchange to be created. *[string]* **Required**
+  * `type` - type of exchange to create. Possible values are (`direct`, `fanout`, `header`, `topic`) *[string]* **Required**
+  * `options` - optional settings.  [Settings](http://www.squaremobius.net/amqp.node/channel_api.html#channel_assertExchange) are proxied through to amqplib `assertExchange`. *[Object]* **Optional**
 
 ```javascript
 const BunnyBus = require('bunnybus');
@@ -445,8 +445,8 @@ Delete an exchange.
 
 ##### parameter(s)
 
-  - `name` - name of the exchange to be deleted. *[string]* **Required**
-  - `options` - optional settings. [Settings](http://www.squaremobius.net/amqp.node/channel_api.html#channel_deleteExchange) are proxed through to amqplib `deleteExchange`. *[Object]* **Optional**
+  * `name` - name of the exchange to be deleted. *[string]* **Required**
+  * `options` - optional settings. [Settings](http://www.squaremobius.net/amqp.node/channel_api.html#channel_deleteExchange) are proxed through to amqplib `deleteExchange`. *[Object]* **Optional**
 
 ```javascript
 const BunnyBus = require('bunnybus');
@@ -461,7 +461,7 @@ Checks if an exchange exists.  The channel closes when the exchange does not exi
 
 ##### parameter(s)
 
-  - `name` - name of the exchange to be checked. *[string]* **Required**
+  * `name` - name of the exchange to be checked. *[string]* **Required**
 
 ```javascript
 const BunnyBus = require('bunnybus');
@@ -476,8 +476,8 @@ Creates a queue.
 
 ##### parameter(s)
 
-  - `name` - name of the queue to be created. *[string]* **Required**
-  - `options` - optional settings.  [Settings](http://www.squaremobius.net/amqp.node/channel_api.html#channel_assertQueue) are proxied through to amqplib `assertQueue`. *[Object]* **Optional**
+  * `name` - name of the queue to be created. *[string]* **Required**
+  * `options` - optional settings.  [Settings](http://www.squaremobius.net/amqp.node/channel_api.html#channel_assertQueue) are proxied through to amqplib `assertQueue`. *[Object]* **Optional**
 
 ```javascript
 const BunnyBus = require('bunnybus');
@@ -492,8 +492,8 @@ Delete a queue.
 
 ##### parameter(s)
 
-  - `name` - name of the queue to be created. *[string]* **Required**
-  - `options` - optional settings.  [Settings](http://www.squaremobius.net/amqp.node/channel_api.html#channel_deleteQueue) are proxied through to amqplib `deleteQueue`. *[Object]* **Optional**
+  * `name` - name of the queue to be created. *[string]* **Required**
+  * `options` - optional settings.  [Settings](http://www.squaremobius.net/amqp.node/channel_api.html#channel_deleteQueue) are proxied through to amqplib `deleteQueue`. *[Object]* **Optional**
 
 ```javascript
 const BunnyBus = require('bunnybus');
@@ -508,7 +508,7 @@ Checks if a queue exists.  Returns a queue info object `{ queue, messageCount, c
 
 ##### parameter(s)
 
-  - `name` - name of the queue to be checked. *[string]* **Required**
+  * `name` - name of the queue to be checked. *[string]* **Required**
 
 ```javascript
 const BunnyBus = require('bunnybus');
@@ -523,7 +523,7 @@ Purges a queue.  Will not throw error in cases where queue does not exist.
 
 ##### parameter(s)
 
-  - `name` - name of the queue to be purged. *[string]* **Required**
+  * `name` - name of the queue to be purged. *[string]* **Required**
 
 ```javascript
 const BunnyBus = require('bunnybus');
@@ -538,15 +538,15 @@ Publish a message onto the bus.
 
 ##### parameter(s)
 
-  - `message` - the content being sent to downstream subscribers. *[string|Object|Buffer]* **Required**
-   - `event` - override value for the route key. The value must be supplied here or in `options.routeKey`.  The value can be `.` separated for namespacing. *[string]* **Optional.**
-  - `options` - optional settings. *[Object]* **Optional**
-    - `routeKey` - value for the route key to route the message with.  The value must be supplied here or in `message.event`.  The value can be `.` separated for namespacing. *[string]* **Optional**
-    - `transactionId` - value attached to the header of the message for tracing.  When one is not supplied, a random 40 character token is generated. *[string]* **Optional**
-    - `source` - value attached to the header of the message to help with track the origin of messages in your application.  For applications that leverage this plugin in multiple modules, each module can supply its own module name so a message can be tracked to the creator. *[string]* **Optional**
-    - `globalExchange` - value to override the exchange specified in [`config`](#config). *[string]* **Optional**
-    - `headers` - object used to overlay into the message request header (`payload.properties.headers`).  *[Object]* **Optional**
-    - In addition to the above options, all of `amqplib`'s [configuration options](http://www.squaremobius.net/amqp.node/channel_api.html#channel_publish) (except for `headers` and `immediate`) from its `sendToQueue` and `publish` methods can also be passed as top-level properties in the `publish` options.
+  * `message` - the content being sent to downstream subscribers. *[string|Object|Buffer]* **Required**
+   * `event` - override value for the route key. The value must be supplied here or in `options.routeKey`.  The value can be `.` separated for namespacing. *[string]* **Optional.**
+  * `options` - optional settings. *[Object]* **Optional**
+    * `routeKey` - value for the route key to route the message with.  The value must be supplied here or in `message.event`.  The value can be `.` separated for namespacing. *[string]* **Optional**
+    * `transactionId` - value attached to the header of the message for tracing.  When one is not supplied, a random 40 character token is generated. *[string]* **Optional**
+    * `source` - value attached to the header of the message to help with track the origin of messages in your application.  For applications that leverage this plugin in multiple modules, each module can supply its own module name so a message can be tracked to the creator. *[string]* **Optional**
+    * `globalExchange` - value to override the exchange specified in [`config`](#config). *[string]* **Optional**
+    * `headers` - object used to overlay into the message request header (`payload.properties.headers`).  *[Object]* **Optional**
+    * In addition to the above options, all of `amqplib`'s [configuration options](http://www.squaremobius.net/amqp.node/channel_api.html#channel_publish) (except for `headers` and `immediate`) from its `sendToQueue` and `publish` methods can also be passed as top-level properties in the `publish` options.
 
 ```javascript
 const BunnyBus = require('bunnybus');
@@ -566,18 +566,18 @@ Subscribe to messages from a given queue.
 
 ##### parameter(s)
 
-  - `queue` - the name of the queue to subscribe messages to. A queue with the provided name will be created if one does not exist. *[string]* **Required**
-  - `handlers` - a `key` / `handler` hash where the key reflects the name of the `message.event` or `routeKey`.  And the handler reflects a `AsyncFunction` as `async (message, [meta, [ack, [reject, [requeue]]]]) => {}`. *[Object]* **Required**
-  - `options` - optional settings. *[Object]* **Optional**
-    - `queue` - settings for the queue. [Settings](http://www.squaremobius.net/amqp.node/channel_api.html#channel_assertQueue) are proxied through to amqplib `assertQueue`. *[Object]* **Optional**
-    - `globalExchange` - value of the exchange to transact through for message publishing.  Defaults to one provided in the [config](#config). *[string]* **Optional**
-    - `maxRetryCount` - maximum amount of attempts a message can be requeued.  Defaults to one provided in the [config](#config). *[number]* **Optional**
-    - `validatePublisher` - flag for validating messages having `bunnyBus` header.  More info can be found in [config](#config). Defaults to one provided in the [config](#config). *[boolean]* **Optional**
-    - `validateVersion` - flag for validating messages generated from the same major version.  More info can be found in [config](#config). Defaults to one provided in the [config](#config). *[boolean]* **Optional**
-    - `disableQueueBind` - flag for disabling automatic queue binding.  More info can be found in [config](#config).  Defaults to one provided in the [config](#config).  *[boolean]* **Optional**
-    - `rejectUnroutedMessages` - flag for enabling rejection for unroutable messages.  More info can be found in [config](#config).  Defaults to one provided in the [config](#config).  *[boolean]* 
-    - `rejectPoisonMessages` - flag for enabling rejection for poison messages.  A poison queue is named by default to `<your queue name>_poison`.  More info can be found in [config](#config).  Defaults to one provided in the [config](#config).  *[boolean]* 
-    - `meta` - allows for meta data regarding the payload to be returned.  Headers like the `createdAt` ISO string timestamp and the `transactionId` are included in the `meta.headers` object.  Turning this on will adjust the handler to be an `AsyncFunction` as `async (message, meta, [ack, [reject, [requeue]]]) => {}`. *[boolean]* **Optional**
+  * `queue` - the name of the queue to subscribe messages to. A queue with the provided name will be created if one does not exist. *[string]* **Required**
+  * `handlers` - a `key` / `handler` hash where the key reflects the name of the `message.event` or `routeKey`.  And the handler reflects a `AsyncFunction` as `async (message, [meta, [ack, [reject, [requeue]]]]) => {}`. *[Object]* **Required**
+  * `options` - optional settings. *[Object]* **Optional**
+    * `queue` - settings for the queue. [Settings](http://www.squaremobius.net/amqp.node/channel_api.html#channel_assertQueue) are proxied through to amqplib `assertQueue`. *[Object]* **Optional**
+    * `globalExchange` - value of the exchange to transact through for message publishing.  Defaults to one provided in the [config](#config). *[string]* **Optional**
+    * `maxRetryCount` - maximum amount of attempts a message can be requeued.  Defaults to one provided in the [config](#config). *[number]* **Optional**
+    * `validatePublisher` - flag for validating messages having `bunnyBus` header.  More info can be found in [config](#config). Defaults to one provided in the [config](#config). *[boolean]* **Optional**
+    * `validateVersion` - flag for validating messages generated from the same major version.  More info can be found in [config](#config). Defaults to one provided in the [config](#config). *[boolean]* **Optional**
+    * `disableQueueBind` - flag for disabling automatic queue binding.  More info can be found in [config](#config).  Defaults to one provided in the [config](#config).  *[boolean]* **Optional**
+    * `rejectUnroutedMessages` - flag for enabling rejection for unroutable messages.  More info can be found in [config](#config).  Defaults to one provided in the [config](#config).  *[boolean]* 
+    * `rejectPoisonMessages` - flag for enabling rejection for poison messages.  A poison queue is named by default to `<your queue name>_poison`.  More info can be found in [config](#config).  Defaults to one provided in the [config](#config).  *[boolean]* 
+    * `meta` - allows for meta data regarding the payload to be returned.  Headers like the `createdAt` ISO string timestamp and the `transactionId` are included in the `meta.headers` object.  Turning this on will adjust the handler to be an `AsyncFunction` as `async (message, meta, [ack, [reject, [requeue]]]) => {}`. *[boolean]* **Optional**
 
 ##### handlers
 
@@ -588,13 +588,15 @@ A `key` is the routeKey in RabbitMQ terminology.  `BunnyBus` specifically levera
 ##### `handler`
 
 A `handler` is an asynchronous function which contains the following arity.  Order matters.
-  - `message` is what was received from the bus.  The message does represent the RabbitMQ `'payload.content` buffer.  The original source of this object is from `payload.content`.
-  - `meta` is only available when `options.meta` is set to `true`.  This object will contain all payload related meta information like `payload.properties.headers`. Headers like the `createdAt` ISO string timestamp and the `transactionId` are included in the `meta.headers` object.
-  - `async ack([option)` is an async function for acknowledging the message off the bus.
-    - `option` - a placeholder for future optional parameters for `ack`.  High chance of deprecation.
-  - `async reject([option)` is an async function for rejecting the message off the bus to a predefined error queue.  The error queue is named by default to `<your queue name>_error`.  It will also short circuit to `error_bus` when defaults can't be found.
-    - `option` - An object with a property of `reason` to be supplied. *[Object]* **Optional**
-  - `async requeue()` is an async function for requeuing the message back to the back of the queue.  This is feature circumvents Rabbit's `nack` RPC.  `nack` natively requeues but pushes the message to the front of the queue.
+  * `message` is what was received from the bus.  The message does represent the RabbitMQ `'payload.content` buffer.  The original source of this object is from `payload.content`.
+  * `meta` is only available when `options.meta` is set to `true`.  This object will contain all payload related meta information like `payload.properties.headers`. Headers like the `createdAt` ISO string timestamp and the `transactionId` are included in the `meta.headers` object.
+  * `async ack([option])` is an async function for acknowledging the message off the bus.
+    * `option` - a placeholder for future optional parameters for `ack`.  High chance of deprecation.
+  * `async reject([option])` is an async function for rejecting the message off the bus to a predefined error queue.  The error queue is named by default to `<your queue name>_error`.  It will also short circuit to `error_bus` when defaults can't be found.
+    * `option` *[Object]* **Optional**
+      * `reason` - A string that should describe the reason the message is being rejcted *[String]* **Optional**
+      * `errorQueue` - A string for a specific error queue that the message should be routed to. *[String]* **Optional**
+  * `async requeue()` is an async function for requeuing the message back to the back of the queue.  This is feature circumvents Rabbit's `nack` RPC.  `nack` natively requeues but pushes the message to the front of the queue.
 
 ```javascript
 const BunnyBus = require('bunnybus');
@@ -622,7 +624,7 @@ Resubscribes non-active handlers to a queue.  This should be used with [`unsubsc
 
 ##### parameter(s)
 
-  - `queue` - the name of the queue. *[string]* **Required**
+  -*`queue` - the name of the queue. *[string]* **Required**
 
 ```javascript
 const BunnyBus = require('bunnybus');
@@ -637,7 +639,7 @@ Unsubscribe active handlers that are listening to a queue.
 
 ##### parameter(s)
 
-  - `queue` - the name of the queue. *[string]* **Required**
+  * `queue` - the name of the queue. *[string]* **Required**
 
 ```javascript
 const BunnyBus = require('bunnybus');
@@ -656,14 +658,14 @@ When `message.event` or `options.routeKey` values are not provided for `routeKey
 
 ##### parameter(s)
 
-  - `message` - the content being sent directly to specfied queue. *[string|Object|Buffer]* **Required**
-   - `event` - override value for the route key. The value must be supplied here or in `options.routeKey`.  The value can be `.` separated for namespacing. *[string]* **Optional.**
-  - `queue` - the name of the queue. *[string]* **Required**
-  - `options` - optional settings. *[Object]* **Optional**
-    - `routeKey` - value for the route key to route the message with.  The value must be supplied here or in `message.event`.  The value can be `.` separated for namespacing. *[string]* **Optional**
-    - `transactionId` - value attached to the header of the message for tracing.  When one is not supplied, a random 40 character token is generated. *[string]*  **Optional**
-    - `source` - value attached to the header of the message to help with tracking the origination point of your application.  For applications that leverage this plugin in multiple modules, each module can supply its own module name so a message can be tracked to the creator. *[string]*  **Optional**
-    - In addition to the above options, all of `amqplib`'s [configuration options](http://www.squaremobius.net/amqp.node/channel_api.html#channel_publish) (except for `headers` and `immediate`) from its `sendToQueue` and `publish` methods can also be passed as top-level properties in the `send` options.
+  * `message` - the content being sent directly to specfied queue. *[string|Object|Buffer]* **Required**
+    * `event` - override value for the route key. The value must be supplied here or in `options.routeKey`.  The value can be `.` separated for namespacing. *[string]* **Optional.**
+  * `queue` - the name of the queue. *[string]* **Required**
+  * `options` - optional settings. *[Object]* **Optional**
+    * `routeKey` - value for the route key to route the message with.  The value must be supplied here or in `message.event`.  The value can be `.` separated for namespacing. *[string]* **Optional**
+    * `transactionId` - value attached to the header of the message for tracing.  When one is not supplied, a random 40 character token is generated. *[string]*  **Optional**
+    * `source` - value attached to the header of the message to help with tracking the origination point of your application.  For applications that leverage this plugin in multiple modules, each module can supply its own module name so a message can be tracked to the creator. *[string]*  **Optional**
+    * In addition to the above options, all of `amqplib`'s [configuration options](http://www.squaremobius.net/amqp.node/channel_api.html#channel_publish) (except for `headers` and `immediate`) from its `sendToQueue` and `publish` methods can also be passed as top-level properties in the `send` options.
 
 ```javascript
 const BunnyBus = require('bunnybus');
@@ -698,11 +700,11 @@ Pop all messages directly off of a queue until there are no more.  Handler is ca
 
 ##### parameter(s)
 
-  - `queue` - the name of the queue. *[string]* **Required**
-  - `handler` - a handler reflects an `AsyncFunction` as `async (message, [meta, [ack]]) => {}`. *[AsyncFunction]* **Required**
-  - `options` - optional settings. *[Object]* **Optional**
-    - `get` - [Settings](http://www.squaremobius.net/amqp.node/channel_api.html#channel_get) are proxied through to amqplib `get`. *[Object]* **Optional**
-    - `meta` - allows for meta data regarding the payload to be returned.  Headers like the `createdAt` ISO string timestamp and the `transactionId` are included in the `meta.headers` object.  Turning this on will adjust the handler to be an `AsyncFunction` as `async (message, meta, [ack]) => {}`.  *[boolean]* **Optional**
+  * `queue` - the name of the queue. *[string]* **Required**
+  * `handler` - a handler reflects an `AsyncFunction` as `async (message, [meta, [ack]]) => {}`. *[AsyncFunction]* **Required**
+  * `options` - optional settings. *[Object]* **Optional**
+    * `get` - [Settings](http://www.squaremobius.net/amqp.node/channel_api.html#channel_get) are proxied through to amqplib `get`. *[Object]* **Optional**
+    * `meta` - allows for meta data regarding the payload to be returned.  Headers like the `createdAt` ISO string timestamp and the `transactionId` are included in the `meta.headers` object.  Turning this on will adjust the handler to be an `AsyncFunction` as `async (message, meta, [ack]) => {}`.  *[boolean]* **Optional**
 
 ```javascript
 const BunnyBus = require('bunnybus');
@@ -819,7 +821,9 @@ Rejects a message by acknowledging off the originating queue and sending to an e
 * `payload` - raw payload from an AMQP result message response. *[Object]* **Required**
 * `channelName` - the originating channel the payload came from. *[string]* **Required**
 * `errorQueue` - the destination error queue to push to. Defaults to a queue defined in [`config`](#config) *[string]* **Optional**
-* `options` - can supply AMQP specific values which is just proxied to [`sentToQueue`](https://www.squaremobius.net/amqp.node/channel_api.html#channel_sendToQueue) for the destination error queue.  A property of `reason` can be supplied which will be caught and added to the message header.  The property of `reason` is used uniformally within all rejection paths in the BunnyBus code base. *[Object]* **Required**
+* `options` - can supply AMQP specific values which is just proxied to [`sentToQueue`](https://www.squaremobius.net/amqp.node/channel_api.html#channel_sendToQueue) for the destination error queue.
+  * `reason` - can be supplied which will be caught and added to the message header.  The property of `reason` is used uniformally within all rejection paths in the BunnyBus code base. *[string]* **Optionald**
+  * `errorQueue` - the name of the queue to route the error to instead of the safe defaults. *[string]* **Optional**
 
 ```javascript
 const BunnyBus = require('bunnybus');
