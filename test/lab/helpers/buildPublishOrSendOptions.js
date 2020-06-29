@@ -56,6 +56,22 @@ describe('Helpers', () => {
             const result = Helpers.buildPublishOrSendOptions(options, headers);
 
             expect(result).to.contain({ headers });
+            expect(result.foo).to.not.exist();
+        });
+
+        it('should not add any options in a whitelist that is null', () => {
+            const options = {
+                expiration: null
+            };
+
+            const headers = {
+                hello: 'world'
+            };
+
+            const result = Helpers.buildPublishOrSendOptions(options, headers);
+
+            expect(result).to.contain({ headers });
+            expect(result.expiration).to.not.exist();
         });
 
         it('should not add any options when provided options is a string', () => {
@@ -66,6 +82,7 @@ describe('Helpers', () => {
             const result = Helpers.buildPublishOrSendOptions('foo.bar', headers);
 
             expect(result).to.contain({ headers });
+            expect(result['foo.bar']).to.not.exist();
         });
 
         it('should not add any options when provided options is null', () => {

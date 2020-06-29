@@ -85,7 +85,7 @@ describe('Helpers', () => {
         });
 
         it('should return undefined when all input is falsy', () => {
-            const result = Helpers.reduceRouteKey(null, null, null);
+            const result = Helpers.reduceRouteKey();
 
             expect(result).to.be.undefined();
         });
