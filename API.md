@@ -577,7 +577,6 @@ Subscribe to messages from a given queue.
     * `disableQueueBind` - flag for disabling automatic queue binding.  More info can be found in [config](#config).  Defaults to one provided in the [config](#config).  *[boolean]* **Optional**
     * `rejectUnroutedMessages` - flag for enabling rejection for unroutable messages.  More info can be found in [config](#config).  Defaults to one provided in the [config](#config).  *[boolean]* 
     * `rejectPoisonMessages` - flag for enabling rejection for poison messages.  A poison queue is named by default to `<your queue name>_poison`.  More info can be found in [config](#config).  Defaults to one provided in the [config](#config).  *[boolean]* 
-    * `meta` - allows for meta data regarding the payload to be returned.  Headers like the `createdAt` ISO string timestamp and the `transactionId` are included in the `meta.headers` object.  Turning this on will adjust the handler to be an `AsyncFunction` as `async (message, meta, [ack, [reject, [requeue]]]) => {}`. *[boolean]* **Optional**
 
 ##### handlers
 
@@ -589,10 +588,10 @@ A `key` is the routeKey in RabbitMQ terminology.  `BunnyBus` specifically levera
 
 A `handler` is an asynchronous function which contains the following arity.  Order matters.
   * `message` is what was received from the bus.  The message does represent the RabbitMQ `'payload.content` buffer.  The original source of this object is from `payload.content`.
-  * `meta` is only available when `options.meta` is set to `true`.  This object will contain all payload related meta information like `payload.properties.headers`. Headers like the `createdAt` ISO string timestamp and the `transactionId` are included in the `meta.headers` object.
+  * `metaData` This object will contain all payload related meta information like `payload.properties.headers`. Headers like the `createdAt` ISO string timestamp and the `transactionId` are included in the `metaData.headers` object.
   * `async ack([option])` is an async function for acknowledging the message off the bus.
     * `option` - a placeholder for future optional parameters for `ack`.  High chance of deprecation.
-  * `async reject([option])` is an async function for rejecting the message off the bus to a predefined error queue.  The error queue is named by default to `<your queue name>_error`.  It will also short circuit to `error_bus` when defaults can't be found.
+  * `async rej([option])` is an async function for rejecting the message off the bus to a predefined error queue.  The error queue is named by default to `<your queue name>_error`.  It will also short circuit to `error_bus` when defaults can't be found.
     * `option` *[Object]* **Optional**
       * `reason` - A string that should describe the reason the message is being rejcted *[String]* **Optional**
       * `errorQueue` - A string for a specific error queue that the message should be routed to. *[String]* **Optional**
@@ -603,10 +602,10 @@ const BunnyBus = require('bunnybus');
 const bunnyBus = new BunnyBus();
 
 const handlers = {
-    route.event1 : async (message, ack, reject, requeue) => {
+    route.event1 : async ({message, metaData, ack, rej, requeue}) => {
         await ack();
     },
-    route.event2 : async (message, ack, reject, requeue) => {
+    route.event2 : async ({message, metaData, ack, rej, requeue}) => {
         if (//something not ready) {
             await requeue();
         } else {
