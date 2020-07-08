@@ -29,12 +29,12 @@ describe('BunnyBus', () => {
 
             beforeEach(async () => {
                 instance.config = BunnyBus.DEFAULT_SERVER_CONFIGURATION;
-                channelContext = await instance._autoBuildChannelContext(baseChannelName);
+                channelContext = await instance._autoBuildChannelContext({ channelName: baseChannelName });
                 await channelContext.channel.assertQueue(baseQueueName);
             });
 
             before(async () => {
-                channelContext = await instance._autoBuildChannelContext(baseChannelName);
+                channelContext = await instance._autoBuildChannelContext({ channelName: baseChannelName });
 
                 await Promise.all([
                     channelContext.channel.assertQueue(baseQueueName, BunnyBus.DEFAULT_QUEUE_CONFIGURATION),

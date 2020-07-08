@@ -25,7 +25,7 @@ describe('BunnyBus', () => {
             connectionManager = instance.connections;
             channelManager = instance.channels;
 
-            channelContext = await instance._autoBuildChannelContext(baseChannelName);
+            channelContext = await instance._autoBuildChannelContext({ channelName: baseChannelName });
         });
 
         afterEach(async () => {
@@ -48,7 +48,7 @@ describe('BunnyBus', () => {
                 const handlers = {};
 
                 const consumePromise = new Promise(async (resolve) => {
-                    handlers['test-event'] = async (sentMessage, ack) => {
+                    handlers['test-event'] = async ({ message: sentMessage, ack }) => {
                         expect(sentMessage).to.contains(message);
 
                         await ack();
@@ -72,10 +72,10 @@ describe('BunnyBus', () => {
                     setTimeout(resolve, 4000);
                 });
 
-                await instance.subscribe(baseQueueName, handlers);
+                await instance.subscribe({ queue: baseQueueName, handlers });
                 await channelManager.close(targetChannelName);
                 await recoveryPromise;
-                await instance.publish(message);
+                await instance.publish({ message });
                 await consumePromise;
                 await timeDelayPromise;
             });

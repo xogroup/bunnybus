@@ -26,7 +26,7 @@ describe('BunnyBus', () => {
             const baseQueueName = 'test-events-subscribe-queue';
 
             before(async () => {
-                channelContext = await instance._autoBuildChannelContext(baseChannelName);
+                channelContext = await instance._autoBuildChannelContext({ channelName: baseChannelName });
             });
 
             after(async () => {
@@ -47,7 +47,7 @@ describe('BunnyBus', () => {
 
             it('should emit SUBSCRIBED_EVENT when consume handlers are setup', async () => {
                 const handlers = {};
-                handlers['subscribed-event'] = (consumedMessage, ack, reject, requeue) => {};
+                handlers['subscribed-event'] = () => {};
 
                 await new Promise(async (resolve) => {
                     instance.once(BunnyBus.SUBSCRIBED_EVENT, (queue) => {
@@ -55,7 +55,7 @@ describe('BunnyBus', () => {
                         resolve();
                     });
 
-                    await instance.subscribe(baseQueueName, handlers);
+                    await instance.subscribe({ queue: baseQueueName, handlers });
                 });
             });
         });

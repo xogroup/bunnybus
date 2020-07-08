@@ -28,7 +28,7 @@ describe('BunnyBus', () => {
                 connectionManager = instance.connections;
                 channelManager = instance.channels;
 
-                channelContext = await instance._autoBuildChannelContext(baseChannelName);
+                channelContext = await instance._autoBuildChannelContext({ channelName: baseChannelName });
 
                 await Promise.all([
                     channelContext.channel.deleteExchange(instance.config.globalExchange),
@@ -45,7 +45,7 @@ describe('BunnyBus', () => {
             });
 
             afterEach(async () => {
-                await instance.unsubscribe(baseQueueName);
+                await instance.unsubscribe({ queue: baseQueueName });
             });
 
             after(async () => {
@@ -67,11 +67,11 @@ describe('BunnyBus', () => {
                     const handlers = {};
 
                     for (let i = 0; i < publishTarget; ++i) {
-                        await instance.publish(Object.assign({}, message, { number: i }));
+                        await instance.publish({ message: Object.assign({}, message, { number: i }) });
                     }
 
                     const promise = new Promise(async (resolve, reject) => {
-                        handlers[pattern] = async (msg, ack) => {
+                        handlers[pattern] = async ({ message: msg, ack }) => {
                             const waitTimeInMs = randomNumber();
                             await new Promise((handlerResolve) => setTimeout(handlerResolve, waitTimeInMs));
 
@@ -87,8 +87,12 @@ describe('BunnyBus', () => {
                         };
                     });
 
-                    await instance.subscribe(baseQueueName, handlers, {
-                        queue: { durable: false }
+                    await instance.subscribe({
+                        queue: baseQueueName,
+                        handlers,
+                        options: {
+                            queue: { durable: false }
+                        }
                     });
 
                     await promise;

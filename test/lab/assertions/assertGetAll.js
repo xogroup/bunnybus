@@ -23,7 +23,7 @@ const assertGetAll = async (
         meta
     };
 
-    const handlerWithoutMeta = async (sentMessage, ack) => {
+    const handlerWithoutMeta = async ({ message: sentMessage, ack }) => {
         ++handleCounter;
 
         expect(sentMessage).to.be.equal(message);
@@ -31,7 +31,7 @@ const assertGetAll = async (
         await ack();
     };
 
-    const handlerWithMeta = async (sentMessage, sentMeta, ack) => {
+    const handlerWithMeta = async ({ message: sentMessage, metaData: sentMeta, ack }) => {
         ++handleCounter;
 
         expect(sentMessage).to.be.equal(message);
@@ -56,7 +56,7 @@ const assertGetAll = async (
         await channelManager.close(BunnyBus.QUEUE_CHANNEL_NAME(queueName));
     }
 
-    await instance.getAll(queueName, handler, options);
+    await instance.getAll({ queue: queueName, handler, options });
 
     expect(handleCounter).to.equal(limit);
 };

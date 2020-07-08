@@ -28,7 +28,7 @@ describe('BunnyBus', () => {
             const baseExchangeName = 'test-exchange';
 
             beforeEach(async () => {
-                channelContext = await instance._autoBuildChannelContext(baseChannelName);
+                channelContext = await instance._autoBuildChannelContext({ channelName: baseChannelName });
                 connectionContext = channelContext.connectionContext;
 
                 await channelContext.channel.deleteExchange(baseExchangeName);
@@ -44,7 +44,7 @@ describe('BunnyBus', () => {
                     async () => {
                         let result1 = null;
 
-                        const result2 = await instance.createExchange(baseExchangeName, 'topic');
+                        const result2 = await instance.createExchange({ name: baseExchangeName, type: 'topic' });
 
                         try {
                             await channelContext.channel.checkExchange(baseExchangeName);
@@ -68,8 +68,8 @@ describe('BunnyBus', () => {
                         let result = null;
 
                         await Promise.all([
-                            instance.createExchange(baseExchangeName, 'topic'),
-                            instance.createExchange(baseExchangeName, 'topic')
+                            instance.createExchange({ name: baseExchangeName, type: 'topic' }),
+                            instance.createExchange({ name: baseExchangeName, type: 'topic' })
                         ]);
 
                         try {
@@ -91,8 +91,8 @@ describe('BunnyBus', () => {
                     async () => {
                         let result = null;
 
-                        await instance.createExchange(baseExchangeName, 'topic'),
-                            await instance.createExchange(baseExchangeName, 'topic');
+                        await instance.createExchange({ name: baseExchangeName, type: 'topic' });
+                        await instance.createExchange({ name: baseExchangeName, type: 'topic' });
 
                         try {
                             await channelContext.channel.checkExchange(baseExchangeName);
@@ -115,12 +115,12 @@ describe('BunnyBus', () => {
                     async () => {
                         let result = null;
 
-                        await instance.createExchange(baseExchangeName, 'topic');
+                        await instance.createExchange({ name: baseExchangeName, type: 'topic' });
 
                         try {
                             // removing the connection cancels all channels attached to it.
                             // so we have to reinstate the channel used for this test as well
-                            await instance._autoBuildChannelContext(baseChannelName);
+                            await instance._autoBuildChannelContext({ channelName: baseChannelName });
                             await channelContext.channel.checkExchange(baseExchangeName);
                         } catch (err) {
                             result = err;
@@ -141,7 +141,7 @@ describe('BunnyBus', () => {
                     async () => {
                         let result = null;
 
-                        await instance.createExchange(baseExchangeName, 'topic');
+                        await instance.createExchange({ name: baseExchangeName, type: 'topic' });
 
                         try {
                             await channelContext.channel.checkExchange(baseExchangeName);
@@ -164,7 +164,7 @@ describe('BunnyBus', () => {
                     async () => {
                         let result1 = null;
 
-                        const result2 = await instance.createExchange(baseExchangeName, 'topic');
+                        const result2 = await instance.createExchange({ name: baseExchangeName, type: 'topic' });
 
                         try {
                             await channelContext.channel.checkExchange(baseExchangeName);

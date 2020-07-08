@@ -27,7 +27,7 @@ describe('BunnyBus', () => {
             const message = { event: 'published-event', name: 'bunnybus' };
 
             after(async () => {
-                channelContext = await instance._autoBuildChannelContext(baseChannelName);
+                channelContext = await instance._autoBuildChannelContext({ channelName: baseChannelName });
 
                 await channelContext.channel.deleteExchange(instance.config.globalExchange);
 
@@ -47,7 +47,7 @@ describe('BunnyBus', () => {
                         resolve();
                     });
 
-                    await instance.publish(message);
+                    await instance.publish({ message });
                 });
             });
         });

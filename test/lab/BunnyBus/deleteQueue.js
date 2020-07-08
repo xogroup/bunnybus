@@ -28,7 +28,7 @@ describe('BunnyBus', () => {
             const baseQueueName = 'test-queue';
 
             beforeEach(async () => {
-                channelContext = await instance._autoBuildChannelContext(baseChannelName);
+                channelContext = await instance._autoBuildChannelContext({ channelName: baseChannelName });
                 connectionContext = channelContext.connectionContext;
 
                 await channelContext.channel.assertQueue(baseQueueName, BunnyBus.DEFAULT_QUEUE_CONFIGURATION);
@@ -44,7 +44,7 @@ describe('BunnyBus', () => {
                     async () => {
                         let result1 = null;
 
-                        const result2 = await instance.deleteQueue(baseQueueName);
+                        const result2 = await instance.deleteQueue({ name: baseQueueName });
 
                         try {
                             await channelContext.channel.checkQueue(baseQueueName);
@@ -67,7 +67,10 @@ describe('BunnyBus', () => {
                     async () => {
                         let result = null;
 
-                        await Promise.all([instance.deleteQueue(baseQueueName), instance.deleteQueue(baseQueueName)]);
+                        await Promise.all([
+                            instance.deleteQueue({ name: baseQueueName }),
+                            instance.deleteQueue({ name: baseQueueName })
+                        ]);
 
                         try {
                             await channelContext.channel.checkQueue(baseQueueName);
@@ -88,7 +91,8 @@ describe('BunnyBus', () => {
                     async () => {
                         let result = null;
 
-                        await instance.deleteQueue(baseQueueName), await instance.deleteQueue(baseQueueName);
+                        await instance.deleteQueue({ name: baseQueueName });
+                        await instance.deleteQueue({ name: baseQueueName });
 
                         try {
                             await channelContext.channel.checkQueue(baseQueueName);
@@ -111,12 +115,12 @@ describe('BunnyBus', () => {
                     async () => {
                         let result = null;
 
-                        await instance.deleteQueue(baseQueueName);
+                        await instance.deleteQueue({ name: baseQueueName });
 
                         try {
                             // removing the connection cancels all channels attached to it.
                             // so we have to reinstate the channel used for this test as well
-                            await instance._autoBuildChannelContext(baseChannelName);
+                            await instance._autoBuildChannelContext({ channelName: baseChannelName });
                             await channelContext.channel.checkQueue(baseQueueName);
                         } catch (err) {
                             result = err;
@@ -137,7 +141,7 @@ describe('BunnyBus', () => {
                     async () => {
                         let result = null;
 
-                        await instance.deleteQueue(baseQueueName);
+                        await instance.deleteQueue({ name: baseQueueName });
 
                         try {
                             await channelContext.channel.checkQueue(baseQueueName);

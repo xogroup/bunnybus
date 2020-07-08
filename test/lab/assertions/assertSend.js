@@ -24,10 +24,10 @@ const assertSend = async (
         Object.assign(options, miscOptions);
     }
 
-    await instance.send(message, queueName, options);
+    await instance.send({ message, queue: queueName, options });
 
     if (!channelContext.channel) {
-        await instance._autoBuildChannelContext(channelContext.name);
+        await instance._autoBuildChannelContext({ channelName: channelContext.name });
     }
 
     const result = await channelContext.channel.get(queueName);

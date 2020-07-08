@@ -50,7 +50,7 @@ describe('BunnyBus', () => {
                 });
 
                 it('should establish a new connection and channel when none exist', async () => {
-                    const result = await instance._autoBuildChannelContext(baseChannelName);
+                    const result = await instance._autoBuildChannelContext({ channelName: baseChannelName });
 
                     expect(result).to.exist();
                     expect(result.channel).to.exist();
@@ -60,8 +60,8 @@ describe('BunnyBus', () => {
 
                 it('should return the same channel context when called concurrently', async () => {
                     const [result1, result2] = await Promise.all([
-                        instance._autoBuildChannelContext(baseChannelName),
-                        instance._autoBuildChannelContext(baseChannelName)
+                        instance._autoBuildChannelContext({ channelName: baseChannelName }),
+                        instance._autoBuildChannelContext({ channelName: baseChannelName })
                     ]);
 
                     expect(result1).to.exist();
@@ -70,8 +70,8 @@ describe('BunnyBus', () => {
                 });
 
                 it('should return the same channel context when called sequentially', async () => {
-                    const result1 = await instance._autoBuildChannelContext(baseChannelName);
-                    const result2 = await instance._autoBuildChannelContext(baseChannelName);
+                    const result1 = await instance._autoBuildChannelContext({ channelName: baseChannelName });
+                    const result2 = await instance._autoBuildChannelContext({ channelName: baseChannelName });
 
                     expect(result1).to.exist();
                     expect(result2).to.exist();
@@ -104,7 +104,7 @@ describe('BunnyBus', () => {
                 });
 
                 it('should establish a new channel context when none exist', async () => {
-                    const result = await instance._autoBuildChannelContext(baseChannelName);
+                    const result = await instance._autoBuildChannelContext({ channelName: baseChannelName });
 
                     expect(result).to.exist();
                     expect(result.channel).to.exist();
@@ -116,7 +116,7 @@ describe('BunnyBus', () => {
                 it('should establish a new channel context when connection is closed', async () => {
                     await connectionManager.close(BunnyBus.DEFAULT_CONNECTION_NAME);
 
-                    const result = await instance._autoBuildChannelContext(baseChannelName);
+                    const result = await instance._autoBuildChannelContext({ channelName: baseChannelName });
 
                     expect(result).to.exist();
                     expect(result.channel).to.exist();
@@ -168,7 +168,7 @@ describe('BunnyBus', () => {
                     expect(connectionContext.connection).to.be.undefined();
                     expect(channelContext.channel).to.be.undefined();
 
-                    const result = await instance._autoBuildChannelContext(baseChannelName);
+                    const result = await instance._autoBuildChannelContext({ channelName: baseChannelName });
 
                     expect(result).to.exist();
                     expect(result.channel).to.exist();
@@ -183,7 +183,7 @@ describe('BunnyBus', () => {
                     expect(connectionContext.connection).to.exist();
                     expect(channelContext.channel).to.be.undefined();
 
-                    const result = await instance._autoBuildChannelContext(baseChannelName);
+                    const result = await instance._autoBuildChannelContext({ channelName: baseChannelName });
 
                     expect(result).to.exist();
                     expect(result.channel).to.exist();

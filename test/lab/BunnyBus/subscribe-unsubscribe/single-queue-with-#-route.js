@@ -25,7 +25,7 @@ describe('BunnyBus', () => {
             const routableObject = { event: 'abc.hello.world.xyz', name: 'bunnybus' };
 
             before(async () => {
-                channelContext = await instance._autoBuildChannelContext(baseChannelName);
+                channelContext = await instance._autoBuildChannelContext({ channelName: baseChannelName });
 
                 await Promise.all([
                     channelContext.channel.deleteExchange(instance.config.globalExchange),
@@ -51,15 +51,15 @@ describe('BunnyBus', () => {
             it('should consume message (Object) from queue and acknowledge off', async () => {
                 return new Promise(async (resolve) => {
                     const handlers = {};
-                    handlers[subscriptionKey] = async (consumedMessage, ack) => {
+                    handlers[subscriptionKey] = async ({ message: consumedMessage, ack }) => {
                         expect(consumedMessage).to.be.equal(routableObject);
 
                         await ack();
                         resolve();
                     };
 
-                    await instance.subscribe(baseQueueName, handlers);
-                    await instance.publish(routableObject);
+                    await instance.subscribe({ queue: baseQueueName, handlers });
+                    await instance.publish({ message: routableObject });
                 });
             });
         });

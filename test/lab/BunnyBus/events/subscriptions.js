@@ -26,7 +26,7 @@ describe('BunnyBus', () => {
             const baseQueueName = 'test-events-subscriptions-queue';
 
             beforeEach(async () => {
-                channelContext = await instance._autoBuildChannelContext(baseChannelName);
+                channelContext = await instance._autoBuildChannelContext({ channelName: baseChannelName });
             });
 
             afterEach(async () => {
@@ -39,8 +39,11 @@ describe('BunnyBus', () => {
             });
 
             it('should emit UNSUBSCRIBED_EVENT when queue is blocked', async () => {
-                await instance.subscribe(baseQueueName, {
-                    'subscribed-event': async (consumedMessage, ack, reject, requeue) => {}
+                await instance.subscribe({
+                    queue: baseQueueName,
+                    handlers: {
+                        'subscribed-event': () => {}
+                    }
                 });
 
                 await new Promise(async (resolve) => {
@@ -49,7 +52,6 @@ describe('BunnyBus', () => {
 
                         resolve();
                     });
-
                     instance.subscriptions.block(baseQueueName);
                 });
 
@@ -61,7 +63,7 @@ describe('BunnyBus', () => {
 
             it('should emit SUBSCRIBED_EVENT when queue is unblocked', async () => {
                 await instance.subscriptions.create(baseQueueName, {
-                    'subscribed-event': async (consumedMessage, ack, reject, requeue) => {}
+                    'subscribed-event': () => {}
                 });
                 instance.subscriptions._blockQueues.add(baseQueueName);
 
@@ -79,63 +81,6 @@ describe('BunnyBus', () => {
                     channelContext.channel.deleteExchange(instance.config.globalExchange),
                     channelContext.channel.deleteQueue(baseQueueName)
                 ]);
-            });
-        });
-
-        describe('recovery', () => {
-            const baseChannelName = 'bunnybus-events-recovery';
-            const baseQueueName = 'test-events-recovery-queue';
-
-            beforeEach(async () => {
-                channelContext = await instance._autoBuildChannelContext(baseChannelName);
-            });
-
-            it('should emit RECOVERING_CONNECTION_EVENT when closed connection is recovering', async () => {
-                await new Promise((resolve) => {
-                    instance.once(BunnyBus.RECOVERING_CONNECTION_EVENT, resolve);
-
-                    connectionManager.close(BunnyBus.DEFAULT_CONNECTION_NAME);
-                });
-            });
-
-            it('should emit RECOVERING_CHANNEL_EVENT when closed connection is recovering', async () => {
-                await new Promise((resolve) => {
-                    instance.once(BunnyBus.RECOVERING_CHANNEL_EVENT, resolve);
-
-                    connectionManager.close(BunnyBus.DEFAULT_CONNECTION_NAME);
-                });
-            });
-
-            it('should emit RECOVERING_CHANNEL_EVENT when closed connection is recovering', async () => {
-                await new Promise((resolve) => {
-                    instance.once(BunnyBus.RECOVERING_CHANNEL_EVENT, resolve);
-
-                    channelManager.close(baseChannelName);
-                });
-            });
-
-            it('should emit RECOVERED_CONNECTION_EVENT when closed connection is recovered', async () => {
-                await new Promise((resolve) => {
-                    instance.once(BunnyBus.RECOVERED_CONNECTION_EVENT, resolve);
-
-                    connectionManager.close(BunnyBus.DEFAULT_CONNECTION_NAME);
-                });
-            });
-
-            it('should emit RECOVERED_CHANNEL_EVENT when closed connection is recovered', async () => {
-                await new Promise((resolve) => {
-                    instance.once(BunnyBus.RECOVERED_CHANNEL_EVENT, resolve);
-
-                    connectionManager.close(BunnyBus.DEFAULT_CONNECTION_NAME);
-                });
-            });
-
-            it('should emit RECOVERED_CHANNEL_EVENT when closed connection is recovering', async () => {
-                await new Promise((resolve) => {
-                    instance.once(BunnyBus.RECOVERED_CHANNEL_EVENT, resolve);
-
-                    channelManager.close(baseChannelName);
-                });
             });
         });
     });

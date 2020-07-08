@@ -28,14 +28,14 @@ describe('BunnyBus', () => {
             const message = { name: 'bunnybus' };
 
             beforeEach(async () => {
-                channelContext = await instance._autoBuildChannelContext(baseChannelName);
+                channelContext = await instance._autoBuildChannelContext({ channelName: baseChannelName });
 
                 await channelContext.channel.assertQueue(baseQueueName, BunnyBus.DEFAULT_QUEUE_CONFIGURATION);
                 await channelContext.channel.purgeQueue(baseQueueName);
             });
 
             after(async () => {
-                await instance._autoBuildChannelContext(baseChannelName);
+                await instance._autoBuildChannelContext({ channelName: baseChannelName });
                 await channelContext.channel.deleteQueue(baseQueueName);
                 await instance.stop();
             });

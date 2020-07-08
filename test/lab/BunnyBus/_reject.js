@@ -31,7 +31,7 @@ describe('BunnyBus', () => {
             const pattern = 'a';
 
             before(async () => {
-                channelContext = await instance._autoBuildChannelContext(baseChannelName);
+                channelContext = await instance._autoBuildChannelContext({ channelName: baseChannelName });
                 connectionContext = channelContext.connectionContext;
 
                 await Promise.all([
@@ -62,9 +62,13 @@ describe('BunnyBus', () => {
             it('should reject a message off the queue', async () => {
                 await Assertions.autoRecoverChannel(
                     async () => {
-                        await instance.publish(message);
-                        const payload = await instance.get(baseQueueName);
-                        await instance._reject(payload, BunnyBus.QUEUE_CHANNEL_NAME(baseQueueName), baseErrorQueueName);
+                        await instance.publish({ message });
+                        const payload = await instance.get({ queue: baseQueueName });
+                        await instance._reject({
+                            payload,
+                            channelName: BunnyBus.QUEUE_CHANNEL_NAME(baseQueueName),
+                            errorQueue: baseErrorQueueName
+                        });
                         const result = await channelContext.channel.checkQueue(baseErrorQueueName);
 
                         expect(result.queue).to.be.equal(baseErrorQueueName);
@@ -86,17 +90,21 @@ describe('BunnyBus', () => {
                 let createdAt = null;
                 let payload = null;
 
-                await instance.publish(message, publishOptions);
-                payload = await instance.get(baseQueueName);
+                await instance.publish({ message, options: publishOptions });
+                payload = await instance.get({ queue: baseQueueName });
 
                 transactionId = payload.properties.headers.transactionId;
                 createdAt = payload.properties.headers.createdAt;
                 payload.properties.headers.requeuedAt = requeuedAt;
                 payload.properties.headers.retryCount = retryCount;
 
-                await instance._reject(payload, BunnyBus.QUEUE_CHANNEL_NAME(baseQueueName), baseErrorQueueName);
+                await instance._reject({
+                    payload,
+                    channelName: BunnyBus.QUEUE_CHANNEL_NAME(baseQueueName),
+                    errorQueue: baseErrorQueueName
+                });
 
-                payload = await instance.get(baseErrorQueueName);
+                payload = await instance.get({ queue: baseErrorQueueName });
 
                 expect(payload.properties.headers.transactionId).to.be.equal(transactionId);
                 expect(payload.properties.headers.createdAt).to.be.equal(createdAt);
@@ -110,12 +118,16 @@ describe('BunnyBus', () => {
             it('should not error when connection does not pre-exist', async () => {
                 await Assertions.autoRecoverChannel(
                     async () => {
-                        await instance.publish(message);
-                        const payload = await instance.get(baseQueueName);
+                        await instance.publish({ message });
+                        const payload = await instance.get({ queue: baseQueueName });
 
                         await connectionManager.close(BunnyBus.DEFAULT_CONNECTION_NAME);
 
-                        await instance._reject(payload, BunnyBus.QUEUE_CHANNEL_NAME(baseQueueName), baseErrorQueueName);
+                        await instance._reject({
+                            payload,
+                            channelName: BunnyBus.QUEUE_CHANNEL_NAME(baseQueueName),
+                            errorQueue: baseErrorQueueName
+                        });
                     },
                     connectionContext,
                     channelContext,
@@ -126,12 +138,16 @@ describe('BunnyBus', () => {
             it('should not error when channel does not pre-exist', async () => {
                 await Assertions.autoRecoverChannel(
                     async () => {
-                        await instance.publish(message);
-                        const payload = await instance.get(baseQueueName);
+                        await instance.publish({ message });
+                        const payload = await instance.get({ queue: baseQueueName });
 
                         await channelManager.close(BunnyBus.QUEUE_CHANNEL_NAME(baseQueueName));
 
-                        await instance._reject(payload, BunnyBus.QUEUE_CHANNEL_NAME(baseQueueName), baseErrorQueueName);
+                        await instance._reject({
+                            payload,
+                            channelName: BunnyBus.QUEUE_CHANNEL_NAME(baseQueueName),
+                            errorQueue: baseErrorQueueName
+                        });
                     },
                     connectionContext,
                     channelContext,

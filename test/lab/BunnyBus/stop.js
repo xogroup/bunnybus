@@ -24,7 +24,7 @@ describe('BunnyBus', () => {
             const baseQueueName2 = 'test-stop-queue2';
 
             after(async () => {
-                channelContext = await instance._autoBuildChannelContext(baseChannelName);
+                channelContext = await instance._autoBuildChannelContext({ channelName: baseChannelName });
 
                 await Promise.all([
                     channelContext.channel.deleteQueue(baseQueueName1),
@@ -35,8 +35,8 @@ describe('BunnyBus', () => {
             });
 
             it('should destroy all connections, channels and subscriptions', async () => {
-                await instance.subscribe(baseQueueName1, { a: (...args) => {} });
-                await instance.subscribe(baseQueueName2, { b: (...args) => {} });
+                await instance.subscribe({ queue: baseQueueName1, handlers: { a: (...args) => {} } });
+                await instance.subscribe({ queue: baseQueueName2, handlers: { b: (...args) => {} } });
 
                 expect(instance.connections.list()).to.be.length(1);
                 expect(instance.channels.list()).to.be.length(3);

@@ -24,7 +24,7 @@ describe('BunnyBus', () => {
         const messageBuffer = Buffer.from(messageString);
 
         beforeAll(async () => {
-            channelContext = await instance._autoBuildChannelContext(baseChannelName);
+            channelContext = await instance._autoBuildChannelContext({ channelName: baseChannelName });
 
             await Promise.all([
                 channelContext.channel.deleteExchange(instance.config.globalExchange),
@@ -52,7 +52,7 @@ describe('BunnyBus', () => {
                     resolve();
                 };
 
-                await instance.subscribe(baseQueueName, handlers);
+                await instance.subscribe({ queue: baseQueueName, handlers });
                 await instance.publish(messageObject);
             });
         });

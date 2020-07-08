@@ -24,7 +24,7 @@ describe('BunnyBus', () => {
             const message = { event: 'a.b', name: 'bunnybus' };
 
             before(async () => {
-                channelContext = await instance._autoBuildChannelContext(baseChannelName);
+                channelContext = await instance._autoBuildChannelContext({ channelName: baseChannelName });
 
                 await Promise.all([
                     channelContext.channel.deleteExchange(instance.config.globalExchange),
@@ -34,7 +34,10 @@ describe('BunnyBus', () => {
             });
 
             afterEach(async () => {
-                await Promise.all([instance.unsubscribe(baseQueueName1), instance.unsubscribe(baseQueueName2)]);
+                await Promise.all([
+                    instance.unsubscribe({ queue: baseQueueName1 }),
+                    instance.unsubscribe({ queue: baseQueueName2 })
+                ]);
             });
 
             after(async () => {
@@ -52,7 +55,7 @@ describe('BunnyBus', () => {
                     const handlers = {};
                     let counter = 0;
 
-                    handlers[message.event] = async (consumedMessage, ack) => {
+                    handlers[message.event] = async ({ message: consumedMessage, ack }) => {
                         expect(consumedMessage.name).to.be.equal(message.name);
                         await ack();
 
@@ -62,11 +65,11 @@ describe('BunnyBus', () => {
                     };
 
                     await Promise.all([
-                        instance.subscribe(baseQueueName1, handlers),
-                        instance.subscribe(baseQueueName2, handlers)
+                        instance.subscribe({ queue: baseQueueName1, handlers }),
+                        instance.subscribe({ queue: baseQueueName2, handlers })
                     ]);
 
-                    await instance.publish(message);
+                    await instance.publish({ message });
                 });
             });
         });
