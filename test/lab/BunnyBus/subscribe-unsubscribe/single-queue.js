@@ -23,7 +23,6 @@ describe('BunnyBus', () => {
             const baseErrorQueueName = `${baseQueueName}_error`;
             const customErrorQueueName = `${baseQueueName}_custom_error`;
             const publishOptions = { routeKey: 'a.b' };
-            const subscribeOptionsWithMeta = { meta: true };
             const messageObject = { event: 'a.b', name: 'bunnybus' };
             const messageString = 'bunnybus';
             const messageBuffer = Buffer.from(messageString);
@@ -57,31 +56,15 @@ describe('BunnyBus', () => {
             it('should consume message (Object) from queue and acknowledge off', async () => {
                 return new Promise(async (resolve) => {
                     const handlers = {};
-                    handlers[messageObject.event] = async ({ message: consumedMessage, ack }) => {
+                    handlers[messageObject.event] = async ({ message: consumedMessage, metaData, ack }) => {
                         expect(consumedMessage).to.be.equal(messageObject);
+                        expect(metaData.headers).to.exist();
 
                         await ack();
                         resolve();
                     };
 
                     await instance.subscribe({ queue: baseQueueName, handlers });
-                    await instance.publish({ message: messageObject });
-                });
-            });
-
-            it('should consume message (Object) and meta from queue and acknowledge off', async () => {
-                return new Promise(async (resolve) => {
-                    const handlers = {};
-                    handlers[messageObject.event] = async ({ message: consumedMessage, metaData: meta, ack }) => {
-                        expect(consumedMessage).to.equal(messageObject);
-                        expect(meta).to.not.be.a.function();
-                        expect(meta.headers).to.exist();
-
-                        await ack();
-                        resolve();
-                    };
-
-                    await instance.subscribe({ queue: baseQueueName, handlers, options: subscribeOptionsWithMeta });
                     await instance.publish({ message: messageObject });
                 });
             });
@@ -89,31 +72,15 @@ describe('BunnyBus', () => {
             it('should consume message (String) from queue and acknowledge off', async () => {
                 return new Promise(async (resolve) => {
                     const handlers = {};
-                    handlers[publishOptions.routeKey] = async ({ message: consumedMessage, ack }) => {
+                    handlers[publishOptions.routeKey] = async ({ message: consumedMessage, metaData, ack }) => {
                         expect(consumedMessage).to.be.equal(messageString);
+                        expect(metaData.headers).to.exist();
 
                         await ack();
                         resolve();
                     };
 
                     await instance.subscribe({ queue: baseQueueName, handlers });
-                    await instance.publish({ message: messageString, options: publishOptions });
-                });
-            });
-
-            it('should consume message (String) and meta from queue and acknowledge off', async () => {
-                return new Promise(async (resolve) => {
-                    const handlers = {};
-                    handlers[publishOptions.routeKey] = async ({ message: consumedMessage, metaData: meta, ack }) => {
-                        expect(consumedMessage).to.equal(messageString);
-                        expect(meta).to.not.be.a.function();
-                        expect(meta.headers).to.exist();
-
-                        await ack();
-                        resolve();
-                    };
-
-                    await instance.subscribe({ queue: baseQueueName, handlers, options: subscribeOptionsWithMeta });
                     await instance.publish({ message: messageString, options: publishOptions });
                 });
             });
@@ -121,31 +88,15 @@ describe('BunnyBus', () => {
             it('should consume message (Buffer) from queue and acknowledge off', async () => {
                 return new Promise(async (resolve) => {
                     const handlers = {};
-                    handlers[publishOptions.routeKey] = async ({ message: consumedMessage, ack }) => {
+                    handlers[publishOptions.routeKey] = async ({ message: consumedMessage, metaData, ack }) => {
                         expect(consumedMessage).to.be.equal(messageBuffer);
+                        expect(metaData.headers).to.exist();
 
                         await ack();
                         resolve();
                     };
 
                     await instance.subscribe({ queue: baseQueueName, handlers });
-                    await instance.publish({ message: messageBuffer, options: publishOptions });
-                });
-            });
-
-            it('should consume message (Buffer) and meta from queue and acknowledge off', async () => {
-                return new Promise(async (resolve) => {
-                    const handlers = {};
-                    handlers[publishOptions.routeKey] = async ({ message: consumedMessage, metaData: meta, ack }) => {
-                        expect(consumedMessage).to.equal(messageBuffer);
-                        expect(meta).to.not.be.a.function();
-                        expect(meta.headers).to.exist();
-
-                        await ack();
-                        resolve();
-                    };
-
-                    await instance.subscribe({ queue: baseQueueName, handlers, options: subscribeOptionsWithMeta });
                     await instance.publish({ message: messageBuffer, options: publishOptions });
                 });
             });
