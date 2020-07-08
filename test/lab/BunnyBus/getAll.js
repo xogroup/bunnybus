@@ -40,12 +40,8 @@ describe('BunnyBus', () => {
                 await instance.stop();
             });
 
-            it('should retrieve all message without meta flag', async () => {
-                await Assertions.assertGetAll(instance, channelContext, null, null, message, baseQueueName, false, 10);
-            });
-
-            it('should retrieve all message with meta flag', async () => {
-                await Assertions.assertGetAll(instance, channelContext, null, null, message, baseQueueName, true, 10);
+            it('should retrieve all message', async () => {
+                await Assertions.assertGetAll(instance, channelContext, null, null, message, baseQueueName, 10);
             });
 
             it('should not error when connection does not pre-exist', async () => {
@@ -56,7 +52,6 @@ describe('BunnyBus', () => {
                     null,
                     message,
                     baseQueueName,
-                    true,
                     10
                 );
             });
@@ -69,7 +64,6 @@ describe('BunnyBus', () => {
                     channelManager,
                     message,
                     baseQueueName,
-                    true,
                     10
                 );
             });
