@@ -28,24 +28,20 @@ describe('BunnyBus', () => {
             const message = { name: 'bunnybus' };
 
             beforeEach(async () => {
-                channelContext = await instance._autoBuildChannelContext(baseChannelName);
+                channelContext = await instance._autoBuildChannelContext({ channelName: baseChannelName });
 
                 await channelContext.channel.assertQueue(baseQueueName, BunnyBus.DEFAULT_QUEUE_CONFIGURATION);
                 await channelContext.channel.purgeQueue(baseQueueName);
             });
 
             after(async () => {
-                await instance._autoBuildChannelContext(baseChannelName);
+                await instance._autoBuildChannelContext({ channelName: baseChannelName });
                 await channelContext.channel.deleteQueue(baseQueueName);
                 await instance.stop();
             });
 
-            it('should retrieve all message without meta flag', async () => {
-                await Assertions.assertGetAll(instance, channelContext, null, null, message, baseQueueName, false, 10);
-            });
-
-            it('should retrieve all message with meta flag', async () => {
-                await Assertions.assertGetAll(instance, channelContext, null, null, message, baseQueueName, true, 10);
+            it('should retrieve all message', async () => {
+                await Assertions.assertGetAll(instance, channelContext, null, null, message, baseQueueName, 10);
             });
 
             it('should not error when connection does not pre-exist', async () => {
@@ -56,7 +52,6 @@ describe('BunnyBus', () => {
                     null,
                     message,
                     baseQueueName,
-                    true,
                     10
                 );
             });
@@ -69,7 +64,6 @@ describe('BunnyBus', () => {
                     channelManager,
                     message,
                     baseQueueName,
-                    true,
                     10
                 );
             });

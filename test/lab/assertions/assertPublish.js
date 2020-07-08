@@ -27,10 +27,10 @@ const assertPublish = async (
         Object.assign(options, miscOptions);
     }
 
-    await instance.publish(message, options);
+    await instance.publish({ message, options });
 
     if (!channelContext.channel) {
-        await instance._autoBuildChannelContext(channelContext.name);
+        await instance._autoBuildChannelContext({ channelName: channelContext.name });
     }
 
     const payload = await channelContext.channel.get(queueName);

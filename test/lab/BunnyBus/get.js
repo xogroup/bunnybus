@@ -37,7 +37,7 @@ describe('BunnyBus', () => {
             };
 
             beforeEach(async () => {
-                channelContext = await instance._autoBuildChannelContext(baseChannelName);
+                channelContext = await instance._autoBuildChannelContext({ channelName: baseChannelName });
 
                 await channelContext.channel.assertQueue(baseQueueName, BunnyBus.DEFAULT_QUEUE_CONFIGURATION);
                 await channelContext.channel.purgeQueue(baseQueueName);

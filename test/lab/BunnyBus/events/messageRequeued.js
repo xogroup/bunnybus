@@ -26,7 +26,7 @@ describe('BunnyBus', () => {
             const baseQueueName = 'test-events-message-requeued-queue';
 
             before(async () => {
-                channelContext = await instance._autoBuildChannelContext(baseChannelName);
+                channelContext = await instance._autoBuildChannelContext({ channelName: baseChannelName });
 
                 await Promise.all([
                     channelContext.channel.deleteExchange(instance.config.globalExchange),
@@ -55,7 +55,7 @@ describe('BunnyBus', () => {
                 const message = { event: routeKey, foo: 'bar' };
                 const transactionId = 'foo-789-xyz';
                 const handlers = {};
-                handlers[routeKey] = async (consumedMessage, ack, reject, requeue) => await requeue();
+                handlers[routeKey] = async ({ requeue }) => await requeue();
 
                 const promise = new Promise((resolve) => {
                     const eventHandler = (sentOptions, sentMessage) => {
@@ -77,8 +77,8 @@ describe('BunnyBus', () => {
                     instance.on(BunnyBus.MESSAGE_REQUEUED_EVENT, eventHandler);
                 });
 
-                await instance.subscribe(baseQueueName, handlers);
-                await instance.publish(message, { transactionId });
+                await instance.subscribe({ queue: baseQueueName, handlers });
+                await instance.publish({ message, options: { transactionId } });
                 await promise;
             });
         });

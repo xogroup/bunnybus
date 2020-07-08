@@ -22,7 +22,7 @@ describe('BunnyBus', () => {
     });
 
     describe('public methods', () => {
-        describe('negative tests', () => {
+        describe('connection and channel failure tests', () => {
             const baseChannelName = 'bunnybus-negative-tests';
             const baseQueueName = 'test-negative-tests-queue';
             const baseErrorQueueName = `${baseQueueName}_error`;
@@ -30,7 +30,7 @@ describe('BunnyBus', () => {
             const handlers = { event1: () => {} };
 
             before(async () => {
-                channelContext = await instance._autoBuildChannelContext(baseChannelName);
+                channelContext = await instance._autoBuildChannelContext({ channelName: baseChannelName });
 
                 await Promise.all([
                     channelContext.channel.deleteExchange(instance.config.globalExchange),
@@ -40,14 +40,14 @@ describe('BunnyBus', () => {
             });
 
             afterEach(async () => {
-                await instance.unsubscribe(baseQueueName);
+                await instance.unsubscribe({ queue: baseQueueName });
 
                 instance.subscriptions._subscriptions.clear();
                 instance.subscriptions._blockQueues.clear();
             });
 
             after(async () => {
-                await instance._autoBuildChannelContext(baseChannelName);
+                await instance._autoBuildChannelContext({ channelName: baseChannelName });
 
                 await Promise.all([
                     channelContext.channel.deleteExchange(instance.config.globalExchange),
@@ -65,7 +65,7 @@ describe('BunnyBus', () => {
                 instance.subscriptions.tag(baseQueueName, consumerTag);
 
                 try {
-                    await instance.subscribe(baseQueueName, handlers);
+                    await instance.subscribe({ queue: baseQueueName, handlers });
                 } catch (err) {
                     result = err;
                 }
@@ -79,7 +79,7 @@ describe('BunnyBus', () => {
                 instance.subscriptions.block(baseQueueName);
 
                 try {
-                    await instance.subscribe(baseQueueName, handlers);
+                    await instance.subscribe({ queue: baseQueueName, handlers });
                 } catch (err) {
                     result = err;
                 }
@@ -90,13 +90,13 @@ describe('BunnyBus', () => {
             it('should not error when connection does not pre-exist', async () => {
                 await connectionManager.close(BunnyBus.DEFAULT_CONNECTION_NAME);
 
-                await instance.subscribe(baseQueueName, handlers);
+                await instance.subscribe({ queue: baseQueueName, handlers });
             });
 
             it('should not error when channel does not pre-exist', async () => {
                 await channelManager.close(BunnyBus.QUEUE_CHANNEL_NAME(baseQueueName));
 
-                await instance.subscribe(baseQueueName, handlers);
+                await instance.subscribe({ queue: baseQueueName, handlers });
             });
         });
     });

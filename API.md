@@ -19,49 +19,49 @@
   - [Static Methods](#static-methods)
     - [`Singleton([config])`](#singletonconfig)
   - [Methods](#methods)
-    - [`async createExchange(name, type, [options])`](#async-createexchangename-type-options)
+    - [`async createExchange({name, type, [options]})`](#async-createexchangename-type-options)
       - [parameter(s)](#parameters)
-    - [`async deleteExchange(name, [options])`](#async-deleteexchangename-options)
+    - [`async deleteExchange({name, [options]})`](#async-deleteexchangename-options)
       - [parameter(s)](#parameters-1)
-    - [`async checkExchange(name)`](#async-checkexchangename)
+    - [`async checkExchange({name})`](#async-checkexchangename)
       - [parameter(s)](#parameters-2)
-    - [`async createQueue(name, [options])`](#async-createqueuename-options)
+    - [`async createQueue({name, [options]})`](#async-createqueuename-options)
       - [parameter(s)](#parameters-3)
     - [`async deleteQueue(name, [options])`](#async-deletequeuename-options)
       - [parameter(s)](#parameters-4)
-    - [`async checkQueue(name)`](#async-checkqueuename)
+    - [`async checkQueue({name})`](#async-checkqueuename)
       - [parameter(s)](#parameters-5)
-    - [`async purgeQueue(name)`](#async-purgequeuename)
+    - [`async purgeQueue({name})`](#async-purgequeuename)
       - [parameter(s)](#parameters-6)
-    - [`async publish(message, [options])`](#async-publishmessage-options)
+    - [`async publish({message, [options]})`](#async-publishmessage-options)
       - [parameter(s)](#parameters-7)
-    - [`async subscribe(queue, handlers, [options])`](#async-subscribequeue-handlers-options)
+    - [`async subscribe({queue, handlers, [options]})`](#async-subscribequeue-handlers-options)
       - [parameter(s)](#parameters-8)
       - [handlers](#handlers)
       - [`key`](#key)
       - [`handler`](#handler)
-    - [`async resubscribe(queue)`](#async-resubscribequeue)
+    - [`async resubscribe({queue})`](#async-resubscribequeue)
       - [parameter(s)](#parameters-9)
-    - [`async unsubscribe(queue)`](#async-unsubscribequeue)
+    - [`async unsubscribe({queue})`](#async-unsubscribequeue)
       - [parameter(s)](#parameters-10)
-    - [`await send(message, queue, [options])`](#await-sendmessage-queue-options)
+    - [`await send({message, queue, [options]})`](#await-sendmessage-queue-options)
       - [note(s)](#notes)
       - [parameter(s)](#parameters-11)
-    - [`async get(queue, [options])`](#async-getqueue-options)
+    - [`async get({queue, [options]})`](#async-getqueue-options)
       - [parameter(s)](#parameters-12)
-    - [`async getAll(queue, handler, [options])`](#async-getallqueue-handler-options)
+    - [`async getAll({queue, handler, [options]})`](#async-getallqueue-handler-options)
       - [parameter(s)](#parameters-13)
     - [`async stop()`](#async-stop)
   - [Internal-use Methods](#internal-use-methods)
-    - [`async _autoBuildChannelContext(channelName, [queue = null])`](#async-_autobuildchannelcontextchannelname-queue--null)
+    - [`async _autoBuildChannelContext({channelName, [queue = null]})`](#async-_autobuildchannelcontextchannelname-queue--null)
       - [`parameter(s)`](#parameters)
     - [`async _recoverConnection()`](#async-_recoverconnection)
-    - [`async _recoverChannel(channelName)`](#async-_recoverchannelchannelname)
-    - [`async _ack(payload, channelName, [options])`](#async-_ackpayload-channelname-options)
+    - [`async _recoverChannel({channelName})`](#async-_recoverchannelchannelname)
+    - [`async _ack({payload, channelName}, [options]})`](#async-_ackpayload-channelname-options)
       - [`parameter(s)`](#parameters-1)
-    - [`async _requeue(payload, channelName, queue, [options])`](#async-_requeuepayload-channelname-queue-options)
+    - [`async _requeue({payload, channelName, queue}, [options])`](#async-_requeuepayload-channelname-queue-options)
       - [`parameter(s)`](#parameters-2)
-    - [`async _reject(payload, channelName, [errorQueue, [options]])`](#async-_rejectpayload-channelname-errorqueue-options)
+    - [`async _reject({payload, channelName, [errorQueue]}, [options])`](#async-_rejectpayload-channelname-errorqueue-options)
       - [`parameter(s)`](#parameters-3)
   - [Events](#events)
   - [`BunnyBus.LOG_DEBUG_EVENT`](#bunnybuslog_debug_event)
@@ -422,7 +422,7 @@ const bunnyBus = BunnyBus.Singleton({ hostname : 'red-bee.cloudamqp.com' });
 
 ### Methods
 
-#### `async createExchange(name, type, [options])`
+#### `async createExchange({name, type, [options]})`
 
 Creates an exchange.
 
@@ -436,10 +436,10 @@ Creates an exchange.
 const BunnyBus = require('bunnybus');
 const bunnyBus = new BunnyBus();
 
-await bunnyBus.createExchange('default-exchange', 'topic');
+await bunnyBus.createExchange({ name: 'default-exchange', type: 'topic' });
 ```
 
-#### `async deleteExchange(name, [options])`
+#### `async deleteExchange({name, [options]})`
 
 Delete an exchange.
 
@@ -452,10 +452,10 @@ Delete an exchange.
 const BunnyBus = require('bunnybus');
 const bunnyBus = new BunnyBus();
 
-await bunnyBus.deleteExchange('default-exchange');
+await bunnyBus.deleteExchange({ name: 'default-exchange' });
 ```
 
-#### `async checkExchange(name)`
+#### `async checkExchange({name})`
 
 Checks if an exchange exists.  The channel closes when the exchange does not exist.
 
@@ -467,10 +467,10 @@ Checks if an exchange exists.  The channel closes when the exchange does not exi
 const BunnyBus = require('bunnybus');
 const bunnyBus = new BunnyBus();
 
-await bunnyBus.checkExchange('default-exchange');
+await bunnyBus.checkExchange({ name: 'default-exchange' });
 ```
 
-#### `async createQueue(name, [options])`
+#### `async createQueue({name, [options]})`
 
 Creates a queue.
 
@@ -483,7 +483,7 @@ Creates a queue.
 const BunnyBus = require('bunnybus');
 const bunnyBus = new BunnyBus();
 
-bunnyBus.createQueue('queue1');
+bunnyBus.createQueue({ name: 'queue1' });
 ```
 
 #### `async deleteQueue(name, [options])`
@@ -499,10 +499,10 @@ Delete a queue.
 const BunnyBus = require('bunnybus');
 const bunnyBus = new BunnyBus();
 
-async bunnyBus.deleteQueue('queue1');
+async bunnyBus.deleteQueue({ name: 'queue1' });
 ```
 
-#### `async checkQueue(name)`
+#### `async checkQueue({name})`
 
 Checks if a queue exists.  Returns a queue info object `{ queue, messageCount, consumerCount }` when it exist.
 
@@ -514,10 +514,10 @@ Checks if a queue exists.  Returns a queue info object `{ queue, messageCount, c
 const BunnyBus = require('bunnybus');
 const bunnyBus = new BunnyBus();
 
-await bunnyBus.checkQueue('queue1');
+await bunnyBus.checkQueue({ name: 'queue1' });
 ```
 
-#### `async purgeQueue(name)`
+#### `async purgeQueue({name})`
 
 Purges a queue.  Will not throw error in cases where queue does not exist.
 
@@ -529,10 +529,10 @@ Purges a queue.  Will not throw error in cases where queue does not exist.
 const BunnyBus = require('bunnybus');
 const bunnyBus = new BunnyBus();
 
-await bunnyBus.purgeQueue('queue1');
+await bunnyBus.purgeQueue({ name: 'queue1' });
 ```
 
-#### `async publish(message, [options])`
+#### `async publish({message, [options]})`
 
 Publish a message onto the bus.
 
@@ -557,10 +557,10 @@ const message = {
     // other stuff you want to send
 }
 
-await bunnyBus.publish(message);
+await bunnyBus.publish({message});
 ```
 
-#### `async subscribe(queue, handlers, [options])`
+#### `async subscribe({queue, handlers, [options]})`
 
 Subscribe to messages from a given queue.
 
@@ -577,7 +577,6 @@ Subscribe to messages from a given queue.
     * `disableQueueBind` - flag for disabling automatic queue binding.  More info can be found in [config](#config).  Defaults to one provided in the [config](#config).  *[boolean]* **Optional**
     * `rejectUnroutedMessages` - flag for enabling rejection for unroutable messages.  More info can be found in [config](#config).  Defaults to one provided in the [config](#config).  *[boolean]* 
     * `rejectPoisonMessages` - flag for enabling rejection for poison messages.  A poison queue is named by default to `<your queue name>_poison`.  More info can be found in [config](#config).  Defaults to one provided in the [config](#config).  *[boolean]* 
-    * `meta` - allows for meta data regarding the payload to be returned.  Headers like the `createdAt` ISO string timestamp and the `transactionId` are included in the `meta.headers` object.  Turning this on will adjust the handler to be an `AsyncFunction` as `async (message, meta, [ack, [reject, [requeue]]]) => {}`. *[boolean]* **Optional**
 
 ##### handlers
 
@@ -589,10 +588,10 @@ A `key` is the routeKey in RabbitMQ terminology.  `BunnyBus` specifically levera
 
 A `handler` is an asynchronous function which contains the following arity.  Order matters.
   * `message` is what was received from the bus.  The message does represent the RabbitMQ `'payload.content` buffer.  The original source of this object is from `payload.content`.
-  * `meta` is only available when `options.meta` is set to `true`.  This object will contain all payload related meta information like `payload.properties.headers`. Headers like the `createdAt` ISO string timestamp and the `transactionId` are included in the `meta.headers` object.
+  * `metaData` This object will contain all payload related meta information like `payload.properties.headers`. Headers like the `createdAt` ISO string timestamp and the `transactionId` are included in the `metaData.headers` object.
   * `async ack([option])` is an async function for acknowledging the message off the bus.
     * `option` - a placeholder for future optional parameters for `ack`.  High chance of deprecation.
-  * `async reject([option])` is an async function for rejecting the message off the bus to a predefined error queue.  The error queue is named by default to `<your queue name>_error`.  It will also short circuit to `error_bus` when defaults can't be found.
+  * `async rej([option])` is an async function for rejecting the message off the bus to a predefined error queue.  The error queue is named by default to `<your queue name>_error`.  It will also short circuit to `error_bus` when defaults can't be found.
     * `option` *[Object]* **Optional**
       * `reason` - A string that should describe the reason the message is being rejcted *[String]* **Optional**
       * `errorQueue` - A string for a specific error queue that the message should be routed to. *[String]* **Optional**
@@ -603,10 +602,10 @@ const BunnyBus = require('bunnybus');
 const bunnyBus = new BunnyBus();
 
 const handlers = {
-    route.event1 : async (message, ack, reject, requeue) => {
+    route.event1 : async ({message, metaData, ack, rej, requeue}) => {
         await ack();
     },
-    route.event2 : async (message, ack, reject, requeue) => {
+    route.event2 : async ({message, metaData, ack, rej, requeue}) => {
         if (//something not ready) {
             await requeue();
         } else {
@@ -615,10 +614,10 @@ const handlers = {
     }
 }
 
-await bunnyBus.subscribe('queue', handlers);
+await bunnyBus.subscribe({queue: 'queue', handlers });
 ```
 
-#### `async resubscribe(queue)`
+#### `async resubscribe({queue})`
 
 Resubscribes non-active handlers to a queue.  This should be used with [`unsubscribe()`](#async-unsubscribequeue).
 
@@ -630,10 +629,10 @@ Resubscribes non-active handlers to a queue.  This should be used with [`unsubsc
 const BunnyBus = require('bunnybus');
 const bunnyBus = new BunnyBus();
 
-await bunnyBus.resubscribe('queue1');
+await bunnyBus.resubscribe({ queue: 'queue1' });
 ```
 
-#### `async unsubscribe(queue)`
+#### `async unsubscribe({queue})`
 
 Unsubscribe active handlers that are listening to a queue.
 
@@ -645,10 +644,10 @@ Unsubscribe active handlers that are listening to a queue.
 const BunnyBus = require('bunnybus');
 const bunnyBus = new BunnyBus();
 
-await bunnyBus.unsubscribe('queue1');
+await bunnyBus.unsubscribe({ queue: 'queue1' });
 ```
 
-#### `await send(message, queue, [options])`
+#### `await send({message, queue, [options]})`
 
 Send a message directly to a specified queue.
 
@@ -675,10 +674,10 @@ const message = {
     // other stuff you want to send
 }
 
-await bunnyBus.send(message, 'queue1');
+await bunnyBus.send({message, queue: 'queue1'});
 ```
 
-#### `async get(queue, [options])`
+#### `async get({queue, [options]})`
 
 Pop a message directly off a queue.  The payload returned is the RabbitMQ `payload` with `payload.properties` and `payload.content` in its original form.
 
@@ -691,30 +690,29 @@ Pop a message directly off a queue.  The payload returned is the RabbitMQ `paylo
 const BunnyBus = require('bunnybus');
 const bunnyBus = new BunnyBus();
 
-const payload = await bunnyBus.get('queue1');
+const payload = await bunnyBus.get({ queue: 'queue1' });
 ```
 
-#### `async getAll(queue, handler, [options])`
+#### `async getAll({queue, handler, [options]})`
 
 Pop all messages directly off of a queue until there are no more.  Handler is called for each message that is popped.
 
 ##### parameter(s)
 
   * `queue` - the name of the queue. *[string]* **Required**
-  * `handler` - a handler reflects an `AsyncFunction` as `async (message, [meta, [ack]]) => {}`. *[AsyncFunction]* **Required**
+  * `handler` - a handler reflects an `AsyncFunction` as `async ({message, metaData, ack}) => {}`. *[AsyncFunction]* **Required**
   * `options` - optional settings. *[Object]* **Optional**
     * `get` - [Settings](http://www.squaremobius.net/amqp.node/channel_api.html#channel_get) are proxied through to amqplib `get`. *[Object]* **Optional**
-    * `meta` - allows for meta data regarding the payload to be returned.  Headers like the `createdAt` ISO string timestamp and the `transactionId` are included in the `meta.headers` object.  Turning this on will adjust the handler to be an `AsyncFunction` as `async (message, meta, [ack]) => {}`.  *[boolean]* **Optional**
 
 ```javascript
 const BunnyBus = require('bunnybus');
 const bunnyBus = new BunnyBus();
 
-const handler = async (message, ack) => {
+const handler = async ({message, metaData, ack}) => {
     await ack();
 }
 
-await bunnyBus.getAll('queue1', handler);
+await bunnyBus.getAll({queue: 'queue1', handler});
 ```
 
 #### `async stop()`
@@ -732,7 +730,7 @@ await bunnyBus.stop();
 
 The following methods are available in the public API, but manual use of them is highly discouraged.
 
-#### `async _autoBuildChannelContext(channelName, [queue = null])`
+#### `async _autoBuildChannelContext({channelName, [queue = null]})`
 
 Method handles the coordination for creating a connection and channel via the [`ConnectionManager`](#connectionmanager) and [`ChannelManager`](#channelmanager).  This is also responsible for subscribing to error and close events available from the [`Connection`](#connection) and [`Channel`](#channel) context classes which proxy events from the corresponding underlying `amqplib` objects.  
 
@@ -745,7 +743,7 @@ Method handles the coordination for creating a connection and channel via the [`
 const BunnyBus = require('bunnybus');
 const bunnyBus = new BunnyBus();
 
-const channelContext = await bunnyBus._autoBuildChannelContext(channelForQueue1);
+const channelContext = await bunnyBus._autoBuildChannelContext({ channelName: 'channelForQueue1' });
 // output : { name, queue, connectionContext, channelOptions, lock, channel }
 ```
 
@@ -762,7 +760,7 @@ const bunnyBus = new BunnyBus();
 await bunnyBus._recoverConnection();
 ```
 
-#### `async _recoverChannel(channelName)`
+#### `async _recoverChannel({channelName})`
 
 Auto retry mechanism to restore a specific channel and attached connection that was closed.  When failure happens, an invocation to `process.exit(1)` will be done.  This is invoked internally through event handlers listening to channel events.  This will not revive subscribed queues that are in block state registered through the [`SubscriptionManager`](#subscriptionmanager)
 
@@ -772,10 +770,10 @@ const bunnyBus = new BunnyBus();
 
 // something bad happened
 
-await bunnyBus._recoverChannel(channelName);
+await bunnyBus._recoverChannel({channelName});
 ```
 
-#### `async _ack(payload, channelName, [options])`
+#### `async _ack({payload, channelName}, [options]})`
 
 The acknowledge method for removing a message off the queue.  Mainly used in handlers through `bind()` parameter injection for methods like [`getAll()`](#async-getallqueue-handler-options) and [`subscribe`](#async-subscribequeue-handlers-options).
 
@@ -789,11 +787,24 @@ The acknowledge method for removing a message off the queue.  Mainly used in han
 const BunnyBus = require('bunnybus');
 const bunnyBus = new BunnyBus();
 
-const payload = await bunnyBus.getAll('queue1');
-await bunnyBus.ack(payload, 'channelForQueue1');
+const payload = await bunnyBus.get({ queue: 'queue1' });
+await bunnyBus.ack({ payload, channelName: 'channelForQueue1' });
 ```
 
-#### `async _requeue(payload, channelName, queue, [options])`
+When supplied through the handler
+
+```javascript
+const BunnyBus = require('bunnybus');
+const bunnyBus = new BunnyBus();
+
+await bunnyBus.subscribe({ queue: 'queue1' : handlers: {
+    'topicA': async (message, ack, rej, requeue) => {
+        ack();
+    }
+}});
+```
+
+#### `async _requeue({payload, channelName, queue}, [options])`
 
 Requeues message to any queue while it acknowledges the payload off of the original.  This method does not push the message back to the original queue in the front position.  It will put the message to any desired queue in the back position.  Mainly used in handlers through `bind()` parameter injection for methods like [`getAll()`](#async-getallqueue-handler-options) and [`subscribe()`](#async-subscribequeue-handlers-options).
 
@@ -808,11 +819,24 @@ Requeues message to any queue while it acknowledges the payload off of the origi
 const BunnyBus = require('bunnybus');
 const bunnyBus = new BunnyBus();
 
-const payload = await bunnyBus.getAll('queue1');
-await bunnyBus.requeue(payload, 'channelForQueue1', 'queue1');
+const payload = await bunnyBus.get({ queue: 'queue1' });
+await bunnyBus.requeue({ payload, channelName: 'channelForQueue1', queue: 'queue1' });
 ```
 
-#### `async _reject(payload, channelName, [errorQueue, [options]])`
+When supplied through the handler
+
+```javascript
+const BunnyBus = require('bunnybus');
+const bunnyBus = new BunnyBus();
+
+await bunnyBus.subscribe({ queue: 'queue1' : handlers: {
+    'topicA': async (message, ack, rej, requeue) => {
+        requeue({ reason: 'wait condition not met' });
+    }
+}});
+```
+
+#### `async _reject({payload, channelName, [errorQueue]}, [options])`
 
 Rejects a message by acknowledging off the originating queue and sending to an error queue of choice.  Mainly used in handlers through `bind()` parameter injection for methods like [`getAll()`](#async-getallqueue-handler-options) and [`subscribe()`](#async-subscribequeue-handlers-options).
 
@@ -829,8 +853,21 @@ Rejects a message by acknowledging off the originating queue and sending to an e
 const BunnyBus = require('bunnybus');
 const bunnyBus = new BunnyBus();
 
-const payload = await bunnyBus.getAll('queue1');
-await bunnyBus.reject(payload, 'channelForQueue1', 'queue1_error', { reason: 'some unforeseen failure' });
+const payload = await bunnyBus.get({ queue: 'queue1' });
+await bunnyBus.reject({payload, channelName: 'channelForQueue1', errorQueue: 'queue1_error'}, { reason: 'some unforeseen failure' });
+```
+
+When supplied through the handler
+
+```javascript
+const BunnyBus = require('bunnybus');
+const bunnyBus = new BunnyBus();
+
+await bunnyBus.subscribe({ queue: 'queue1' : handlers: {
+    'topicA': async (message, ack, rej, requeue) => {
+        rej({ reason: 'error encountered', errorQueue: 'error-queue-shard-5' });
+    }
+}});
 ```
 
 ### Events

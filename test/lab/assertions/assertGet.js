@@ -17,7 +17,7 @@ const assertGet = async (instance, channelContext, connectionManager, channelMan
         await channelManager.close(BunnyBus.QUEUE_CHANNEL_NAME(queueName));
     }
 
-    const result = await instance.get(queueName);
+    const result = await instance.get({ queue: queueName });
 
     expect(result.content.toString()).to.equal(buffer.toString());
 };

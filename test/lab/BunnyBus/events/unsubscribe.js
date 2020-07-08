@@ -26,14 +26,14 @@ describe('BunnyBus', () => {
             const baseQueueName = 'test-events-unsubscribe-queue';
 
             before(async () => {
-                channelContext = await instance._autoBuildChannelContext(baseChannelName);
+                channelContext = await instance._autoBuildChannelContext({ channelName: baseChannelName });
             });
 
             beforeEach(async () => {
                 const handlers = {};
                 handlers['subscribed-event'] = (consumedMessage, ack, reject, requeue) => {};
 
-                await instance.subscribe(baseQueueName, handlers);
+                await instance.subscribe({ queue: baseQueueName, handlers });
             });
 
             after(async () => {
@@ -53,7 +53,7 @@ describe('BunnyBus', () => {
                         resolve();
                     });
 
-                    await instance.unsubscribe(baseQueueName);
+                    await instance.unsubscribe({ queue: baseQueueName });
                 });
             });
         });

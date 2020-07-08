@@ -28,7 +28,7 @@ describe('BunnyBus', () => {
             const baseQueueName = 'test-queue';
 
             beforeEach(async () => {
-                channelContext = await instance._autoBuildChannelContext(baseChannelName);
+                channelContext = await instance._autoBuildChannelContext({ channelName: baseChannelName });
                 connectionContext = channelContext.connectionContext;
 
                 await channelContext.channel.assertQueue(baseQueueName, BunnyBus.DEFAULT_QUEUE_CONFIGURATION);
@@ -45,7 +45,7 @@ describe('BunnyBus', () => {
             it(`should purge a queue with name ${baseQueueName}`, async () => {
                 await Assertions.autoRecoverChannel(
                     async () => {
-                        expect(await instance.purgeQueue(baseQueueName)).to.be.true();
+                        expect(await instance.purgeQueue({ name: baseQueueName })).to.be.true();
                         await expect(channelContext.channel.checkQueue(baseQueueName)).to.not.reject();
                     },
                     connectionContext,
@@ -59,7 +59,7 @@ describe('BunnyBus', () => {
 
                 await Assertions.autoRecoverChannel(
                     async () => {
-                        expect(await instance.purgeQueue(baseQueueName)).to.be.false();
+                        expect(await instance.purgeQueue({ name: baseQueueName })).to.be.false();
                     },
                     connectionContext,
                     channelContext,

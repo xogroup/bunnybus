@@ -28,7 +28,7 @@ describe('BunnyBus', () => {
                 connectionManager = instance.connections;
                 channelManager = instance.channels;
 
-                channelContext = await instance._autoBuildChannelContext(baseChannelName);
+                channelContext = await instance._autoBuildChannelContext({ channelName: baseChannelName });
             });
 
             afterEach(async () => {
@@ -45,9 +45,12 @@ describe('BunnyBus', () => {
                 const badJSONBuffer = Buffer.from('{ "hello": "world ', 'utf-8');
 
                 // This will never be called
-                await instance.subscribe(baseQueueName, {
-                    ec: async (consumedMessage, ack) => {
-                        await ack();
+                await instance.subscribe({
+                    queue: baseQueueName,
+                    handlers: {
+                        ec: async ({ ack }) => {
+                            await ack();
+                        }
                     }
                 });
 
@@ -56,7 +59,7 @@ describe('BunnyBus', () => {
 
                 await new Promise((resolve) => {
                     instance.once(BunnyBus.MESSAGE_REJECTED_EVENT, async () => {
-                        expect(await instance.get(basePoisonQueueName)).to.exist();
+                        expect(await instance.get({ queue: basePoisonQueueName })).to.exist();
                         resolve();
                     });
                 });
@@ -66,15 +69,15 @@ describe('BunnyBus', () => {
                 const badJSONBuffer = Buffer.from('{ "hello": "world ', 'utf-8');
 
                 // This will never be called
-                await instance.subscribe(
-                    baseQueueName,
-                    {
-                        ec: async (consumedMessage, ack) => {
+                await instance.subscribe({
+                    queue: baseQueueName,
+                    handlers: {
+                        ec: async ({ ack }) => {
                             await ack();
                         }
                     },
-                    { rejectPoisonMessages: false }
-                );
+                    options: { rejectPoisonMessages: false }
+                });
 
                 // send the poison message
                 channelContext.channel.sendToQueue(baseQueueName, badJSONBuffer, { headers: { routeKey: 'ec' } });
@@ -84,7 +87,7 @@ describe('BunnyBus', () => {
                         async () =>
                             await new Promise((resolve) => {
                                 instance.once(BunnyBus.MESSAGE_REJECTED_EVENT, async () => {
-                                    expect(await instance.get(basePoisonQueueName)).to.exist();
+                                    expect(await instance.get({ queue: basePoisonQueueName })).to.exist();
                                     resolve();
                                 });
                             }),

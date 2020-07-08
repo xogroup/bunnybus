@@ -28,7 +28,7 @@ describe('BunnyBus', () => {
             const baseExchangeName = 'test-exchange';
 
             beforeEach(async () => {
-                channelContext = await instance._autoBuildChannelContext(baseChannelName);
+                channelContext = await instance._autoBuildChannelContext({ channelName: baseChannelName });
                 connectionContext = channelContext.connectionContext;
 
                 await channelContext.channel.deleteExchange(baseExchangeName);
@@ -42,7 +42,7 @@ describe('BunnyBus', () => {
             it('should be undefined when exchange does not exist', async () => {
                 await Assertions.autoRecoverChannel(
                     async () => {
-                        const result1 = await instance.checkExchange(baseExchangeName);
+                        const result1 = await instance.checkExchange({ name: baseExchangeName });
                         const result2 = instance.channels.get(BunnyBus.MANAGEMENT_CHANNEL_NAME());
 
                         expect(result1).to.be.undefined();
@@ -63,7 +63,7 @@ describe('BunnyBus', () => {
 
                 await Assertions.autoRecoverChannel(
                     async () => {
-                        const result = await instance.checkExchange(baseExchangeName);
+                        const result = await instance.checkExchange({ name: baseExchangeName });
 
                         expect(result).to.exist().and.to.be.an.object();
                     },
@@ -83,7 +83,7 @@ describe('BunnyBus', () => {
 
                 await Assertions.autoRecoverChannel(
                     async () => {
-                        await expect(instance.checkExchange(baseExchangeName)).to.not.reject();
+                        await expect(instance.checkExchange({ name: baseExchangeName })).to.not.reject();
                     },
                     connectionContext,
                     channelContext,
@@ -101,7 +101,7 @@ describe('BunnyBus', () => {
 
                 await Assertions.autoRecoverChannel(
                     async () => {
-                        await expect(instance.checkExchange(baseExchangeName)).to.not.reject();
+                        await expect(instance.checkExchange({ name: baseExchangeName })).to.not.reject();
                     },
                     connectionContext,
                     channelContext,

@@ -28,7 +28,7 @@ describe('BunnyBus', () => {
                 connectionManager = instance.connections;
                 channelManager = instance.channels;
 
-                channelContext = await instance._autoBuildChannelContext(baseChannelName);
+                channelContext = await instance._autoBuildChannelContext({ channelName: baseChannelName });
 
                 await Promise.all([
                     channelContext.channel.deleteExchange(instance.config.globalExchange),
@@ -45,7 +45,7 @@ describe('BunnyBus', () => {
             });
 
             afterEach(async () => {
-                await instance.unsubscribe(baseQueueName);
+                await instance.unsubscribe({ queue: baseQueueName });
             });
 
             after(async () => {
@@ -61,11 +61,11 @@ describe('BunnyBus', () => {
             it('should publish all messages within 3 seconds', { timeout: 3000 }, async () => {
                 const promises = [];
 
-                // Do this to primse the connection
-                await instance.publish(message);
+                // Do this to prime the connection
+                await instance.publish({ message });
 
                 for (let i = 0; i < publishTarget; ++i) {
-                    promises.push(instance.publish(message));
+                    promises.push(instance.publish({ message }));
                 }
 
                 await Promise.all(promises);
@@ -77,7 +77,7 @@ describe('BunnyBus', () => {
                 const handlers = {};
 
                 const promise = new Promise(async (resolve) => {
-                    handlers['a.promise'] = async (msg, ack) => {
+                    handlers['a.promise'] = async ({ ack }) => {
                         await ack();
 
                         if (++count === publishTarget) {
@@ -86,8 +86,12 @@ describe('BunnyBus', () => {
                     };
                 });
 
-                await instance.subscribe(baseQueueName, handlers, {
-                    queue: { durable: false }
+                await instance.subscribe({
+                    queue: baseQueueName,
+                    handlers,
+                    options: {
+                        queue: { durable: false }
+                    }
                 });
 
                 await promise;
@@ -110,7 +114,7 @@ describe('BunnyBus', () => {
                 connectionManager = instance.connections;
                 channelManager = instance.channels;
 
-                channelContext = await instance._autoBuildChannelContext(baseChannelName);
+                channelContext = await instance._autoBuildChannelContext({ channelName: baseChannelName });
 
                 await Promise.all([
                     channelContext.channel.deleteExchange(instance.config.globalExchange),
@@ -127,7 +131,7 @@ describe('BunnyBus', () => {
             });
 
             afterEach(async () => {
-                await instance.unsubscribe(baseQueueName);
+                await instance.unsubscribe({ queue: baseQueueName });
             });
 
             after(async () => {
@@ -142,10 +146,10 @@ describe('BunnyBus', () => {
                 const promises = [];
 
                 // Do this to primse the connection
-                await instance.publish(message);
+                await instance.publish({ message });
 
                 for (let i = 0; i < publishTarget; ++i) {
-                    promises.push(instance.publish(message));
+                    promises.push(instance.publish({ message }));
                 }
 
                 await Promise.all(promises);
@@ -157,7 +161,7 @@ describe('BunnyBus', () => {
                 const handlers = {};
 
                 const promise = new Promise(async (resolve) => {
-                    handlers['a.promise'] = async (msg, ack) => {
+                    handlers['a.promise'] = async ({ ack }) => {
                         await ack();
 
                         if (++count === publishTarget) {
@@ -166,8 +170,12 @@ describe('BunnyBus', () => {
                     };
                 });
 
-                await instance.subscribe(baseQueueName, handlers, {
-                    queue: { durable: false }
+                await instance.subscribe({
+                    queue: baseQueueName,
+                    handlers,
+                    options: {
+                        queue: { durable: false }
+                    }
                 });
 
                 await promise;

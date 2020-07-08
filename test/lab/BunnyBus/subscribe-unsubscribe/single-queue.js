@@ -21,26 +21,25 @@ describe('BunnyBus', () => {
             const baseChannelName = 'bunnybus-subscribe';
             const baseQueueName = 'test-subscribe-queue';
             const baseErrorQueueName = `${baseQueueName}_error`;
-            const customErrroQueueName = `${baseQueueName}_custom_error`;
+            const customErrorQueueName = `${baseQueueName}_custom_error`;
             const publishOptions = { routeKey: 'a.b' };
-            const subscribeOptionsWithMeta = { meta: true };
             const messageObject = { event: 'a.b', name: 'bunnybus' };
             const messageString = 'bunnybus';
             const messageBuffer = Buffer.from(messageString);
 
             before(async () => {
-                channelContext = await instance._autoBuildChannelContext(baseChannelName);
+                channelContext = await instance._autoBuildChannelContext({ channelName: baseChannelName });
 
                 await Promise.all([
                     channelContext.channel.deleteExchange(instance.config.globalExchange),
                     channelContext.channel.deleteQueue(baseQueueName),
                     channelContext.channel.deleteQueue(baseErrorQueueName),
-                    channelContext.channel.deleteQueue(customErrroQueueName)
+                    channelContext.channel.deleteQueue(customErrorQueueName)
                 ]);
             });
 
             afterEach(async () => {
-                await instance.unsubscribe(baseQueueName);
+                await instance.unsubscribe({ queue: baseQueueName });
             });
 
             after(async () => {
@@ -48,7 +47,7 @@ describe('BunnyBus', () => {
                     channelContext.channel.deleteExchange(instance.config.globalExchange),
                     channelContext.channel.deleteQueue(baseQueueName),
                     channelContext.channel.deleteQueue(baseErrorQueueName),
-                    channelContext.channel.deleteQueue(customErrroQueueName)
+                    channelContext.channel.deleteQueue(customErrorQueueName)
                 ]);
 
                 await instance.stop();
@@ -57,106 +56,59 @@ describe('BunnyBus', () => {
             it('should consume message (Object) from queue and acknowledge off', async () => {
                 return new Promise(async (resolve) => {
                     const handlers = {};
-                    handlers[messageObject.event] = async (consumedMessage, ack) => {
+                    handlers[messageObject.event] = async ({ message: consumedMessage, metaData, ack }) => {
                         expect(consumedMessage).to.be.equal(messageObject);
+                        expect(metaData.headers).to.exist();
 
                         await ack();
                         resolve();
                     };
 
-                    await instance.subscribe(baseQueueName, handlers), await instance.publish(messageObject);
-                });
-            });
-
-            it('should consume message (Object) and meta from queue and acknowledge off', async () => {
-                return new Promise(async (resolve) => {
-                    const handlers = {};
-                    handlers[messageObject.event] = async (consumedMessage, meta, ack) => {
-                        expect(consumedMessage).to.equal(messageObject);
-                        expect(meta).to.not.be.a.function();
-                        expect(meta.headers).to.exist();
-
-                        await ack();
-                        resolve();
-                    };
-
-                    await instance.subscribe(baseQueueName, handlers, subscribeOptionsWithMeta);
-                    await instance.publish(messageObject);
+                    await instance.subscribe({ queue: baseQueueName, handlers });
+                    await instance.publish({ message: messageObject });
                 });
             });
 
             it('should consume message (String) from queue and acknowledge off', async () => {
                 return new Promise(async (resolve) => {
                     const handlers = {};
-                    handlers[publishOptions.routeKey] = async (consumedMessage, ack) => {
+                    handlers[publishOptions.routeKey] = async ({ message: consumedMessage, metaData, ack }) => {
                         expect(consumedMessage).to.be.equal(messageString);
+                        expect(metaData.headers).to.exist();
 
                         await ack();
                         resolve();
                     };
 
-                    await instance.subscribe(baseQueueName, handlers);
-                    await instance.publish(messageString, publishOptions);
-                });
-            });
-
-            it('should consume message (String) and meta from queue and acknowledge off', async () => {
-                return new Promise(async (resolve) => {
-                    const handlers = {};
-                    handlers[publishOptions.routeKey] = async (consumedMessage, meta, ack) => {
-                        expect(consumedMessage).to.equal(messageString);
-                        expect(meta).to.not.be.a.function();
-                        expect(meta.headers).to.exist();
-
-                        await ack();
-                        resolve();
-                    };
-
-                    await instance.subscribe(baseQueueName, handlers, subscribeOptionsWithMeta);
-                    await instance.publish(messageString, publishOptions);
+                    await instance.subscribe({ queue: baseQueueName, handlers });
+                    await instance.publish({ message: messageString, options: publishOptions });
                 });
             });
 
             it('should consume message (Buffer) from queue and acknowledge off', async () => {
                 return new Promise(async (resolve) => {
                     const handlers = {};
-                    handlers[publishOptions.routeKey] = async (consumedMessage, ack) => {
+                    handlers[publishOptions.routeKey] = async ({ message: consumedMessage, metaData, ack }) => {
                         expect(consumedMessage).to.be.equal(messageBuffer);
+                        expect(metaData.headers).to.exist();
 
                         await ack();
                         resolve();
                     };
 
-                    await instance.subscribe(baseQueueName, handlers);
-                    await instance.publish(messageBuffer, publishOptions);
-                });
-            });
-
-            it('should consume message (Buffer) and meta from queue and acknowledge off', async () => {
-                return new Promise(async (resolve) => {
-                    const handlers = {};
-                    handlers[publishOptions.routeKey] = async (consumedMessage, meta, ack) => {
-                        expect(consumedMessage).to.equal(messageBuffer);
-                        expect(meta).to.not.be.a.function();
-                        expect(meta.headers).to.exist();
-
-                        await ack();
-                        resolve();
-                    };
-
-                    await instance.subscribe(baseQueueName, handlers, subscribeOptionsWithMeta);
-                    await instance.publish(messageBuffer, publishOptions);
+                    await instance.subscribe({ queue: baseQueueName, handlers });
+                    await instance.publish({ message: messageBuffer, options: publishOptions });
                 });
             });
 
             it('should consume message (Object) from queue and reject off', async () => {
                 return new Promise(async (resolve) => {
                     const handlers = {};
-                    handlers[messageObject.event] = async (consumedMessage, ack, reject) => {
+                    handlers[messageObject.event] = async ({ message: consumedMessage, ack, rej }) => {
                         expect(consumedMessage).to.be.equal(messageObject);
 
-                        await reject();
-                        const payload = await instance.get(baseErrorQueueName);
+                        await rej();
+                        const payload = await instance.get({ queue: baseErrorQueueName });
 
                         expect(payload).to.exist();
                         const errorMessage = JSON.parse(payload.content.toString());
@@ -166,19 +118,19 @@ describe('BunnyBus', () => {
                         resolve();
                     };
 
-                    await instance.subscribe(baseQueueName, handlers);
-                    await instance.publish(messageObject);
+                    await instance.subscribe({ queue: baseQueueName, handlers });
+                    await instance.publish({ message: messageObject });
                 });
             });
 
             it('should consume message (Buffer) from queue and reject off', async () => {
                 return new Promise(async (resolve) => {
                     const handlers = {};
-                    handlers[publishOptions.routeKey] = async (consumedMessage, ack, reject) => {
+                    handlers[publishOptions.routeKey] = async ({ message: consumedMessage, rej }) => {
                         expect(consumedMessage).to.be.equal(messageBuffer);
 
-                        await reject();
-                        const payload = await instance.get(baseErrorQueueName);
+                        await rej();
+                        const payload = await instance.get({ queue: baseErrorQueueName });
 
                         expect(payload).to.exist();
                         const errorMessage = payload.content;
@@ -188,27 +140,27 @@ describe('BunnyBus', () => {
                         resolve();
                     };
 
-                    await instance.subscribe(baseQueueName, handlers);
-                    await instance.publish(messageBuffer, publishOptions);
+                    await instance.subscribe({ queue: baseQueueName, handlers });
+                    await instance.publish({ message: messageBuffer, options: publishOptions });
                 });
             });
 
             it('should consume message (Object) from queue and reject off to a custom specified error queue', async () => {
                 return new Promise(async (resolve) => {
                     const handlers = {};
-                    handlers[messageObject.event] = async (consumedMessage, ack, reject) => {
+                    handlers[messageObject.event] = async ({ message: consumedMessage, rej }) => {
                         expect(consumedMessage).to.be.equal(messageObject);
 
-                        await reject({ errorQueue: customErrroQueueName });
-                        const payload = await instance.get(customErrroQueueName);
+                        await rej({ errorQueue: customErrorQueueName });
+                        const payload = await instance.get({ queue: customErrorQueueName });
 
                         expect(payload).to.exist();
 
                         resolve();
                     };
 
-                    await instance.subscribe(baseQueueName, handlers);
-                    await instance.publish(messageObject);
+                    await instance.subscribe({ queue: baseQueueName, handlers });
+                    await instance.publish({ message: messageObject });
                 });
             });
 
@@ -217,7 +169,7 @@ describe('BunnyBus', () => {
                     const handlers = {};
                     const maxRetryCount = 3;
                     let retryCount = 0;
-                    handlers[messageObject.event] = async (consumedMessage, ack, reject, requeue) => {
+                    handlers[messageObject.event] = async ({ message: consumedMessage, ack, requeue }) => {
                         ++retryCount;
 
                         if (retryCount < maxRetryCount) {
@@ -231,8 +183,8 @@ describe('BunnyBus', () => {
                         }
                     };
 
-                    await instance.subscribe(baseQueueName, handlers, { maxRetryCount });
-                    await instance.publish(messageObject);
+                    await instance.subscribe({ queue: baseQueueName, handlers, options: { maxRetryCount } });
+                    await instance.publish({ message: messageObject });
                 });
             });
 
@@ -241,7 +193,7 @@ describe('BunnyBus', () => {
                 const maxRetryCount = 1;
                 const transactionId = 'retry-abc-134';
 
-                handlers[messageObject.event] = async (consumedMessage, ack, reject, requeue) => await requeue();
+                handlers[messageObject.event] = async ({ requeue }) => await requeue();
 
                 const promise = new Promise((resolve) => {
                     instance.once(BunnyBus.MESSAGE_REJECTED_EVENT, (sentOptions, sentPayload) => {
@@ -252,8 +204,8 @@ describe('BunnyBus', () => {
                     });
                 });
 
-                await instance.subscribe(baseQueueName, handlers, { maxRetryCount });
-                await instance.publish(messageObject, { transactionId });
+                await instance.subscribe({ queue: baseQueueName, handlers, options: { maxRetryCount } });
+                await instance.publish({ message: messageObject, options: { transactionId } });
                 await promise;
             });
 
@@ -262,7 +214,7 @@ describe('BunnyBus', () => {
                     const handlers = {};
                     const maxRetryCount = 3;
                     let retryCount = 0;
-                    handlers[publishOptions.routeKey] = async (consumedMessage, ack, reject, requeue) => {
+                    handlers[publishOptions.routeKey] = async ({ message: consumedMessage, ack, requeue }) => {
                         ++retryCount;
 
                         if (retryCount < maxRetryCount) {
@@ -275,8 +227,8 @@ describe('BunnyBus', () => {
                         }
                     };
 
-                    await instance.subscribe(baseQueueName, handlers, { maxRetryCount });
-                    await instance.publish(messageBuffer, publishOptions);
+                    await instance.subscribe({ queue: baseQueueName, handlers, options: { maxRetryCount } });
+                    await instance.publish({ message: messageBuffer, options: publishOptions });
                 });
             });
 
@@ -293,7 +245,7 @@ describe('BunnyBus', () => {
                         }
                     };
 
-                    handlers[publishOptions.routeKey] = async (consumedMessage, ack) => {
+                    handlers[publishOptions.routeKey] = async ({ ack }) => {
                         //this should never be called.
                         await ack();
                         reject(new Error('not expected to be called'));
@@ -305,8 +257,12 @@ describe('BunnyBus', () => {
                         resolve();
                     });
 
-                    await instance.subscribe(baseQueueName, handlers, {
-                        validatePublisher: true
+                    await instance.subscribe({
+                        queue: baseQueueName,
+                        handlers,
+                        options: {
+                            validatePublisher: true
+                        }
                     });
                     await channelContext.channel.publish(
                         config.globalExchange,
@@ -330,13 +286,17 @@ describe('BunnyBus', () => {
                         }
                     };
 
-                    handlers[publishOptions.routeKey] = async (consumedMessage, ack) => {
+                    handlers[publishOptions.routeKey] = async ({ ack }) => {
                         await ack();
                         resolve();
                     };
 
-                    await instance.subscribe(baseQueueName, handlers, {
-                        validatePublisher: false
+                    await instance.subscribe({
+                        queue: baseQueueName,
+                        handlers,
+                        options: {
+                            validatePublisher: false
+                        }
                     });
                     await channelContext.channel.publish(
                         config.globalExchange,
@@ -362,14 +322,18 @@ describe('BunnyBus', () => {
                         }
                     };
 
-                    handlers[publishOptions.routeKey] = async (consumedMessage, ack) => {
+                    handlers[publishOptions.routeKey] = async ({ ack }) => {
                         await ack();
                         resolve();
                     };
 
-                    await instance.subscribe(baseQueueName, handlers, {
-                        validatePublisher: true,
-                        validateVersion: false
+                    await instance.subscribe({
+                        queue: baseQueueName,
+                        handlers,
+                        options: {
+                            validatePublisher: true,
+                            validateVersion: false
+                        }
                     });
                     await channelContext.channel.publish(
                         config.globalExchange,
@@ -395,7 +359,7 @@ describe('BunnyBus', () => {
                         }
                     };
 
-                    handlers[publishOptions.routeKey] = async (consumedMessage, ack) => {
+                    handlers[publishOptions.routeKey] = async ({ ack }) => {
                         //this should never be called.
                         await ack();
                         reject(new Error('not expected to be called'));
@@ -407,9 +371,13 @@ describe('BunnyBus', () => {
                         resolve();
                     });
 
-                    await instance.subscribe(baseQueueName, handlers, {
-                        validatePublisher: true,
-                        validateVersion: true
+                    await instance.subscribe({
+                        queue: baseQueueName,
+                        handlers,
+                        options: {
+                            validatePublisher: true,
+                            validateVersion: true
+                        }
                     });
                     await channelContext.channel.publish(
                         config.globalExchange,
@@ -434,14 +402,18 @@ describe('BunnyBus', () => {
                         }
                     };
 
-                    handlers[publishOptions.routeKey] = async (consumedMessage, ack, reject, requeue) => {
+                    handlers[publishOptions.routeKey] = async ({ ack }) => {
                         //this should never be called.
                         await ack();
                         resolve();
                     };
 
-                    await instance.subscribe(baseQueueName, handlers, {
-                        validatePublisher
+                    await instance.subscribe({
+                        queue: baseQueueName,
+                        handlers,
+                        options: {
+                            validatePublisher
+                        }
                     });
                     await channelContext.channel.publish(
                         config.globalExchange,
@@ -468,14 +440,18 @@ describe('BunnyBus', () => {
                         }
                     };
 
-                    handlers[publishOptions.routeKey] = async (consumedMessage, ack, reject, requeue) => {
+                    handlers[publishOptions.routeKey] = async ({ ack }) => {
                         //this should never be called.
                         await ack();
                         resolve();
                     };
 
-                    await instance.subscribe(baseQueueName, handlers, {
-                        validateVersion
+                    await instance.subscribe({
+                        queue: baseQueueName,
+                        handlers,
+                        options: {
+                            validateVersion
+                        }
                     });
                     await channelContext.channel.publish(
                         config.globalExchange,
@@ -489,15 +465,19 @@ describe('BunnyBus', () => {
             it('should not create exchange to queue binding when disableQueueBind == true', async () => {
                 const handlers = {};
 
-                handlers[messageObject.event] = async (consumedMessage, ack) => {
+                handlers[messageObject.event] = async ({ ack }) => {
                     await ack();
                 };
 
-                await instance.subscribe(baseQueueName, handlers, {
-                    disableQueueBind: true
+                await instance.subscribe({
+                    queue: baseQueueName,
+                    handlers,
+                    options: {
+                        disableQueueBind: true
+                    }
                 });
-                await instance.publish(messageObject);
-                const result = await instance.get(baseQueueName);
+                await instance.publish({ message: messageObject });
+                const result = await instance.get({ queue: baseQueueName });
 
                 expect(result).to.be.false();
             });
@@ -508,7 +488,7 @@ describe('BunnyBus', () => {
                 const rejectionReason = `message consumed with no matching routeKey (${unregisteredTopic}) handler`;
 
                 const handlers = {};
-                handlers[messageObject.event] = async (consumedMessage, ack) => await ack();
+                handlers[messageObject.event] = async ({ ack }) => await ack();
 
                 const promise = new Promise(async (resolve) => {
                     const eventHandler = (sentOptions, sentMessage) => {
@@ -530,15 +510,19 @@ describe('BunnyBus', () => {
                     instance.on(BunnyBus.MESSAGE_REJECTED_EVENT, eventHandler);
                 });
 
-                await instance.subscribe(baseQueueName, handlers, {
-                    rejectUnroutedMessages: true
+                await instance.subscribe({
+                    queue: baseQueueName,
+                    handlers,
+                    options: {
+                        rejectUnroutedMessages: true
+                    }
                 }),
                     await channelContext.channel.bindQueue(
                         baseQueueName,
                         instance.config.globalExchange,
                         unregisteredTopic
                     );
-                await instance.publish(testObject);
+                await instance.publish({ message: testObject });
                 await promise;
             });
 
@@ -554,18 +538,18 @@ describe('BunnyBus', () => {
                         }
                     };
 
-                    handlers[publishOptions.routeKey] = async (consumedMessage, ack) => {
+                    handlers[publishOptions.routeKey] = async ({ ack }) => {
                         ack();
                         resolver();
                     };
 
-                    handlers['a.#'] = async (consumedMessage, ack) => {
+                    handlers['a.#'] = async ({ ack }) => {
                         ack();
                         resolver();
                     };
 
-                    await instance.subscribe(baseQueueName, handlers);
-                    await instance.publish(messageString, publishOptions);
+                    await instance.subscribe({ queue: baseQueueName, handlers });
+                    await instance.publish({ message: messageString, options: publishOptions });
                 });
 
                 await new Promise((resolve) => setTimeout(resolve, 500));

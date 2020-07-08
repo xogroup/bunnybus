@@ -36,7 +36,7 @@ describe('BunnyBus', () => {
                     connectionManager = instance.connections;
                     channelManager = instance.channels;
 
-                    channelContext = await instance._autoBuildChannelContext(baseChannelName);
+                    channelContext = await instance._autoBuildChannelContext({ channelName: baseChannelName });
                     connectionContext = channelContext.connectionContext;
 
                     await channelContext.channel.deleteQueue(baseQueueName);
@@ -50,7 +50,7 @@ describe('BunnyBus', () => {
                 it('should be undefined when queue does not exist', async () => {
                     await Assertions.autoRecoverChannel(
                         async () => {
-                            const result1 = await instance.checkQueue(baseQueueName);
+                            const result1 = await instance.checkQueue({ name: baseQueueName });
                             const result2 = instance.channels.get(BunnyBus.MANAGEMENT_CHANNEL_NAME());
 
                             expect(result1).to.be.undefined();
@@ -67,7 +67,7 @@ describe('BunnyBus', () => {
 
                     await Assertions.autoRecoverChannel(
                         async () => {
-                            const result = await instance.checkQueue(baseQueueName);
+                            const result = await instance.checkQueue({ name: baseQueueName });
 
                             expect(result).to.exist().and.to.be.an.object().and.to.contain({
                                 queue: baseQueueName,
@@ -87,7 +87,7 @@ describe('BunnyBus', () => {
 
                     await Assertions.autoRecoverChannel(
                         async () => {
-                            await expect(instance.checkQueue(baseQueueName)).to.not.reject();
+                            await expect(instance.checkQueue({ name: baseQueueName })).to.not.reject();
                         },
                         connectionContext,
                         channelContext,
@@ -101,7 +101,7 @@ describe('BunnyBus', () => {
 
                     await Assertions.autoRecoverChannel(
                         async () => {
-                            await expect(instance.checkQueue(baseQueueName)).to.not.reject();
+                            await expect(instance.checkQueue({ name: baseQueueName })).to.not.reject();
                         },
                         connectionContext,
                         channelContext,
@@ -118,7 +118,7 @@ describe('BunnyBus', () => {
                     connectionManager = instance.connections;
                     channelManager = instance.channels;
 
-                    channelContext = await instance._autoBuildChannelContext(baseChannelName);
+                    channelContext = await instance._autoBuildChannelContext({ channelName: baseChannelName });
                     connectionContext = channelContext.connectionContext;
 
                     await channelContext.channel.deleteQueue(baseQueueName);
@@ -129,7 +129,7 @@ describe('BunnyBus', () => {
                 });
 
                 it('should be undefined when queue does not exist', async () => {
-                    const result1 = await instance.checkQueue(baseQueueName);
+                    const result1 = await instance.checkQueue({ name: baseQueueName });
                     const result2 = instance.channels.get(BunnyBus.MANAGEMENT_CHANNEL_NAME());
 
                     expect(result1).to.be.undefined();
@@ -139,7 +139,7 @@ describe('BunnyBus', () => {
                 it('should return queue info when queue does exist', async () => {
                     await channelContext.channel.assertQueue(baseQueueName, BunnyBus.DEFAULT_QUEUE_CONFIGURATION);
 
-                    const result = await instance.checkQueue(baseQueueName);
+                    const result = await instance.checkQueue({ name: baseQueueName });
 
                     expect(result).to.exist().and.to.be.an.object().and.to.contain({
                         queue: baseQueueName,

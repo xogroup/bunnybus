@@ -17,14 +17,11 @@ describe('BunnyBus', () => {
         const baseChannelName = 'bunnybus-jest';
         const baseQueueName = 'test-jest-queue';
         const baseErrorQueueName = `${baseQueueName}_error`;
-        const publishOptions = { routeKey: 'a.b' };
-        const subscribeOptionsWithMeta = { meta: true };
         const messageObject = { event: 'a.b', name: 'bunnybus' };
         const messageString = 'bunnybus';
-        const messageBuffer = Buffer.from(messageString);
 
         beforeAll(async () => {
-            channelContext = await instance._autoBuildChannelContext(baseChannelName);
+            channelContext = await instance._autoBuildChannelContext({ channelName: baseChannelName });
 
             await Promise.all([
                 channelContext.channel.deleteExchange(instance.config.globalExchange),
@@ -46,14 +43,14 @@ describe('BunnyBus', () => {
         it('should consume message (Object) from queue and acknowledge off', async () => {
             return new Promise(async (resolve) => {
                 const handlers = {};
-                handlers[messageObject.event] = async (consumedMessage, ack) => {
+                handlers[messageObject.event] = async ({ message: consumedMessage, ack }) => {
                     expect(consumedMessage).toEqual(messageObject);
                     await ack();
                     resolve();
                 };
 
-                await instance.subscribe(baseQueueName, handlers);
-                await instance.publish(messageObject);
+                await instance.subscribe({ queue: baseQueueName, handlers });
+                await instance.publish({ message: messageObject });
             });
         });
     });

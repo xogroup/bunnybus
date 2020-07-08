@@ -29,11 +29,11 @@ describe('BunnyBus', () => {
             beforeEach(async () => {
                 instance.config = BunnyBus.DEFAULT_SERVER_CONFIGURATION;
 
-                channelContext = await instance._autoBuildChannelContext(baseChannelName);
+                channelContext = await instance._autoBuildChannelContext({ channelName: baseChannelName });
             });
 
             after(async () => {
-                channelContext = await instance._autoBuildChannelContext(baseChannelName);
+                channelContext = await instance._autoBuildChannelContext({ channelName: baseChannelName });
                 await channelContext.channel.deleteQueue(baseQueueName);
 
                 await instance.stop();
@@ -107,8 +107,11 @@ describe('BunnyBus', () => {
 
             it('should emit RECOVERY_FAILED_EVENT when recovery process fails', { timeout: 6000 }, async () => {
                 // Setup a subscripton so recovery is necessary.
-                await instance.subscribe(baseQueueName, {
-                    'subscribed-event': () => {}
+                await instance.subscribe({
+                    queue: baseQueueName,
+                    handlers: {
+                        'subscribed-event': () => {}
+                    }
                 });
 
                 // Make sure connection/channel state is in a good place.

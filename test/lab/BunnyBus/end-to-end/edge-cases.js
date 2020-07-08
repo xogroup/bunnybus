@@ -26,7 +26,7 @@ describe('BunnyBus', () => {
                 connectionManager = instance.connections;
                 channelManager = instance.channels;
 
-                channelContext = await instance._autoBuildChannelContext(baseChannelName);
+                channelContext = await instance._autoBuildChannelContext({ channelName: baseChannelName });
 
                 await new Promise(async (resolve) => {
                     channelManager.once(ChannelManager.CHANNEL_REMOVED, resolve);
@@ -38,7 +38,7 @@ describe('BunnyBus', () => {
                 if (!channelContext.channel) {
                     // We need this to clean up bad configuration induced by edge case testing
                     instance.config = BunnyBus.DEFAULT_SERVER_CONFIGURATION;
-                    channelContext = await instance._autoBuildChannelContext(baseChannelName);
+                    channelContext = await instance._autoBuildChannelContext({ channelName: baseChannelName });
                 }
 
                 await channelContext.channel.deleteQueue(baseQueueName);
@@ -48,7 +48,11 @@ describe('BunnyBus', () => {
             it('should pass when parallel calls to publish happens when connection starts off closed', async () => {
                 const message = { event: 'ee', name: 'bunnybus' };
 
-                await Promise.all([instance.publish(message), instance.publish(message), instance.publish(message)]);
+                await Promise.all([
+                    instance.publish({ message }),
+                    instance.publish({ message }),
+                    instance.publish({ message })
+                ]);
             });
 
             it('should pass when send pushes a message to a subscribed queue', async () => {
@@ -56,18 +60,18 @@ describe('BunnyBus', () => {
 
                 await new Promise(async (resolve) => {
                     const handlers = {
-                        ea: async (subscribedMessaged, ack) => {
+                        ea: async ({ message: subscribedMessaged, ack }) => {
                             expect(subscribedMessaged).to.be.equal(message);
 
-                            await ack(resolve);
-                            await instance.deleteQueue(baseQueueName);
+                            await ack();
+                            await instance.deleteQueue({ queue: baseQueueName });
                             resolve();
                         }
                     };
 
-                    await instance.createQueue(baseQueueName);
-                    await instance.send(message, baseQueueName);
-                    await instance.subscribe(baseQueueName, handlers);
+                    await instance.createQueue({ name: baseQueueName });
+                    await instance.send({ message, queue: baseQueueName });
+                    await instance.subscribe({ queue: baseQueueName, handlers });
                 });
             });
 
@@ -79,7 +83,7 @@ describe('BunnyBus', () => {
                     connectionRetryCount: 1
                 };
 
-                await expect(instance.publish(message)).to.reject();
+                await expect(instance.publish({ message })).to.reject();
             });
         });
     });

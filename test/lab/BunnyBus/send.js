@@ -29,13 +29,13 @@ describe('BunnyBus', () => {
             const messageWithEvent = { event: 'event1', name: 'bunnybus' };
 
             beforeEach(async () => {
-                channelContext = await instance._autoBuildChannelContext(baseChannelName);
+                channelContext = await instance._autoBuildChannelContext({ channelName: baseChannelName });
 
                 await channelContext.channel.deleteQueue(baseQueueName);
             });
 
             after(async () => {
-                instance._autoBuildChannelContext(baseChannelName);
+                instance._autoBuildChannelContext({ channelName: baseChannelName });
                 await channelContext.channel.deleteQueue(baseQueueName);
 
                 await instance.stop();
