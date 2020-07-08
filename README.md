@@ -32,14 +32,16 @@ const bunnyBus = new BunnyBus();
 
 //create a subscription
 await bunnyBus.subscribe('queue1', { 
-    'create-event' : async (message, ack) => {
+    'create-event' : async ({message, ack}) => {
         console.log(message.comment);
         await ack();
     }}
 );
 
 //publish to the above subscription
-await bunnyBus.publish({ event : 'create-event', comment : 'hello world!' });
+const payload = { event : 'create-event', comment : 'hello world!' }
+
+await bunnyBus.publish({ message: payload });
 
 );
 ```
