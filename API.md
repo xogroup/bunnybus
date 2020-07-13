@@ -333,19 +333,6 @@ console.log(bunnyBus.channels.get('channelForQueue1'));
 // output : { name, queue, connectionContext, channelOptions, lock, channel }
 ```
 
-#### `httpClients`
-
-Getter for HTTP clients.  A reference to the [Http Client Manager](#httpclientmanager).
-
-```javascript
-const BunnyBus = require('bunnybus');
-const bunnyBus = new BunnyBus();
-
-console.log(bunnyBus.httpClients.get('clientForManagementAPI'));
-
-// output : { name, connectionContext }
-```
-
 #### `subscriptions`
 
 Getter for subscriptions.  A reference to the [Subscription Manager](#subscriptionmanager).
@@ -1774,70 +1761,6 @@ bunnyBus.channels.on(ChannelManager.AMQP_CHANNEL_DRAIN_EVENT, (context) => {
     console.log(context);
     // output : { name, queue, connectionContext, channelOptions, lock, channel }
 });
-```
-
-## `HttpClientManager`
-
-This class manages the collection of all http clients created within BunnyBus.
-
-### Methods
-
-#### `async create(name, connectionOptions, [socketOptions])`
-
-Creates an HTTP client to communicate with the RabbitMQ Management API when one exist.
-
-##### parameter(s)
-
-* `name` - name of the connection. *[string]* **Required**
-* `connectionOptions` - options used to create the `amqplib` connection.  See [`config`](#config) for allowed options.  Only relevant subset is used.  *[Object]* **Required**
-
-```javascript
-const BunnyBus = require('bunnybus');
-const bunnyBus = new BunnyBus();
-
-const clientContext = await bunnybus.httpClients.create('defaultHttpClient', { hostname, username, password, vhost timeout, maxRetryCount });
-```
-
-#### `contains(name)`
-
-Checks if a HTTP client context exist with the specified name.
-
-##### parameter(s)
-
-* `name` - name of the connection. *[string]* **Required**
-
-```javascript
-const BunnyBus = require('bunnybus');
-const bunnyBus = new BunnyBus();
-
-const exist = bunnybus.httpClients.contains('defaultHttpClient');
-// exist : boolean
-```
-
-#### `get(name)`
-
-Retrieves a HTTP client context with the specified name.
-
-##### parameter(s)
-
-* `name` - name of the connection. *[string]* **Required**
-
-```javascript
-const BunnyBus = require('bunnybus');
-const bunnyBus = new BunnyBus();
-
-const clientContext = bunnybus.httpClients.get('defaultHttpClient');
-```
-
-#### `list()`
-
-Returns all HTTP clients registered that are in any state of operability.
-
-```javascript
-const BunnyBus = require('bunnybus');
-const bunnyBus = new BunnyBus();
-
-const clientContext = bunnybus.httpClients.list();
 ```
 
 ## `SubscriptionManager`
