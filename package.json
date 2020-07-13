@@ -36,8 +36,7 @@
   "dependencies": {
     "@hapi/hoek": "^9.x",
     "amqplib": "^0.5.x",
-    "set-interval-async": "^1.x",
-    "superagent": "^5.x"
+    "set-interval-async": "^1.x"
   },
   "devDependencies": {
     "@hapi/code": "^8.x",

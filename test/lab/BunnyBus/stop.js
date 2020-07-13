@@ -3,7 +3,6 @@
 const Code = require('@hapi/code');
 const Lab = require('@hapi/lab');
 const BunnyBus = require('../../../lib');
-const { subscribe } = require('superagent');
 
 const { describe, before, beforeEach, after, afterEach, it } = (exports.lab = Lab.script());
 const expect = Code.expect;
