@@ -31,7 +31,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/tenna-llc/bunnybus"
+    "url": "https://github.com/xogroup/bunnybus"
   },
   "dependencies": {
     "amqplib": "^0.5.5",
