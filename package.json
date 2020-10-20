@@ -1,5 +1,5 @@
 {
-  "name": "@xogroup/bunnybus",
+  "name": "bunnybus",
   "version": "5.0.0",
   "description": "RabbitMQ driver for pub/sub with error queue / retry management",
   "keywords": [
