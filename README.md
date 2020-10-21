@@ -5,8 +5,6 @@ Currently supports the following queueing frameworks.
 
 - [RabbitMQ](https://www.rabbitmq.com/)
 
-[![Build Status](https://travis-ci.com/tenna-llc/bunnybus.svg?branch=master)](https://travis-ci.com/tenna-llc/bunnybus)
-
 Lead Maintainer: [Lam Chan](https://github.com/lamchakchan)
 
 ## Introduction
@@ -16,13 +14,7 @@ BunnyBus abstracts away low level queue driver details such as creating a connec
 
 ## Installation
 ```
-➜  test npm login --registry=https://npm.pkg.github.com
-Username: <your github username>
-Password: <your github api token>
-Email: (this IS public) <your email>
-Logged in as <your github username> on https://npm.pkg.github.com/.
-
-➜  npm i @tenna-llc/bunnybus
+➜  npm i bunnybus
 ```
 
 ## Usage
