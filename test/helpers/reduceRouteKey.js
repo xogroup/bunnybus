@@ -66,33 +66,33 @@ describe('Helpers', () => {
             expect(result).to.be.equal(options.routeKey);
         });
 
-        it('should return from payload.fields.routingKey when options is empty', () => {
+        it('should return from message.event when options is empty', () => {
 
             const result = Helpers.reduceRouteKey(payloadFields, {}, message);
 
-            expect(result).to.be.equal(payloadFields.fields.routingKey);
+            expect(result).to.be.equal(message.event);
         });
 
-        it('should return from payload.fields.routingKey when options is null', () => {
+        it('should return from message.event when options is null', () => {
 
             const result = Helpers.reduceRouteKey(payloadFields, null, message);
 
+            expect(result).to.be.equal(message.event);
+        });
+
+
+        it('should return from payload.fields.routingKey when options is empty and fields is empty', () => {
+
+            const result = Helpers.reduceRouteKey(payloadFields, {}, {});
+
             expect(result).to.be.equal(payloadFields.fields.routingKey);
         });
 
+        it('should return from payload.fields.routingKey when options is null and fields is null', () => {
 
-        it('should return from message.event when options is empty and fields is empty', () => {
+            const result = Helpers.reduceRouteKey(payloadFields, null, null);
 
-            const result = Helpers.reduceRouteKey({}, {}, message);
-
-            expect(result).to.be.equal(message.event);
-        });
-
-        it('should return from message.event when options is null and fields is null', () => {
-
-            const result = Helpers.reduceRouteKey(null, null, message);
-
-            expect(result).to.be.equal(message.event);
+            expect(result).to.be.equal(payloadFields.fields.routingKey);
         });
 
         it('should return undefined when all input is falsy', () => {
