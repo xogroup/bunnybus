@@ -73,7 +73,7 @@ describe('Helpers', () => {
             expect(Helpers.parsePayload(payload)).to.be.null();
         });
 
-        it('shold return null when payload content is non deserializable corrupted JSON buffer', () => {
+        it('should return null when payload content is non deserializable corrupted JSON buffer', () => {
             const buffer = Buffer.from('{"hello":"world"', 'utf-8');
 
             const payload = { content: buffer };
