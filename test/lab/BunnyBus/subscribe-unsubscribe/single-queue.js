@@ -517,11 +517,7 @@ describe('BunnyBus', () => {
                         rejectUnroutedMessages: true
                     }
                 }),
-                    await channelContext.channel.bindQueue(
-                        baseQueueName,
-                        instance.config.globalExchange,
-                        unregisteredTopic
-                    );
+                    await channelContext.channel.bindQueue(baseQueueName, instance.config.globalExchange, unregisteredTopic);
                 await instance.publish({ message: testObject });
                 await promise;
             });

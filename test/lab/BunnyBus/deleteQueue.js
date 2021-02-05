@@ -67,10 +67,7 @@ describe('BunnyBus', () => {
                     async () => {
                         let result = null;
 
-                        await Promise.all([
-                            instance.deleteQueue({ name: baseQueueName }),
-                            instance.deleteQueue({ name: baseQueueName })
-                        ]);
+                        await Promise.all([instance.deleteQueue({ name: baseQueueName }), instance.deleteQueue({ name: baseQueueName })]);
 
                         try {
                             await channelContext.channel.checkQueue(baseQueueName);

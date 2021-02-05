@@ -68,10 +68,7 @@ describe('BunnyBus', () => {
                     async () => {
                         let result = null;
 
-                        await Promise.all([
-                            instance.createQueue(baseQueueName),
-                            instance.createQueue({ name: baseQueueName })
-                        ]);
+                        await Promise.all([instance.createQueue(baseQueueName), instance.createQueue({ name: baseQueueName })]);
 
                         try {
                             await channelContext.channel.checkQueue(baseQueueName);

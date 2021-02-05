@@ -16,14 +16,12 @@ const autoRecoverChannel = async (testFuncAsync, connectionContext, channelConte
                 }
             });
 
-        channelContext
-            .removeAllListeners(ChannelManager.AMQP_CHANNEL_CLOSE_EVENT)
-            .once(ChannelManager.AMQP_CHANNEL_CLOSE_EVENT, () => {
-                if (!handled) {
-                    handled = true;
-                    resolve();
-                }
-            });
+        channelContext.removeAllListeners(ChannelManager.AMQP_CHANNEL_CLOSE_EVENT).once(ChannelManager.AMQP_CHANNEL_CLOSE_EVENT, () => {
+            if (!handled) {
+                handled = true;
+                resolve();
+            }
+        });
     });
 
     await testFuncAsync();
@@ -35,12 +33,7 @@ const autoRecoverChannel = async (testFuncAsync, connectionContext, channelConte
             throw err;
         }
     } finally {
-        await channelManager.create(
-            channelContext.name,
-            queue,
-            channelContext.connectionContext,
-            channelContext.channelOptions
-        );
+        await channelManager.create(channelContext.name, queue, channelContext.connectionContext, channelContext.channelOptions);
     }
 };
 

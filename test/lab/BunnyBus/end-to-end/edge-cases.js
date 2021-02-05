@@ -48,11 +48,7 @@ describe('BunnyBus', () => {
             it('should pass when parallel calls to publish happens when connection starts off closed', async () => {
                 const message = { event: 'ee', name: 'bunnybus' };
 
-                await Promise.all([
-                    instance.publish({ message }),
-                    instance.publish({ message }),
-                    instance.publish({ message })
-                ]);
+                await Promise.all([instance.publish({ message }), instance.publish({ message }), instance.publish({ message })]);
             });
 
             it('should pass when send pushes a message to a subscribed queue', async () => {

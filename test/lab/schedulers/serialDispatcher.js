@@ -51,47 +51,43 @@ describe('schedulers', () => {
                 expect(counter).to.equal(3);
             });
 
-            it(
-                'should add 50 functions and execute them in the order they were added',
-                { timeout: 20000 },
-                async () => {
-                    const target = 50;
-                    let counter = 0;
-                    const randomNumber = (min = 20, max = 250) => Math.floor(Math.random() * (max - min + 1) + min);
+            it('should add 50 functions and execute them in the order they were added', { timeout: 20000 }, async () => {
+                const target = 50;
+                let counter = 0;
+                const randomNumber = (min = 20, max = 250) => Math.floor(Math.random() * (max - min + 1) + min);
 
-                    await new Promise((resolve, reject) => {
-                        const delegate = async function (orderNumber) {
-                            const waitTimeInMs = randomNumber();
+                await new Promise((resolve, reject) => {
+                    const delegate = async function (orderNumber) {
+                        const waitTimeInMs = randomNumber();
 
-                            // we add this timeout to force indeterministic behavior for function
-                            // invokers that do not correctly handle asynchronous functions.
-                            await new Promise((handlerResolve) => setTimeout(handlerResolve, waitTimeInMs));
+                        // we add this timeout to force indeterministic behavior for function
+                        // invokers that do not correctly handle asynchronous functions.
+                        await new Promise((handlerResolve) => setTimeout(handlerResolve, waitTimeInMs));
 
-                            if (counter !== orderNumber) {
-                                reject(new Error('Messages are out of order'));
-                            }
-
-                            if (counter === target - 1 && counter === orderNumber) {
-                                resolve();
-                            }
-
-                            counter++;
-                        };
-
-                        for (let i = 0; i < target; ++i) {
-                            // eslint-disable-next-line no-loop-func
-                            ((orderNumber) => {
-                                instance.push(queueName, delegate.bind(null, orderNumber));
-                            })(i);
+                        if (counter !== orderNumber) {
+                            reject(new Error('Messages are out of order'));
                         }
-                    });
 
-                    await new Promise((resolve) => setImmediate(resolve));
+                        if (counter === target - 1 && counter === orderNumber) {
+                            resolve();
+                        }
 
-                    expect(counter).to.equal(target);
-                    expect(instance._queues.size).to.equal(0);
-                }
-            );
+                        counter++;
+                    };
+
+                    for (let i = 0; i < target; ++i) {
+                        // eslint-disable-next-line no-loop-func
+                        ((orderNumber) => {
+                            instance.push(queueName, delegate.bind(null, orderNumber));
+                        })(i);
+                    }
+                });
+
+                await new Promise((resolve) => setImmediate(resolve));
+
+                expect(counter).to.equal(target);
+                expect(instance._queues.size).to.equal(0);
+            });
 
             it('should not concurrently call handlers in the dispatch queue when messages are sequentially enqueued', async () => {
                 let lock = false;

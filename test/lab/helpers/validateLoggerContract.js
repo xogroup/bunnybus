@@ -25,10 +25,7 @@ describe('Helpers', () => {
         });
 
         it('should return true when validating custom logger object', async () => {
-            await Assertions.assertValidateLoggerContract(
-                FakeLoggerFactory('debug', 'info', 'warn', 'error', 'fatal'),
-                true
-            );
+            await Assertions.assertValidateLoggerContract(FakeLoggerFactory('debug', 'info', 'warn', 'error', 'fatal'), true);
         });
 
         it('should return false when validating custom logger missing debug', async () => {

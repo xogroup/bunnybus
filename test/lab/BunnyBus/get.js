@@ -53,27 +53,11 @@ describe('BunnyBus', () => {
             });
 
             it('should not error when connection does not pre-exist', async () => {
-                await Assertions.assertGet(
-                    instance,
-                    channelContext,
-                    connectionManager,
-                    null,
-                    buffer,
-                    baseQueueName,
-                    options
-                );
+                await Assertions.assertGet(instance, channelContext, connectionManager, null, buffer, baseQueueName, options);
             });
 
             it('should not error when channel does not pre-exist', async () => {
-                await Assertions.assertGet(
-                    instance,
-                    channelContext,
-                    null,
-                    channelManager,
-                    buffer,
-                    baseQueueName,
-                    options
-                );
+                await Assertions.assertGet(instance, channelContext, null, channelManager, buffer, baseQueueName, options);
             });
         });
     });

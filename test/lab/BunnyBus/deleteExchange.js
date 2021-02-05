@@ -31,11 +31,7 @@ describe('BunnyBus', () => {
                 channelContext = await instance._autoBuildChannelContext({ channelName: baseChannelName });
                 connectionContext = channelContext.connectionContext;
 
-                await channelContext.channel.assertExchange(
-                    baseExchangeName,
-                    'topic',
-                    BunnyBus.DEFAULT_EXCHANGE_CONFIGURATION
-                );
+                await channelContext.channel.assertExchange(baseExchangeName, 'topic', BunnyBus.DEFAULT_EXCHANGE_CONFIGURATION);
             });
 
             after(async () => {

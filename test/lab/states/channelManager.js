@@ -147,12 +147,7 @@ describe('state management', () => {
             const baseChannelName = 'channel-getChannel';
 
             it('should return a connection context when it exist', async () => {
-                const channelContext = await instance.create(
-                    baseChannelName,
-                    null,
-                    connectionContext,
-                    defaultConfiguration
-                );
+                const channelContext = await instance.create(baseChannelName, null, connectionContext, defaultConfiguration);
 
                 const result = instance.get(baseChannelName);
 
@@ -208,15 +203,10 @@ describe('state management', () => {
 
             it('should be false when channel is missing from context but outside the timeout and retry duration limits', async () => {
                 try {
-                    await Helpers.timeoutAsync(instance.create.bind(instance), 10)(
-                        baseChannelName,
-                        null,
-                        connectionContext,
-                        {
-                            ...defaultConfiguration,
-                            ...{ timeout: 10, connectionRetryCount: 1 }
-                        }
-                    );
+                    await Helpers.timeoutAsync(instance.create.bind(instance), 10)(baseChannelName, null, connectionContext, {
+                        ...defaultConfiguration,
+                        ...{ timeout: 10, connectionRetryCount: 1 }
+                    });
                 } catch (err) {}
 
                 const context = await instance.get(baseChannelName);
@@ -252,12 +242,7 @@ describe('state management', () => {
             const baseChannelName = 'channel-getChannelChannel';
 
             it('should return a channel when it exist', async () => {
-                const channelContext = await instance.create(
-                    baseChannelName,
-                    null,
-                    connectionContext,
-                    defaultConfiguration
-                );
+                const channelContext = await instance.create(baseChannelName, null, connectionContext, defaultConfiguration);
 
                 const result = instance.getChannel(baseChannelName);
 
