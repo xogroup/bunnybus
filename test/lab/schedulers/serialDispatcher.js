@@ -66,13 +66,12 @@ describe('schedulers', () => {
 
                         if (counter !== orderNumber) {
                             reject(new Error('Messages are out of order'));
-                        }
-
-                        if (counter === target - 1 && counter === orderNumber) {
+                        } else if (counter === target - 1 && counter === orderNumber) {
+                            ++counter;
                             resolve();
+                        } else {
+                            ++counter;
                         }
-
-                        counter++;
                     };
 
                     for (let i = 0; i < target; ++i) {
