@@ -133,12 +133,16 @@ describe('schedulers', () => {
                 it('should not concurrently call handlers in the dispatch queue when messages are concurrently enqueued', async () => {
                     let lock = false;
                     let counter = 0;
+                    let done = false;
 
                     await new Promise((resolve, reject) => {
                         const delegate = async () => {
+                            if (done) return;
+
                             instance.push(queueName, delegate);
 
                             if (lock) {
+                                done = true;
                                 reject('Messages are not processed serially');
                             }
 
@@ -149,6 +153,7 @@ describe('schedulers', () => {
                                     lock = false;
 
                                     if (++counter === 2) {
+                                        done = true;
                                         resolve();
                                     }
 
@@ -165,7 +170,7 @@ describe('schedulers', () => {
             });
         });
 
-        describe.only('with one partition key defined', () => {
+        describe('with one partition key defined', () => {
             const paritionKeySelector = '{message.serialNumber}';
 
             beforeEach(async () => {
@@ -281,11 +286,16 @@ describe('schedulers', () => {
 
                                     if (counters[partition] !== orderNumber) {
                                         reject(new Error('Messages are out of order'));
-                                    } else if (counters.every((counter) => counter >= target - 1) && counters[partition] === orderNumber) {
-                                        ++counters[partition];
+                                    }
+
+                                    ++counters[partition];
+
+                                    if (counters.every((counter) => counter === target)) {
                                         resolve();
-                                    } else {
-                                        ++counters[partition];
+                                    }
+
+                                    if (counters.some((counter) => counter > target)) {
+                                        reject(new Error('Scheduler assigning things to wrong queue partitions'));
                                     }
                                 };
 
@@ -378,6 +388,84 @@ describe('schedulers', () => {
                         });
 
                         expect(counter).to.equal(2);
+                    });
+                });
+            });
+        });
+
+        describe('with multiple partition keys defined', () => {
+            const partitionKeySelector1 = '{message.serialNumber}';
+            const partitionKeySelector2 = '{message.sn}';
+
+            beforeEach(async () => {
+                instance = new PartitionSerialDispatcher({
+                    serialDispatchPartitionKeySelectors: [partitionKeySelector1, partitionKeySelector2]
+                });
+            });
+
+            describe('constructor', () => {
+                it('should have two entry in the partitionKeySelectors array', async () => {
+                    expect(instance.serialDispatchPartitionKeySelectors).to.be.an.array().to.have.length(2);
+                });
+            });
+
+            describe('when key matches', () => {
+                describe('push', () => {
+                    const partitionQueueName = `${queueName}:8032060121`;
+                    const defaultQueueName = `${queueName}:default`;
+
+                    it('should add a new function to the partitioned queue and execute', async () => {
+                        let delegate = null;
+
+                        const promise = new Promise((resolve) => {
+                            delegate = resolve;
+                        });
+
+                        instance.push(queueName, delegate, { message: { serialNumber: '8032060121' } });
+
+                        const sut1 = instance._queues.get(partitionQueueName);
+                        const sut2 = instance._queues.get(defaultQueueName);
+
+                        await promise;
+
+                        expect(sut1).to.exist().and.to.be.an.object();
+                        expect(sut2).to.be.undefined();
+                    });
+
+                    it('should add a new function to the partitioned queue and execute with the first selector', async () => {
+                        let delegate = null;
+
+                        const promise = new Promise((resolve) => {
+                            delegate = resolve;
+                        });
+
+                        instance.push(queueName, delegate, { message: { serialNumber: '8032060121', sn: 'will-not-catch' } });
+
+                        const sut1 = instance._queues.get(partitionQueueName);
+                        const sut2 = instance._queues.get(defaultQueueName);
+
+                        await promise;
+
+                        expect(sut1).to.exist().and.to.be.an.object();
+                        expect(sut2).to.be.undefined();
+                    });
+
+                    it('should add a new function to the partitioned queue and execute with the second selector', async () => {
+                        let delegate = null;
+
+                        const promise = new Promise((resolve) => {
+                            delegate = resolve;
+                        });
+
+                        instance.push(queueName, delegate, { message: { sn: '8032060121' } });
+
+                        const sut1 = instance._queues.get(partitionQueueName);
+                        const sut2 = instance._queues.get(defaultQueueName);
+
+                        await promise;
+
+                        expect(sut1).to.exist().and.to.be.an.object();
+                        expect(sut2).to.be.undefined();
                     });
                 });
             });

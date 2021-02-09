@@ -123,12 +123,16 @@ describe('schedulers', () => {
             it('should not concurrently call handlers in the dispatch queue when messages are concurrently enqueued', async () => {
                 let lock = false;
                 let counter = 0;
+                let done = false;
 
                 await new Promise((resolve, reject) => {
                     const delegate = async () => {
+                        if (done) return;
+
                         instance.push(queueName, delegate);
 
                         if (lock) {
+                            done = true;
                             reject('Messages are not processed serially');
                         }
 
@@ -139,6 +143,7 @@ describe('schedulers', () => {
                                 lock = false;
 
                                 if (++counter === 2) {
+                                    done = true;
                                     resolve();
                                 }
 
