@@ -54,6 +54,18 @@ describe('schedulers', () => {
                     expect(sut).to.exist().and.to.be.an.object();
                 });
 
+                it('should not error when delegate is undefined', async () => {
+                    const delegate = undefined;
+
+                    instance.push(queueName, delegate);
+
+                    const sut = instance._queues.get(defaultQueueName);
+
+                    await new Promise((resolve) => setTimeout(resolve, 10));
+
+                    expect(sut).to.exist().and.to.be.an.object();
+                });
+
                 it('should add 3 functions to the default queue and execute', async () => {
                     let counter = 0;
 
