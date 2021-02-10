@@ -539,7 +539,7 @@ describe('schedulers', () => {
                         expect(sut2).to.be.undefined();
                     });
 
-                    it.only(
+                    it(
                         'should add 100 functions and execute them in the order they were added for each partition',
                         { timeout: 20000 },
                         async () => {
