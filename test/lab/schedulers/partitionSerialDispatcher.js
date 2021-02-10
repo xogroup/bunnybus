@@ -20,6 +20,17 @@ describe('schedulers', () => {
 
             describe('constructor', () => {
                 it('should default partitionKeySelectors to an empty array', async () => {
+                    instance = new PartitionSerialDispatcher();
+                    expect(instance.serialDispatchPartitionKeySelectors).to.be.an.array().to.have.length(0);
+                });
+
+                it('should default partitionKeySelectors to an empty array when array contains an empty string item', async () => {
+                    instance = new PartitionSerialDispatcher({ serialDispatchPartitionKeySelectors: [''] });
+                    expect(instance.serialDispatchPartitionKeySelectors).to.be.an.array().to.have.length(0);
+                });
+
+                it('should default partitionKeySelectors to an empty array when array contains a non string type item', async () => {
+                    instance = new PartitionSerialDispatcher({ serialDispatchPartitionKeySelectors: [{}] });
                     expect(instance.serialDispatchPartitionKeySelectors).to.be.an.array().to.have.length(0);
                 });
             });
@@ -388,6 +399,48 @@ describe('schedulers', () => {
                         });
 
                         expect(counter).to.equal(2);
+                    });
+                });
+            });
+
+            describe('when key does not match', () => {
+                beforeEach(async () => {
+                    payload = { message: { sn: 'wont-match' } };
+                });
+
+                describe('push', () => {
+                    const defaultQueueName = `${queueName}:default`;
+
+                    it('should add a new function to the default queue and execute', async () => {
+                        let delegate = null;
+
+                        const promise = new Promise((resolve) => {
+                            delegate = resolve;
+                        });
+
+                        instance.push(queueName, delegate, payload);
+
+                        const sut = instance._queues.get(defaultQueueName);
+
+                        await promise;
+
+                        expect(sut).to.exist().and.to.be.an.object();
+                    });
+
+                    it('should add a new function to the default queue and execute when payload does not exist', async () => {
+                        let delegate = null;
+
+                        const promise = new Promise((resolve) => {
+                            delegate = resolve;
+                        });
+
+                        instance.push(queueName, delegate);
+
+                        const sut = instance._queues.get(defaultQueueName);
+
+                        await promise;
+
+                        expect(sut).to.exist().and.to.be.an.object();
                     });
                 });
             });
