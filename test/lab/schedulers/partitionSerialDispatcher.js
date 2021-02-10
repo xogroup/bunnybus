@@ -383,12 +383,16 @@ describe('schedulers', () => {
                     it('should not concurrently call handlers in the dispatch queue when messages are concurrently enqueued', async () => {
                         let lock = false;
                         let counter = 0;
+                        let done = false;
 
                         await new Promise((resolve, reject) => {
                             const delegate = async () => {
+                                if (done) return;
+
                                 instance.push(queueName, delegate, payload);
 
                                 if (lock) {
+                                    done = true;
                                     reject('Messages are not processed serially');
                                 }
 
@@ -399,6 +403,7 @@ describe('schedulers', () => {
                                         lock = false;
 
                                         if (++counter === 2) {
+                                            done = true;
                                             resolve();
                                         }
 
@@ -476,7 +481,8 @@ describe('schedulers', () => {
 
             describe('when key matches', () => {
                 describe('push', () => {
-                    const partitionQueueName = `${queueName}:8032060121`;
+                    const partitionQueueName1 = `${queueName}:8032060121`;
+
                     const defaultQueueName = `${queueName}:default`;
 
                     it('should add a new function to the partitioned queue and execute', async () => {
@@ -488,7 +494,7 @@ describe('schedulers', () => {
 
                         instance.push(queueName, delegate, { message: { serialNumber: '8032060121' } });
 
-                        const sut1 = instance._queues.get(partitionQueueName);
+                        const sut1 = instance._queues.get(partitionQueueName1);
                         const sut2 = instance._queues.get(defaultQueueName);
 
                         await promise;
@@ -506,7 +512,7 @@ describe('schedulers', () => {
 
                         instance.push(queueName, delegate, { message: { serialNumber: '8032060121', sn: 'will-not-catch' } });
 
-                        const sut1 = instance._queues.get(partitionQueueName);
+                        const sut1 = instance._queues.get(partitionQueueName1);
                         const sut2 = instance._queues.get(defaultQueueName);
 
                         await promise;
@@ -524,7 +530,7 @@ describe('schedulers', () => {
 
                         instance.push(queueName, delegate, { message: { sn: '8032060121' } });
 
-                        const sut1 = instance._queues.get(partitionQueueName);
+                        const sut1 = instance._queues.get(partitionQueueName1);
                         const sut2 = instance._queues.get(defaultQueueName);
 
                         await promise;
@@ -532,6 +538,67 @@ describe('schedulers', () => {
                         expect(sut1).to.exist().and.to.be.an.object();
                         expect(sut2).to.be.undefined();
                     });
+
+                    it.only(
+                        'should add 100 functions and execute them in the order they were added for each partition',
+                        { timeout: 20000 },
+                        async () => {
+                            const target = 20;
+                            const partitionCount = 5;
+
+                            const counters = [];
+
+                            const randomNumber = (min = 20, max = 250) => Math.floor(Math.random() * (max - min + 1) + min);
+
+                            await new Promise((resolve, reject) => {
+                                const delegate = async function (partition, orderNumber) {
+                                    const waitTimeInMs = randomNumber();
+
+                                    // we add this timeout to force indeterministic behavior for function
+                                    // invokers that do not correctly handle asynchronous functions.
+                                    await new Promise((handlerResolve) => setTimeout(handlerResolve, waitTimeInMs));
+
+                                    if (counters[partition] !== orderNumber) {
+                                        reject(new Error('Messages are out of order'));
+                                    }
+
+                                    ++counters[partition];
+
+                                    if (counters.every((counter) => counter === target)) {
+                                        resolve();
+                                    }
+
+                                    if (counters.some((counter) => counter > target)) {
+                                        reject(new Error('Scheduler assigning things to wrong queue partitions'));
+                                    }
+                                };
+
+                                for (let i = 0; i < partitionCount; ++i) {
+                                    counters[i] = 0;
+
+                                    for (let j = 0; j < target; ++j) {
+                                        // eslint-disable-next-line no-loop-func
+                                        ((partition, orderNumber) => {
+                                            const dynamicPayload =
+                                                partition % 2 ? { message: { serialNumber: partition } } : { message: { sn: partition } };
+
+                                            instance.push(queueName, delegate.bind(null, partition, orderNumber), dynamicPayload);
+                                        })(i, j);
+                                    }
+                                }
+
+                                expect(instance._queues.size).to.equal(partitionCount);
+                            });
+
+                            await new Promise((resolve) => setImmediate(resolve));
+
+                            for (let i = 0; i < partitionCount; ++i) {
+                                expect(counters[i]).to.equal(target);
+                            }
+
+                            expect(instance._queues.size).to.equal(0);
+                        }
+                    );
                 });
             });
         });
