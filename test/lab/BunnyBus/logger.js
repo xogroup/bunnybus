@@ -27,37 +27,39 @@ describe('BunnyBus', () => {
 
             describe('with default logger (Event Logger)', () => {
                 it('should subscribe to `log.info` event when log.info() is called', async () => {
-                    await Assertions.assertLogger(instance, 'info', inputMessage);
+                    await Assertions.assertLogger(instance, 'info', BunnyBus.LOG_INFO_EVENT, inputMessage);
                 });
 
                 it('should subscribe to `log.error` event when log.error() is called', async () => {
-                    await Assertions.assertLogger(instance, 'error', inputMessage);
+                    await Assertions.assertLogger(instance, 'error', BunnyBus.LOG_ERROR_EVENT, inputMessage);
                 });
 
                 it('should subscribe to `log.warn` event when log.warn() is called', async () => {
-                    await Assertions.assertLogger(instance, 'warn', inputMessage);
+                    await Assertions.assertLogger(instance, 'warn', BunnyBus.LOG_WARN_EVENT, inputMessage);
                 });
 
                 it('should subscribe to `log.fatal` event when log.fatal() is called', async () => {
-                    await Assertions.assertLogger(instance, 'fatal', inputMessage);
+                    await Assertions.assertLogger(instance, 'fatal', BunnyBus.LOG_FATAL_EVENT, inputMessage);
                 });
 
                 it('should subscribe to `log.debug` event when log.debug() is called', async () => {
-                    await Assertions.assertLogger(instance, 'debug', inputMessage);
+                    await Assertions.assertLogger(instance, 'debug', BunnyBus.LOG_DEBUG_EVENT, inputMessage);
                 });
 
-                it('should subscribe to `log.info` event when log.inf0() is called with multiple arguments', async () => {
+                it('should subscribe to `log.info` event when log.info() is called with multiple arguments', async () => {
                     const arg1 = 'foo';
+                    const arg2 = 'bar';
 
                     const promise = new Promise((resolve) => {
-                        instance.once(BunnyBus.LOG_INFO_EVENT, (sentArg1) => {
+                        instance.once(BunnyBus.LOG_INFO_EVENT, (sentArg1, sentArg2) => {
                             expect(sentArg1).to.equal(arg1);
+                            expect(sentArg2).to.equal(arg2);
 
                             resolve();
                         });
                     });
 
-                    instance.logger.info(arg1);
+                    instance.logger.info(arg1, arg2);
                     await promise;
                 });
             });
