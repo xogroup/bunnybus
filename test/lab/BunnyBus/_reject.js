@@ -35,11 +35,7 @@ describe('BunnyBus', () => {
                 connectionContext = channelContext.connectionContext;
 
                 await Promise.all([
-                    channelContext.channel.assertExchange(
-                        instance.config.globalExchange,
-                        'topic',
-                        BunnyBus.DEFAULT_EXCHANGE_CONFIGURATION
-                    ),
+                    channelContext.channel.assertExchange(instance.config.globalExchange, 'topic', BunnyBus.DEFAULT_EXCHANGE_CONFIGURATION),
                     channelContext.channel.assertQueue(baseQueueName, BunnyBus.DEFAULT_QUEUE_CONFIGURATION),
                     channelContext.channel.bindQueue(baseQueueName, instance.config.globalExchange, pattern)
                 ]);

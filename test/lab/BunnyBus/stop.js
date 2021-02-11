@@ -25,10 +25,7 @@ describe('BunnyBus', () => {
             after(async () => {
                 channelContext = await instance._autoBuildChannelContext({ channelName: baseChannelName });
 
-                await Promise.all([
-                    channelContext.channel.deleteQueue(baseQueueName1),
-                    channelContext.channel.deleteQueue(baseQueueName2)
-                ]);
+                await Promise.all([channelContext.channel.deleteQueue(baseQueueName1), channelContext.channel.deleteQueue(baseQueueName2)]);
 
                 await instance.stop();
             });

@@ -65,68 +65,23 @@ describe('BunnyBus', () => {
                     appId: 'test_app'
                 };
 
-                await Assertions.assertSend(
-                    instance,
-                    channelContext,
-                    message,
-                    baseQueueName,
-                    null,
-                    null,
-                    null,
-                    amqpOptions
-                );
+                await Assertions.assertSend(instance, channelContext, message, baseQueueName, null, null, null, amqpOptions);
             });
 
             it('should proxy `source` when supplied', async () => {
-                await Assertions.assertSend(
-                    instance,
-                    channelContext,
-                    message,
-                    baseQueueName,
-                    null,
-                    'someModule',
-                    null,
-                    null
-                );
+                await Assertions.assertSend(instance, channelContext, message, baseQueueName, null, 'someModule', null, null);
             });
 
             it('should proxy `transactionId` when supplied', async () => {
-                await Assertions.assertSend(
-                    instance,
-                    channelContext,
-                    message,
-                    baseQueueName,
-                    'someTransactionId',
-                    null,
-                    null,
-                    null
-                );
+                await Assertions.assertSend(instance, channelContext, message, baseQueueName, 'someTransactionId', null, null, null);
             });
 
             it('should proxy `routeKey` when supplied', async () => {
-                await Assertions.assertSend(
-                    instance,
-                    channelContext,
-                    message,
-                    baseQueueName,
-                    null,
-                    null,
-                    'event1',
-                    null
-                );
+                await Assertions.assertSend(instance, channelContext, message, baseQueueName, null, null, 'event1', null);
             });
 
             it('should proxy `routeKey` when supplied', async () => {
-                await Assertions.assertSend(
-                    instance,
-                    channelContext,
-                    messageWithEvent,
-                    baseQueueName,
-                    null,
-                    null,
-                    null,
-                    null
-                );
+                await Assertions.assertSend(instance, channelContext, messageWithEvent, baseQueueName, null, null, null, null);
             });
 
             it('should not error when connection does not pre-exist', async () => {

@@ -55,11 +55,7 @@ describe('BunnyBus', () => {
             });
 
             it('should return exchange info when exchange does exist', async () => {
-                await channelContext.channel.assertExchange(
-                    baseExchangeName,
-                    'topic',
-                    BunnyBus.DEFAULT_EXCHANGE_CONFIGURATION
-                );
+                await channelContext.channel.assertExchange(baseExchangeName, 'topic', BunnyBus.DEFAULT_EXCHANGE_CONFIGURATION);
 
                 await Assertions.autoRecoverChannel(
                     async () => {
@@ -74,11 +70,7 @@ describe('BunnyBus', () => {
             });
 
             it('should not error when connection does not pre-exist', async () => {
-                await channelContext.channel.assertExchange(
-                    baseExchangeName,
-                    'topic',
-                    BunnyBus.DEFAULT_EXCHANGE_CONFIGURATION
-                );
+                await channelContext.channel.assertExchange(baseExchangeName, 'topic', BunnyBus.DEFAULT_EXCHANGE_CONFIGURATION);
                 await connectionManager.close(BunnyBus.DEFAULT_CONNECTION_NAME);
 
                 await Assertions.autoRecoverChannel(
@@ -92,11 +84,7 @@ describe('BunnyBus', () => {
             });
 
             it('should not error when channel does not pre-exist', async () => {
-                await channelContext.channel.assertExchange(
-                    baseExchangeName,
-                    'topic',
-                    BunnyBus.DEFAULT_EXCHANGE_CONFIGURATION
-                );
+                await channelContext.channel.assertExchange(baseExchangeName, 'topic', BunnyBus.DEFAULT_EXCHANGE_CONFIGURATION);
                 await channelManager.close(BunnyBus.MANAGEMENT_CHANNEL_NAME());
 
                 await Assertions.autoRecoverChannel(

@@ -34,10 +34,7 @@ describe('BunnyBus', () => {
             });
 
             afterEach(async () => {
-                await Promise.all([
-                    instance.unsubscribe({ queue: baseQueueName1 }),
-                    instance.unsubscribe({ queue: baseQueueName2 })
-                ]);
+                await Promise.all([instance.unsubscribe({ queue: baseQueueName1 }), instance.unsubscribe({ queue: baseQueueName2 })]);
             });
 
             after(async () => {

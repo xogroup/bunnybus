@@ -14,6 +14,13 @@ describe('singleton', () => {
         expect(instance).to.be.an.instanceof(BunnyBus);
     });
 
+    it('should override configuration when passed', () => {
+        const newConfig = { ...BunnyBus.DEFAULT_SERVER_CONFIGURATION, custom: 'value' };
+        const instance = BunnyBus.Singleton(newConfig);
+
+        expect(instance.config).to.contain(newConfig);
+    });
+
     it('should generate the same instance when instantiated twice', () => {
         const instance1 = BunnyBus.Singleton();
         const instance2 = BunnyBus.Singleton();
