@@ -36,6 +36,7 @@
   "dependencies": {
     "@hapi/hoek": "^9.x",
     "amqplib": "^0.5.x",
+    "denque": "^1.x",
     "set-interval-async": "^1.x"
   },
   "devDependencies": {
