@@ -125,10 +125,7 @@ describe('BunnyBus', () => {
 
                 // Inject some faults into the Manager objects
 
-                stubs = [
-                    Sinon.stub(instance.connections, 'create').rejects(),
-                    Sinon.stub(instance.channels, 'create').rejects()
-                ];
+                stubs = [Sinon.stub(instance.connections, 'create').rejects(), Sinon.stub(instance.channels, 'create').rejects()];
 
                 // Force a failure and attempt at reconnection
 
