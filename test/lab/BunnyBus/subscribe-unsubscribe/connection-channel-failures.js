@@ -2,6 +2,7 @@
 
 const Code = require('@hapi/code');
 const Lab = require('@hapi/lab');
+const Sinon = require('sinon');
 const BunnyBus = require('../../../../lib');
 const Exceptions = require('../../../../lib/exceptions');
 
@@ -9,6 +10,7 @@ const { describe, before, beforeEach, after, afterEach, it } = (exports.lab = La
 const expect = Code.expect;
 
 let instance = undefined;
+let stubs = [];
 let connectionManager = undefined;
 let channelManager = undefined;
 let channelContext = undefined;
@@ -97,6 +99,48 @@ describe('BunnyBus', () => {
                 await channelManager.close(BunnyBus.QUEUE_CHANNEL_NAME(baseQueueName));
 
                 await instance.subscribe({ queue: baseQueueName, handlers });
+            });
+        });
+
+        describe('connection recovery failure tests', () => {
+            const baseChannelName = 'bunnybus-recovery-failure';
+            const baseQueueName = 'test-recovery-queue';
+
+            before(async () => {
+                channelContext = await instance._autoBuildChannelContext({ channelName: baseChannelName });
+            });
+
+            after(() => {
+                for (const stub of stubs) {
+                    stub.restore();
+                }
+            });
+
+            it('should be unhealthy after recovery fails', async () => {
+                const handlers = {};
+
+                // Subscribe to an arbitrary queue
+
+                await instance.subscribe({ queue: baseQueueName, handlers });
+
+                // Inject some faults into the Manager objects
+
+                stubs = [Sinon.stub(instance.connections, 'create').rejects(), Sinon.stub(instance.channels, 'create').rejects()];
+
+                // Force a failure and attempt at reconnection
+
+                const failurePromise = new Promise((resolve) => {
+                    instance.on(BunnyBus.RECOVERY_FAILED_EVENT, resolve);
+                });
+
+                await channelManager.close(BunnyBus.QUEUE_CHANNEL_NAME(baseQueueName));
+                await failurePromise;
+
+                // Validate health check
+
+                const result = instance.healthy;
+
+                expect(result).to.be.false();
             });
         });
     });
