@@ -5,7 +5,6 @@ Examples are based on usage of Promises.
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
-
 - [BunnyBus Layout](#bunnybus-layout)
   - [Components of the Diagram](#components-of-the-diagram)
     - [Modules](#modules)

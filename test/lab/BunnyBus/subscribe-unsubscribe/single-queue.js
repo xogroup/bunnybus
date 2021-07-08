@@ -552,6 +552,29 @@ describe('BunnyBus', () => {
 
                 expect(resolveCounter).to.equal(1);
             });
+
+            it('should consume and nack message', async () => {
+                await new Promise(async (resolve) => {
+                    const handlers = {};
+                    handlers[messageObject.event] = async ({ message: consumedMessage, metaData, nack }) => {
+                        expect(consumedMessage).to.be.equal(messageObject);
+                        expect(metaData.headers).to.exist();
+
+                        await nack();
+                        resolve();
+                    };
+
+                    await instance.subscribe({ queue: baseQueueName, handlers });
+                    await instance.publish({ message: messageObject });
+                });
+
+                // unsubscribe to not consume msg again
+                await instance.unsubscribe({ queue: baseQueueName });
+                // add delay to allow rabbit to catch up
+                await new Promise((res) => setTimeout(res, 100));
+                const result = await channelContext.channel.checkQueue(baseQueueName);
+                expect(result.messageCount).to.be.equal(1);
+            });
         });
     });
 });

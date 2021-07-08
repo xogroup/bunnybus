@@ -1,56 +1,59 @@
 {
-  "name": "@tenna-llc/bunnybus",
-  "version": "7.2.0",
-  "description": "RabbitMQ driver for pub/sub with error queue / retry management",
-  "keywords": [
-    "bunnybus",
-    "rabbitmq",
-    "broker",
-    "bus",
-    "queue",
-    "pubsub",
-    "publish",
-    "subscribe"
-  ],
-  "main": "lib/index.js",
-  "scripts": {
-    "test": "lab test/lab",
-    "jest": "jest test/jest",
-    "start-docker": "docker run -d --name=rabbitmq -p 5671:5671 -p 15672:15672 -p 5672:5672 rabbitmq:3-management",
-    "waitfor-docker": ". docker/wait-on-resource.sh",
-    "stop-docker": "docker rm -f rabbitmq",
-    "doctoc": "doctoc API.md Example.md Diagram.md",
-    "lint": "eslint ./",
-    "lint-fix": "eslint --fix ./",
-    "lint-fix-dry-run": "eslint --fix-dry-run ./"
-  },
-  "author": "Lam Chan",
-  "license": "BSD-3-Clause",
-  "engines": {
-    "node": "12.x.x || 14.x.x"
-  },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/tenna-llc/bunnybus"
-  },
-  "dependencies": {
-    "@hapi/hoek": "^9.x",
-    "amqplib": "^0.5.x",
-    "denque": "^1.x",
-    "set-interval-async": "^1.x"
-  },
-  "devDependencies": {
-    "@hapi/code": "^8.x",
-    "@hapi/eslint-config-hapi": "^13.x",
-    "@hapi/eslint-plugin-hapi": "^4.x",
-    "@hapi/lab": "^22.x",
-    "@hapi/wreck": "^17.0.0",
-    "doctoc": "*",
-    "eslint": "^6.x",
-    "eslint-config-prettier": "^6.x",
-    "eslint-plugin-prettier": "^3.x",
-    "jest": "^26.x",
-    "prettier": "^2.x",
-    "sinon": "^9.x"
-  }
+    "name": "@tenna-llc/bunnybus",
+    "version": "7.1.5-3",
+    "description": "RabbitMQ driver for pub/sub with error queue / retry management",
+    "keywords": [
+        "bunnybus",
+        "rabbitmq",
+        "broker",
+        "bus",
+        "queue",
+        "pubsub",
+        "publish",
+        "subscribe"
+    ],
+    "main": "lib/index.js",
+    "scripts": {
+        "test": "lab test/lab",
+        "jest": "jest test/jest",
+        "start-docker": "docker run -d --name=rabbitmq -p 5671:5671 -p 15672:15672 -p 5672:5672 rabbitmq:3-management",
+        "waitfor-docker": ". docker/wait-on-resource.sh",
+        "stop-docker": "docker rm -f rabbitmq",
+        "doctoc": "doctoc API.md Example.md Diagram.md",
+        "lint": "eslint ./",
+        "lint-fix": "eslint --fix ./",
+        "lint-fix-dry-run": "eslint --fix-dry-run ./",
+        "test-coverage": "nyc --reporter=lcov lab test/lab --r lcov -S"
+    },
+    "author": "Lam Chan",
+    "license": "BSD-3-Clause",
+    "engines": {
+        "node": "12.x.x || 14.x.x"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/tenna-llc/bunnybus"
+    },
+    "dependencies": {
+        "@hapi/hoek": "^9.x",
+        "amqplib": "^0.8.x",
+        "denque": "^1.x",
+        "set-interval-async": "^2.x"
+    },
+    "devDependencies": {
+        "@hapi/code": "^8.x",
+        "@hapi/eslint-config-hapi": "^13.x",
+        "@hapi/eslint-plugin-hapi": "^4.x",
+        "@hapi/lab": "^24.x",
+        "@hapi/wreck": "^17.0.0",
+        "doctoc": "*",
+        "eslint": "^7.x",
+        "eslint-config-prettier": "^8.x",
+        "eslint-plugin-prettier": "^3.x",
+        "jest": "^26.x",
+        "nyc": "^15.x",
+        "prettier": "^2.x",
+        "sinon": "11.x",
+        "wait-for-expect": "^3.x"
+    }
 }
