@@ -1,13 +1,13 @@
 'use strict';
 
 module.exports = {
-    extends: ['@hapi/eslint-config-hapi', 'prettier'],
-    plugins: ['@hapi/eslint-plugin-hapi', 'prettier'],
+    extends: ['plugin:@hapi/module', 'prettier'],
+    plugins: ['prettier'],
     rules: {
         'require-await': 'off',
         'no-unused-vars': 'off',
         'consistent-this': [0, 'self', '$'],
         'prettier/prettier': 'error',
-        '@hapi/hapi/scope-start': 'off'
+        '@hapi/scope-start': 'off'
     }
 };
