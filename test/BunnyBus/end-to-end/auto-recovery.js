@@ -68,7 +68,7 @@ describe('BunnyBus', () => {
 
                     instance.once(BunnyBus.RECOVERED_CHANNEL_EVENT, (channelName) => {
 
-                        const result = Object.keys(channelManager.get(targetChannelName).channel.consumers).length;
+                        const result = channelManager.get(targetChannelName).channel.consumers.size;
 
                         expect(channelName).to.equal(targetChannelName);
                         expect(result).to.be.at.least(1);

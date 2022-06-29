@@ -7,7 +7,7 @@ const expect = Code.expect;
 
 const assertGet = async (instance, channelContext, connectionManager, channelManager, buffer, queueName, options) => {
 
-    await channelContext.channel.sendToQueue(queueName, buffer, options);
+    channelContext.channel.sendToQueue(queueName, buffer, options);
     await channelContext.channel.waitForConfirms();
 
     if (connectionManager) {

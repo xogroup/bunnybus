@@ -27,22 +27,22 @@
   "author": "Lam Chan",
   "license": "BSD-3-Clause",
   "engines": {
-    "node": "10.x.x || 12.x.x"
+    "node": ">=10"
   },
   "repository": {
     "type": "git",
     "url": "https://github.com/xogroup/bunnybus"
   },
   "dependencies": {
-    "amqplib": "^0.5.5",
-    "set-interval-async": "^1.0.30"
+    "amqplib": "^0.10.0",
+    "set-interval-async": "^2.0.3"
   },
   "devDependencies": {
-    "@hapi/code": "^7.0.0",
+    "@hapi/code": "^9.0.1",
     "@hapi/eslint-config-hapi": "^12.3.0",
     "@hapi/eslint-plugin-hapi": "^4.3.4",
-    "@hapi/lab": "^21.0.0",
-    "doctoc": "^1.4.0",
-    "eslint": "^6.6.0"
+    "@hapi/lab": "^25.0.1",
+    "doctoc": "^2.2.0",
+    "eslint": "^7.6.0"
   }
 }
