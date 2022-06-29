@@ -30,7 +30,7 @@ describe('BunnyBus', () => {
 
             const baseChannelName = 'bunnybus-ack';
             const baseQueueName = 'test-ack-queue';
-            const message = { name : 'bunnybus', event : 'a' };
+            const message = { name: 'bunnybus', event: 'a' };
             const pattern = 'a';
 
             before(async () => {

@@ -14,10 +14,10 @@ describe('Helpers', () => {
         it('should clean properties that have no values at first level', () => {
 
             const obj = {
-                a : 'value1',
-                b : null,
-                c : undefined,
-                d : 'value2'
+                a: 'value1',
+                b: null,
+                c: undefined,
+                d: 'value2'
             };
 
             Helpers.cleanObject(obj);
@@ -31,11 +31,11 @@ describe('Helpers', () => {
         it('should clean properties that have no values at second level', () => {
 
             const obj = {
-                a : {
-                    a1 : 'value1',
-                    a2 : null,
-                    a3 : undefined,
-                    a4 : 'value2'
+                a: {
+                    a1: 'value1',
+                    a2: null,
+                    a3: undefined,
+                    a4: 'value2'
                 }
             };
 
@@ -50,10 +50,10 @@ describe('Helpers', () => {
         it('should not clean properties that are false', () => {
 
             const obj = {
-                a : 'value1',
-                b : true,
-                c : false,
-                d : undefined
+                a: 'value1',
+                b: true,
+                c: false,
+                d: undefined
             };
 
             Helpers.cleanObject(obj);

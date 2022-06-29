@@ -14,11 +14,11 @@ describe('BunnyBus', () => {
         it('should generate an instance when valid configurations are passed to the constructor', () => {
 
             const config = {
-                username : 'testUser',
-                password : 'testPassword',
-                hostname : 'test.rabbitmq.com',
-                vhost : 'testVirtualHost',
-                globalExchange : 'testExchange'
+                username: 'testUser',
+                password: 'testPassword',
+                hostname: 'test.rabbitmq.com',
+                vhost: 'testVirtualHost',
+                globalExchange: 'testExchange'
             };
 
             const instance = new BunnyBus(config);
@@ -36,11 +36,11 @@ describe('BunnyBus', () => {
         it('should generate a connections string when custom values are passed through the constructor', () => {
 
             const config = {
-                protocol : 'amqps',
-                username : 'testUser',
-                password : 'testPassword',
-                hostname : 'test.rabbitmq.com',
-                vhost : 'testVirtualHost'
+                protocol: 'amqps',
+                username: 'testUser',
+                password: 'testPassword',
+                hostname: 'test.rabbitmq.com',
+                vhost: 'testVirtualHost'
             };
 
             const instance = new BunnyBus(config);
@@ -59,11 +59,11 @@ describe('BunnyBus', () => {
         it('should generate a connection string with custom values', () => {
 
             const config = {
-                protocol : 'amqps',
-                username : 'testUser',
-                password : 'testPassword',
-                hostname : 'test.rabbitmq.com',
-                vhost : 'testVirtualHost'
+                protocol: 'amqps',
+                username: 'testUser',
+                password: 'testPassword',
+                hostname: 'test.rabbitmq.com',
+                vhost: 'testVirtualHost'
             };
 
             const instance = new BunnyBus();

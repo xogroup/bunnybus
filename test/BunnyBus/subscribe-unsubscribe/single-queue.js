@@ -25,9 +25,9 @@ describe('BunnyBus', () => {
             const baseChannelName = 'bunnybus-subscribe';
             const baseQueueName = 'test-subscribe-queue';
             const baseErrorQueueName = `${baseQueueName}_error`;
-            const publishOptions = { routeKey : 'a.b' };
-            const subscribeOptionsWithMeta = { meta : true };
-            const messageObject = { event : 'a.b', name : 'bunnybus' };
+            const publishOptions = { routeKey: 'a.b' };
+            const subscribeOptionsWithMeta = { meta: true };
+            const messageObject = { event: 'a.b', name: 'bunnybus' };
             const messageString = 'bunnybus';
             const messageBuffer = Buffer.from(messageString);
 
@@ -306,11 +306,11 @@ describe('BunnyBus', () => {
                     const handlers = {};
                     const config = instance.config;
                     const headers = {
-                        headers : {
-                            transactionId : '1234abcd',
-                            isBuffer      : false,
-                            routeKey      : publishOptions.routeKey,
-                            createAt      : (new Date()).toISOString()
+                        headers: {
+                            transactionId: '1234abcd',
+                            isBuffer: false,
+                            routeKey: publishOptions.routeKey,
+                            createAt: (new Date()).toISOString()
                         }
                     };
 
@@ -328,7 +328,7 @@ describe('BunnyBus', () => {
                         resolve();
                     });
 
-                    await instance.subscribe(baseQueueName, handlers, { validatePublisher : true });
+                    await instance.subscribe(baseQueueName, handlers, { validatePublisher: true });
                     await channelContext.channel.publish(config.globalExchange, publishOptions.routeKey, Buffer.from(JSON.stringify(messageObject)), headers);
                 });
             });
@@ -340,11 +340,11 @@ describe('BunnyBus', () => {
                     const handlers = {};
                     const config = instance.config;
                     const headers = {
-                        headers : {
-                            transactionId : '1234abcd',
-                            isBuffer      : false,
-                            routeKey      : publishOptions.routeKey,
-                            createAt      : (new Date()).toISOString()
+                        headers: {
+                            transactionId: '1234abcd',
+                            isBuffer: false,
+                            routeKey: publishOptions.routeKey,
+                            createAt: (new Date()).toISOString()
                         }
                     };
 
@@ -367,12 +367,12 @@ describe('BunnyBus', () => {
                     const config = instance.config;
                     const version = '0.0.1';
                     const headers = {
-                        headers : {
-                            transactionId : '1234abcd',
-                            isBuffer      : false,
-                            routeKey      : publishOptions.routeKey,
-                            createAt      : (new Date()).toISOString(),
-                            bunnyBus      : version
+                        headers: {
+                            transactionId: '1234abcd',
+                            isBuffer: false,
+                            routeKey: publishOptions.routeKey,
+                            createAt: (new Date()).toISOString(),
+                            bunnyBus: version
                         }
                     };
 
@@ -395,12 +395,12 @@ describe('BunnyBus', () => {
                     const config = instance.config;
                     const version = '0.0.1';
                     const headers = {
-                        headers : {
-                            transactionId : '1234abcd',
-                            isBuffer      : false,
-                            routeKey      : publishOptions.routeKey,
-                            createAt      : (new Date()).toISOString(),
-                            bunnyBus      : version
+                        headers: {
+                            transactionId: '1234abcd',
+                            isBuffer: false,
+                            routeKey: publishOptions.routeKey,
+                            createAt: (new Date()).toISOString(),
+                            bunnyBus: version
                         }
                     };
 
@@ -431,11 +431,11 @@ describe('BunnyBus', () => {
                     const validatePublisher = false;
                     const config = instance.config;
                     const headers = {
-                        headers : {
-                            transactionId : '1234abcd',
-                            isBuffer      : false,
-                            routeKey      : publishOptions.routeKey,
-                            createAt      : (new Date()).toISOString()
+                        headers: {
+                            transactionId: '1234abcd',
+                            isBuffer: false,
+                            routeKey: publishOptions.routeKey,
+                            createAt: (new Date()).toISOString()
                         }
                     };
 
@@ -460,12 +460,12 @@ describe('BunnyBus', () => {
                     const config = instance.config;
                     const version = '0.0.1';
                     const headers = {
-                        headers : {
-                            transactionId : '1234abcd',
-                            isBuffer      : false,
-                            routeKey      : publishOptions.routeKey,
-                            createAt      : (new Date()).toISOString(),
-                            bunnyBus      : version
+                        headers: {
+                            transactionId: '1234abcd',
+                            isBuffer: false,
+                            routeKey: publishOptions.routeKey,
+                            createAt: (new Date()).toISOString(),
+                            bunnyBus: version
                         }
                     };
 
@@ -500,7 +500,7 @@ describe('BunnyBus', () => {
             it('should auto reject message off queue when there is a topic/route mismatch when rejectUnroutedMessages === true', async () => {
 
                 const unregisteredTopic = 'd.f';
-                const testObject = { event : unregisteredTopic, name : 'bunnybus' };
+                const testObject = { event: unregisteredTopic, name: 'bunnybus' };
                 const rejectionReason = `message consumed with no matching routeKey (${unregisteredTopic}) handler`;
 
                 const handlers = {};

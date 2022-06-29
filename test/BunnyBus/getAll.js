@@ -29,7 +29,7 @@ describe('BunnyBus', () => {
 
             const baseChannelName = 'bunnybus-getAll';
             const baseQueueName = 'test-getAll-queue';
-            const message = { name : 'bunnybus' };
+            const message = { name: 'bunnybus' };
 
             beforeEach(async () => {
 

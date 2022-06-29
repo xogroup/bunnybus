@@ -1,10 +1,5 @@
 {
-    "extends": [
-        "@hapi/eslint-config-hapi"
-    ],
-    "plugins": [
-        "@hapi/eslint-plugin-hapi"
-    ],
+    "extends": "plugin:@hapi/recommended",
     "rules": {
         "consistent-this" : [ 0, "self", "$" ],
         "require-await": "off",

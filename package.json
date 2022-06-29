@@ -39,10 +39,9 @@
   },
   "devDependencies": {
     "@hapi/code": "^9.0.1",
-    "@hapi/eslint-config-hapi": "^12.3.0",
-    "@hapi/eslint-plugin-hapi": "^4.3.4",
+    "@hapi/eslint-plugin": "^6.0.0",
     "@hapi/lab": "^25.0.1",
     "doctoc": "^2.2.0",
-    "eslint": "^7.6.0"
+    "eslint": "^8.18.0"
   }
 }

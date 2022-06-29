@@ -12,7 +12,7 @@ const assertPublish = async (instance, channelContext, message, queueName, route
         source
     };
 
-    if (typeof miscOptions === 'object' && miscOptions !== null){
+    if (typeof miscOptions === 'object' && miscOptions !== null) {
         Object.assign(options, miscOptions);
     }
 

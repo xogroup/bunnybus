@@ -30,7 +30,7 @@ describe('BunnyBus', () => {
 
             const baseChannelName = 'bunnybus-requeue';
             const baseQueueName = 'test-requeue-queue';
-            const message = { name : 'bunnybus', event : 'a' };
+            const message = { name: 'bunnybus', event: 'a' };
             const pattern = 'a';
 
             before(async () => {
@@ -79,7 +79,7 @@ describe('BunnyBus', () => {
             it('should requeue with well formed header properties', async () => {
 
                 const publishOptions = {
-                    source : 'test'
+                    source: 'test'
                 };
 
                 let payload = null;

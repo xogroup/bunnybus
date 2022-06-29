@@ -8,30 +8,30 @@ const { describe, before, beforeEach, after, it } = exports.lab = Lab.script();
 const expect = Code.expect;
 
 const payloadHeaders = {
-    properties : {
-        headers : {
-            routeKey : 'a.b'
+    properties: {
+        headers: {
+            routeKey: 'a.b'
         }
     }
 };
 
 const payloadFields = {
-    fields : {
-        routingKey : 'a.c'
+    fields: {
+        routingKey: 'a.c'
     }
 };
 
 const payload = {
-    properties : payloadHeaders.properties,
-    fieldds : payloadFields.fields
+    properties: payloadHeaders.properties,
+    fieldds: payloadFields.fields
 };
 
 const message = {
-    event : 'a.d'
+    event: 'a.d'
 };
 
 const options = {
-    routeKey : 'a.e'
+    routeKey: 'a.e'
 };
 
 describe('Helpers', () => {

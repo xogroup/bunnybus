@@ -31,7 +31,7 @@ describe('BunnyBus', () => {
             const baseChannelName = 'bunnybus-reject';
             const baseQueueName = 'test-reject-queue';
             const baseErrorQueueName = `${baseQueueName}_error`;
-            const message = { name : 'bunnybus', event : 'a' };
+            const message = { name: 'bunnybus', event: 'a' };
             const pattern = 'a';
 
             before(async () => {
@@ -81,7 +81,7 @@ describe('BunnyBus', () => {
             it('should reject with well formed header properties', async () => {
 
                 const publishOptions = {
-                    source : 'test'
+                    source: 'test'
                 };
                 const requeuedAt = (new Date()).toISOString();
                 const retryCount = 5;

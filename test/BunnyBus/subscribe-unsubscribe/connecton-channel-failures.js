@@ -31,7 +31,7 @@ describe('BunnyBus', () => {
             const baseQueueName = 'test-negative-tests-queue';
             const baseErrorQueueName = `${baseQueueName}_error`;
             const consumerTag = 'abcde12345';
-            const handlers = { event1 : () => {} };
+            const handlers = { event1: () => {} };
 
             before(async () => {
 

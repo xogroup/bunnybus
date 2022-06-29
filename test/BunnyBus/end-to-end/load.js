@@ -21,7 +21,7 @@ describe('BunnyBus', () => {
             const baseChannelName = 'bunnybus-e2e-load-serial-test';
             const baseQueueName = 'test-e2e-load-serial-test-queue';
             const baseErrorQueueName = `${baseQueueName}_error`;
-            const message = { event : 'a.promise', name : 'bunnybus' };
+            const message = { event: 'a.promise', name: 'bunnybus' };
             const pattern = 'a.promise';
             const publishTarget = 300;
 
@@ -42,7 +42,7 @@ describe('BunnyBus', () => {
 
                 await Promise.all([
                     channelContext.channel.assertExchange(instance.config.globalExchange, 'topic'),
-                    channelContext.channel.assertQueue(baseQueueName, { durable : false })
+                    channelContext.channel.assertQueue(baseQueueName, { durable: false })
                 ]);
 
                 await channelContext.channel.bindQueue(baseQueueName, instance.config.globalExchange, pattern);
@@ -94,7 +94,7 @@ describe('BunnyBus', () => {
                     };
                 });
 
-                await instance.subscribe(baseQueueName, handlers, { queue: { durable : false } });
+                await instance.subscribe(baseQueueName, handlers, { queue: { durable: false } });
 
                 await promise;
             });
@@ -105,7 +105,7 @@ describe('BunnyBus', () => {
             const baseChannelName = 'bunnybus-e2e-load-concurrent-test';
             const baseQueueName = 'test-e2e-load-concurrent-test-queue';
             const baseErrorQueueName = `${baseQueueName}_error`;
-            const message = { event : 'a.promise', name : 'bunnybus' };
+            const message = { event: 'a.promise', name: 'bunnybus' };
             const pattern = 'a.promise';
             const publishTarget = 300;
 
@@ -126,7 +126,7 @@ describe('BunnyBus', () => {
 
                 await Promise.all([
                     channelContext.channel.assertExchange(instance.config.globalExchange, 'topic'),
-                    channelContext.channel.assertQueue(baseQueueName, { durable : false })
+                    channelContext.channel.assertQueue(baseQueueName, { durable: false })
                 ]);
 
                 await channelContext.channel.bindQueue(baseQueueName, instance.config.globalExchange, pattern);
@@ -178,7 +178,7 @@ describe('BunnyBus', () => {
                     };
                 });
 
-                await instance.subscribe(baseQueueName, handlers, { queue: { durable : false } });
+                await instance.subscribe(baseQueueName, handlers, { queue: { durable: false } });
 
                 await promise;
             });
