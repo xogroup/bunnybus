@@ -31,7 +31,7 @@ describe('state management', () => {
             it('should create one if it does not exist', () => {
 
                 const queueName = `${baseQueueName}-1`;
-                const handlers = { event1 : () => {} };
+                const handlers = { event1: () => {} };
                 const options = {};
 
                 const response = instance.create(queueName, handlers, options);
@@ -47,7 +47,7 @@ describe('state management', () => {
             it('should not create one if it does exist', () => {
 
                 const queueName = `${baseQueueName}-2`;
-                const handlers = { event1 : () => {} };
+                const handlers = { event1: () => {} };
                 const options = {};
 
                 instance.create(queueName, handlers, options);
@@ -61,7 +61,7 @@ describe('state management', () => {
                 await new Promise((resolve) => {
 
                     const queueName = `${baseQueueName}-3`;
-                    const handlers = { event1 : () => {} };
+                    const handlers = { event1: () => {} };
                     const options = {};
 
                     instance.once(SubscriptionManager.CREATED_EVENT, (subcription) => {
@@ -87,7 +87,7 @@ describe('state management', () => {
 
                 const queueName = `${baseQueueName}-1`;
                 const consumerTag = 'abcdefg012345';
-                const handlers = { event1 : () => {} };
+                const handlers = { event1: () => {} };
                 const options = {};
 
                 instance.create(queueName, handlers, options);
@@ -114,7 +114,7 @@ describe('state management', () => {
 
                     const queueName = `${baseQueueName}-3`;
                     const consumerTag = 'abcdefg012345';
-                    const handlers = { event1 : () => {} };
+                    const handlers = { event1: () => {} };
                     const options = {};
 
                     instance.once(SubscriptionManager.TAGGED_EVENT, (subcription) => {
@@ -142,7 +142,7 @@ describe('state management', () => {
 
                 const queueName = `${baseQueueName}-1`;
                 const consumerTag = 'abcdefg012345';
-                const handlers = { event1 : () => {} };
+                const handlers = { event1: () => {} };
                 const options = {};
 
                 instance.create(queueName, handlers, options);
@@ -173,7 +173,7 @@ describe('state management', () => {
 
                 const queueName = `${baseQueueName}-1`;
                 const consumerTag = 'abcdefg012345';
-                const handlers = { event1 : () => {} };
+                const handlers = { event1: () => {} };
                 const options = {};
 
                 instance.create(queueName, handlers, options);
@@ -188,7 +188,7 @@ describe('state management', () => {
             it('should return false when subscription exist but does not have a consumerTag', () => {
 
                 const queueName = `${baseQueueName}-2`;
-                const handlers = { event1 : () => {} };
+                const handlers = { event1: () => {} };
                 const options = {};
 
                 instance.create(queueName, handlers, options);
@@ -212,7 +212,7 @@ describe('state management', () => {
 
                     const queueName = `${baseQueueName}-4`;
                     const consumerTag = 'abcdefg012345';
-                    const handlers = { event1 : () => {} };
+                    const handlers = { event1: () => {} };
                     const options = {};
 
                     instance.once(SubscriptionManager.CLEARED_EVENT, (subcription) => {
@@ -237,7 +237,7 @@ describe('state management', () => {
 
                 await new Promise((resolve) => {
 
-                    const handlers = { event1 : () => {} };
+                    const handlers = { event1: () => {} };
                     const options = {};
                     const iterationLimit = 5;
                     let iterationCount = 0;
@@ -285,7 +285,7 @@ describe('state management', () => {
 
                 const queueName = `${baseQueueName}-2`;
                 const consumerTag = 'abcdefg012345';
-                const handlers = { event1 : () => {} };
+                const handlers = { event1: () => {} };
                 const options = {};
 
                 instance.create(queueName, handlers, options);
@@ -298,7 +298,7 @@ describe('state management', () => {
             it('should return true when subscription does exist with removed consumerTag when using flag override', () => {
 
                 const queueName = `${baseQueueName}-3`;
-                const handlers = { event1 : () => {} };
+                const handlers = { event1: () => {} };
                 const options = {};
 
                 instance.create(queueName, handlers, options);
@@ -325,7 +325,7 @@ describe('state management', () => {
 
                 const queueName = `${baseQueueName}-2`;
                 const consumerTag = 'abcdefg012345';
-                const handlers = { event1 : () => {} };
+                const handlers = { event1: () => {} };
                 const options = {};
 
                 instance.create(queueName, handlers, options);
@@ -338,7 +338,7 @@ describe('state management', () => {
             it('should return true when subscription exist with no consumerTag', () => {
 
                 const queueName = `${baseQueueName}-2`;
-                const handlers = { event1 : () => {} };
+                const handlers = { event1: () => {} };
                 const options = {};
 
                 instance.create(queueName, handlers, options);
@@ -352,7 +352,7 @@ describe('state management', () => {
                 await new Promise((resolve) => {
 
                     const queueName = `${baseQueueName}-4`;
-                    const handlers = { event1 : () => {} };
+                    const handlers = { event1: () => {} };
                     const options = {};
 
                     instance.once(SubscriptionManager.REMOVED_EVENT, (subscription) => {
@@ -376,7 +376,7 @@ describe('state management', () => {
 
                 for (let i = 1; i <= 3; ++i) {
                     const queueName = `${baseQueueName}-${i}`;
-                    const handlers = { event1 : () => {} };
+                    const handlers = { event1: () => {} };
                     const options = {};
 
                     instance.create(queueName, handlers, options);

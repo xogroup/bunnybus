@@ -26,7 +26,7 @@ describe('BunnyBus', () => {
             const baseQueueName = 'test-subscribe-queue';
             const baseErrorQueueName = `${baseQueueName}_error`;
             const subscriptionKey = 'abc.#.xyz';
-            const routableObject = { event : 'abc.hello.world.xyz', name : 'bunnybus' };
+            const routableObject = { event: 'abc.hello.world.xyz', name: 'bunnybus' };
 
             before(async () => {
 

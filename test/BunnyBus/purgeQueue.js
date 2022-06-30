@@ -37,7 +37,7 @@ describe('BunnyBus', () => {
                 connectionContext = channelContext.connectionContext;
 
                 await channelContext.channel.assertQueue(baseQueueName, BunnyBus.DEFAULT_QUEUE_CONFIGURATION);
-                await channelContext.channel.sendToQueue(baseQueueName, Buffer.from('foobar'));
+                channelContext.channel.sendToQueue(baseQueueName, Buffer.from('foobar'));
                 await channelContext.channel.waitForConfirms();
             });
 

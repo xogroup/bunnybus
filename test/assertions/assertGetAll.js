@@ -37,7 +37,7 @@ const assertGetAll = async (instance, channelContext, connectionManager, channel
     const handler = meta ? handlerWithMeta : handlerWithoutMeta;
 
     for (let i = 0; i < limit; ++i) {
-        await channelContext.channel.sendToQueue(queueName, buffer);
+        channelContext.channel.sendToQueue(queueName, buffer);
     }
 
     await channelContext.channel.waitForConfirms();

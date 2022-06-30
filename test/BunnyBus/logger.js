@@ -19,8 +19,8 @@ describe('BunnyBus', () => {
         describe('logging', () => {
 
             const inputMessage = {
-                prop1 : 'message value 1',
-                prop2 : 'message value 2'
+                prop1: 'message value 1',
+                prop2: 'message value 2'
             };
 
             before(async () => {

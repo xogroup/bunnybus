@@ -29,7 +29,7 @@ describe('BunnyBus', () => {
 
             const baseChannelName = 'bunnybus-publish';
             const baseQueueName = 'test-publish-queue';
-            const message = { name : 'bunnybus' };
+            const message = { name: 'bunnybus' };
             const patterns = ['a', 'a.b', 'b', 'b.b', 'z.*'];
 
             beforeEach(async () => {
@@ -76,7 +76,7 @@ describe('BunnyBus', () => {
                     priority: 1,
                     persistent: false,
                     deliveryMode: false,
-                    mandatory:false,
+                    mandatory: false,
                     BCC: 'b',
                     contentType: 'text/plain',
                     contentEncoding: 'text/plain',
@@ -128,7 +128,7 @@ describe('BunnyBus', () => {
 
             it('should publish for route `a` when route key is provided in the message', async () => {
 
-                const messageWithRoute = Object.assign({}, message, { event : 'a' });
+                const messageWithRoute = Object.assign({}, message, { event: 'a' });
 
                 await Assertions.assertPublish(instance, channelContext, messageWithRoute, baseQueueName, null, null, null, true, null);
             });

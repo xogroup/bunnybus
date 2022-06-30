@@ -22,7 +22,6 @@ const before = async () => {
 };
 
 const after = async () => {
-
     await channelContext.channel.deleteExchange(baseQueueName);
     await channelContext.channel.deleteQueue(baseQueueName);
 };

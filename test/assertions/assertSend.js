@@ -12,7 +12,7 @@ const assertSend = async (instance, channelContext, message, queueName, transact
         routeKey
     };
 
-    if (typeof miscOptions === 'object' && miscOptions !== null){
+    if (typeof miscOptions === 'object' && miscOptions !== null) {
         Object.assign(options, miscOptions);
     }
 

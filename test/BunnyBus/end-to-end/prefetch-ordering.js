@@ -21,7 +21,7 @@ describe('BunnyBus', () => {
             const baseChannelName = 'bunnybus-e2e-prefetch-ordering-test';
             const baseQueueName = 'test-e2e-prefetch-ordering-test-queue';
             const baseErrorQueueName = `${baseQueueName}_error`;
-            const message = { event : 'e2e.prefetch-ordering', name : 'bunnybus' };
+            const message = { event: 'e2e.prefetch-ordering', name: 'bunnybus' };
             const pattern = 'e2e.prefetch-ordering';
             const publishTarget = 200;
 
@@ -42,7 +42,7 @@ describe('BunnyBus', () => {
 
                 await Promise.all([
                     channelContext.channel.assertExchange(instance.config.globalExchange, 'topic'),
-                    channelContext.channel.assertQueue(baseQueueName, { durable : false })
+                    channelContext.channel.assertQueue(baseQueueName, { durable: false })
                 ]);
 
                 await channelContext.channel.bindQueue(baseQueueName, instance.config.globalExchange, pattern);
@@ -91,7 +91,7 @@ describe('BunnyBus', () => {
                     };
                 });
 
-                await instance.subscribe(baseQueueName, handlers, { queue: { durable : false } });
+                await instance.subscribe(baseQueueName, handlers, { queue: { durable: false } });
 
                 await promise;
             });

@@ -28,7 +28,7 @@ describe('BunnyBus', () => {
 
             const baseChannelName = 'bunnybus-events-publish';
             const baseQueueName = 'test-events-publish-queue';
-            const message = { event : 'published-event', name : 'bunnybus' };
+            const message = { event: 'published-event', name: 'bunnybus' };
 
             after(async () => {
 

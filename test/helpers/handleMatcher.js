@@ -14,9 +14,9 @@ describe('Helpers', () => {
         it('should not match any handler', () => {
 
             const handlers = {
-                'abc.#.xyz' : () => {},
+                'abc.#.xyz': () => {},
                 'abc.*.hello.world': () => {},
-                'abc.xyz' : () => {}
+                'abc.xyz': () => {}
             };
 
             const result = Helpers.handlerMatcher(handlers, 'world.hello');
@@ -28,8 +28,8 @@ describe('Helpers', () => {
         it('should match a single handler', () => {
 
             const handlers = {
-                'hello.world' : () => {},
-                'world.hello' : () => {}
+                'hello.world': () => {},
+                'world.hello': () => {}
             };
 
             const result = Helpers.handlerMatcher(handlers, 'world.hello');
@@ -41,9 +41,9 @@ describe('Helpers', () => {
         it('should match multiple handlers', () => {
 
             const handlers = {
-                'abc.#.xyz' : () => {},
-                'abc.*.xyz' : () => {},
-                'abc.xyz' : () => {}
+                'abc.#.xyz': () => {},
+                'abc.*.xyz': () => {},
+                'abc.xyz': () => {}
             };
 
             const result = Helpers.handlerMatcher(handlers, 'abc.hello.xyz');

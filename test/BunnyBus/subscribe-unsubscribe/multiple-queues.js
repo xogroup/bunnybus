@@ -25,7 +25,7 @@ describe('BunnyBus', () => {
             const baseChannelName = 'bunnybus-subscribe';
             const baseQueueName1 = 'test-subscribe-queue1';
             const baseQueueName2 = 'test-subscribe-queue2';
-            const message = { event : 'a.b', name : 'bunnybus' };
+            const message = { event: 'a.b', name: 'bunnybus' };
 
             before(async () => {
 

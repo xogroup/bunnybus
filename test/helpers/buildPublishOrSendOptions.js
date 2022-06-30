@@ -21,7 +21,7 @@ describe('Helpers', () => {
                 priority: 1,
                 persistent: false,
                 deliveryMode: false,
-                mandatory:false,
+                mandatory: false,
                 BCC: 'b',
                 contentType: 'text/plain',
                 contentEncoding: 'text/plain',

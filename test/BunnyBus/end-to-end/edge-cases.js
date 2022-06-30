@@ -41,7 +41,7 @@ describe('BunnyBus', () => {
 
             it('should pass when parallel calls to publish happens when connection starts off closed', async () => {
 
-                const message = { event : 'ee', name : 'bunnybus' };
+                const message = { event: 'ee', name: 'bunnybus' };
 
                 await Promise.all([
                     instance.publish(message),
@@ -52,12 +52,12 @@ describe('BunnyBus', () => {
 
             it('should pass when send pushes a message to a subscribed queue', async () => {
 
-                const message = { event : 'ea', name : 'bunnybus' };
+                const message = { event: 'ea', name: 'bunnybus' };
 
                 await new Promise(async (resolve) => {
 
                     const handlers = {
-                        ea : async (subscribedMessaged, ack) => {
+                        ea: async (subscribedMessaged, ack) => {
 
                             expect(subscribedMessaged).to.be.equal(message);
 

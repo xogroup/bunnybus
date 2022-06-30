@@ -21,11 +21,11 @@ describe('Helpers', () => {
         it('should convert an object to a Buffer', async () => {
 
             const data = {
-                a : 'root1',
-                b : 'root2',
-                c : {
-                    c1 : 'sub1',
-                    c2 : 'sub2'
+                a: 'root1',
+                b: 'root2',
+                c: {
+                    c1: 'sub1',
+                    c2: 'sub2'
                 }
             };
 

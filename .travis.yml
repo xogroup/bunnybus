@@ -11,6 +11,10 @@ matrix:
       env: NODE_VERSION=10
     - node_js: '12'
       env: NODE_VERSION=12
+    - node_js: '14'
+      env: NODE_VERSION=14
+    - node_js: '16'
+      env: NODE_VERSION=16
 before_install:
   - npm install -g npm@'>=2.13.5'
   - npm run start-docker

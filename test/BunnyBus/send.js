@@ -29,8 +29,8 @@ describe('BunnyBus', () => {
 
             const baseChannelName = 'bunnybus-send';
             const baseQueueName = 'test-send-queue';
-            const message = { name : 'bunnybus' };
-            const messageWithEvent = { event : 'event1', name : 'bunnybus' };
+            const message = { name: 'bunnybus' };
+            const messageWithEvent = { event: 'event1', name: 'bunnybus' };
 
             beforeEach(async () => {
 
@@ -59,7 +59,7 @@ describe('BunnyBus', () => {
                     priority: 1,
                     persistent: false,
                     deliveryMode: false,
-                    mandatory:false,
+                    mandatory: false,
                     BCC: 'b',
                     contentType: 'text/plain',
                     contentEncoding: 'text/plain',
