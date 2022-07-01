@@ -22,7 +22,8 @@
     "lint": "eslint ./",
     "lint-fix": "eslint --fix ./",
     "lint-fix-dry-run": "eslint --fix-dry-run ./",
-    "benchmark-publish": "node benchmark/publish.js"
+    "benchmark-publish": "node benchmark/publish.js",
+    "benchmark-subscribe": "node benchmark/subscribe.js"
   },
   "author": "Lam Chan",
   "license": "BSD-3-Clause",

@@ -11,6 +11,7 @@ const baseChannelName = 'bunnybus-publish-bench';
 const baseQueueName = 'bench-publish-queue';
 const message = { name : 'bunnybus' };
 const routeKey = 'bench-a';
+const messageCount = 100000;
 
 const before = async () => {
 
@@ -22,6 +23,7 @@ const before = async () => {
 };
 
 const after = async () => {
+
     await channelContext.channel.deleteExchange(baseQueueName);
     await channelContext.channel.deleteQueue(baseQueueName);
 };
@@ -35,7 +37,7 @@ const run = async () => {
     console.log(`STARTING BENCHMARK\n\n\n`);
     await before();
     const start = process.hrtime.bigint();
-    for (let i = 0; i < 100000; ++i) {
+    for (let i = 0; i < messageCount; ++i) {
 
         await instance.publish(message, options);
     }
@@ -43,7 +45,15 @@ const run = async () => {
     const fin = process.hrtime.bigint();
     const time = fin - start;
     await after();
-    console.log(`BENCHMARK\n\n\nPublish\n${time}ns\n${time / 1000000000}secs\n`);
+    const summary = `
+BENCHMARK
+    
+    Time to Publish ${messageCount} messages:
+        ${time} nanoseconds
+        ${time / BigInt(1000000000)} seconds
+`
+
+    console.log(summary);
     process.exit(0);
 };
 

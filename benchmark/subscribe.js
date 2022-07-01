@@ -43,7 +43,7 @@ const run = async () => {
         }
     }
 
-    console.log('\n\n All messages published, beginning subscribe...\n\n');
+    console.log('\n\n All messages published, beginning to subscribe...\n\n');
 
     let messagesReceived = 0;
     const start = process.hrtime.bigint();
@@ -54,13 +54,23 @@ const run = async () => {
             await ack();
             const tat = process.hrtime.bigint();
             const time = tat - start;
+            
             if ( messagesReceived % 1000 === 0 ) {
-                console.log(`${messagesReceived}/${messageCount} | ${time}ns | ${time / BigInt(1000000000)}secs`);
+                console.log(`${messagesReceived}/${messageCount} | ${time} nanoseconds | ${time / BigInt(1000000000)} seconds`);
             }
 
             if ( messagesReceived >= messageCount ) {
                 await after();
-                console.log(`BENCHMARK\n\n\nPublish\n${time}ns\n${time / BigInt(1000000000)}secs\n`);
+
+                const summary = `
+BENCHMARK
+    
+    Time to Receive ${messageCount} messages:
+        ${time} nanoseconds
+        ${time / BigInt(1000000000)} seconds
+`
+            
+                console.log(summary);
                 process.exit(0);
             }
         }}
