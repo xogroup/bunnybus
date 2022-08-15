@@ -329,7 +329,7 @@ describe('BunnyBus', () => {
                     });
 
                     await instance.subscribe(baseQueueName, handlers, { validatePublisher: true });
-                    await channelContext.channel.publish(config.globalExchange, publishOptions.routeKey, Buffer.from(JSON.stringify(messageObject)), headers);
+                    channelContext.channel.publish(config.globalExchange, publishOptions.routeKey, Buffer.from(JSON.stringify(messageObject)), headers);
                 });
             });
 
@@ -355,7 +355,7 @@ describe('BunnyBus', () => {
                     };
 
                     await instance.subscribe(baseQueueName, handlers, { validatePublisher: false });
-                    await channelContext.channel.publish(config.globalExchange, publishOptions.routeKey, Buffer.from(JSON.stringify(messageObject)), headers);
+                    channelContext.channel.publish(config.globalExchange, publishOptions.routeKey, Buffer.from(JSON.stringify(messageObject)), headers);
                 });
             });
 
@@ -383,7 +383,7 @@ describe('BunnyBus', () => {
                     };
 
                     await instance.subscribe(baseQueueName, handlers, { validatePublisher: true, validateVersion: false });
-                    await channelContext.channel.publish(config.globalExchange, publishOptions.routeKey, Buffer.from(JSON.stringify(messageObject)), headers);
+                    channelContext.channel.publish(config.globalExchange, publishOptions.routeKey, Buffer.from(JSON.stringify(messageObject)), headers);
                 });
             });
 
@@ -419,7 +419,7 @@ describe('BunnyBus', () => {
                     });
 
                     await instance.subscribe(baseQueueName, handlers, { validatePublisher: true, validateVersion: true });
-                    await channelContext.channel.publish(config.globalExchange, publishOptions.routeKey, Buffer.from(JSON.stringify(messageObject)), headers);
+                    channelContext.channel.publish(config.globalExchange, publishOptions.routeKey, Buffer.from(JSON.stringify(messageObject)), headers);
                 });
             });
 
@@ -447,7 +447,7 @@ describe('BunnyBus', () => {
                     };
 
                     await instance.subscribe(baseQueueName, handlers, { validatePublisher });
-                    await channelContext.channel.publish(config.globalExchange, publishOptions.routeKey, Buffer.from(JSON.stringify(messageObject)), headers);
+                    channelContext.channel.publish(config.globalExchange, publishOptions.routeKey, Buffer.from(JSON.stringify(messageObject)), headers);
                 });
             });
 
@@ -477,7 +477,7 @@ describe('BunnyBus', () => {
                     };
 
                     await instance.subscribe(baseQueueName, handlers, { validateVersion });
-                    await channelContext.channel.publish(config.globalExchange, publishOptions.routeKey, Buffer.from(JSON.stringify(messageObject)), headers);
+                    channelContext.channel.publish(config.globalExchange, publishOptions.routeKey, Buffer.from(JSON.stringify(messageObject)), headers);
                 });
             });
 
