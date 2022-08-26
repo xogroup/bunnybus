@@ -52,7 +52,7 @@ const assertSend = async (instance, channelContext, message, queueName, transact
         expect(result.properties.headers.routeKey).to.be.equal(message.event);
     }
 
-    await channelContext.channel.ack(result);
+    channelContext.channel.ack(result);
 };
 
 module.exports = assertSend;
