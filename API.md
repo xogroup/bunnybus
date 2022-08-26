@@ -427,7 +427,7 @@ Creates a queue.
 const BunnyBus = require('bunnybus');
 const bunnyBus = new BunnyBus();
 
-bunnyBus.createQueue('queue1');
+await bunnyBus.createQueue('queue1');
 ```
 
 #### `async deleteQueue(name, [options])`
@@ -443,7 +443,7 @@ Delete a queue.
 const BunnyBus = require('bunnybus');
 const bunnyBus = new BunnyBus();
 
-async bunnyBus.deleteQueue('queue1');
+await bunnyBus.deleteQueue('queue1');
 ```
 
 #### `async checkQueue(name)`
