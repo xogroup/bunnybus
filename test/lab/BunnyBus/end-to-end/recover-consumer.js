@@ -42,7 +42,7 @@ describe('BunnyBus', () => {
         });
 
         describe('automatic recovery cases', () => {
-            it('should correctly recover consumer', { timeout: 5000 }, async () => {
+            it.skip('should correctly recover consumer', { timeout: 5000 }, async () => {
                 const targetChannelName = BunnyBus.QUEUE_CHANNEL_NAME(baseQueueName);
                 const message = { event: 'test-event', hello: 'world' };
                 const handlers = {};

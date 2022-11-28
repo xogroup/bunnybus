@@ -28,7 +28,7 @@
     "author": "Lam Chan",
     "license": "BSD-3-Clause",
     "engines": {
-        "node": "16.x"
+        "node": ">16.x"
     },
     "repository": {
         "type": "git",
@@ -36,9 +36,9 @@
     },
     "dependencies": {
         "@hapi/hoek": "10.x",
-        "amqplib": "0.9.x",
+        "amqplib": "0.10.x",
         "denque": "2.x",
-        "set-interval-async": "2.x"
+        "set-interval-async": "3.x"
     },
     "devDependencies": {
         "@hapi/code": "9.x",
@@ -49,10 +49,10 @@
         "eslint": "8.x",
         "eslint-config-prettier": "8.x",
         "eslint-plugin-prettier": "4.x",
-        "jest": "28.x",
+        "jest": "29.x",
         "nyc": "15.x",
         "prettier": "2.x",
-        "sinon": "14.x",
+        "sinon": "15.x",
         "wait-for-expect": "3.x"
     }
 }
