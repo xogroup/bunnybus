@@ -483,7 +483,7 @@ Publish a message onto the bus.
 ##### parameter(s)
 
   - `message` - the content being sent to downstream subscribers. *[string|Object|Buffer]* **Required**
-   - `event` - override value for the route key. The value must be supplied here or in `options.routeKey`.  The value can be `.` separated for namespacing. *[string]* **Optional.**
+  **Optional.**
   - `options` - optional settings. *[Object]* **Optional**
     - `routeKey` - value for the route key to route the message with.  The value must be supplied here or in `message.event`.  The value can be `.` separated for namespacing. *[string]* **Optional**
     - `transactionId` - value attached to the header of the message for tracing.  When one is not supplied, a random 40 character token is generated. *[string]* **Optional**
